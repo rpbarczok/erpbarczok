@@ -1,0 +1,55 @@
+.function-button {
+    float: right;
+}
+
+.stammdaten {
+    background-color: lightcyan;
+}
+
+.heading {
+    border-radius: 25px 0 0 0;
+    padding: 10px 0 5px 10px;
+}
+
+.suche {
+    padding: 10px;
+}
+
+.scrollBox {
+    font-size:small;
+    overflow-y: scroll;
+    border: 1px solid lightgrey;
+}
+
+.suchListe {
+    height: 5lh;
+}
+
+.suchFirmenFlexBox {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.heightBranchen {
+    height: 6em;
+    width: 100% 
+ }
+
+ .smallDesign {
+    font-size: 11px;
+    padding: 0px 2px 1px 3px;
+}
+ 
+ .defaultRow {
+     padding: 1px 0 1px 0;
+ }
+ 
+ .smallDesignLabel {
+     padding: 0.25em 0 0 1.5em;
+ }
+
+ .heightAddressAnsprechpartner {
+    height: 15em;
+}
