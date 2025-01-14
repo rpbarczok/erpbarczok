@@ -3,10 +3,15 @@ import {Container, Row} from 'react-bootstrap'
 import Companies from './components/companies/companies.js'
 import Navigation from './components/navigation/navigation.js'
 
+export interface FormTab {
+    name: string
+    id: string
+}
+
 export default function App() {
-    const startPage = { name: "Stammdaten", id: "stammForm"}
-    const [activeForm, setActiveForm] = useState(startPage)
-    const [tabs, setTabs] = useState([startPage])
+    const startPage: FormTab = { name: "Stammdaten", id: "stammForm"}
+    const [activeForm, setActiveForm] = useState<FormTab>(startPage)
+    const [tabs, setTabs] = useState<FormTab[]>([startPage])
     
     return(
         <Container fluid>

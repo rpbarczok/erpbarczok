@@ -1,8 +1,10 @@
 {
     "compilerOptions": {
+      "jsx": "react-jsx",
       "outDir": "server/ecmascript",
-      "module": "Node16"
+      "module": "Node16",
+      "target": "ESNext"
       //"removeComments": true
     },
-    "include": ["server/typescript/**/*"]
+    "include": ["server/typescript/**/*", "client/**/*"]
   }

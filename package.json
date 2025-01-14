@@ -5,10 +5,12 @@
   "private": "true",
   "type": "module",
   "scripts": {
-    "start": "dotenvx run -f config/dev.env -- tsx server/typescript/start.ts | webpack serve --open --config webpack.dev.js",
+    "start": "concurrently \"npm run startserver\" \"npm run startclient\"",
+    "startserver": "dotenvx run -f config/dev.env -- tsx server/typescript/start.ts",
+    "startclient": "webpack serve --open --config webpack.dev.js",
     "test": "dotenvx run -f config/test.env -- mocha --config mocha-typescript-rc.cjs",
     "build": "rm -fR ecmascript && tsc && dotenvx run -f config/test.env -- mocha --config mocha-ecmascript-rc.cjs",
-    "built": "dotenvx run -f config/prod.env -- node ./ecmascript/start.js",
+    "built": "dotenvx run -f config/prod.env -- node server/ecmascript/start.js",
     "buildclient": "webpack --config webpack.prod.js"
   },
   "author": "Ralph Barczok",
@@ -40,6 +42,7 @@
     "@types/swagger-ui-express": "^4.1.7",
     "axios": "^1.7.9",
     "babel-loader": "^9.2.1",
+    "concurrently": "^9.1.2",
     "css-loader": "^7.1.2",
     "expect": "^29.7.0",
     "express": "^4.21.2",

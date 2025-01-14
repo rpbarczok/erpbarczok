@@ -1,10 +1,20 @@
 import {Nav} from 'react-bootstrap'
 import {XLg} from 'react-bootstrap-icons'
 import '../../style.css'
+import React, { EventHandler } from 'react'
+import { FormTab } from '../../app.js'
 
-export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeForm }) {
+interface TabsNavigationInterface {
+    tabs: FormTab[]
+    setTabs: React.Dispatch<React.SetStateAction<FormTab[]>>
+    setActiveForm: React.Dispatch<React.SetStateAction<FormTab>>
+    activeForm: FormTab
+}
 
-    const handleClose = (tab) => {
+
+export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeForm }: TabsNavigationInterface) {
+
+    const handleClose = (tab: FormTab) => {
         console.log(tab)
         const index = tabs.indexOf(tab)
         if (tabs.length > 1) {
@@ -19,20 +29,22 @@ export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeFor
         }
     }
 
-    const handleClick = (tab) => {
+    const handleClick = (tab: FormTab) => {
         setActiveForm(tab)
     }
 
-    function handleDragStart(e) {
-        e.dataTransfer.setData("text", e.target.id)
+    function handleDragStart(e: React.DragEvent<HTMLElement>) {
+        console.log(e.target)
+        const id: string= (e.target as HTMLElement).id
+        e.dataTransfer.setData("text", id)
     }
 
-    function handleDrop(e) {
+    function handleDrop(e: React.DragEvent<HTMLElement>) {
         const indexDraggedFrom = e.dataTransfer.getData("text")
         const draggedFrom = tabs[e.dataTransfer.getData("text")]
         const indexDroppedOn = e.currentTarget.id
         const newList = tabs.map((tab, index) => {
-            if (indexDroppedOn > Number(indexDraggedFrom)) {
+            if (Number(indexDroppedOn) > Number(indexDraggedFrom)) {
                 if (index > Number(indexDroppedOn) || index < Number(indexDraggedFrom)) {
                     return tab
                 } else if (index === Number(indexDroppedOn)) {
@@ -54,17 +66,17 @@ export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeFor
         setTabs(newList)
     }
 
-    function allowDrop(e) {
+    function allowDrop(e: any) {
         e.preventDefault()
     }
 
     const Tabs = () => {
 
-        const openForms = tabs.map((tab, index) => {
+        const openForms = tabs.map((tab, index) => { 
             const tabName = tab.name + " "
             if (tab.id === activeForm.id) {
                 return (
-                    <Nav.Item key={tab.id} id={index} draggable={true} onDragStart={handleDragStart} onDrop={handleDrop} onDragOver={allowDrop} onDragEnter={allowDrop}>
+                    <Nav.Item key={tab.id} id={index.toString()} draggable={true} onDragStart={handleDragStart} onDrop={handleDrop} onDragOver={allowDrop} onDragEnter={allowDrop}>
                         <Nav.Link active draggable={false}>
                             <span role="button" onClick={() => handleClick(tab)}>{tabName}</span>
                             <span role="button" onClick={() => handleClose(tab)}><XLg /></span>
@@ -73,7 +85,7 @@ export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeFor
                 )
             } else {
                 return (
-                    <Nav.Item key={tab.id} id={index} draggable={true} onDragStart={handleDragStart} onDrop={handleDrop} onDragOver={allowDrop} onDragEnter={allowDrop}>
+                    <Nav.Item key={tab.id} id={index.toString()} draggable={true} onDragStart={handleDragStart} onDrop={handleDrop} onDragOver={allowDrop} onDragEnter={allowDrop}>
                         <Nav.Link draggable={false} >
                             <span role="button" onClick={() => handleClick(tab)} >{tabName}</span>
                             <span role="button" onClick={() => handleClose(tab)} ><XLg /></span>

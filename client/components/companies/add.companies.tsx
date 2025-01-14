@@ -1,11 +1,10 @@
 import {Button, Form, Modal} from "react-bootstrap"
 import "../../style.css"
-import {ChangeEvent, MouseEvent, useState} from 'react' 
+import React, {ChangeEvent, MouseEvent, useState} from 'react' 
 import axios from 'axios'
 import { Company } from "./companies.js"
 
-
-export default function AddCompanies(props) {
+export default function AddCompanies({setIsChanged, onChangeActive, setIsNew}) {
     const [show, setShow] = useState<boolean>(false) // to handle the modal
     const [company, setCompany] = useState<Company>({name: "", abbr: ""}) 
     const handleShow = () => setShow(true)
@@ -33,9 +32,9 @@ export default function AddCompanies(props) {
             axios
                 .post(`http://localhost:8080/companies/`, company)
                 .then((res) => {
-                    props.setIsChanged(true)
-                    props.setIsNew(true)
-                    props.onChangeActive(res.headers.location)
+                    setIsChanged(true)
+                    setIsNew(true)
+                    onChangeActive(res.headers.location)
                     setCompany({
                         abbr: "",
                         name: ""

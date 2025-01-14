@@ -1,18 +1,22 @@
-import { ChangeEvent } from "react"
+import React, { ChangeEvent } from "react"
 import "../../style.css"
 import {Form} from 'react-bootstrap'
 
+interface SearchCompaniesInterface {
+    search: string
+    setSearch: React.Dispatch<React.SetStateAction<string>>
+}
 
-export default function SearchCompanies(props) {
+export default function SearchCompanies({search, setSearch}: SearchCompaniesInterface) {
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-        props.setSearch(e.target.value)
+        setSearch(e.target.value)
     }
 
     return (
         <Form >
             <Form.Label className="smallDesign">Suche (Firmenname, Kürzel)</Form.Label>
-            <Form.Control type="text" className="smallDesign" value={props.search} onChange={handleSearch} />
+            <Form.Control type="text" className="smallDesign" value={search} onChange={handleSearch} />
         </Form>
     ) 
 } 

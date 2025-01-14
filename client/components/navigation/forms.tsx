@@ -1,4 +1,21 @@
-const formArray = [
+export interface Form {
+    name: string
+    id: string
+    group: string
+    order: number
+}
+
+export interface FormGroup {
+    name: string
+    id: string
+    order: number
+}
+
+export interface FormNav extends FormGroup {
+    forms: Form[]
+}
+
+const formArray: Form[] = [
     { name: "Startseite", id: "startForm", group: "start", order: 0 },
     { name: "Anfragen", id: "anfragenForm", group: "pro", order: 2 },
     { name: "Stammdaten", id: "stammForm", group: "stamm", order: 0 },
@@ -31,7 +48,7 @@ const formArray = [
     { name: "Taric-Nr", id: "taricForm", group: "sonst", order: 2 }]
 
 //* List of all Groups in Ribbon *//
-const groupArray = [
+const groupArray: FormGroup[] = [
     { name: "Start", id: "start", order: 0 },
     { name: "Stammdaten", id: "stamm", order: 1 },
     { name: "Projekte", id: "pro", order: 2 },
@@ -41,12 +58,12 @@ const groupArray = [
     { name: "Lieferungen", id: "lief", order: 4 },
     { name: "Spedition/ER", id: "sped", order: 5 },
     { name: "Rechnungen", id: "rech", order: 8 },
-    { name: "Sonstiges", id: "sonst", order: 9 }]
-
+    { name: "Sonstiges", id: "sonst", order: 9 }
+]
 
     const groupSort = groupArray.sort((a, b) => a.order - b.order)
 
-    const groupForm = groupSort.map((g) => {
+    const groupForm: FormNav[] = groupSort.map((g) => {
         const formsGroup = formArray.filter(f => (f.group === g.id))
         const formsGroupSort = formsGroup.sort((a, b) => a.order - b.order)
         return (

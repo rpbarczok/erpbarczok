@@ -2,18 +2,28 @@ import {Col, Row, Button, ButtonGroup, Form} from 'react-bootstrap'
 import "../../style.css"
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Company } from './companies.js'
+import { Company, CompanyLoc } from './companies.js'
 
-export default function SpecificCompanies(props) {
+interface SpecificComapniesInterface {
+    setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
+    activeCompany: CompanyLoc
+}
 
-    const [changeCompany, setChangeCompany] = useState<Company>(props.activeCompany.company)
+export default function SpecificCompanies({setIsChanged, activeCompany}: SpecificComapniesInterface) {
+
+    const [changeCompany, setChangeCompany] = useState<Company>(activeCompany.company)
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         const userConfirmed = window.confirm("Willst du wirklich die Firma löschen?")
         if (userConfirmed) {
-            axios.delete(`http://localhost:8080${props.activeCompany.location}`)
-                .then(props.setIsChanged(true))
+            axios.delete(`http://localhost:8080${activeCompany.location}`)
+            .then((res) => {
+                setIsChanged(true)
+            })
+            .catch(function (error) {
+                console.log(error)
+            })
         }
     }
 
@@ -48,9 +58,9 @@ export default function SpecificCompanies(props) {
         e.preventDefault()
         if (changeCompany.name !== "") {
             axios
-                .put(`http://localhost:8080${props.activeCompany.location}`, changeCompany)
+                .put(`http://localhost:8080${activeCompany.location}`, changeCompany)
                 .then((res) => {
-                    props.setIsChanged(true)
+                    setIsChanged(true)
                 })
                 .catch(function (error) {
                     console.log(error)

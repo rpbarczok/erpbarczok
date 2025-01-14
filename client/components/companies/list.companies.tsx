@@ -1,22 +1,22 @@
 import "../../style.css"
 import {ListGroup} from 'react-bootstrap'
-import { useState, useEffect } from 'react'
-import { CompanyLoc, Company } from "./companies.js"
+import React, { useState, useEffect } from 'react'
+import { CompanyLoc } from "./companies.js"
 
 
-export default function ListCompanies(props) {
+export default function ListCompanies({search, active, onChangeActive, isNew, setIsNew, listCompanies}) {
 
     const [listFiltered, setListFiltered] = useState<CompanyLoc[]>([])
 
     useEffect(() => {
-        const newList: CompanyLoc[] = props.listCompanies.filter((company: CompanyLoc) => {
-            if (!props.isNew) {
+        const newList: CompanyLoc[] = listCompanies.filter((company: CompanyLoc) => {
+            if (!isNew) {
                 if (company.company.abbr) {
-                    if (company.company.name.toLowerCase().includes(props.search.toLowerCase()) || company.company.abbr.toLowerCase().includes(props.search.toLowerCase())) {
+                    if (company.company.name.toLowerCase().includes(search.toLowerCase()) || company.company.abbr.toLowerCase().includes(search.toLowerCase())) {
                         return company
                     }
                 } else {
-                    if (company.company.name.toLowerCase().includes(props.search.toLowerCase())) {
+                    if (company.company.name.toLowerCase().includes(search.toLowerCase())) {
                         return company
                     }
                 }
@@ -26,16 +26,16 @@ export default function ListCompanies(props) {
         })
 
         if (newList.length === 0) {
-            props.onChangeActive("")
+            onChangeActive("")
         } else {
-            if (!newList.some((e) => e.location === props.active)) {
-                props.onChangeActive(newList[0].location)
+            if (!newList.some((e) => e.location === active)) {
+                onChangeActive(newList[0].location)
             }
         }
 
         setListFiltered(newList)
-        props.setIsNew(false)
-    }, [props.search, props.listCompanies])
+        setIsNew(false)
+    }, [search, listCompanies])
 
     if (listFiltered.length === 0) {
         return (
@@ -48,7 +48,7 @@ export default function ListCompanies(props) {
             <ListGroup className="scrollBox suchListe smallDesign" id="company-list">
                 {listFiltered.map((element) => {
                     return (
-                        <ListGroup.Item className="smallDesign" key={element.location} active={element.location === props.active} onClick={() => props.onChangeActive(element.location)}>
+                        <ListGroup.Item className="smallDesign" key={element.location} active={element.location === active} onClick={() => onChangeActive(element.location)}>
                             {element.company.name + (element.company.abbr ? " (" + element.company.abbr + ")" : "")}
                         </ListGroup.Item>
                     )

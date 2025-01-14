@@ -3,7 +3,7 @@ import "../../style.css"
 import HeadingCompanies from './heading.companies.js'
 import GeneralCompanies from './general.companies.js'
 import SpecificCompanies from './specific.companies.js'
-import {useState, useEffect} from 'react'  
+import React, {useState, useEffect} from 'react'  
 import axios from 'axios'
 
 export interface Company {
@@ -17,7 +17,7 @@ export interface CompanyLoc {
     "company": Company
 }
 
-export default function Companies(props) {
+export default function Companies() {
     const [isChanged, setIsChanged] = useState<boolean>(true)
     const [listCompanies, setListCompanies] = useState<CompanyLoc[]>([])
     const [activeCompany, setActiveCompany] = useState<CompanyLoc>({ "location": "", "company": { "abbr": "", "name": "", "www": "" } })
@@ -52,8 +52,8 @@ export default function Companies(props) {
             <Row id="search">
                 <GeneralCompanies 
                     active={activeCompany.location} onChangeActive={handleChangeActive} 
-                    isChanged = {isChanged} setIsChanged={setIsChanged}
-                    listCompanies = {listCompanies} setListCompanies = {setListCompanies}
+                    setIsChanged={setIsChanged}
+                    listCompanies = {listCompanies}
                 />
             </Row>
             <hr />

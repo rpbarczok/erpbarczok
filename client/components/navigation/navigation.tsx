@@ -2,8 +2,17 @@ import {Row} from 'react-bootstrap'
 import RibbonNavigation from './ribbon.navigation.js'
 import TabsNavigation from './tabs.navigation.js'
 import '../../style.css'
+import React from 'react'
+import { FormTab } from '../../app.js'
 
-export default function Navigation({tabs, setTabs, activeForm, setActiveForm}) {
+interface NavigationInterface {
+    tabs: FormTab[]
+    setTabs: React.Dispatch<React.SetStateAction<FormTab[]>>
+    activeForm: FormTab
+    setActiveForm: React.Dispatch<React.SetStateAction<FormTab>>
+}
+
+export default function Navigation({tabs, setTabs, activeForm, setActiveForm}: NavigationInterface) {
 
     return (
         <>
