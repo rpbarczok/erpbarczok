@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+      "outDir": "server/ecmascript",
+      "module": "Node16"
+      //"removeComments": true
+    },
+    "include": ["server/typescript/**/*"]
+  }

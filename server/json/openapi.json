@@ -1,0 +1,207 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Panda 2.0",
+        "description": "The Description of the API of Panda 2.0",
+        "version": "0.0.1"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Company"
+        },
+        {
+            "name": "Company Type"
+        }
+    ],
+    "paths": {
+        "/companies/": {},
+        "/companies/{id}": {},
+        "/companytypes/": {},
+        "/companytypes/{id}": {}
+    },
+    "components": {
+        "parameters": {
+            "id-in-path": {
+                "name": "id",
+                "in": "path",
+                "description": "Id of the entity",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 1
+                }
+            }
+        },
+        "requestBodies": {
+            "company": {
+                "description": "Add or update company",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/company-full"
+                        }
+                    }
+                }
+            },
+            "companytype": {
+                "description": "Add or update company type",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/companytype"
+                        }
+                    }
+                }
+            }
+        },
+        "responses": {
+            "204-success": {
+                "description": "Successfull operation, no further content"
+            },
+            "400-validation-error": {
+                "description": "Bad request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/error"
+                        },
+                        "examples": {
+                            "400": {
+                                "$ref": "#/components/examples/error400"
+                            }
+                        }
+                    }
+                }
+            },
+            "404-not-found-error": {
+                "description": "Not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/error"
+                        },
+                        "examples": {
+                            "404": {
+                                "$ref": "#/components/examples/error404"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "schemas": {
+            "location": {
+                "type": "string",
+                "format": "uri-reference"
+            },
+            "company": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Firma A"
+                    },
+                    "abbr": {
+                        "type": "string",
+                        "example": "FRA",
+                        "maxLength": 3
+                    }
+                }
+            },
+            "companytype": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Kunde"
+                    }
+                }
+            },
+            "company-full": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Firma A"
+                    },
+                    "abbr": {
+                        "type": "string",
+                        "example": "FRA",
+                        "maxLength": 3
+                    },
+                    "www": {
+                        "type": "string",
+                        "example": "www.example.org"
+                    }
+                }
+            },
+            "error": {
+                "required": [
+                    "message",
+                    "status"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "status": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "errors": {
+                        "type": "array"
+                    }
+                }
+            }
+        },
+        "examples": {
+            "company": {
+                "value": {
+                    "name": "Firma A",
+                    "abbr": "FRA",
+                    "www": "www.example.de"
+                }
+            },
+            "companytype": {
+                "value": {
+                    "name": "Kunde"
+                }
+            },
+            "error400": {
+                "value": {
+                    "status": 400,
+                    "message": "request/body must NOT have additional properties",
+                    "errors": {
+                        "path": "/body/invalid",
+                        "message": "must NOT have additional properties",
+                        "errorCode": "additionalProperties.openapi.validation"
+                    }
+                }
+            },
+            "error404": {
+                "value": {
+                    "status": 404,
+                    "message": "Not found"
+                }
+            }
+        }
+    }
+}
