@@ -1,14 +1,21 @@
-import {Button, Form, Modal} from "react-bootstrap"
+import { Col, Row, Button, Form, Modal } from "react-bootstrap"
 import "../../style.css"
-import React, {ChangeEvent, MouseEvent, useState} from 'react' 
+import React, { ChangeEvent, MouseEvent, useState } from 'react'
 import axios from 'axios'
-import { Company } from "./companies.js"
+import { Company, Companytype } from "./companies.js"
 
-export default function AddCompanies({setIsChanged, onChangeActive, setIsNew}) {
+interface AddCompaniesInterface {
+    setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
+    onChangeActive: Function
+    setIsNew: React.Dispatch<React.SetStateAction<boolean>>
+    listCompanytypes: Companytype[]
+}
+
+export default function AddCompanies({ setIsChanged, onChangeActive, setIsNew, listCompanytypes }) {
     const [show, setShow] = useState<boolean>(false) // to handle the modal
-    const [company, setCompany] = useState<Company>({name: "", abbr: ""}) 
+    const [company, setCompany] = useState<Company>({ name: "", abbr: "", www: "" })
     const handleShow = () => setShow(true)
-    const handleClose = () => setShow(false)   
+    const handleClose = () => setShow(false)
 
     const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
@@ -23,6 +30,22 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew}) {
         setCompany({
             ...company,
             abbr: e.target.value
+        })
+    }
+
+    const handleChangeWWW = (e: ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault()
+        setCompany({
+            ...company,
+            www: e.target.value
+        })
+    }
+
+    const handleChangeCompanytype = (e: ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault()
+        setCompany({
+            ...company,
+            www: e.target.value
         })
     }
 
@@ -44,30 +67,62 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew}) {
         }
     }
 
+    const Companytypes = () => {
+        const optionsdefault = [<option id="default" value="default">Rolle auswählen</option>]
+        const options = listCompanytypes.map((role: Companytype) => {
+            return (
+                <option id={role.name} value={role.name}>{role.name}</option>
+            )
+        })
+        return optionsdefault.concat(options)
+    }
+
     return (
-            <>
-                <Button className="smallDesign" variant="outline-primary" onClick={handleShow}>Firma hinzufügen</Button>
-                <Form>
-                    <Modal show={show} onHide={handleClose}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Neue Firma hinzufügen</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Form.Group controlId="formFirmenname">
-                                <Form.Label>Firmenname</Form.Label>
-                                <Form.Control type="text" placeholder='Firmenname' onChange={handleChangeName}/>
-                            </Form.Group>
-                            <Form.Group controlId="formFirmenkuerzel">
-                                <Form.Label>Firmenkuerzel</Form.Label>
-                                <Form.Control type="text" placeholder='Firmenkürzel' onChange={handleChangeAbbr}/>
-                            </Form.Group>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="secondary" onClick={handleClose}>Abbrechen</Button>
-                            <Button type="submit" variant='primary' onClick={handleSubmitNew}>Abspeichern</Button>
-                        </Modal.Footer>
-                    </Modal>
-                </Form>
-            </>
+        <>
+            <Button className="smallDesign" variant="outline-primary" onClick={handleShow}>Firma hinzufügen</Button>
+            <Form>
+                <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Neue Firma hinzufügen</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Row>
+                            <Col>
+                                <Form.Group controlId="formFirmenname">
+                                    <Form.Label>Firmenname</Form.Label>
+                                    <Form.Control type="text" placeholder='Firmenname' onChange={handleChangeName} />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group controlId="formFirmenkuerzel">
+                                    <Form.Label>Firmenkürzel</Form.Label>
+                                    <Form.Control type="text" placeholder='Firmenkürzel' onChange={handleChangeAbbr} />
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <Form.Group controlId="formWWW">
+                                    <Form.Label>Internetadresse</Form.Label>
+                                    <Form.Control type="text" placeholder='Internetadresse' onChange={handleChangeWWW} />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group>
+                                    <Form.Label>Firmenrolle</Form.Label>
+                                    <Form.Select>
+                                        <Companytypes />
+                                    </Form.Select>
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>Abbrechen</Button>
+                        <Button type="submit" variant='primary' onClick={handleSubmitNew}>Abspeichern</Button>
+                    </Modal.Footer>
+                </Modal>
+            </Form>
+        </>
     )
 } 

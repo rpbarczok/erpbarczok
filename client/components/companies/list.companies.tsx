@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { CompanyLoc } from "./companies.js"
 
 
+
 export default function ListCompanies({search, active, onChangeActive, isNew, setIsNew, listCompanies}) {
 
     const [listFiltered, setListFiltered] = useState<CompanyLoc[]>([])

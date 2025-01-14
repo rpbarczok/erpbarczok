@@ -1,9 +1,11 @@
-import {Row} from 'react-bootstrap'
+import { Col, Row } from 'react-bootstrap'
 import "../../style.css"
-import HeadingCompanies from './heading.companies.js'
-import GeneralCompanies from './general.companies.js'
+import Heading from '../common/heading.js'
 import SpecificCompanies from './specific.companies.js'
-import React, {useState, useEffect} from 'react'  
+import SearchCompanies from './search.companies.js'
+import AddCompanies from './add.companies.js'
+import ListCompanies from './list.companies.js'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
 export interface Company {
@@ -17,21 +19,36 @@ export interface CompanyLoc {
     "company": Company
 }
 
+export interface Companytype {
+    "name": string
+}
+
 export default function Companies() {
     const [isChanged, setIsChanged] = useState<boolean>(true)
     const [listCompanies, setListCompanies] = useState<CompanyLoc[]>([])
     const [activeCompany, setActiveCompany] = useState<CompanyLoc>({ "location": "", "company": { "abbr": "", "name": "", "www": "" } })
+    const [listCompanytypes, setListCompanytypes] = useState<Companytype[]>([])
+    const [search, setSearch] = useState<string>("")
+    const [isNew, setIsNew] = useState<boolean>(false)
 
     useEffect(() => {
-        if (isChanged)
-        {
+        if (isChanged) {
             axios.get("http://localhost:8080/companies/")
-            .then(result => {
-                setListCompanies(result?.data)
-            })
+                .then(result => {
+                    setListCompanies(result?.data)
+                })
             setIsChanged(false)
-        } 
+        }
     }, [isChanged])
+
+    useEffect(() => {
+        {
+            axios.get("http://localhost:8080/companytypes/")
+                .then(result => {
+                    setListCompanytypes(result?.data)
+                })
+        }
+    }, [])
 
     function handleChangeActive(active: string) {
         if (active === "" || active === undefined) {
@@ -46,19 +63,35 @@ export default function Companies() {
 
     return (
         <>
-            <Row id = "heading">
-                <HeadingCompanies/>
+            <Row id="heading">
+                <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass = "stammForm"/>
             </Row>
-            <Row id="search">
-                <GeneralCompanies 
-                    active={activeCompany.location} onChangeActive={handleChangeActive} 
-                    setIsChanged={setIsChanged}
-                    listCompanies = {listCompanies}
-                />
+            <Row className="suche">
+                <Col>
+                    <SearchCompanies search={search} setSearch={setSearch} />
+                </Col>
+                <Col>
+                    <ListCompanies
+                        search={search}
+                        active={activeCompany} onChangeActive={handleChangeActive}
+                        isNew={isNew} setIsNew={setIsNew}
+                        listCompanies={listCompanies}
+                    />
+                </Col>
+                <Col>
+                    <AddCompanies
+                        setIsChanged={setIsChanged}
+                        onChangeActive={handleChangeActive}
+                        setIsNew={setIsNew}
+                        listCompanytypes={listCompanytypes}
+                    />
+                </Col>
+                <Col>
+                </Col>
             </Row>
             <hr />
             <Row id="specific">
-               {activeCompany.location === "" ?<p>Keine Firma gefunden</p>:<SpecificCompanies key={activeCompany.location} setIsChanged={setIsChanged} activeCompany={activeCompany}/>}   
+                {activeCompany.location === "" ? <p>Keine Firma gefunden</p> : <SpecificCompanies key={activeCompany.location} setIsChanged={setIsChanged} activeCompany={activeCompany} />}
             </Row>
         </>
     )

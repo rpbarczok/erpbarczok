@@ -2,8 +2,12 @@
     float: right;
 }
 
-.stammdaten {
+.stammForm {
     background-color: lightcyan;
+}
+
+.adminForm {
+    background-color: lightcoral;
 }
 
 .heading {
