@@ -159,13 +159,6 @@ describe('/companies/ HTTP integration Tests', function () {
                 .expect('Content-Type', new RegExp("text/html"))
                 .expect(200, new RegExp("<title>Swagger UI</title>"));
         });
-        it('GET / fails', async () => {
-            await request(app)
-                .get('/')
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(404, { status: 404, message: "not found", errors: [{ path: "/", message: "not found" }] });
-        });
         it('GET /something fails', async () => {
             await request(app)
                 .get('/something')

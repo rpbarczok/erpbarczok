@@ -12,7 +12,7 @@ const config = {
     ],
     output: {
         filename: '[name].bundle.js',
-        path: path.resolve(import.meta.dirname, 'dist'),
+        path: path.resolve(import.meta.dirname, 'server/public'),
         clean: true
     },
     module: {

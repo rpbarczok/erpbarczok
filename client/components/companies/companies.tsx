@@ -25,7 +25,7 @@ export default function Companies() {
     useEffect(() => {
         if (isChanged)
         {
-            axios.get("http://localhost:8080/companies/")
+            axios.get("/companies/")
             .then(result => {
                 setListCompanies(result?.data)
             })
@@ -37,7 +37,7 @@ export default function Companies() {
         if (active === "" || active === undefined) {
             setActiveCompany({ "location": "", "company": { "abbr": "", "name": "", "www": "" } })
         } else {
-            axios.get(`http://localhost:8080${active}`)
+            axios.get(active)
                 .then(result => {
                     setActiveCompany(result.data)
                 })

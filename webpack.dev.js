@@ -7,6 +7,13 @@ const config = merge(common, {
     devServer: {
         port: 3000,
         hot: true,
+        open: false,
+        proxy: [
+            {
+                context: ['/companies', '/companytypes'],
+                target: 'http://localhost:8080'
+            }
+        ]
     },
 })
 

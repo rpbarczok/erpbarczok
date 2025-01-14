@@ -30,7 +30,7 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew}) {
         e.preventDefault()
         if (company.name !== "") {
             axios
-                .post(`http://localhost:8080/companies/`, company)
+                .post(`/companies/`, company)
                 .then((res) => {
                     setIsChanged(true)
                     setIsNew(true)

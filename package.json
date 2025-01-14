@@ -5,13 +5,12 @@
   "private": "true",
   "type": "module",
   "scripts": {
-    "start": "concurrently \"npm run startserver\" \"npm run startclient\"",
-    "startserver": "dotenvx run -f config/dev.env -- tsx server/typescript/start.ts",
-    "startclient": "webpack serve --open --config webpack.dev.js",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "dotenvx run -f config/dev.env -- tsx server/typescript/start.ts",
+    "client": "webpack serve --open --config webpack.dev.js",
     "test": "dotenvx run -f config/test.env -- mocha --config mocha-typescript-rc.cjs",
-    "build": "rm -fR ecmascript && tsc && dotenvx run -f config/test.env -- mocha --config mocha-ecmascript-rc.cjs",
-    "built": "dotenvx run -f config/prod.env -- node server/ecmascript/start.js",
-    "buildclient": "webpack --config webpack.prod.js"
+    "build": "webpack --config webpack.prod.js && rm -fR server/ecmascript && tsc && dotenvx run -f config/test.env -- mocha --config mocha-ecmascript-rc.cjs",
+    "built": "dotenvx run -f config/prod.env -- node server/ecmascript/start.js"
   },
   "author": "Ralph Barczok",
   "license": "ISC",

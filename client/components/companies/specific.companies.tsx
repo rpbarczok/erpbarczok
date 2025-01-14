@@ -17,7 +17,7 @@ export default function SpecificCompanies({setIsChanged, activeCompany}: Specifi
         e.preventDefault()
         const userConfirmed = window.confirm("Willst du wirklich die Firma löschen?")
         if (userConfirmed) {
-            axios.delete(`http://localhost:8080${activeCompany.location}`)
+            axios.delete(activeCompany.location)
             .then((res) => {
                 setIsChanged(true)
             })
@@ -58,7 +58,7 @@ export default function SpecificCompanies({setIsChanged, activeCompany}: Specifi
         e.preventDefault()
         if (changeCompany.name !== "") {
             axios
-                .put(`http://localhost:8080${activeCompany.location}`, changeCompany)
+                .put(activeCompany.location, changeCompany)
                 .then((res) => {
                     setIsChanged(true)
                 })

@@ -31,6 +31,8 @@ const startApp = async () => {
         ];
     }
     app.use(cors(corsOptions));
+    // static content
+    app.use(express.static('server/public'));
     // mitteilen, wo das OAS-Document ist
     app.use('/api-docs', (req, res, next) => { res.json(apiSpec); });
     // Swagger UI an der Stelle /docs einrichten
