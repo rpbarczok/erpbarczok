@@ -9,6 +9,7 @@ import OpenApiValidator from 'express-openapi-validator'
 import baseLogger from './logger.js'
 import loadControllers from './apiSpecAssembler.js'
 import initSequelize from './models/index.js'
+import path from 'path'
 
 const startApp = async () => {
     const app = express()
@@ -41,7 +42,7 @@ const startApp = async () => {
 
     // static content
 
-    app.use(express.static('server/public'))
+    app.use(express.static(path.join(import.meta.dirname, '..', 'public')))
     
     // mitteilen, wo das OAS-Document ist
 
