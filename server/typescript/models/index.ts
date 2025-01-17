@@ -5,7 +5,7 @@ import baseLogger from "../logger.js"
 
 const logger = baseLogger.extend('models:index')
 const loggerSequelize = logger.extend('sequelize')
-const sequelizeLogger = (sql, stuff) => loggerSequelize(sql)
+const sequelizeLogger = (sql: any, stuff: any) => loggerSequelize(sql)
 
 if (!process.env.DB_NAME || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.DB_HOST || !process.env.DB_DIALECT) {
     console.log('No database config found: ', process.env)
@@ -27,7 +27,7 @@ Companytype.hasMany(Company)
 try {
     await sequelize.sync({ alter: true })
     logger("Drop and re-sync db.")
-} catch (err) {
+} catch (err: any) {
     logger("Failed to sync db: " + err.message)
     throw err
 }

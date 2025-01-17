@@ -1,22 +1,22 @@
 import "../../style.css"
 import {ListGroup} from 'react-bootstrap'
 import React, { useState, useEffect } from 'react'
-import { CompanyLoc } from "./companies.js"
-
+import {Loc} from '../../app.js'
+import { Company } from "./companies.js"
 
 export default function ListCompanies({search, active, onChangeActive, isNew, setIsNew, listCompanies}) {
 
-    const [listFiltered, setListFiltered] = useState<CompanyLoc[]>([])
+    const [listFiltered, setListFiltered] = useState<Loc<Company>[]>([])
 
     useEffect(() => {
-        const newList: CompanyLoc[] = listCompanies.filter((company: CompanyLoc) => {
+        const newList: Loc<Company>[] = listCompanies.filter((company: Loc<Company>) => {
             if (!isNew) {
-                if (company.company.abbr) {
-                    if (company.company.name.toLowerCase().includes(search.toLowerCase()) || company.company.abbr.toLowerCase().includes(search.toLowerCase())) {
+                if (company.data.abbr) {
+                    if (company.data.name.toLowerCase().includes(search.toLowerCase()) || company.data.abbr.toLowerCase().includes(search.toLowerCase())) {
                         return company
                     }
                 } else {
-                    if (company.company.name.toLowerCase().includes(search.toLowerCase())) {
+                    if (company.data.name.toLowerCase().includes(search.toLowerCase())) {
                         return company
                     }
                 }
@@ -49,7 +49,7 @@ export default function ListCompanies({search, active, onChangeActive, isNew, se
                 {listFiltered.map((element) => {
                     return (
                         <ListGroup.Item className="smallDesign" key={element.location} active={element.location === active} onClick={() => onChangeActive(element.location)}>
-                            {element.company.name + (element.company.abbr ? " (" + element.company.abbr + ")" : "")}
+                            {element.data.name + (element.data.abbr ? " (" + element.data.abbr + ")" : "")}
                         </ListGroup.Item>
                     )
                 })}

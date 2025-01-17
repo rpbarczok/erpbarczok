@@ -6,11 +6,11 @@
   "type": "module",
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "dotenvx run -f config/dev.env -- tsx server/typescript/start.ts",
+    "server": "dotenvx run -f .env -- tsx server/typescript/start.ts",
     "client": "webpack serve --open --config webpack.dev.js",
     "test": "mocha --config mocha-typescript-rc.cjs",
     "build": "webpack --config webpack.prod.js && rm -fR server/ecmascript && tsc && mocha --config mocha-ecmascript-rc.cjs",
-    "built": "dotenvx run -f config/prod.env -- node server/ecmascript/start.js",
+    "built": "dotenvx run -f .env -- node server/ecmascript/start.js",
     "dockerbuild": "webpack --config webpack.prod.js && tsc && mocha --config mocha-ecmascript-rc.cjs"
   },
   "author": "Ralph Barczok",

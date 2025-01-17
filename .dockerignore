@@ -2,6 +2,6 @@
 .gitignore
 node_modules
 docker.md
-config
+.env
 server/ecmascript
 server/public

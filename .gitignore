@@ -1,6 +1,6 @@
 node_modules
 package-lock.json
-config/
+.env
 server/ecmascript
 server/public
 docker-compose.yml

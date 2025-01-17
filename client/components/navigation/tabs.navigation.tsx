@@ -66,7 +66,7 @@ export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeFor
         setTabs(newList)
     }
 
-    function allowDrop(e: any) {
+    function allowDrop(e: React.DragEvent<HTMLElement>) {
         e.preventDefault()
     }
 
