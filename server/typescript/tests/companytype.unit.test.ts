@@ -1,4 +1,5 @@
 import { expect } from 'expect'
+import './utils/testenv.js'
 import { getAllCompanytypes, getCompanytypeById, deleteCompanytypeById, putCompanytypeById, addCompanytype, } from '../services/companytypes.js'
 import sequelize from '../models/index.js'
 import { NotFoundError } from '../services/error.js'
@@ -11,7 +12,7 @@ describe('Companytype Unit Tests', function () {
         await sequelize.sync({ force: true })
     });
 
-    describe('test getAllCompanytypes / addCompanytype', function () {
+    describe('test getAllCompanytyps / addCompanytype', function () {
 
          it('should return [] for a fresh and empty DB', async () => {
             await expect(getAllCompanytypes()).resolves.toHaveLength(0)

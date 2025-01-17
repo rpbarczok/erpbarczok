@@ -1,12 +1,13 @@
 import request from 'supertest'
+import './utils/testenv.js'
 import startingApp from '../app.js'
 import sequelize from '../models/index.js'
 import {expect} from 'expect'
-
+import { App } from 'supertest/types.js'
 
 describe('/companies/ HTTP integration Tests', function () {
 
-    let app
+    let app: App
 
     before(async function () {
         app = await startingApp
@@ -16,24 +17,28 @@ describe('/companies/ HTTP integration Tests', function () {
     describe('GET /companies/ and POST /companies/', function () {
 
         it('should succeed with 200 and return [] for a fresh and empty DB', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/companies/')
                 .set('Accept', 'application/json')
                 .expect('content-type', /json/)
-                .expect(200, [])
+                .expect(200,[])
+            expect(response.headers["content-type"]).toMatch(/json/)
+            expect(response.status).toEqual(200)
+            expect(response.body).toEqual([])
         })
 
         it('Post /company with name and abbr succeeds', async () => {
-            await request(app)
+            const response = await request(app)
                 .post('/companies/')
                 .send({ "name": "Firma A", "abbr": "FRA", "www": "www.firmaa.com" })
                 .set('Accept', "application/json")
                 .expect(201, '')
                 .expect("location", "/companies/1")
+            
         })
 
         it('Post /company with name only succeeds', async () => {
-            await request(app)
+            const response = await request(app)
                 .post('/companies/')
                 .send({ "name": "Firma B" })
                 .set('Accept', "application/json")
@@ -117,7 +122,7 @@ describe('/companies/ HTTP integration Tests', function () {
 
     describe('GET /companies/{id}', function () {
         it('Get existing company succeeds', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -158,7 +163,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('GET /companies/ works with contents', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/companies/')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -166,7 +171,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('GET /api-docs works', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/api-docs')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -174,7 +179,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('GET /docs/ works', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/docs/')
                 .set('Accept', 'text/html')
                 .expect('Content-Type', new RegExp("text/html"))
@@ -182,7 +187,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('GET /something fails', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/something')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -192,7 +197,7 @@ describe('/companies/ HTTP integration Tests', function () {
 
     describe('PUT /companies/{id}', function () {
         it('Get existing company succeeds', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -200,7 +205,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('Change name of existing company', async () => {
-            await request(app)
+            const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
                 .send({ "name": "Firma C" })
@@ -208,7 +213,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('Get existing company succeeds after Name Change', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -216,7 +221,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('PUT: add abbr to existing company succeeds', async () => {
-            await request(app)
+            const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
                 .send({ "name": "Firma C", "abbr": "FRC" })
@@ -224,7 +229,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('Get existing company succeeds after abbr added.', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -232,7 +237,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('PUT: add www to existing company succeeds', async () => {
-            await request(app)
+            const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
                 .send({ "name": "Firma C", "abbr": "FRC", "www": "www.example.de" })
@@ -240,7 +245,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('Get existing company succeeds after www added.', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -248,7 +253,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('PUT: remove www from existing company succeeds', async () => {
-            await request(app)
+            const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
                 .send({ "name": "Firma C", "abbr": "FRC" })
@@ -256,7 +261,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('Get existing company succeeds after www removed', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -264,7 +269,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('PUT: remove abbr from existing company succeeds', async () => {
-            await request(app)
+            const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
                 .send({ "name": "Firma C" })
@@ -272,7 +277,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('Get existing companny succeeds after abbr removed', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -291,7 +296,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
         
         it('Get existing company succeeds after name removal faild', async () => {
-            await request(app)
+            const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)

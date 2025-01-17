@@ -1,7 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express'
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
-import dotenv from 'dotenv'
 import cors, { CorsOptions } from 'cors'
 import { apiSpec } from "./openapi.cjs"
 import swaggerUi from 'swagger-ui-express'
@@ -19,8 +18,6 @@ const startApp = async () => {
     const controllers = loadControllers
     logger("All controllers:", controllers)
     const sequelize = initSequelize
-
-    dotenv.config()
 
     app.use(morgan('dev', { stream: { write: msg => { morganLogger(msg); return true } } }))
     app.use(express.json())

@@ -1,0 +1,7 @@
+.git
+.gitignore
+node_modules
+docker.md
+config
+server/ecmascript
+server/public

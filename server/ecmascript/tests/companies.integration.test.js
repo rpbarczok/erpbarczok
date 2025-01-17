@@ -1,4 +1,5 @@
 import request from 'supertest';
+import './utils/testenv.js';
 import startingApp from '../app.js';
 import sequelize from '../models/index.js';
 import { expect } from 'expect';

@@ -1,7 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import { apiSpec } from "./openapi.cjs";
 import swaggerUi from 'swagger-ui-express';
@@ -9,6 +8,7 @@ import OpenApiValidator from 'express-openapi-validator';
 import baseLogger from './logger.js';
 import loadControllers from './apiSpecAssembler.js';
 import initSequelize from './models/index.js';
+import path from 'path';
 const startApp = async () => {
     const app = express();
     const logger = baseLogger.extend('app');
@@ -16,7 +16,6 @@ const startApp = async () => {
     const controllers = loadControllers;
     logger("All controllers:", controllers);
     const sequelize = initSequelize;
-    dotenv.config();
     app.use(morgan('dev', { stream: { write: msg => { morganLogger(msg); return true; } } }));
     app.use(express.json());
     app.use(express.urlencoded({ extended: false }));
@@ -32,7 +31,7 @@ const startApp = async () => {
     }
     app.use(cors(corsOptions));
     // static content
-    app.use(express.static('server/public'));
+    app.use(express.static(path.join(import.meta.dirname, '..', 'public')));
     // mitteilen, wo das OAS-Document ist
     app.use('/api-docs', (req, res, next) => { res.json(apiSpec); });
     // Swagger UI an der Stelle /docs einrichten
