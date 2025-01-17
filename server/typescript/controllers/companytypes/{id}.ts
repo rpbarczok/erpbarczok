@@ -2,12 +2,13 @@ import { getCompanytypeById, deleteCompanytypeById, putCompanytypeById } from '.
 import { NotFoundError } from "../../services/error.js"
 import type { Request, Response } from 'express'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
-import { CompanytypeApi, CompanytypeApiResponse } from './index.js'
+import { CompanytypeApi } from './index.js'
+import { Loc } from '../../app.js'
 
 export const GET = async (req: Request, res: Response) => {
     try {
         const companytype = await getCompanytypeById(Number(req.params.id))
-        const companytypeApi: CompanytypeApiResponse = { "location": "/companytypes/" + companytype.id, "companytype": {name: companytype.name} }
+        const companytypeApi: Loc<CompanytypeApi> = { "location": "/companytypes/" + companytype.id, "data": {name: companytype.name} }
         res.status(200).json(companytypeApi)
     }
     catch (err) {
@@ -31,14 +32,14 @@ GET.apiSpec = {
                         "type": "object",
                         "required": [
                             "location",
-                            "companytype"
+                            "data"
                         ],
                         "additionalProperties": false,
                         "properties": {
                             "location": {
                                 "$ref": "#/components/schemas/location"
                             },
-                            "companytype": {
+                            "data": {
                                 "$ref": "#/components/schemas/companytype"
                             }
                         }

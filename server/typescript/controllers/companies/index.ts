@@ -1,15 +1,11 @@
 import type { Request, Response } from 'express'
 import { getAllCompanies, addCompany } from '../../services/companies.js'
+import { Loc } from '../../app.js'
 
 export interface CompanyApi {
     name: string
     abbr?: string | null
     www?: string | null
-}
-
-export interface CompanyApiResponse {
-    location: string
-    company: CompanyApi
 }
 
 function normalize_company(company: CompanyApi): CompanyApi {
@@ -27,7 +23,7 @@ function normalize_company(company: CompanyApi): CompanyApi {
 
 export const GET = async (req: Request, res: Response) => {
     const allCompanies = await getAllCompanies()
-    const allCompaniesApi: CompanyApiResponse[] = allCompanies.map((row) => ({ "location": "/companies/" + row.id, "company": normalize_company(row) }))
+    const allCompaniesApi: Loc<CompanyApi>[] = allCompanies.map((row) => ({ "location": "/companies/" + row.id, "data": normalize_company(row) }))
     res.status(200).json(allCompaniesApi)
 }
 
@@ -48,14 +44,14 @@ GET.apiSpec = {
                             "type": "object",
                             "required": [
                                 "location",
-                                "company"
+                                "data"
                             ],
                             "additionalProperties": false,
                             "properties": {
                                 "location": {
                                     "$ref": "#/components/schemas/location"
                                 },
-                                "company": {
+                                "data": {
                                     "$ref": "#/components/schemas/company"
                                 }
                             }
@@ -66,21 +62,21 @@ GET.apiSpec = {
                             "value": [
                                 {
                                     "location": "/companies/1",
-                                    "company": {
+                                    "data": {
                                         "name": "Firma A",
                                         "abbr": "FRA"
                                     }
                                 },
                                 {
                                     "location": "/companies/2",
-                                    "company": {
+                                    "data": {
                                         "name": "Firma B",
                                         "abbr": "FRB"
                                     }
                                 },
                                 {
                                     "location": "/companies/3",
-                                    "company": {
+                                    "data": {
                                         "name": "Firma C",
                                         "abbr": "FRC"
                                     }

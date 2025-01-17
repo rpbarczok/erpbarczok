@@ -126,7 +126,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200, { "location": "/companies/2", "company": { name: 'Firma B' } })
+                .expect(200, { "location": "/companies/2", "data": { name: 'Firma B' } })
         })
     
         it('Get non existing company fails', async () => {
@@ -167,7 +167,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .get('/companies/')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200, [{ location: '/companies/1', company: { name: 'Firma A', abbr: 'FRA' } }, { location: '/companies/2', company: { name: 'Firma B' } }])
+                .expect(200, [{ 'location': '/companies/1', 'data': { 'name': 'Firma A', 'abbr': 'FRA' } }, { 'location': '/companies/2', 'data': { 'name': 'Firma B' } }])
         })
         
         it('GET /api-docs works', async () => {
@@ -201,7 +201,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200, { "location": "/companies/2", "company": { "name": 'Firma B' } })
+                .expect(200, { "location": "/companies/2", "data": { "name": 'Firma B' } })
         })
         
         it('Change name of existing company', async () => {
@@ -217,7 +217,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200, { "location": "/companies/2", "company": { "name": 'Firma C' } })
+                .expect(200, { "location": "/companies/2", "data": { "name": 'Firma C' } })
         })
         
         it('PUT: add abbr to existing company succeeds', async () => {
@@ -233,7 +233,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200, { "location": "/companies/2", "company": { "name": 'Firma C', "abbr": 'FRC' } })
+                .expect(200, { "location": "/companies/2", "data": { "name": 'Firma C', "abbr": 'FRC' } })
         })
         
         it('PUT: add www to existing company succeeds', async () => {
@@ -249,7 +249,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200, { "location": "/companies/2", "company": { "name": 'Firma C', "abbr": 'FRC', "www": "www.example.de" } })
+                .expect(200, { "location": "/companies/2", "data": { "name": 'Firma C', "abbr": 'FRC', "www": "www.example.de" } })
         })
         
         it('PUT: remove www from existing company succeeds', async () => {
@@ -265,7 +265,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200, { "location": "/companies/2", "company": { "name": 'Firma C', "abbr": "FRC" } })
+                .expect(200, { "location": "/companies/2", "data": { "name": 'Firma C', "abbr": "FRC" } })
         })
         
         it('PUT: remove abbr from existing company succeeds', async () => {
@@ -281,14 +281,14 @@ describe('/companies/ HTTP integration Tests', function () {
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200, { "location": "/companies/2", "company": { "name": 'Firma C' } })
+                .expect(200, { "location": "/companies/2", "data": { "name": 'Firma C' } })
         })
         
         it('PUT: remove name form existing company fails', async () => {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
-                .send({ "location": "/companies/2", "company": {} })
+                .send({ "location": "/companies/2", "data": {} })
                 .expect(400)
             expect(response.body.status).toBe(400)
             expect(response.body.message).toMatch("must have required property 'name'")
@@ -300,7 +300,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200, { "location": "/companies/2", "company": { "name": 'Firma C' } })
+                .expect(200, { "location": "/companies/2", "data": { "name": 'Firma C' } })
         })
     })
 

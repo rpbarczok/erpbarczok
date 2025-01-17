@@ -2,7 +2,8 @@
     "compilerOptions": {
       "outDir": "server/ecmascript",
       "module": "Node16",
-      "target": "ESNext"
+      "target": "ESNext",
+      "strict": true
       //"removeComments": true
     },
     "include": ["server/typescript/**/*"]

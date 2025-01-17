@@ -1,3 +1,5 @@
+# Panda 2
+
 docker stop Panda2
 
 docker rm Panda2
@@ -20,4 +22,6 @@ docker run \
     --rm \
     erpbarczok:latest
 
+# Postgres
 
+docker run -e POSTGRES_PASSWORD="blablubber" -p 8080:5432 -d --rm postgres:17.2-alpine3.20

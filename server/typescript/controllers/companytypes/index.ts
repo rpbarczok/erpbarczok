@@ -1,3 +1,4 @@
+import { Loc } from '../../app.js'
 import { getAllCompanytypes, addCompanytype } from '../../services/companytypes.js'
 import { Request, Response } from 'express'
 
@@ -5,14 +6,9 @@ export interface CompanytypeApi {
     name: string
 }
 
-export interface CompanytypeApiResponse {
-    location: string
-    companytype: CompanytypeApi
-}
-
 export const GET = async (req: Request, res: Response) => {
     const allCompanytypes = await getAllCompanytypes()
-    const allCompanytypesApi: CompanytypeApiResponse[] = allCompanytypes.map(row => ({ "location": "/companytypes/" + row.id, "companytype": { "name": row.name } }))
+    const allCompanytypesApi: Loc<CompanytypeApi>[] = allCompanytypes.map(row => ({ "location": "/companytypes/" + row.id, "data": { "name": row.name } }))
     res.status(200).json(allCompanytypesApi) 
 }
 
@@ -33,14 +29,14 @@ GET.apiSpec = {
                             "type": "object",
                             "required": [
                                 "location",
-                                "companytype"
+                                "data"
                             ],
                             "additionalProperties": false,
                             "properties": {
                                 "location": {
                                     "$ref": "#/components/schemas/location"
                                 },
-                                "companytype": {
+                                "data": {
                                     "$ref": "#/components/schemas/companytype"
                                 }
                             }
@@ -51,19 +47,19 @@ GET.apiSpec = {
                             "value": [
                                 {
                                     "location": "/companytypes/1",
-                                    "companytype": {
+                                    "data": {
                                         "name": "Kunde"
                                     }
                                 },
                                 {
                                     "location": "/companytypes/2",
-                                    "companytype": {
+                                    "data": {
                                         "name": "Interessent"
                                     }
                                 },
                                 {
                                     "location": "/companytypes/3",
-                                    "companytype": {
+                                    "data": {
                                         "name": "Spediteur"
                                     }
                                 }

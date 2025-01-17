@@ -4,13 +4,14 @@ import ListCompanies from './list.companies.js'
 import AddCompanies from './add.companies.js'
 import SearchCompanies from './search.companies.js'
 import React, { useState } from 'react'
-import { Company, CompanyLoc } from './companies.js'
+import { Company } from './companies.js'
+import { Loc } from '../../app.js'
 
 interface GeneralCompaniesInterface {
     onChangeActive: Function
     setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
     active: string
-    listCompanies: CompanyLoc[]
+    listCompanies: Loc<Company>[]
 }
 
 

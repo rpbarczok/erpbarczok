@@ -2,16 +2,17 @@ import {Col, Row, Button, ButtonGroup, Form} from 'react-bootstrap'
 import "../../style.css"
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Company, CompanyLoc } from './companies.js'
+import { Company } from './companies.js'
+import { Loc } from '../../app.js'
 
 interface SpecificComapniesInterface {
     setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
-    activeCompany: CompanyLoc
+    activeCompany: Loc<Company>
 }
 
 export default function SpecificCompanies({setIsChanged, activeCompany}: SpecificComapniesInterface) {
 
-    const [changeCompany, setChangeCompany] = useState<Company>(activeCompany.company)
+    const [changeCompany, setChangeCompany] = useState<Company>(activeCompany.data)
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()

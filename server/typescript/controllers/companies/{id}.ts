@@ -2,7 +2,8 @@ import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { getCompanyById, deleteCompanyById, putCompanyById } from '../../services/companies.js'
 import { NotFoundError } from "../../services/error.js"
 import type { Request, Response } from 'express'
-import { CompanyApi, CompanyApiResponse } from './index.js'
+import { CompanyApi } from './index.js'
+import { Loc } from '../../app.js'
 
 function normalize_company(company: CompanyApi) {
     const result:CompanyApi = { name: company.name }
@@ -15,11 +16,11 @@ function normalize_company(company: CompanyApi) {
     return result
 }
 
-// as CompanyApiResponse
+// as Loc<CompanyApi>
 export const GET = async (req: Request, res: Response) => {
     try {
         const company = await getCompanyById(Number(req.params.id))
-        const companyApi: CompanyApiResponse = { "location": "/companies/" + company.id, "company": normalize_company(company) }
+        const companyApi: Loc<CompanyApi> = { "location": "/companies/" + company.id, "data": normalize_company(company) }
         res.status(200).json(companyApi)
     }
     catch (err) {
@@ -42,14 +43,14 @@ GET.apiSpec = {
                         "type": "object",
                         "required": [
                             "location",
-                            "company"
+                            "data"
                         ],
                         "additionalProperties": false,
                         "properties": {
                             "location": {
                                 "$ref": "#/components/schemas/location"
                             },
-                            "company": {
+                            "data": {
                                 "$ref": "#/components/schemas/company-full"
                             }
                         }

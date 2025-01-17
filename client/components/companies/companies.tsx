@@ -5,6 +5,7 @@ import GeneralCompanies from './general.companies.js'
 import SpecificCompanies from './specific.companies.js'
 import React, {useState, useEffect} from 'react'  
 import axios from 'axios'
+import { Loc } from '../../app.js'
 
 export interface Company {
     "name": string
@@ -12,15 +13,10 @@ export interface Company {
     "www"?: string
 }
 
-export interface CompanyLoc {
-    "location": string,
-    "company": Company
-}
-
 export default function Companies() {
     const [isChanged, setIsChanged] = useState<boolean>(true)
-    const [listCompanies, setListCompanies] = useState<CompanyLoc[]>([])
-    const [activeCompany, setActiveCompany] = useState<CompanyLoc>({ "location": "", "company": { "abbr": "", "name": "", "www": "" } })
+    const [listCompanies, setListCompanies] = useState<Loc<Company>[]>([])
+    const [activeCompany, setActiveCompany] = useState<Loc<Company>>({ "location": "", "data": { "abbr": "", "name": "", "www": "" } })
 
     useEffect(() => {
         if (isChanged)
@@ -35,7 +31,7 @@ export default function Companies() {
 
     function handleChangeActive(active: string) {
         if (active === "" || active === undefined) {
-            setActiveCompany({ "location": "", "company": { "abbr": "", "name": "", "www": "" } })
+            setActiveCompany({ "location": "", "data": { "abbr": "", "name": "", "www": "" } })
         } else {
             axios.get(active)
                 .then(result => {

@@ -1,4 +1,4 @@
-FROM node:20.16.0-alpine AS compiler
+FROM node:23-alpine3.20 AS compiler
 
 USER node
 WORKDIR /home/node
@@ -13,7 +13,7 @@ RUN npx webpack --config webpack.prod.js && rm -fR server/ecmascript && npx tsc 
 
 #------------------------------------------------------------
 
-FROM node:20.16.0-alpine
+FROM node:23-alpine3.20
 
 RUN apk add dumb-init
 

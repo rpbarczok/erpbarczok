@@ -8,6 +8,11 @@ export interface FormTab {
     id: string
 }
 
+export interface Loc<T> {
+    "location": string,
+    "data": T
+}
+
 export default function App() {
     const startPage: FormTab = { name: "Stammdaten", id: "stammForm"}
     const [activeForm, setActiveForm] = useState<FormTab>(startPage)

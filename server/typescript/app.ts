@@ -10,6 +10,11 @@ import loadControllers from './apiSpecAssembler.js'
 import initSequelize from './models/index.js'
 import path from 'path'
 
+export interface Loc<T> {
+    location: string
+    data: T
+}
+
 const startApp = async () => {
     const app = express()
 
