@@ -7,15 +7,16 @@ const logger = baseLogger.extend('models:index')
 const loggerSequelize = logger.extend('sequelize')
 const sequelizeLogger = (sql: any, stuff: any) => loggerSequelize(sql)
 
-if (!process.env.DB_NAME || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.DB_HOST || !process.env.DB_DIALECT) {
+if (!process.env.DB_NAME || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.DB_HOST) {
     console.log('No database config found: ', process.env)
     process.exit(1)
 }
 
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT as Dialect,
-    logging: sequelizeLogger
+    dialect: 'postgres',
+    logging: sequelizeLogger,
+    port: Number(process.env.DB_PORT)
 })
 
 initializeCompanytype(sequelize)

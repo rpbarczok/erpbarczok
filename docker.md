@@ -18,7 +18,6 @@ docker run \
     -e DB_USER='panda2_app' \
     -e DB_PASSWORD='blablubber' \
     -e DB_HOST='localhost' \
-    -e DB_DIALECT='postgres' \
     --rm \
     erpbarczok:latest
 
