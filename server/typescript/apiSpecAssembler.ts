@@ -1,16 +1,16 @@
 import path from 'node:path'
 import baseLogger from "./logger.js"
-import {apiSpec as apiSpecBase} from './openapi.cjs'
+import { apiSpec as apiSpecBase } from './openapi.cjs'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
-import { Request, Response,RequestHandler } from 'express'
+import { Request, Response, RequestHandler } from 'express'
 
-interface Operation { 
+interface Operation {
     (req: Request, res: Response): Promise<void>
     apiSpec: OpenAPIV3.OperationObject
 }
 
 interface PathMap {
-    [x:string]: VerbMap
+    [x: string]: VerbMap
 }
 
 interface VerbMap {
@@ -27,32 +27,33 @@ async function loadControllers() {
         controllers[apiPath] = {}
         const pathLogger = logger.extend(apiPath)
         pathLogger("starting import of ", apiPath)
-        
+
         const controllerPath = apiPath.slice(-1) === '/' ?
             path.join(import.meta.dirname, 'controllers', apiPath, 'index.js') :
             path.join(import.meta.dirname, 'controllers', apiPath) + '.js'
-        
-            logger(`Loading controller ${controllerPath} for API path ${apiPath}`)
-        
+
+        logger(`Loading controller ${controllerPath} for API path ${apiPath}`)
+
         const controller = await import(controllerPath)
-        
+
         pathLogger("successfully imported module.")
-        
+
         if (controller.apiSpec as OpenAPIV3.PathItemObject) {
             Object.assign(apiSpecBase.paths[apiPath], controller.apiSpec)
             pathLogger("Added generic api spec:", apiSpecBase.paths[apiPath])
         }
 
-        for (const apiVerbSpec of <Operation[]>[controller.GET, controller.PUT,controller.POST, controller.DELETE]) {
-            if (apiVerbSpec && apiVerbSpec.apiSpec) {
-                const apiVerb = apiVerbSpec.name.toLowerCase()
-                apiSpecBase.paths[apiPath][apiVerb] = apiVerbSpec.apiSpec
-                const handler: RequestHandler = controller[apiVerb.toUpperCase()]
-                controllers[apiPath][apiVerb.toUpperCase()] = handler
+        for (const apiVerbCap of ["GET", "PUT", "POST", "DELETE"]) {
+            const operation = controller[apiVerbCap]
+            if (operation && operation.apiSpec) {
+                const apiVerbMin = apiVerbCap.toLowerCase() as "get" | "put" | "post" | "delete"
+                apiSpecBase.paths[apiPath][apiVerbMin] = operation.apiSpec
+                const handler: RequestHandler = controller[apiVerbCap]
+                controllers[apiPath][apiVerbCap] = handler
             }
         }
     }
-    return(controllers)
+    return (controllers)
 }
 
 const controllers = await loadControllers()
