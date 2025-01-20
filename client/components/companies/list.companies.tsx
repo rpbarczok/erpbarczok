@@ -4,7 +4,16 @@ import React, { useState, useEffect } from 'react'
 import {Loc} from '../../app.js'
 import { Company } from "./companies.js"
 
-export default function ListCompanies({search, active, onChangeActive, isNew, setIsNew, listCompanies}) {
+interface ListCompaniesInterface {
+    search: string
+    active: string
+    onChangeActive: Function
+    isNew: boolean
+    setIsNew: React.Dispatch<React.SetStateAction<boolean>>
+    listCompanies: Loc<Company>[]
+}
+
+export default function ListCompanies({search, active, onChangeActive, isNew, setIsNew, listCompanies}: ListCompaniesInterface) {
 
     const [listFiltered, setListFiltered] = useState<Loc<Company>[]>([])
 

@@ -1,7 +1,7 @@
 import {Nav} from 'react-bootstrap'
 import {XLg} from 'react-bootstrap-icons'
 import '../../style.css'
-import React, { EventHandler } from 'react'
+import React from 'react'
 import { FormTab } from '../../app.js'
 
 interface TabsNavigationInterface {
@@ -18,7 +18,8 @@ export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeFor
         console.log(tab)
         const index = tabs.indexOf(tab)
         if (tabs.length > 1) {
-            setTabs(tabs.toSpliced(index, 1))
+            const newTabs = tabs.filter((tab, i) => i !== index)
+            setTabs(newTabs)
             if (tab === activeForm) {
                 if (index === tabs.length - 1) {
                     setActiveForm(tabs[index - 1])
@@ -40,22 +41,22 @@ export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeFor
     }
 
     function handleDrop(e: React.DragEvent<HTMLElement>) {
-        const indexDraggedFrom = e.dataTransfer.getData("text")
-        const draggedFrom = tabs[e.dataTransfer.getData("text")]
-        const indexDroppedOn = e.currentTarget.id
+        const indexDraggedFrom = Number(e.dataTransfer.getData("text"))
+        const draggedFrom  = tabs[indexDraggedFrom]
+        const indexDroppedOn = Number(e.currentTarget.id)
         const newList = tabs.map((tab, index) => {
-            if (Number(indexDroppedOn) > Number(indexDraggedFrom)) {
-                if (index > Number(indexDroppedOn) || index < Number(indexDraggedFrom)) {
+            if (indexDroppedOn > indexDraggedFrom) {
+                if (index > indexDroppedOn || index < indexDraggedFrom) {
                     return tab
-                } else if (index === Number(indexDroppedOn)) {
+                } else if (index === indexDroppedOn) {
                     return draggedFrom
                 } else {
                     return tabs[index + 1]
                 }
             } else {
-                if (index < Number(indexDroppedOn) || index > Number(indexDraggedFrom)) {
+                if (index < indexDroppedOn || index > indexDraggedFrom) {
                     return tab
-                } else if (index === Number(indexDroppedOn)) {
+                } else if (index === indexDroppedOn) {
                     return draggedFrom
                 } else {
                     return tabs[index - 1]

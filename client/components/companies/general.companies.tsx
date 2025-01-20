@@ -14,7 +14,6 @@ interface GeneralCompaniesInterface {
     listCompanies: Loc<Company>[]
 }
 
-
 export default function GeneralCompanies({ onChangeActive, setIsChanged, active, listCompanies }: GeneralCompaniesInterface) {
 
     const [search, setSearch] = useState<string>("")

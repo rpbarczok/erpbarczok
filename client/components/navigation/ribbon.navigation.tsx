@@ -24,7 +24,7 @@ export default function RibbonNavigation({tabs, setTabs, setActiveForm}: RibbonN
 
     function Groups() {
         
-        function Forms({forms}) {
+        function Forms({forms}: {forms: Form[]}) {
             const formsList = forms.map(f => {
                 return (
                     <NavDropdown.Item key={f.id} onClick ={() =>handleClick(f)} >

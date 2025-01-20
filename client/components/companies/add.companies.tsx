@@ -4,7 +4,13 @@ import React, {ChangeEvent, MouseEvent, useState} from 'react'
 import axios from 'axios'
 import { Company } from "./companies.js"
 
-export default function AddCompanies({setIsChanged, onChangeActive, setIsNew}) {
+interface AddCompaniesInterface {
+    setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
+    onChangeActive: Function
+    setIsNew: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export default function AddCompanies({setIsChanged, onChangeActive, setIsNew}: AddCompaniesInterface) {
     const [show, setShow] = useState<boolean>(false) // to handle the modal
     const [company, setCompany] = useState<Company>({name: "", abbr: ""}) 
     const handleShow = () => setShow(true)

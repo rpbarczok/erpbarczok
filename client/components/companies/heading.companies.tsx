@@ -1,6 +1,5 @@
 import {Col, Row, Button} from 'react-bootstrap'
 import "../../style.css"
-import React from 'react'
 
 export default function HeadingCompanies() {
     return (

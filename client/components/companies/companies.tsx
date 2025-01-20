@@ -3,7 +3,7 @@ import "../../style.css"
 import HeadingCompanies from './heading.companies.js'
 import GeneralCompanies from './general.companies.js'
 import SpecificCompanies from './specific.companies.js'
-import React, {useState, useEffect} from 'react'  
+import {useState, useEffect} from 'react'  
 import axios from 'axios'
 import { Loc } from '../../app.js'
 
