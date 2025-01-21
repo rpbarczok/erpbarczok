@@ -4,8 +4,17 @@ on: [push]
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
+    permissions:
+        contents: read
+        packages: write
+        attestations: write
+        id-token: write
+    env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
         - name: Check out repository code
           uses: actions/checkout@v4
+        - name: Log in to registry
+          run: echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
         - name: Create docker image
           run: npm run dockerbuild
