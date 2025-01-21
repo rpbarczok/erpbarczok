@@ -8,7 +8,7 @@ RUN npm install
 
 ADD --chown=node:node . .
 
-RUN npm run purebuild
+RUN npx webpack --config webpack.prod.js && rm -fR server/ecmascript && npx tsc
 
 #------------------------------------------------------------
 
