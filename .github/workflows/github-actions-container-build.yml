@@ -18,4 +18,4 @@ jobs:
           run: echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
           # builder for multiplatform from https://www.docker.com/blog/how-to-rapidly-build-multi-architecture-images-with-buildx/
         - name: Create Docker Image and Push Docker Image
-          run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build --push -t ghcr.io/rpbarczok/erpbarczok:latest --network host .
+          run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build  --platform linux/amd64,linux/arm64 --push -t ghcr.io/rpbarczok/erpbarczok:latest --network host .
