@@ -17,7 +17,7 @@
     "build": "npm run starttestdb && npm run purebuild && npm run stoptestdb",
     "starttestdb": "npm run stoptestdb ; docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",
     "stoptestdb": "docker kill testdb",
-    "dockerbuild": "npm run starttestdb && docker buildx build -t erpbarczok:latest --network host .&& npm run stoptestdb",
+    "dockerbuild": "npm run starttestdb && docker buildx build -t erpbarczok:latest --network host . && npm run stoptestdb",
     "docker": "docker compose up"
   },
   "author": "Ralph Barczok",
