@@ -7,7 +7,5 @@ jobs:
     steps:
         - name: Check out repository code
           uses: actions/checkout@v4
-        - name: Install node dependencies
-          run: npm install
         - name: Create docker image
           run: npm run dockerbuild
