@@ -9,7 +9,7 @@ RUN npm install
 
 ADD --chown=node:node . .
 
-RUN npx webpack --config webpack.prod.js && rm -fR server/ecmascript && npx tsc && npx mocha --config mocha-ecmascript-rc.cjs
+RUN npm run purebuild
 
 #------------------------------------------------------------
 
