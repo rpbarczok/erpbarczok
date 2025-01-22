@@ -1,4 +1,4 @@
-import groupForm, { FormGroup, Form } from './forms.js'
+import groupForm, {Form } from './forms.js'
 import {Navbar, Nav, NavDropdown, Container} from 'react-bootstrap'
 import '../../style.css'
 import React from 'react'

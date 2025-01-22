@@ -1,15 +1,15 @@
 {
-    "compilerOptions": {
-      "noEmit": true,
-      "jsx": "react-jsx",
-      "esModuleInterop": true,
-      "strict": true,
-      "lib": [
-        "es2022",
-        "dom"
-      ],
-      "target": "ES2022",
-      "moduleResolution": "nodenext",
-      "module": "NodeNext"
-    }
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": true,
+    "jsx": "preserve",
+    "strict": true,
+    "lib": [
+      "es2022",
+      "dom"
+    ],
+    "target": "ES2022",
+    "moduleResolution": "nodenext",
+    "module": "NodeNext"
   }
+}
