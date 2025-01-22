@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFROM node:23-alpine3.20 AS build
+FROM --platform=$BUILDPLATFORM node:23-alpine3.20 AS build
 
 USER node
 WORKDIR /home/node
@@ -12,7 +12,7 @@ RUN npx webpack --config webpack.prod.js && rm -fR server/ecmascript && npx tsc
 
 #------------------------------------------------------------
 
-FROM node:23-alpine3.20
+FROM node:23-alpine3.20 AS erpbarczok
 
 RUN apk add dumb-init
 
