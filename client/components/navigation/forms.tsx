@@ -16,14 +16,14 @@ export interface FormNav extends FormGroup {
 }
 
 const formArray: Form[] = [
-    { name: "Startseite", id: "startForm", group: "start", order: 0 },
-    { name: "Anfragen", id: "anfragenForm", group: "pro", order: 2 },
-    { name: "Stammdaten", id: "stammForm", group: "stamm", order: 0 },
-    { name: "Ansprechpartner", id: "ansprechForm", group: "stamm", order: 1 },
-    { name: "Kampagnen", id: "kamForm", group: "stamm", order: 2 },
-    { name: "Projekte", id: "proForm", group: "pro", order: 0 },
-    { name: "Angebote", id: "angForm", group: "pro", order: 1 },
-    { name: "Prüfmittel", id: "prüfForm", group: "pro", order: 4 },
+    { name: "Startseite", id: "startForm", group: "start", order: 0},
+    { name: "Anfragen", id: "anfragenForm", group: "pro", order: 2},
+    { name: "Stammdaten", id: "stammForm", group: "stamm", order: 0},
+    { name: "Ansprechpartner", id: "ansprechForm", group: "stamm", order: 1},
+    { name: "PR", id: "prForm", group: "stamm", order: 2},
+    { name: "Artikel", id: "artForm", group: "art", order: 0},
+    { name: "Angebote", id: "angForm", group: "art", order: 1},
+    { name: "Prüfmittel", id: "prüfForm", group: "art", order: 4},
     { name: "Aufträge", id: "aufForm", group: "auf", order: 0 },
     { name: "AB", id: "abForm", group: "auf", order: 1 },
     { name: "Bestellung Lieferant", id: "bestLiefForm", group: "auf", order: 2 },
@@ -45,20 +45,22 @@ const formArray: Form[] = [
     { name: "Gebühren", id: "gebForm", group: "rech", order: 1 },
     { name: "Zahlungsaufforderung", id: "zahlForm", group: "rech", order: 2 },
     { name: "Wechselkurs", id: "wechselForm", group: "sonst", order: 1 },
-    { name: "Taric-Nr", id: "taricForm", group: "sonst", order: 2 }]
+    { name: "Taric-Nr", id: "taricForm", group: "sonst", order: 2 },
+    { name: "Admin", id: "adminForm", group: "admin", order: 0}]
 
 //* List of all Groups in Ribbon *//
 const groupArray: FormGroup[] = [
     { name: "Start", id: "start", order: 0 },
     { name: "Stammdaten", id: "stamm", order: 1 },
-    { name: "Projekte", id: "pro", order: 2 },
+    { name: "Artikel", id: "art", order: 2 },
     { name: "Aufträge", id: "auf", order: 3 },
     { name: "Lager", id: "lag", order: 6 },
     { name: "Reklamationen", id: "rekl", order: 7 },
     { name: "Lieferungen", id: "lief", order: 4 },
     { name: "Spedition/ER", id: "sped", order: 5 },
     { name: "Rechnungen", id: "rech", order: 8 },
-    { name: "Sonstiges", id: "sonst", order: 9 }
+    { name: "Sonstiges", id: "sonst", order: 9 },
+    { name: "Admin", id: "admin", order: 10 }
 ]
 
     const groupSort = groupArray.sort((a, b) => a.order - b.order)

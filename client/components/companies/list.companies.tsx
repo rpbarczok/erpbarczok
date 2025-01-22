@@ -6,14 +6,14 @@ import { Company } from "./companies.js"
 
 interface ListCompaniesInterface {
     search: string
-    active: string
+    activeCompany: Loc<Company>
     onChangeActive: Function
     isNew: boolean
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
     listCompanies: Loc<Company>[]
 }
 
-export default function ListCompanies({search, active, onChangeActive, isNew, setIsNew, listCompanies}: ListCompaniesInterface) {
+export default function ListCompanies({search, activeCompany, onChangeActive, isNew, setIsNew, listCompanies}: ListCompaniesInterface) {
 
     const [listFiltered, setListFiltered] = useState<Loc<Company>[]>([])
 
@@ -37,7 +37,7 @@ export default function ListCompanies({search, active, onChangeActive, isNew, se
         if (newList.length === 0) {
             onChangeActive("")
         } else {
-            if (!newList.some((e) => e.location === active)) {
+            if (!newList.some((e) => e.location === activeCompany.location)) {
                 onChangeActive(newList[0].location)
             }
         }
@@ -57,7 +57,7 @@ export default function ListCompanies({search, active, onChangeActive, isNew, se
             <ListGroup className="scrollBox suchListe smallDesign" id="company-list">
                 {listFiltered.map((element) => {
                     return (
-                        <ListGroup.Item className="smallDesign" key={element.location} active={element.location === active} onClick={() => onChangeActive(element.location)}>
+                        <ListGroup.Item className="smallDesign" key={element.location} active={element.location === activeCompany.location} onClick={() => onChangeActive(element.location)}>
                             {element.data.name + (element.data.abbr ? " (" + element.data.abbr + ")" : "")}
                         </ListGroup.Item>
                     )
