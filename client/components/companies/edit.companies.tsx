@@ -1,16 +1,17 @@
-import {Col, Row, Button, ButtonGroup, Form} from 'react-bootstrap'
+import { Col, Row, Button, ButtonGroup, Form } from 'react-bootstrap'
 import "../../style.css"
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Company } from './companies.js'
-import { Loc } from '../../app.js'
+import { Company, Companytype } from './companies.jsx'
+import { Loc } from '../../app.jsx'
 
-interface SpecificComapniesInterface {
+interface EditComapniesInterface {
     setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
     activeCompany: Loc<Company>
+    listCompanytypes: Loc<Companytype>[]
 }
 
-export default function SpecificCompanies({setIsChanged, activeCompany}: SpecificComapniesInterface) {
+export default function EditCompanies({ setIsChanged, activeCompany, listCompanytypes }: EditComapniesInterface) {
 
     const [changeCompany, setChangeCompany] = useState<Company>(activeCompany.data)
 
@@ -19,12 +20,12 @@ export default function SpecificCompanies({setIsChanged, activeCompany}: Specifi
         const userConfirmed = window.confirm("Willst du wirklich die Firma löschen?")
         if (userConfirmed) {
             axios.delete(activeCompany.location)
-            .then((res) => {
-                setIsChanged(true)
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
+                .then((res) => {
+                    setIsChanged(true)
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
         }
     }
 
@@ -69,9 +70,19 @@ export default function SpecificCompanies({setIsChanged, activeCompany}: Specifi
         }
     }
 
+    const Companytypes = () => {
+        const optionsdefault = [<option id="default" value="default">Rolle auswählen</option>]
+        const options = listCompanytypes.map((role: Loc<Companytype>) => {
+            return (
+                <option id={role.location} value={role.data.name}>{role.data.name}</option>
+            )
+        })
+        return optionsdefault.concat(options)
+    }
+
     return (
         <>
-            <Row id="specific">
+            <Row id="edit">
                 <Col id='company' xl={5} lg={6} xs={12}>
                     <Form>
                         <Row>
@@ -88,7 +99,7 @@ export default function SpecificCompanies({setIsChanged, activeCompany}: Specifi
                                     <Form.Control className="smallDesign" type="text" value={changeCompany.name} onChange={handleChangeName} />
                                 </Form.Group>
                             </Col>
-                            <Col sc={2}>
+                            <Col>
                                 <Form.Group controlId="companyAbbr">
                                     <Form.Label className="smallDesign">Kürzel</Form.Label >
                                     <Form.Control type="text" className="smallDesign" value={changeCompany.abbr} onChange={handleChangeAbbr} />
@@ -96,10 +107,18 @@ export default function SpecificCompanies({setIsChanged, activeCompany}: Specifi
                             </Col>
                         </Row>
                         <Row className="defaultRow">
-                            <Col>
+                            <Col xs={8}>
                                 <Form.Group controlId="companyWWW">
                                     <Form.Label className="smallDesign">Internet Adresse</Form.Label >
                                     <Form.Control type="text" className="smallDesign" value={changeCompany.www} onChange={handleChangeWWW} />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group>
+                                    <Form.Label className="smallDesign">Firmenrolle</Form.Label>
+                                    <Form.Select className="smallDesign">
+                                        <Companytypes />
+                                    </Form.Select>
                                 </Form.Group>
                             </Col>
                         </Row>

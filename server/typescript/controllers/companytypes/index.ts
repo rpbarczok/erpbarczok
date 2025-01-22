@@ -16,7 +16,7 @@ GET.apiSpec = {
     "summary": "Get a list of all company types",
     "description": "GET request on all companies",
     "tags": [
-        "Company Type"
+        "Companytype"
     ],
     "responses": {
         "200": {
@@ -86,7 +86,7 @@ POST.apiSpec = {
     "summary": "Add new company type",
     "description": "POST request for a new company type",
     "tags": [
-        "Company Type"
+        "Companytype"
     ],
     "requestBody": {
         "$ref": "#/components/requestBodies/companytype"

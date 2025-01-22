@@ -35,8 +35,7 @@ const startApp = async () => {
     if (process.env.NODE_ENV != 'production') {
         corsOptions.origin = [
             "http://localhost:3000",
-            "http://hainan:3000",
-            "http://hainan:8080"
+            "http://localhost:8080"
         ]
     }
 

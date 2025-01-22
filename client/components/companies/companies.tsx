@@ -1,7 +1,7 @@
 import { Col, Row } from 'react-bootstrap'
 import "../../style.css"
 import Heading from '../common/heading.js'
-import SpecificCompanies from './specific.companies.js'
+import EditCompanies from './edit.companies.js'
 import SearchCompanies from './search.companies.js'
 import AddCompanies from './add.companies.js'
 import ListCompanies from './list.companies.js'
@@ -71,7 +71,7 @@ export default function Companies() {
                 <Col>
                     <ListCompanies
                         search={search}
-                        active={activeCompany} onChangeActive={handleChangeActive}
+                        activeCompany={activeCompany} onChangeActive={handleChangeActive}
                         isNew={isNew} setIsNew={setIsNew}
                         listCompanies={listCompanies}
                     />
@@ -88,8 +88,8 @@ export default function Companies() {
                 </Col>
             </Row>
             <hr />
-            <Row id="specific">
-                {activeCompany.location === "" ? <p>Keine Firma gefunden</p> : <SpecificCompanies key={activeCompany.location} setIsChanged={setIsChanged} activeCompany={activeCompany} />}
+            <Row id="edit">
+                {activeCompany.location === "" ? <p>Keine Firma gefunden</p> : <EditCompanies key={activeCompany.location} setIsChanged={setIsChanged} activeCompany={activeCompany} listCompanytypes={listCompanytypes} />}
             </Row>
         </>
     )

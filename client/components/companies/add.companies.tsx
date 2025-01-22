@@ -2,15 +2,17 @@ import { Col, Row, Button, Form, Modal } from "react-bootstrap"
 import "../../style.css"
 import React, { ChangeEvent, MouseEvent, useState } from 'react'
 import axios from 'axios'
+import { Loc } from "app.jsx"
 import { Company, Companytype } from "./companies.js"
 
 interface AddCompaniesInterface {
     setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
     onChangeActive: Function
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
+    listCompanytypes: Loc<Companytype>[]
 }
 
-export default function AddCompanies({setIsChanged, onChangeActive, setIsNew}: AddCompaniesInterface) {
+export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, listCompanytypes}: AddCompaniesInterface) {
     const [show, setShow] = useState<boolean>(false) // to handle the modal
     const [company, setCompany] = useState<Company>({ name: "", abbr: "", www: "" })
     const handleShow = () => setShow(true)
@@ -68,9 +70,9 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew}: A
 
     const Companytypes = () => {
         const optionsdefault = [<option id="default" value="default">Rolle auswählen</option>]
-        const options = listCompanytypes.map((role: Companytype) => {
+        const options = listCompanytypes.map((role: Loc<Companytype>) => {
             return (
-                <option id={role.name} value={role.name}>{role.name}</option>
+                <option id={role.location} value={role.data.name}>{role.data.name}</option>
             )
         })
         return optionsdefault.concat(options)

@@ -21,7 +21,7 @@ GET.apiSpec = {
     "summary": "Get a certain company type",
     "description": "GET request on a certain company type by id {id}",
     "tags": [
-        "Company Type"
+        "Companytype"
     ],
     "responses": {
         "200": {
@@ -75,7 +75,7 @@ DELETE.apiSpec = {
     "summary": "Remove a certain company type",
     "description": "DELETE request on company type by id {id}",
     "tags": [
-        "Company Type"
+        "Companytype"
     ],
     "responses": {
         "204": {
@@ -104,7 +104,7 @@ PUT.apiSpec = {
     "summary": "Updates company type with id {id}",
     "description": "Put request on company type by id {id}",
     "tags": [
-        "Company Type"
+        "Companytype"
     ],
     "requestBody": {
         "$ref": "#/components/requestBodies/companytype"
