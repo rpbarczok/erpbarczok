@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Loc } from 'app.jsx'
 import { Companytype } from 'components/companies/companies.jsx'
+import AddCompanytypes from './add.companytypes.admin.jsx'
 import ListCompanytypes from './list.comanytypes.admin.jsx'
 
 const Companytypes = () => {
@@ -25,7 +26,10 @@ const Companytypes = () => {
                 <h1>Firmenrolle</h1>
             </Row>
             <Row>
-                <ListCompanytypes listCompanytypes={listCompanytypes} setIsChanged=  {setIsChanged}/>
+                < ListGroup className="standardDesign" id="company-list" >
+                    <ListCompanytypes listCompanytypes={listCompanytypes} setIsChanged={setIsChanged}/>
+                    <AddCompanytypes setIsChanged={setIsChanged} />
+                </ListGroup >
             </Row>
         </>
     )

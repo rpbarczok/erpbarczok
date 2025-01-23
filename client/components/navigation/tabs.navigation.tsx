@@ -78,7 +78,7 @@ export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeFor
             if (tab.id === activeForm.id) {
                 return (
                     <Nav.Item key={tab.id} id={index.toString()} draggable={true} onDragStart={handleDragStart} onDrop={handleDrop} onDragOver={allowDrop} onDragEnter={allowDrop}>
-                        <Nav.Link active draggable={false}>
+                        <Nav.Link active className="lineWithButton" draggable={false}>
                             <span role="button" onClick={() => handleClick(tab)}>{tabName}</span>
                             <span role="button" onClick={() => handleClose(tab)}><XLg /></span>
                         </Nav.Link>
@@ -87,7 +87,7 @@ export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeFor
             } else {
                 return (
                     <Nav.Item key={tab.id} id={index.toString()} draggable={true} onDragStart={handleDragStart} onDrop={handleDrop} onDragOver={allowDrop} onDragEnter={allowDrop}>
-                        <Nav.Link draggable={false} >
+                        <Nav.Link draggable={false} className="lineWithButton" >
                             <span role="button" onClick={() => handleClick(tab)} >{tabName}</span>
                             <span role="button" onClick={() => handleClose(tab)} ><XLg /></span>
                         </Nav.Link>

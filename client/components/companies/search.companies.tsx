@@ -15,8 +15,8 @@ export default function SearchCompanies({search, setSearch}: SearchCompaniesInte
 
     return (
         <Form >
-            <Form.Label className="smallDesign">Suche (Firmenname, Kürzel)</Form.Label>
-            <Form.Control type="text" className="smallDesign" value={search} onChange={handleSearch} />
+            <Form.Label className="standardDesign">Suche (Firmenname, Kürzel)</Form.Label>
+            <Form.Control type="text" className="standardDesign" value={search} onChange={handleSearch} />
         </Form>
     ) 
 } 

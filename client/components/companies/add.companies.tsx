@@ -80,7 +80,7 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, li
 
     return (
         <>
-            <Button className="smallDesign" variant="outline-primary" onClick={handleShow}>Firma hinzufügen</Button>
+            <Button className="standardDesign" variant="outline-primary" onClick={handleShow}>Firma hinzufügen</Button>
             <Form>
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>

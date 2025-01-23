@@ -1,6 +1,10 @@
 import { Companytype } from "components/companies/companies.jsx"
 import { Loc } from "app.jsx"
-import { ListGroup } from "react-bootstrap"
+import { Button, ButtonGroup, ListGroup } from "react-bootstrap"
+import { Pencil, Trash } from "react-bootstrap-icons"
+import { useState } from "react"
+import axios from "axios"
+import InputCompanytypes from "./input.companytypes.admin.jsx"
 
 interface ListCompanytypesInterface {
     listCompanytypes: Loc<Companytype>[]
@@ -8,20 +12,60 @@ interface ListCompanytypesInterface {
 }
 
 const ListCompanytypes = ({ listCompanytypes, setIsChanged }: ListCompanytypesInterface) => {
-    const listgroupitems = listCompanytypes.map(element => {
+    const [show, setShow] = useState<boolean>(false) // to handle the modal
+    const [companytypeChange, setCompanytypeChange] = useState<Companytype>({name: ""})
+
+    const handleDelete = (e: React.MouseEvent<HTMLButtonElement>, companytype: Loc<Companytype>) => {
+        e.preventDefault()
+        const userConfirmed = window.confirm("Willst du wirklich die Firmenrolle löschen?")
+        if (userConfirmed) {
+            axios.delete(companytype.location)
+                .then((res) => {
+                    setIsChanged(true)
+                    setShow(false)
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+        }
+    }
+
+    const handleEdit = (e: React.MouseEvent<HTMLButtonElement>, companytype: Loc<Companytype>) => {
+        e.preventDefault()
+        setCompanytypeChange(companytype.data)
+        setShow(true)
+    }
+
+    return listCompanytypes.map(element => {
+
+        const handleSubmitEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
+            e.preventDefault()
+            if (companytypeChange.name !== "") {
+                axios
+                    .put(element.location, companytypeChange)
+                    .then((res) => {
+                        setIsChanged(true)
+                        setShow(false)
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
+            }
+        }
+
         return (
-            <ListGroup.Item className="smallDesign" key={element.location}>
-                {element.data.name}
-            </ListGroup.Item>
+            <>
+                <ListGroup.Item className="standardDesign lineWithButton" key={element.location}>
+                    <span>{element.data.name}</span>
+                    <ButtonGroup className="function-button standardDesign">
+                        <Button className="standardDesign" variant="outline-dark" onClick={(e) => handleEdit(e, element)}><Pencil /></Button>
+                        <Button className="standardDesign" variant="outline-dark" onClick={(e) => handleDelete(e, element)}><Trash /></Button>
+                    </ButtonGroup>
+                </ListGroup.Item>
+                <InputCompanytypes show={show} setShow={setShow} handleSubmit={handleSubmitEdit} companytype={companytypeChange} setCompanytype={setCompanytypeChange} />
+            </>
         )
     })
-    const newItem = <ListGroup.Item className="smallDesign" key="newCompanytype">Neue Firmenrolle hinzufügen</ListGroup.Item>
-    return (
-        < ListGroup className="smallDesign" id="company-list" >
-            {listgroupitems}
-            {newItem}
-        </ListGroup >
-    )
 }
 
 export default ListCompanytypes

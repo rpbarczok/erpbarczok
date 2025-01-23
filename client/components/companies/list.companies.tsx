@@ -48,16 +48,16 @@ export default function ListCompanies({search, activeCompany, onChangeActive, is
 
     if (listFiltered.length === 0) {
         return (
-            <ListGroup className="scrollBox suchListe smallDesign" id="company-list">
+            <ListGroup className="scrollBox suchListe standardDesign" id="company-list">
                 <p>Keine Firmen gefunden!</p>
             </ListGroup>
         )
     } else {
         return (
-            <ListGroup className="scrollBox suchListe smallDesign" id="company-list">
+            <ListGroup className="scrollBox suchListe standardDesign" id="company-list">
                 {listFiltered.map((element) => {
                     return (
-                        <ListGroup.Item className="smallDesign" key={element.location}>
+                        <ListGroup.Item className="standardDesign" key={element.location}>
                             {element.data.name}
                         </ListGroup.Item>
                     )

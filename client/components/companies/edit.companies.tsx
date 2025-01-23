@@ -5,13 +5,13 @@ import axios from 'axios'
 import { Company, Companytype } from './companies.jsx'
 import { Loc } from '../../app.jsx'
 
-interface EditComapniesInterface {
+interface EditCompaniesInterface {
     setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
     activeCompany: Loc<Company>
     listCompanytypes: Loc<Companytype>[]
 }
 
-export default function EditCompanies({ setIsChanged, activeCompany, listCompanytypes }: EditComapniesInterface) {
+export default function EditCompanies({ setIsChanged, activeCompany, listCompanytypes }: EditCompaniesInterface) {
 
     const [changeCompany, setChangeCompany] = useState<Company>(activeCompany.data)
 
@@ -86,37 +86,37 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
                 <Col id='company' xl={5} lg={6} xs={12}>
                     <Form>
                         <Row>
-                            <ButtonGroup className="function-button smallDesign">
-                                <Button className="smallDesign" variant="outline-primary" onClick={handleSubmitChange}>Abspeichern</Button>
-                                <Button className="smallDesign" variant="outline-primary" disabled >Rückgängig</Button>
-                                <Button className="smallDesign" variant="outline-primary" onClick={handleDelete}>Löschen</Button>
+                            <ButtonGroup className="function-button standardDesign">
+                                <Button className="standardDesign" variant="outline-primary" onClick={handleSubmitChange}>Abspeichern</Button>
+                                <Button className="standardDesign" variant="outline-primary" disabled >Rückgängig</Button>
+                                <Button className="standardDesign" variant="outline-primary" onClick={handleDelete}>Löschen</Button>
                             </ButtonGroup>
                         </Row>
                         <Row className="defaultRow">
                             <Col xs={8}>
                                 <Form.Group controlId="companyName">
-                                    <Form.Label className="smallDesign">Firmenname</Form.Label>
-                                    <Form.Control className="smallDesign" type="text" value={changeCompany.name} onChange={handleChangeName} />
+                                    <Form.Label className="standardDesign">Firmenname</Form.Label>
+                                    <Form.Control className="standardDesign" type="text" value={changeCompany.name} onChange={handleChangeName} />
                                 </Form.Group>
                             </Col>
                             <Col>
                                 <Form.Group controlId="companyAbbr">
-                                    <Form.Label className="smallDesign">Kürzel</Form.Label >
-                                    <Form.Control type="text" className="smallDesign" value={changeCompany.abbr} onChange={handleChangeAbbr} />
+                                    <Form.Label className="standardDesign">Kürzel</Form.Label >
+                                    <Form.Control type="text" className="standardDesign" value={changeCompany.abbr} onChange={handleChangeAbbr} />
                                 </Form.Group>
                             </Col>
                         </Row>
                         <Row className="defaultRow">
                             <Col xs={8}>
                                 <Form.Group controlId="companyWWW">
-                                    <Form.Label className="smallDesign">Internet Adresse</Form.Label >
-                                    <Form.Control type="text" className="smallDesign" value={changeCompany.www} onChange={handleChangeWWW} />
+                                    <Form.Label className="standardDesign">Internet Adresse</Form.Label >
+                                    <Form.Control type="text" className="standardDesign" value={changeCompany.www} onChange={handleChangeWWW} />
                                 </Form.Group>
                             </Col>
                             <Col>
                                 <Form.Group>
-                                    <Form.Label className="smallDesign">Firmenrolle</Form.Label>
-                                    <Form.Select className="smallDesign">
+                                    <Form.Label className="standardDesign">Firmenrolle</Form.Label>
+                                    <Form.Select className="standardDesign">
                                         <Companytypes />
                                     </Form.Select>
                                 </Form.Group>
