@@ -1,9 +1,9 @@
 import {Row} from 'react-bootstrap'
-import RibbonNavigation from './ribbon.navigation.js'
-import TabsNavigation from './tabs.navigation.js'
+import RibbonNavigation from './ribbon.navigation.jsx'
+import TabsNavigation from './tabs.navigation.jsx'
 import '../../style.css'
 import React from 'react'
-import { FormTab } from '../../app.js'
+import { FormTab } from '../../app.jsx'
 
 interface NavigationInterface {
     tabs: FormTab[]

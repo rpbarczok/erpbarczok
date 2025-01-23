@@ -1,23 +1,27 @@
 import { Row, Col, Button } from 'react-bootstrap'
-import Heading from '../common/heading.js'
-import ressourcelist from './ressourcelist.js'
+import Heading from '../common/heading.jsx'
+import LeftNavAdmin from './leftnav.admin.jsx'
+import Companytypes from './companytypes/companytypes.admin.jsx'
+import { useState } from 'react'
 
-const handleRessource = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    const ressource = (e.target as HTMLButtonElement).id
+export interface Ressource {
+    name: string
+    path: string
 }
 
-const LinkeNavigation = () => {
-    const result = ressourcelist.map(ressource => {
-        return (
-            <Button id={ressource.name} onClick={handleRessource}>
-                ressource.name
-            </Button>
-        )
-    })
-    return result
-}
+
+
 export default function Admin() {
+    const [ressource, setRessource] = useState<Ressource>({name: "Firmenrolle", path: "companytypes"})
+
+
+    const ActiveRessource = () => {
+        switch (ressource.path) {
+            case "companytypes":
+                return <Companytypes/>
+        }
+    }
+
     return (
         <>
             <Row id="heading">
@@ -25,10 +29,14 @@ export default function Admin() {
             </Row>
             <Row>
                 <Col>
-                    <LinkeNavigation />
+                    <LeftNavAdmin
+                        setRessource={setRessource}
+                    />
                 </Col>
                 <Col>
-                    Hauptteil
+                    <ActiveRessource />
+                </Col>
+                <Col>
                 </Col>
             </Row>
         </>
