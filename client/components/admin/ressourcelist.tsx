@@ -1,10 +1,7 @@
-interface ressource {
-    name: string
-    model: string
-}
+import { Ressource } from "./admin.jsx"
 
-const ressourcelist: ressource[] = [{
-    name: "Firmenrolle", model: "Companytype"
+const ressourceList: Ressource[] = [{
+    name: "Firmenrolle", path: "companytypes"
 }]
 
-export default ressourcelist
+export default ressourceList

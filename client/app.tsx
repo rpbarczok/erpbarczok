@@ -1,8 +1,8 @@
 import React, { useState } from "react"
 import { Container, Row } from 'react-bootstrap'
-import Companies from './components/companies/companies.js'
-import Navigation from './components/navigation/navigation.js'
-import Admin from "./components/admin/admin.js"
+import Companies from './components/companies/companies.jsx'
+import Navigation from './components/navigation/navigation.jsx'
+import Admin from "./components/admin/admin.jsx"
 
 export interface FormTab {
     name: string

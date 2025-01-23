@@ -3,7 +3,7 @@ import "../../style.css"
 import React, { ChangeEvent, MouseEvent, useState } from 'react'
 import axios from 'axios'
 import { Loc } from "app.jsx"
-import { Company, Companytype } from "./companies.js"
+import { Company, Companytype } from "./companies.jsx"
 
 interface AddCompaniesInterface {
     setIsChanged: React.Dispatch<React.SetStateAction<boolean>>

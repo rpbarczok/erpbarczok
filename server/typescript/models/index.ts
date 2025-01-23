@@ -1,7 +1,8 @@
-import { Sequelize, Dialect, Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes } from "sequelize"
+import { Sequelize } from "sequelize"
 import initializeCompany, { Company} from './companies.js'
 import initializeCompanytype, {Companytype} from "./companytypes.js"
 import baseLogger from "../logger.js"
+import setDefaultValues from './default-values.js'
 
 const logger = baseLogger.extend('models:index')
 const loggerSequelize = logger.extend('sequelize')
@@ -31,6 +32,18 @@ try {
 } catch (err: any) {
     logger("Failed to sync db: " + err.message)
     throw err
+}
+
+try {
+    const companytypes = await Companytype.findAll()
+    if (companytypes.length === 0) {
+        setDefaultValues()
+        logger("Default values set")
+    } else {
+        logger("Default values not set")
+    }
+} catch (err: any) {
+    logger("Failed to set default values")
 }
 
 export default sequelize

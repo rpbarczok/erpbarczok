@@ -1,8 +1,8 @@
 import "../../style.css"
 import {ListGroup} from 'react-bootstrap'
 import React, { useState, useEffect } from 'react'
-import {Loc} from '../../app.js'
-import { Company } from "./companies.js"
+import {Loc} from '../../app.jsx'
+import { Company } from "./companies.jsx"
 
 interface ListCompaniesInterface {
     search: string
@@ -57,8 +57,8 @@ export default function ListCompanies({search, activeCompany, onChangeActive, is
             <ListGroup className="scrollBox suchListe smallDesign" id="company-list">
                 {listFiltered.map((element) => {
                     return (
-                        <ListGroup.Item className="smallDesign" key={element.location} active={element.location === activeCompany.location} onClick={() => onChangeActive(element.location)}>
-                            {element.data.name + (element.data.abbr ? " (" + element.data.abbr + ")" : "")}
+                        <ListGroup.Item className="smallDesign" key={element.location}>
+                            {element.data.name}
                         </ListGroup.Item>
                     )
                 })}
