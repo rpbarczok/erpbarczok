@@ -10,8 +10,12 @@ import loadControllers from './apiSpecAssembler.js'
 import initSequelize from './models/index.js'
 import path from 'path'
 
-export interface Loc<T> {
+export interface MetaData {
     location: string
+    etag: string
+}
+export interface Meta<T> {
+    meta: MetaData
     data: T
 }
 

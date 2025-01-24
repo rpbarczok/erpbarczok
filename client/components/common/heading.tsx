@@ -1,5 +1,4 @@
 import {Col, Row} from 'react-bootstrap'
-import "../../style.css"
 import React from 'react'
 
 interface HeadingInterface {

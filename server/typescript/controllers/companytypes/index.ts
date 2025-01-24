@@ -1,4 +1,6 @@
-import { Loc } from '../../app.js'
+import { Meta } from '../../app.js'
+import { sha256 } from '../../hasher.js'
+import { Companytype } from '../../models/companytypes.js'
 import { getAllCompanytypes, addCompanytype } from '../../services/companytypes.js'
 import { Request, Response } from 'express'
 
@@ -6,12 +8,16 @@ export interface CompanytypeApi {
     name: string
 }
 
-export const GET = async (req: Request, res: Response) => {
-    const allCompanytypes = await getAllCompanytypes()
-    const allCompanytypesApi: Loc<CompanytypeApi>[] = allCompanytypes.map(row => ({ "location": "/companytypes/" + row.id, "data": { "name": row.name } }))
-    res.status(200).json(allCompanytypesApi) 
+export function normalize_companytype(companytype: Companytype) {
+    const result: CompanytypeApi = {name: companytype.name}
+    return { "meta": {"location": "/companytypes/" + companytype.id, "etag": sha256(JSON.stringify(result))}, "data": result}
 }
 
+export const GET = async (req: Request, res: Response) => {
+    const allCompanytypes = await getAllCompanytypes()
+    const allCompanytypesApi: Meta<CompanytypeApi>[] = allCompanytypes.map(row => normalize_companytype(row))
+    res.status(200).json(allCompanytypesApi)
+}
 GET.apiSpec = {
     "summary": "Get a list of all company types",
     "description": "GET request on all companies",
@@ -28,13 +34,13 @@ GET.apiSpec = {
                         "items": {
                             "type": "object",
                             "required": [
-                                "location",
+                                "meta",
                                 "data"
                             ],
                             "additionalProperties": false,
                             "properties": {
-                                "location": {
-                                    "$ref": "#/components/schemas/location"
+                                "meta": {
+                                    "$ref": "#/components/schemas/meta"
                                 },
                                 "data": {
                                     "$ref": "#/components/schemas/companytype"
@@ -80,7 +86,7 @@ GET.apiSpec = {
         }
     }
 }
-export const POST = async (req: Request, res: Response) => res.status(201).set({ location: "/location/" + String(await addCompanytype(req.body)) }).end()
+export const POST = async (req: Request, res: Response) => res.status(201).set({ location: "/companytypes/" + String(await addCompanytype(req.body)) }).end()
 
 POST.apiSpec = {
     "summary": "Add new company type",
@@ -89,7 +95,14 @@ POST.apiSpec = {
         "Companytype"
     ],
     "requestBody": {
-        "$ref": "#/components/requestBodies/companytype"
+        "description": "Add company type",
+        "content": {
+            "application/json": {
+                "schema": {
+                    "$ref": "#/components/schemas/companytype"
+                }
+            }
+        }
     },
     "responses": {
         "201": {

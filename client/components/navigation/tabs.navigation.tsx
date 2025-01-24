@@ -1,6 +1,5 @@
 import {Nav} from 'react-bootstrap'
 import {XLg} from 'react-bootstrap-icons'
-import '../../style.css'
 import React from 'react'
 import { FormTab } from '../../app.jsx'
 

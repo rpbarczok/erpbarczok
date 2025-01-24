@@ -9,8 +9,12 @@ export interface FormTab {
     id: string
 }
 
-export interface Loc<T> {
-    "location": string,
+interface Meta {
+    location: string
+    etag: string
+}
+export interface DataWithMeta<T> {
+    "meta": Meta
     "data": T
 }
 

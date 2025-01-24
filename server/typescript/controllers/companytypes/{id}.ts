@@ -1,14 +1,16 @@
 import { getCompanytypeById, deleteCompanytypeById, putCompanytypeById } from '../../services/companytypes.js'
-import { NotFoundError } from "../../services/error.js"
+import { error_formatter, NotFoundError } from "../../services/error.js"
 import type { Request, Response } from 'express'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { CompanytypeApi } from './index.js'
-import { Loc } from '../../app.js'
+import { normalize_companytype } from './index.js'
+import { Meta } from '../../app.js'
+import { sha256 } from '../../hasher.js'
 
 export const GET = async (req: Request, res: Response) => {
     try {
         const companytype = await getCompanytypeById(Number(req.params.id))
-        const companytypeApi: Loc<CompanytypeApi> = { "location": "/companytypes/" + companytype.id, "data": {name: companytype.name} }
+        const companytypeApi: Meta<CompanytypeApi> = normalize_companytype(companytype)
         res.status(200).json(companytypeApi)
     }
     catch (err) {
@@ -16,7 +18,6 @@ export const GET = async (req: Request, res: Response) => {
         else throw err
     }
 }
-// //
 GET.apiSpec = {
     "summary": "Get a certain company type",
     "description": "GET request on a certain company type by id {id}",
@@ -31,13 +32,13 @@ GET.apiSpec = {
                     "schema": {
                         "type": "object",
                         "required": [
-                            "location",
+                            "meta",
                             "data"
                         ],
                         "additionalProperties": false,
                         "properties": {
-                            "location": {
-                                "$ref": "#/components/schemas/location"
+                            "meta": {
+                                "$ref": "#/components/schemas/meta"
                             },
                             "data": {
                                 "$ref": "#/components/schemas/companytype"
@@ -45,7 +46,7 @@ GET.apiSpec = {
                         }
                     },
                     "examples": {
-                        "company": {
+                        "companytype": {
                             "$ref": "#/components/examples/companytype"
                         }
                     }
@@ -92,8 +93,23 @@ DELETE.apiSpec = {
 
 export const PUT = async (req: Request, res: Response) => {
     try {
-        await putCompanytypeById(Number(req.params.id), req.body)
-        res.status(204).end()
+        const dbData= await getCompanytypeById(Number(req.params.id))
+        const companytype = normalize_companytype(dbData)
+        const dbHash = sha256(JSON.stringify(companytype.data))
+        console.log(dbHash)
+        console.log(req.body.meta.etag)
+        if (dbHash === req.body.meta.etag) {
+            try {
+                await putCompanytypeById(Number(req.params.id), req.body.data)
+                res.status(204).end()
+            }
+            catch (err) {
+                error_formatter(500, err)
+            }
+        } else {
+            res.status(412).json({ status: 412, message: "Precondition failed" })
+        }
+
     }
     catch (err) {
         if (err instanceof NotFoundError) res.status(404).json({ status: 404, message: "not found" })
@@ -107,7 +123,27 @@ PUT.apiSpec = {
         "Companytype"
     ],
     "requestBody": {
-        "$ref": "#/components/requestBodies/companytype"
+        "description": "Add company type",
+        "content": {
+            "application/json": {
+                "schema": {
+                    "type": "object",
+                    "required": [
+                        "meta",
+                        "data"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "meta": {
+                            "$ref": "#/components/schemas/meta"
+                        },
+                        "data": {
+                            "$ref": "#/components/schemas/companytype"
+                        }
+                    }
+                }
+            }
+        }
     },
     "responses": {
         "204": {
@@ -118,6 +154,9 @@ PUT.apiSpec = {
         },
         "404": {
             "$ref": "#/components/responses/404-not-found-error"
+        },
+        "412": {
+            "$ref": "#/components/responses/412-precondition-error"
         }
     }
 }

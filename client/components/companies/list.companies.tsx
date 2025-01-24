@@ -1,24 +1,23 @@
-import "../../style.css"
 import {ListGroup} from 'react-bootstrap'
 import React, { useState, useEffect } from 'react'
-import {Loc} from '../../app.jsx'
+import {DataWithMeta} from '../../app.jsx'
 import { Company } from "./companies.jsx"
 
 interface ListCompaniesInterface {
     search: string
-    activeCompany: Loc<Company>
+    activeCompany: DataWithMeta<Company>
     onChangeActive: Function
     isNew: boolean
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
-    listCompanies: Loc<Company>[]
+    listCompanies: DataWithMeta<Company>[]
 }
 
 export default function ListCompanies({search, activeCompany, onChangeActive, isNew, setIsNew, listCompanies}: ListCompaniesInterface) {
 
-    const [listFiltered, setListFiltered] = useState<Loc<Company>[]>([])
+    const [listFiltered, setListFiltered] = useState<DataWithMeta<Company>[]>([])
 
     useEffect(() => {
-        const newList: Loc<Company>[] = listCompanies.filter((company: Loc<Company>) => {
+        const newList: DataWithMeta<Company>[] = listCompanies.filter((company: DataWithMeta<Company>) => {
             if (!isNew) {
                 if (company.data.abbr) {
                     if (company.data.name.toLowerCase().includes(search.toLowerCase()) || company.data.abbr.toLowerCase().includes(search.toLowerCase())) {
@@ -37,8 +36,8 @@ export default function ListCompanies({search, activeCompany, onChangeActive, is
         if (newList.length === 0) {
             onChangeActive("")
         } else {
-            if (!newList.some((e) => e.location === activeCompany.location)) {
-                onChangeActive(newList[0].location)
+            if (!newList.some((e) => e.meta.location === activeCompany.meta.location)) {
+                onChangeActive(newList[0].meta.location)
             }
         }
 
@@ -57,7 +56,7 @@ export default function ListCompanies({search, activeCompany, onChangeActive, is
             <ListGroup className="scrollBox suchListe standardDesign" id="company-list">
                 {listFiltered.map((element) => {
                     return (
-                        <ListGroup.Item className="standardDesign" key={element.location}>
+                        <ListGroup.Item className="standardDesign" key={element.meta.location}>
                             {element.data.name}
                         </ListGroup.Item>
                     )

@@ -36,27 +36,14 @@
                     "minimum": 1,
                     "example": 1
                 }
-            }
-        },
-        "requestBodies": {
-            "company": {
-                "description": "Add or update company",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "$ref": "#/components/schemas/company-full"
-                        }
-                    }
-                }
             },
-            "companytype": {
-                "description": "Add or update company type",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "$ref": "#/components/schemas/companytype"
-                        }
-                    }
+            "if-match": {
+                "name": "if-match",
+                "in": "header",
+                "description": "etag in database must match etag specified in if-match as precondition",
+                "required": true,
+                "schema": {
+                    "$ref": "#/components/schemas/etag"
                 }
             }
         },
@@ -93,28 +80,46 @@
                         }
                     }
                 }
+            },
+            "412-precondition-error": {
+                "description": "precondition failed",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/error"
+                        },
+                        "examples": {
+                            "412": {
+                                "$ref": "#/components/examples/error412"
+                            }
+                        }
+                    }
+                }
             }
         },
         "schemas": {
             "location": {
                 "type": "string",
-                "format": "uri-reference"
+                "format": "uri-reference",
+                "example": "location/1"
             },
-            "company": {
+            "etag": {
+                "type": "string",
+                "example": "656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
+            },
+            "meta": {
                 "type": "object",
                 "required": [
-                    "name"
+                    "location",
+                    "etag"
                 ],
                 "additionalProperties": false,
                 "properties": {
-                    "name": {
-                        "type": "string",
-                        "example": "Firma A"
+                    "location": {
+                        "$ref": "#/components/schemas/location"
                     },
-                    "abbr": {
-                        "type": "string",
-                        "example": "FRA",
-                        "maxLength": 3
+                    "etag": {
+                        "$ref": "#/components/schemas/etag"
                     }
                 }
             },
@@ -131,7 +136,7 @@
                     }
                 }
             },
-            "company-full": {
+            "company": {
                 "type": "object",
                 "required": [
                     "name"
@@ -200,6 +205,12 @@
                 "value": {
                     "status": 404,
                     "message": "Not found"
+                }
+            },
+            "error412": {
+                "value": {
+                    "status": 412,
+                    "message": "precondition failed"
                 }
             }
         }

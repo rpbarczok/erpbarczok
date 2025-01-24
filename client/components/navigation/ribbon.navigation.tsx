@@ -1,6 +1,5 @@
 import groupForm, {Form } from './forms.js'
 import {Navbar, Nav, NavDropdown, Container} from 'react-bootstrap'
-import '../../style.css'
 import React from 'react'
 import { FormTab } from '../../app.jsx'
 

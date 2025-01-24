@@ -1,15 +1,14 @@
 import { Col, Row, Button, Form, Modal } from "react-bootstrap"
-import "../../style.css"
 import React, { ChangeEvent, MouseEvent, useState } from 'react'
 import axios from 'axios'
-import { Loc } from "app.jsx"
+import { DataWithMeta } from "app.jsx"
 import { Company, Companytype } from "./companies.jsx"
 
 interface AddCompaniesInterface {
     setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
     onChangeActive: Function
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
-    listCompanytypes: Loc<Companytype>[]
+    listCompanytypes: DataWithMeta<Companytype>[]
 }
 
 export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, listCompanytypes}: AddCompaniesInterface) {
@@ -70,9 +69,9 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, li
 
     const Companytypes = () => {
         const optionsdefault = [<option id="default" value="default">Rolle auswählen</option>]
-        const options = listCompanytypes.map((role: Loc<Companytype>) => {
+        const options = listCompanytypes.map((role: DataWithMeta<Companytype>) => {
             return (
-                <option id={role.location} value={role.data.name}>{role.data.name}</option>
+                <option id={role.meta.location} value={role.data.name}>{role.data.name}</option>
             )
         })
         return optionsdefault.concat(options)

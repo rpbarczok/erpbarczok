@@ -1,5 +1,4 @@
 import { Col, Row } from 'react-bootstrap'
-import "../../style.css"
 import Heading from '../common/heading.jsx'
 import EditCompanies from './edit.companies.jsx'
 import SearchCompanies from './search.companies.jsx'
@@ -7,7 +6,7 @@ import AddCompanies from './add.companies.jsx'
 import ListCompanies from './list.companies.jsx'
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Loc } from '../../app.js'
+import { DataWithMeta } from '../../app.js'
 
 export interface Companytype {
     "name": string
@@ -22,9 +21,9 @@ export interface Company {
 
 export default function Companies() {
     const [isChanged, setIsChanged] = useState<boolean>(true)
-    const [listCompanies, setListCompanies] = useState<Loc<Company>[]>([])
-    const [listCompanytypes, setListCompanytypes] = useState<Loc<Companytype>[]>([])
-    const [activeCompany, setActiveCompany] = useState<Loc<Company>>({ "location": "", "data": { "abbr": "", "name": "", "www": "" } })
+    const [listCompanies, setListCompanies] = useState<DataWithMeta<Company>[]>([])
+    const [listCompanytypes, setListCompanytypes] = useState<DataWithMeta<Companytype>[]>([])
+    const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>({ "meta": {"location": "", "etag": ""}, "data": { "abbr": "", "name": "", "www": "" } })
     const [search, setSearch] = useState<string>("")
     const [isNew, setIsNew] = useState<boolean>(false)
 
@@ -50,7 +49,7 @@ export default function Companies() {
 
     function handleChangeActive(active: string) {
         if (active === "" || active === undefined) {
-            setActiveCompany({ "location": "", "data": { "abbr": "", "name": "", "www": "" } })
+            setActiveCompany({ "meta": {"location": "", "etag": ""}, "data": { "abbr": "", "name": "", "www": "" } })
         } else {
             axios.get(active)
                 .then(result => {
@@ -89,7 +88,7 @@ export default function Companies() {
             </Row>
             <hr />
             <Row id="edit">
-                {activeCompany.location === "" ? <p>Keine Firma gefunden</p> : <EditCompanies key={activeCompany.location} setIsChanged={setIsChanged} activeCompany={activeCompany} listCompanytypes={listCompanytypes} />}
+                {activeCompany.meta.location === "" ? <p>Keine Firma gefunden</p> : <EditCompanies key={activeCompany.meta.location} setIsChanged={setIsChanged} activeCompany={activeCompany} listCompanytypes={listCompanytypes} />}
             </Row>
         </>
     )

@@ -1,5 +1,5 @@
 import { Companytype } from "components/companies/companies.jsx"
-import { Loc } from "app.jsx"
+import { DataWithMeta } from "app.jsx"
 import { Button, ButtonGroup, ListGroup } from "react-bootstrap"
 import { Pencil, Trash } from "react-bootstrap-icons"
 import { useState } from "react"
@@ -7,7 +7,7 @@ import axios from "axios"
 import InputCompanytypes from "./input.companytypes.admin.jsx"
 
 interface ListCompanytypesInterface {
-    listCompanytypes: Loc<Companytype>[]
+    listCompanytypes: DataWithMeta<Companytype>[]
     setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -15,7 +15,7 @@ const ListCompanytypes = ({ listCompanytypes, setIsChanged }: ListCompanytypesIn
     const [show, setShow] = useState<boolean>(false) // to handle the modal
     const [companytypeChange, setCompanytypeChange] = useState<Companytype>({name: ""})
 
-    const handleDelete = (e: React.MouseEvent<HTMLButtonElement>, companytype: Loc<Companytype>) => {
+    const handleDelete = (e: React.MouseEvent<HTMLButtonElement>, companytype: DataWithMeta<Companytype>) => {
         e.preventDefault()
         const userConfirmed = window.confirm("Willst du wirklich die Firmenrolle löschen?")
         if (userConfirmed) {
@@ -30,7 +30,7 @@ const ListCompanytypes = ({ listCompanytypes, setIsChanged }: ListCompanytypesIn
         }
     }
 
-    const handleEdit = (e: React.MouseEvent<HTMLButtonElement>, companytype: Loc<Companytype>) => {
+    const handleEdit = (e: React.MouseEvent<HTMLButtonElement>, companytype: DataWithMeta<Companytype>) => {
         e.preventDefault()
         setCompanytypeChange(companytype.data)
         setShow(true)

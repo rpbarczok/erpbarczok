@@ -1,14 +1,13 @@
 import { Col, Row, Button, ButtonGroup, Form } from 'react-bootstrap'
-import "../../style.css"
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Company, Companytype } from './companies.jsx'
-import { Loc } from '../../app.jsx'
+import { DataWithMeta } from '../../app.jsx'
 
 interface EditCompaniesInterface {
     setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
-    activeCompany: Loc<Company>
-    listCompanytypes: Loc<Companytype>[]
+    activeCompany: DataWithMeta<Company>
+    listCompanytypes: DataWithMeta<Companytype>[]
 }
 
 export default function EditCompanies({ setIsChanged, activeCompany, listCompanytypes }: EditCompaniesInterface) {
@@ -19,7 +18,7 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
         e.preventDefault()
         const userConfirmed = window.confirm("Willst du wirklich die Firma löschen?")
         if (userConfirmed) {
-            axios.delete(activeCompany.location)
+            axios.delete(activeCompany.meta.location)
                 .then((res) => {
                     setIsChanged(true)
                 })
@@ -60,7 +59,7 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
         e.preventDefault()
         if (changeCompany.name !== "") {
             axios
-                .put(activeCompany.location, changeCompany)
+                .put(activeCompany.meta.location, changeCompany)
                 .then((res) => {
                     setIsChanged(true)
                 })
@@ -72,9 +71,9 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
 
     const Companytypes = () => {
         const optionsdefault = [<option id="default" value="default">Rolle auswählen</option>]
-        const options = listCompanytypes.map((role: Loc<Companytype>) => {
+        const options = listCompanytypes.map((role: DataWithMeta<Companytype>) => {
             return (
-                <option id={role.location} value={role.data.name}>{role.data.name}</option>
+                <option id={role.meta.location} value={role.data.name}>{role.data.name}</option>
             )
         })
         return optionsdefault.concat(options)

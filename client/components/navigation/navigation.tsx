@@ -1,7 +1,6 @@
 import {Row} from 'react-bootstrap'
 import RibbonNavigation from './ribbon.navigation.jsx'
 import TabsNavigation from './tabs.navigation.jsx'
-import '../../style.css'
 import React from 'react'
 import { FormTab } from '../../app.jsx'
 

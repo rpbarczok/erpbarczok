@@ -1,14 +1,14 @@
 import { ListGroup, Row } from 'react-bootstrap'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Loc } from 'app.jsx'
+import { DataWithMeta } from 'app.jsx'
 import { Companytype } from 'components/companies/companies.jsx'
 import AddCompanytypes from './add.companytypes.admin.jsx'
 import ListCompanytypes from './list.comanytypes.admin.jsx'
 
 const Companytypes = () => {
     const [isChanged, setIsChanged] = useState<boolean>(true)
-    const [listCompanytypes, setListCompanytypes] = useState<Loc<Companytype>[]>([])
+    const [listCompanytypes, setListCompanytypes] = useState<DataWithMeta<Companytype>[]>([])
 
     useEffect(() => {
         if (isChanged) {

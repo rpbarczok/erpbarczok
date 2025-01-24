@@ -1,6 +1,8 @@
 import type { Request, Response } from 'express'
 import { getAllCompanies, addCompany } from '../../services/companies.js'
-import { Loc } from '../../app.js'
+import { Meta } from '../../app.js'
+import { Company } from '../../models/companies.js'
+import { sha256 } from '../../hasher.js'
 
 export interface CompanyApi {
     name: string
@@ -8,22 +10,21 @@ export interface CompanyApi {
     www?: string | null
 }
 
-function normalize_company(company: CompanyApi): CompanyApi {
+export function normalize_company(company: Company) {
+    const result: CompanyApi = { name: company.name }
     if (company.abbr) {
-        return {
-            name: company.name,
-            abbr: company.abbr
-        }
-    } else {
-        return {
-            name: company.name
-        }
+        result.abbr = company.abbr
     }
+    if (company.www) {
+        result.www = company.www
+    }
+
+    return { meta: { "location": "/companies/" + company.id, "etag": sha256(JSON.stringify(result)) }, data: result }
 }
 
 export const GET = async (req: Request, res: Response) => {
     const allCompanies = await getAllCompanies()
-    const allCompaniesApi: Loc<CompanyApi>[] = allCompanies.map((row) => ({ "location": "/companies/" + row.id, "data": normalize_company(row) }))
+    const allCompaniesApi: Meta<CompanyApi>[] = allCompanies.map((row) => (normalize_company(row)))
     res.status(200).json(allCompaniesApi)
 }
 
@@ -43,13 +44,13 @@ GET.apiSpec = {
                         "items": {
                             "type": "object",
                             "required": [
-                                "location",
+                                "meta",
                                 "data"
                             ],
                             "additionalProperties": false,
                             "properties": {
-                                "location": {
-                                    "$ref": "#/components/schemas/location"
+                                "meta": {
+                                    "$ref": "#/components/schemas/meta"
                                 },
                                 "data": {
                                     "$ref": "#/components/schemas/company"
@@ -61,21 +62,30 @@ GET.apiSpec = {
                         "example-of-three-companies": {
                             "value": [
                                 {
-                                    "location": "/companies/1",
+                                    "meta": {
+                                        "location": "/companies/1",
+                                        "etag": "656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
+                                    },
                                     "data": {
                                         "name": "Firma A",
                                         "abbr": "FRA"
                                     }
                                 },
                                 {
-                                    "location": "/companies/2",
+                                    "meta": {
+                                        "location": "/companies/2",
+                                        "etag": "656da9646b5a65673e4a1f504ac3d44282e2da0d939413619ef0fd33850f818a"
+                                    },
                                     "data": {
                                         "name": "Firma B",
                                         "abbr": "FRB"
                                     }
                                 },
                                 {
-                                    "location": "/companies/3",
+                                    "meta": {
+                                        "location": "/companies/3",
+                                        "etag": "656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33853f818a"
+                                    },
                                     "data": {
                                         "name": "Firma C",
                                         "abbr": "FRC"
@@ -93,7 +103,9 @@ GET.apiSpec = {
     }
 }
 
-export const POST = async (req: Request, res: Response) => res.status(201).set({ location: "/companies/"+ await addCompany(req.body) }).end()
+export const POST = async (req: Request, res: Response) => {
+    res.status(201).set({ location: "/companies/" + await addCompany(req.body) }).end()
+}
 POST.apiSpec = {
     "summary": "Create new company",
     "description": "POST request for a new company, response new id",
@@ -101,7 +113,14 @@ POST.apiSpec = {
         "Company"
     ],
     "requestBody": {
-        "$ref": "#/components/requestBodies/company"
+        "description": "Add or update company",
+        "content": {
+            "application/json": {
+                "schema": {
+                    "$ref": "#/components/schemas/company"
+                }
+            }
+        }
     },
     "responses": {
         "201": {

@@ -1,5 +1,4 @@
 import React, { ChangeEvent } from "react"
-import "../../style.css"
 import {Form} from 'react-bootstrap'
 
 interface SearchCompaniesInterface {

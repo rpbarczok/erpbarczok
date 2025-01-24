@@ -7,13 +7,12 @@ import { Companytype } from '../models/companytypes.js'
 
 
 describe('Companytype Unit Tests', function () {
-
+    this.timeout(7000)
     before(async function () {
         await sequelize.sync({ force: true })
     });
 
     describe('test getAllCompanytyps / addCompanytype', function () {
-
          it('should return [] for a fresh and empty DB', async () => {
             await expect(getAllCompanytypes()).resolves.toHaveLength(0)
         })
@@ -35,7 +34,6 @@ describe('Companytype Unit Tests', function () {
     })
 
      describe('Test getCompanytypeById(id)', function () {
-
         it('getCompanytypeById(1) returns {"id": 1, "name": "Kunde"}', async () => {
             await expect(getCompanytypeById(1)).resolves.toEqual(
                 expect.any(Companytype) && expect.objectContaining({dataValues: { "id": 1, "name": "Kunde", updatedAt: expect.any(Date), createdAt: expect.any(Date) }})

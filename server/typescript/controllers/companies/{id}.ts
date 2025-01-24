@@ -1,26 +1,17 @@
 import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { getCompanyById, deleteCompanyById, putCompanyById } from '../../services/companies.js'
-import { NotFoundError } from "../../services/error.js"
+import { NotFoundError, error_formatter } from "../../services/error.js"
 import type { Request, Response } from 'express'
 import { CompanyApi } from './index.js'
-import { Loc } from '../../app.js'
+import { Meta } from '../../app.js'
+import { normalize_company } from './index.js'
+import { sha256 } from '../../hasher.js'
 
-function normalize_company(company: CompanyApi) {
-    const result:CompanyApi = { name: company.name }
-    if (company.abbr) {
-        result.abbr = company.abbr
-    }
-    if (company.www) {
-        result.www = company.www
-    }
-    return result
-}
-
-// as Loc<CompanyApi>
+// as Meta<Company>
 export const GET = async (req: Request, res: Response) => {
     try {
         const company = await getCompanyById(Number(req.params.id))
-        const companyApi: Loc<CompanyApi> = { "location": "/companies/" + company.id, "data": normalize_company(company) }
+        const companyApi: Meta<CompanyApi> = normalize_company(company)
         res.status(200).json(companyApi)
     }
     catch (err) {
@@ -42,16 +33,16 @@ GET.apiSpec = {
                     "schema": {
                         "type": "object",
                         "required": [
-                            "location",
+                            "meta",
                             "data"
                         ],
                         "additionalProperties": false,
                         "properties": {
-                            "location": {
-                                "$ref": "#/components/schemas/location"
+                            "meta": {
+                                "$ref": "#/components/schemas/meta"
                             },
                             "data": {
-                                "$ref": "#/components/schemas/company-full"
+                                "$ref": "#/components/schemas/company"
                             }
                         }
                     },
@@ -103,8 +94,21 @@ DELETE.apiSpec = {
 
 export const PUT = async (req: Request, res: Response) => {
     try {
-        await putCompanyById(Number(req.params.id), req.body)
-        res.status(204).end()
+        const dbData = await getCompanyById(Number(req.params.id))
+        const company = normalize_company(dbData)
+        const dbHash = sha256(JSON.stringify(company.data))
+        if (dbHash === req.body.meta.etag) {
+            try {
+                await putCompanyById(Number(req.params.id), req.body.data)
+                res.status(204).end()
+            }
+            catch (err) {
+                error_formatter(500, err)
+            }
+        }
+        else {
+            res.status(412).json({ status: 412, message: "Precondition failed" })
+        }
     }
     catch (err) {
         if (err instanceof NotFoundError) res.status(404).json({ status: 404, message: "not found" })
@@ -118,7 +122,27 @@ PUT.apiSpec = {
         "Company"
     ],
     "requestBody": {
-        "$ref": "#/components/requestBodies/company"
+        "description": "Add or update company",
+        "content": {
+            "application/json": {
+                "schema": {
+                    "type": "object",
+                    "required": [
+                        "meta",
+                        "data"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "meta": {
+                            "$ref": "#/components/schemas/meta"
+                        },
+                        "data": {
+                            "$ref": "#/components/schemas/company"
+                        }
+                    }
+                }
+            }
+        }
     },
     "responses": {
         "204": {
@@ -129,6 +153,9 @@ PUT.apiSpec = {
         },
         "404": {
             "$ref": "#/components/responses/404-not-found-error"
+        },
+        "412": {
+            "$ref": "#/components/responses/412-precondition-error"
         }
     }
 }
