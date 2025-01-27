@@ -9,6 +9,7 @@ import baseLogger from './logger.js'
 import loadControllers from './apiSpecAssembler.js'
 import initSequelize from './models/index.js'
 import path from 'path'
+import { error_formatter } from './services/error.js'
 
 export interface MetaContent {
     location: string
@@ -54,7 +55,7 @@ const startApp = async () => {
     // static content
 
     app.use(express.static(path.join(import.meta.dirname, '..', 'public')))
-    
+
     // mitteilen, wo das OAS-Document ist
 
     app.use('/api-docs', (req, res, next) => { res.json(apiSpec) })
@@ -79,7 +80,14 @@ const startApp = async () => {
                     const apiVerb = apiRoute.method
                     const operationHandler = controllers[apiPath][apiVerb]
                     logger(`apiPath: ${apiPath}, apiVerb: ${apiVerb}, OperationHandler: ${operationHandler}`)
-                    return operationHandler
+                    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+                        try {
+                            return await operationHandler(req, res, next)
+                        } catch (err: any) {
+                            next(err)
+                        }
+
+                    }
                 }
             }
         }

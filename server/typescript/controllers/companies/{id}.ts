@@ -111,7 +111,7 @@ export const PUT: Operation = async (req: Request, res: Response) => {
                     .end()
             }
             catch (err) {
-                error_formatter(500, err)
+                res.status(500).json(error_formatter(500, err))
             }
         }
         else {

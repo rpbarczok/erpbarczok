@@ -2,10 +2,10 @@ import path from 'node:path'
 import baseLogger from "./logger.js"
 import { apiSpec as apiSpecBase } from './openapi.cjs'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
-import { Request, Response, RequestHandler } from 'express'
+import { Request, Response, RequestHandler, NextFunction } from 'express'
 
 export interface Operation {
-    (req: Request, res: Response): Promise<void>
+    (req: Request, res: Response, next: NextFunction): Promise<void>
     apiSpec: OpenAPIV3.OperationObject
 }
 
@@ -14,7 +14,7 @@ interface PathMap {
 }
 
 interface VerbMap {
-    [x: string]: RequestHandler
+    [x: string]: Operation
 }
 
 const logger = baseLogger.extend("apiSpecAssembler")
@@ -48,7 +48,7 @@ async function loadControllers() {
             if (operation && operation.apiSpec) {
                 const apiVerbMin = apiVerbCap.toLowerCase() as "get" | "put" | "post" | "delete"
                 apiSpecBase.paths[apiPath][apiVerbMin] = operation.apiSpec
-                const handler: RequestHandler = controller[apiVerbCap]
+                const handler: Operation = controller[apiVerbCap]
                 controllers[apiPath][apiVerbCap] = handler
             }
         }
