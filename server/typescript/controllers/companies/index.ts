@@ -1,31 +1,49 @@
 import type { Request, Response } from 'express'
 import { getAllCompanies, addCompany } from '../../services/companies.js'
-import { Meta } from '../../app.js'
+import { Meta, MetaContent, MetaHeader } from '../../app.js'
 import { Company } from '../../models/companies.js'
 import { sha256 } from '../../hasher.js'
+import { Operation } from '../../apiSpecAssembler.js'
 
-export interface CompanyApi {
+export interface CompanyResponse {
     name: string
     abbr?: string | null
     www?: string | null
 }
 
-export function normalize_company(company: Company) {
-    const result: CompanyApi = { name: company.name }
+export function normalizeCompany(company: Company) {
+    const result: CompanyResponse = { name: company.name }
     if (company.abbr) {
         result.abbr = company.abbr
     }
     if (company.www) {
         result.www = company.www
     }
-
-    return { meta: { "location": "/companies/" + company.id, "etag": sha256(JSON.stringify(result)) }, data: result }
+    return result
 }
 
-export const GET = async (req: Request, res: Response) => {
+export function normalizeCompanyMetaData(company: Company): Meta<CompanyResponse> {
+    const data: CompanyResponse = normalizeCompany(company)
+    const meta: MetaContent = normalizeCompanyMetaContent(company)
+    return { meta: meta, data: data }
+}
+
+export function normalizeCompanyMetaHeader(company: Company): MetaHeader {
+    const companyResponse: CompanyResponse = normalizeCompany(company)
+    return { "location": "/companies/" + company.id, "if-match": sha256(JSON.stringify(companyResponse)) }
+}
+
+export function normalizeCompanyMetaContent(company: Company): MetaContent {
+    const companyResponse: CompanyResponse = normalizeCompany(company)
+    return { "location": "/companies/" + company.id, "etag": sha256(JSON.stringify(companyResponse)) }
+}
+
+export const GET: Operation = async (req: Request, res: Response) => {
     const allCompanies = await getAllCompanies()
-    const allCompaniesApi: Meta<CompanyApi>[] = allCompanies.map((row) => (normalize_company(row)))
-    res.status(200).json(allCompaniesApi)
+    const allCompaniesResponse: Meta<CompanyResponse>[] = allCompanies.map((row) => (normalizeCompanyMetaData(row)))
+    res
+        .status(200)
+        .json(allCompaniesResponse)
 }
 
 GET.apiSpec = {
@@ -103,8 +121,10 @@ GET.apiSpec = {
     }
 }
 
-export const POST = async (req: Request, res: Response) => {
-    res.status(201).set({ location: "/companies/" + await addCompany(req.body) }).end()
+export const POST: Operation = async (req: Request, res: Response) => {
+    res.status(201)
+        .set(normalizeCompanyMetaHeader(await addCompany(req.body)))
+        .end()
 }
 POST.apiSpec = {
     "summary": "Create new company",
@@ -130,6 +150,12 @@ POST.apiSpec = {
                     "description": "Relative URI of the new company",
                     "schema": {
                         "$ref": "#/components/schemas/location"
+                    }
+                },
+                "if-match": {
+                    "description": "Etag of the new company",
+                    "schema": {
+                        "$ref": "#/components/schemas/etag"
                     }
                 }
             }

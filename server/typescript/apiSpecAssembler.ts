@@ -4,7 +4,7 @@ import { apiSpec as apiSpecBase } from './openapi.cjs'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { Request, Response, RequestHandler } from 'express'
 
-interface Operation {
+export interface Operation {
     (req: Request, res: Response): Promise<void>
     apiSpec: OpenAPIV3.OperationObject
 }

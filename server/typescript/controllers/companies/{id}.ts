@@ -2,23 +2,28 @@ import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { getCompanyById, deleteCompanyById, putCompanyById } from '../../services/companies.js'
 import { NotFoundError, error_formatter } from "../../services/error.js"
 import type { Request, Response } from 'express'
-import { CompanyApi } from './index.js'
-import { Meta } from '../../app.js'
-import { normalize_company } from './index.js'
 import { sha256 } from '../../hasher.js'
+import { CompanyResponse, normalizeCompany, normalizeCompanyMetaHeader, normalizeCompanyMetaData, normalizeCompanyMetaContent } from './index.js'
+import { Operation } from '../../apiSpecAssembler.js'
+import { MetaHeader } from '../../app.js'
 
-// as Meta<Company>
-export const GET = async (req: Request, res: Response) => {
+export const GET: Operation = async (req: Request, res: Response) => {
     try {
         const company = await getCompanyById(Number(req.params.id))
-        const companyApi: Meta<CompanyApi> = normalize_company(company)
-        res.status(200).json(companyApi)
+        const companyResponse: CompanyResponse = normalizeCompany(company)
+        const companyResponseMeta: MetaHeader = normalizeCompanyMetaHeader(company)
+        res
+            .status(200)
+            .set(companyResponseMeta)
+            .json(companyResponse)
     }
     catch (err) {
         if (err instanceof NotFoundError) res.status(404).json({ "status": 404, "message": "not found" })
         else throw err
     }
 }
+
+
 GET.apiSpec = {
     "summary": "Get a certain company",
     "description": "GET request on a certain company by id {id}",
@@ -31,25 +36,26 @@ GET.apiSpec = {
             "content": {
                 "application/json": {
                     "schema": {
-                        "type": "object",
-                        "required": [
-                            "meta",
-                            "data"
-                        ],
-                        "additionalProperties": false,
-                        "properties": {
-                            "meta": {
-                                "$ref": "#/components/schemas/meta"
-                            },
-                            "data": {
-                                "$ref": "#/components/schemas/company"
-                            }
-                        }
+                        "$ref": "#/components/schemas/company"
                     },
                     "examples": {
                         "company": {
                             "$ref": "#/components/examples/company"
                         }
+                    }
+                }
+            },
+            "headers": {
+                "location": {
+                    "description": "Location of the requested company",
+                    "schema": {
+                        "$ref": "#/components/schemas/location"
+                    }
+                },
+                "if-match": {
+                    "description": "Etag of the requested company",
+                    "schema": {
+                        "$ref": "#/components/schemas/etag"
                     }
                 }
             }
@@ -63,10 +69,12 @@ GET.apiSpec = {
     }
 }
 
-export const DELETE = async (req: Request, res: Response) => {
+export const DELETE: Operation = async (req: Request, res: Response) => {
     try {
         await deleteCompanyById(Number(req.params.id))
-        res.status(204).end()
+        res
+            .status(204)
+            .end()
     }
     catch (err) {
         if (err instanceof NotFoundError) res.status(404).json({ status: 404, message: "not found" })
@@ -92,15 +100,15 @@ DELETE.apiSpec = {
     }
 }
 
-export const PUT = async (req: Request, res: Response) => {
+export const PUT: Operation = async (req: Request, res: Response) => {
     try {
-        const dbData = await getCompanyById(Number(req.params.id))
-        const company = normalize_company(dbData)
-        const dbHash = sha256(JSON.stringify(company.data))
-        if (dbHash === req.body.meta.etag) {
+        const dbCompany = await getCompanyById(Number(req.params.id))
+        const dbCompanyMeta = normalizeCompanyMetaContent(dbCompany)
+        if (dbCompanyMeta.etag === req.headers['if-match']) {
             try {
-                await putCompanyById(Number(req.params.id), req.body.data)
-                res.status(204).end()
+                await putCompanyById(Number(req.params.id), req.body)
+                res.status(204)
+                    .end()
             }
             catch (err) {
                 error_formatter(500, err)
@@ -126,24 +134,16 @@ PUT.apiSpec = {
         "content": {
             "application/json": {
                 "schema": {
-                    "type": "object",
-                    "required": [
-                        "meta",
-                        "data"
-                    ],
-                    "additionalProperties": false,
-                    "properties": {
-                        "meta": {
-                            "$ref": "#/components/schemas/meta"
-                        },
-                        "data": {
-                            "$ref": "#/components/schemas/company"
-                        }
-                    }
+                    "$ref": "#/components/schemas/company"
                 }
             }
         }
     },
+    "parameters": [
+        {
+            "$ref": "#/components/parameters/if-match"
+        }
+    ],
     "responses": {
         "204": {
             "$ref": "#/components/responses/204-success"
@@ -159,8 +159,6 @@ PUT.apiSpec = {
         }
     }
 }
-
-
 
 export const apiSpec: OpenAPIV3.PathItemObject = {
     "parameters": [

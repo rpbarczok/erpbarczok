@@ -9,10 +9,15 @@ import { sha256 } from '../hasher.js'
 
 
 const companyA = { "name": "Firma A", "abbr": "FRA", "www": "www.firmaa.com" }
+const etagA = sha256(JSON.stringify(companyA))
 const companyB = { "name": "Firma B" }
+const etagB = sha256(JSON.stringify(companyB))
 const companyBA = { "name": "Firma C" }
+const etagBA = sha256(JSON.stringify(companyBA))
 const companyBA2 = { "name": "Firma C", "abbr": "FRC" }
+const etagBA2 = sha256(JSON.stringify(companyBA2))
 const companyBA3 = { "name": "Firma C", "abbr": "FRC", "www": "www.example.de" }
+const etagBA3 = sha256(JSON.stringify(companyBA3))
 
 describe('/companies/ HTTP integration Tests', function () {
     this.timeout(7000)
@@ -138,7 +143,9 @@ describe('/companies/ HTTP integration Tests', function () {
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200, {"meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyB))}, data: companyB})
+                .expect(200, companyB)
+            expect(response.headers['location']).toBe('/companies/2')
+            expect(response.headers['if-match']).toBe(etagB)
         })
 
         it('Get non existing company fails', async () => {
@@ -183,8 +190,8 @@ describe('/companies/ HTTP integration Tests', function () {
             expect(response.status).toBe(200)
             expect(response.body).toEqual(
                 [
-                    { "meta": {"location": "/companies/1", "etag": sha256(JSON.stringify(companyA))}, data: companyA},
-                    { "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyB))}, data: companyB}
+                    { "meta": { "location": "/companies/1", "etag": etagA }, data: companyA },
+                    { "meta": { "location": "/companies/2", "etag": etagB }, data: companyB }
                 ])
         })
 
@@ -215,53 +222,64 @@ describe('/companies/ HTTP integration Tests', function () {
 
     describe('PUT /companies/{id}', function () {
         this.timeout(7000)
-        
+
         it('Get existing company succeeds', async () => {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200, { "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyB))}, data: companyB})
+                .expect(200, companyB)
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['if-match']).toEqual(etagB)
         })
 
         it('Change name of existing company', async () => {
-            const dbEtag = sha256(JSON.stringify(companyB))
             await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
-                .send({ "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyB))}, data: companyBA})
+                .set('location', '/companytypes/2')
+                .set('if-match', etagB)
+                .send(companyBA)
                 .expect(204, '')
         })
 
-        it('Get existing company succeeds after Name Change', async () => {
-            const response = await request(app)
-                .get('/companies/2')
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(200, { "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyBA))}, data: companyBA})
-        })
+                it('Get existing company succeeds after Name Change', async () => {
+                    const response = await request(app)
+                        .get('/companies/2')
+                        .set('Accept', 'application/json')
+                        .expect('Content-Type', /json/)
+                        .expect(200, companyBA)
+                    expect(response.headers['location']).toEqual('/companies/2')
+                    expect(response.headers['if-match']).toEqual(etagBA)
+                })
 
-        it('PUT: add abbr to existing company succeeds', async () => {
-            const response = await request(app)
-                .put('/companies/2')
-                .set('Accept', 'application/json')
-                .send({"meta": {"location": "/companies/2", "etag":sha256(JSON.stringify(companyBA))}, "data": companyBA2})
-                .expect(204, '')
-        })
+                it('PUT: add abbr to existing company succeeds', async () => {
+                    const response = await request(app)
+                        .put('/companies/2')
+                        .set('Accept', 'application/json')
+                        .set('location', '/companytypes/2')
+                        .set('if-match', etagBA)
+                        .send(companyBA2)
+                        .expect(204, '')
+                })
 
-            it('Get existing company succeeds after abbr added.', async () => {
-                const response = await request(app)
-                    .get('/companies/2')
-                    .set('Accept', 'application/json')
-                    .expect('Content-Type', /json/)
-                    .expect(200, { "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyBA2)) }, "data": companyBA2 })
+                it('Get existing company succeeds after abbr added.', async () => {
+                    const response = await request(app)
+                        .get('/companies/2')
+                        .set('Accept', 'application/json')
+                        .expect('Content-Type', /json/)
+                        .expect(200, companyBA2)
+                    expect(response.headers['location']).toEqual('/companies/2')
+                    expect(response.headers['if-match']).toEqual(etagBA2)
             })
 
             it('PUT: add www to existing company succeeds', async () => {
                 const response = await request(app)
                     .put('/companies/2')
                     .set('Accept', 'application/json')
-                    .send({ "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyBA2)) }, "data": companyBA3 })
+                    .set('location', '/companytypes/2')
+                    .set('if-match', etagBA2)
+                    .send(companyBA3)
                     .expect(204, '')
             })
 
@@ -270,14 +288,18 @@ describe('/companies/ HTTP integration Tests', function () {
                     .get('/companies/2')
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
-                    .expect(200, { "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyBA3)) }, "data": companyBA3 })
+                    .expect(200, companyBA3)
+                expect(response.headers['location']).toEqual('/companies/2')
+                expect(response.headers['if-match']).toEqual(etagBA3)
             })
 
             it('PUT: remove www from existing company succeeds', async () => {
                 const response = await request(app)
                     .put('/companies/2')
                     .set('Accept', 'application/json')
-                    .send({ "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyBA3)) }, "data": companyBA2 })
+                    .set('location', '/companytypes/2')
+                    .set('if-match', etagBA3)
+                    .send(companyBA2)
                     .expect(204, '')
             })
 
@@ -286,15 +308,20 @@ describe('/companies/ HTTP integration Tests', function () {
                     .get('/companies/2')
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
-                    .expect(200, { "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyBA2)) }, "data": companyBA2 })
+                    .expect(200, companyBA2)
+                expect(response.headers['location']).toEqual('/companies/2')
+                expect(response.headers['if-match']).toEqual(etagBA2)
             })
 
             it('PUT: remove abbr from existing company succeeds', async () => {
                 const response = await request(app)
                     .put('/companies/2')
                     .set('Accept', 'application/json')
-                    .send({ "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyBA2)) }, "data": companyBA })
+                    .set('location', '/companytypes/2')
+                    .set('if-match', etagBA2)
+                    .send(companyBA)
                     .expect(204, '')
+
             })
 
             it('Get existing company succeeds after abbr removed', async () => {
@@ -302,24 +329,30 @@ describe('/companies/ HTTP integration Tests', function () {
                     .get('/companies/2')
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
-                    .expect(200, { "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyBA)) }, "data": companyBA })
+                    .expect(200, companyBA)
+                expect(response.headers['location']).toEqual('/companies/2')
+                expect(response.headers['if-match']).toEqual(etagBA)
             })
 
             it('Put company on changed dataset fails with error 412', async () => {
                 const response = await request(app)
                     .put('/companies/2')
                     .set('Accept', 'application/json')
-                    .send({ "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyBA3)) }, "data": companyBA2 })
+                    .set('location', '/companytypes/2')
+                    .set('if-match', etagBA3)
+                    .send(companyBA2)
                     .expect(412)
-                    expect(response.body.status).toBe(412)
-                    expect(response.body.message).toMatch("Precondition failed")
+                expect(response.body.status).toBe(412)
+                expect(response.body.message).toMatch("Precondition failed")
             })
 
             it('PUT: remove name form existing company fails', async () => {
                 const response = await request(app)
                     .put('/companies/2')
                     .set('Accept', 'application/json')
-                    .send({ "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyBA)) }, "data": {} })
+                    .set('location', '/companytypes/2')
+                    .set('if-match', etagBA)
+                    .send({})
                     .expect(400)
                 expect(response.body.status).toBe(400)
                 expect(response.body.message).toMatch("must have required property 'name'")
@@ -331,7 +364,9 @@ describe('/companies/ HTTP integration Tests', function () {
                     .get('/companies/2')
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
-                    .expect(200, { "meta": {"location": "/companies/2", "etag": sha256(JSON.stringify(companyBA)) }, "data": companyBA})
+                    .expect(200, companyBA)
+                    expect(response.headers['location']).toEqual('/companies/2')
+                    expect(response.headers['if-match']).toEqual(etagBA)
             })
         })
 

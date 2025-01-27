@@ -17,12 +17,16 @@ describe('Companytype Unit Tests', function () {
             await expect(getAllCompanytypes()).resolves.toHaveLength(0)
         })
 
-        it('addCompanytype works with and returns 1', async () => {
-            await expect(addCompanytype({ name: "Kunde" })).resolves.toBe(1)
+        it('addCompanytype works and returns 1', async () => {
+            await expect(addCompanytype({ name: "Kunde" })).resolves.toEqual(
+                expect.any(Companytype) && expect.objectContaining({dataValues: { "id": 1, "name": "Kunde", updatedAt: expect.any(Date), createdAt: expect.any(Date) }})
+            )
         })
 
         it('add second companytype with addCompanytype succeeds and returns 2', async () => {
-            await expect(addCompanytype({ name: "Lieferant" })).resolves.toBe(2)
+            await expect(addCompanytype({ name: "Lieferant" })).resolves.toEqual(
+                expect.any(Companytype) && expect.objectContaining({dataValues: { "id": 2, "name": "Lieferant", updatedAt: expect.any(Date), createdAt: expect.any(Date) }}) 
+            )
         })
 
         it('getAllCompanytypes returns 1 und 2 with names', async () => {

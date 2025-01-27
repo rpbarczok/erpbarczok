@@ -2,16 +2,20 @@ import { getCompanytypeById, deleteCompanytypeById, putCompanytypeById } from '.
 import { error_formatter, NotFoundError } from "../../services/error.js"
 import type { Request, Response } from 'express'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
-import { CompanytypeApi } from './index.js'
-import { normalize_companytype } from './index.js'
-import { Meta } from '../../app.js'
+import { CompanytypeResponse, normalizeCompanytype, normalizeCompanytypeMetaHeader, normalizeCompanytypeMetaContent } from './index.js'
 import { sha256 } from '../../hasher.js'
+import { Operation } from '../../apiSpecAssembler.js'
+import { MetaHeader } from '../../app.js'
 
-export const GET = async (req: Request, res: Response) => {
+export const GET: Operation = async (req: Request, res: Response) => {
     try {
         const companytype = await getCompanytypeById(Number(req.params.id))
-        const companytypeApi: Meta<CompanytypeApi> = normalize_companytype(companytype)
-        res.status(200).json(companytypeApi)
+        const companytypeResponse: CompanytypeResponse = normalizeCompanytype(companytype)
+        const companytypeResponseMeta: MetaHeader = normalizeCompanytypeMetaHeader(companytype)
+        res
+            .status(200)
+            .set(companytypeResponseMeta)
+            .json(companytypeResponse)
     }
     catch (err) {
         if (err instanceof NotFoundError) res.status(404).json({ "status": 404, "message": "not found" })
@@ -19,8 +23,8 @@ export const GET = async (req: Request, res: Response) => {
     }
 }
 GET.apiSpec = {
-    "summary": "Get a certain company type",
-    "description": "GET request on a certain company type by id {id}",
+    "summary": "Get a certain companytype",
+    "description": "GET request on a certain companytype by id {id}",
     "tags": [
         "Companytype"
     ],
@@ -30,25 +34,27 @@ GET.apiSpec = {
             "content": {
                 "application/json": {
                     "schema": {
-                        "type": "object",
-                        "required": [
-                            "meta",
-                            "data"
-                        ],
-                        "additionalProperties": false,
-                        "properties": {
-                            "meta": {
-                                "$ref": "#/components/schemas/meta"
-                            },
-                            "data": {
-                                "$ref": "#/components/schemas/companytype"
-                            }
-                        }
+                        "$ref": "#/components/schemas/companytype"
+
                     },
                     "examples": {
                         "companytype": {
                             "$ref": "#/components/examples/companytype"
                         }
+                    }
+                }
+            },
+            "headers": {
+                "location": {
+                    "description": "Location of the requested companytype",
+                    "schema": {
+                        "$ref": "#/components/schemas/location"
+                    }
+                },
+                "if-match": {
+                    "description": "Etag of the requested companytype",
+                    "schema": {
+                        "$ref": "#/components/schemas/etag"
                     }
                 }
             }
@@ -62,7 +68,7 @@ GET.apiSpec = {
     }
 }
 
-export const DELETE = async (req: Request, res: Response) => {
+export const DELETE: Operation = async (req: Request, res: Response) => {
     try {
         await deleteCompanytypeById(Number(req.params.id))
         res.status(204).end()
@@ -91,14 +97,13 @@ DELETE.apiSpec = {
     }
 }
 
-export const PUT = async (req: Request, res: Response) => {
+export const PUT: Operation = async (req: Request, res: Response) => {
     try {
-        const dbData= await getCompanytypeById(Number(req.params.id))
-        const companytype = normalize_companytype(dbData)
-        const dbHash = sha256(JSON.stringify(companytype.data))
-        if (dbHash === req.body.meta.etag) {
+        const dbCompanytype = await getCompanytypeById(Number(req.params.id))
+        const dbCompanytypeMeta = normalizeCompanytypeMetaContent(dbCompanytype)
+        if (dbCompanytypeMeta.etag === req.headers['if-match']) {
             try {
-                await putCompanytypeById(Number(req.params.id), req.body.data)
+                await putCompanytypeById(Number(req.params.id), req.body)
                 res.status(204).end()
             }
             catch (err) {
@@ -114,6 +119,7 @@ export const PUT = async (req: Request, res: Response) => {
         else throw err
     }
 }
+
 PUT.apiSpec = {
     "summary": "Updates company type with id {id}",
     "description": "Put request on company type by id {id}",
@@ -121,28 +127,20 @@ PUT.apiSpec = {
         "Companytype"
     ],
     "requestBody": {
-        "description": "Add company type",
+        "description": "Add companytype",
         "content": {
             "application/json": {
                 "schema": {
-                    "type": "object",
-                    "required": [
-                        "meta",
-                        "data"
-                    ],
-                    "additionalProperties": false,
-                    "properties": {
-                        "meta": {
-                            "$ref": "#/components/schemas/meta"
-                        },
-                        "data": {
-                            "$ref": "#/components/schemas/companytype"
-                        }
-                    }
+                    "$ref": "#/components/schemas/companytype"
                 }
             }
         }
     },
+    "parameters": [
+        {
+            "$ref": "#/components/parameters/if-match"
+        }
+    ],
     "responses": {
         "204": {
             "$ref": "#/components/responses/204-success"

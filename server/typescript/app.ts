@@ -10,12 +10,18 @@ import loadControllers from './apiSpecAssembler.js'
 import initSequelize from './models/index.js'
 import path from 'path'
 
-export interface MetaData {
+export interface MetaContent {
     location: string
     etag: string
 }
+
+export interface MetaHeader {
+    location: string
+    "if-match": string
+}
+
 export interface Meta<T> {
-    meta: MetaData
+    meta: MetaContent
     data: T
 }
 
@@ -35,7 +41,7 @@ const startApp = async () => {
 
     // handle CORS
 
-    const corsOptions: CorsOptions = { "origin": false, exposedHeaders: "location" }
+    const corsOptions: CorsOptions = { "origin": false, exposedHeaders: ["location", "if-match"] }
     if (process.env.NODE_ENV != 'production') {
         corsOptions.origin = [
             "http://localhost:3000",

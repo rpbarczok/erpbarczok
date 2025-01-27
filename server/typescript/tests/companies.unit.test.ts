@@ -5,7 +5,7 @@ import sequelize from '../models/index.js'
 import { NotFoundError } from '../services/error.js'
 import { Company } from '../models/companies.js'
 
-describe('Company Tests', function () {
+describe('Company Unit Tests', function () {
     this.timeout(7000)
     before(async function () {
         await sequelize.sync({ force: true })
@@ -18,11 +18,15 @@ describe('Company Tests', function () {
         })
 
         it('addCompany works with name and abbr and returns /companies/1', async () => {
-            await expect(addCompany({ name: "Firma A", abbr: "FRA", www: "www.firmaa.com" })).resolves.toBe(1)
+            await expect(addCompany({ name: "Firma A", abbr: "FRA", www: "www.firmaa.com" })).resolves.toEqual(
+                expect.any(Company) && expect.objectContaining({ "id": 1, "name": "Firma A", "abbr": "FRA", "www": "www.firmaa.com", CompanytypeId: null, createdAt: expect.any(Date), updatedAt: expect.any(Date) })
+            )
         })
 
         it('addCompany works with name  and returns /companies/2', async () => {
-            await expect(addCompany({ name: "Firma B" })).resolves.toBe(2)
+            await expect(addCompany({ name: "Firma B" })).resolves.toEqual(
+                expect.any(Company) && expect.objectContaining({ "id": 2, "name": "Firma B", "abbr": null, "www": null, CompanytypeId: null, createdAt: expect.any(Date), updatedAt: expect.any(Date) })
+            )
         })
 
         it('getAllCompanies returns 1 und 2', async () => {
