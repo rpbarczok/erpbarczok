@@ -1,8 +1,9 @@
 import { Col, Row, Button, ButtonGroup, Form } from 'react-bootstrap'
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Company, Companytype } from './companies.jsx'
+import { Company, CompanyEdit, Companytype } from './companies.jsx'
 import { DataWithMeta } from '../../app.jsx'
+import { transformCompany, transformCompanyEdit } from './companies.jsx'
 
 interface EditCompaniesInterface {
     setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
@@ -12,7 +13,7 @@ interface EditCompaniesInterface {
 
 export default function EditCompanies({ setIsChanged, activeCompany, listCompanytypes }: EditCompaniesInterface) {
 
-    const [changeCompany, setChangeCompany] = useState<Company>(activeCompany.data)
+    const [changeCompany, setChangeCompany] = useState<CompanyEdit>(transformCompany(activeCompany.data))
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
@@ -57,9 +58,10 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
 
     const handleSubmitChange = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
+        const companySave = {"meta": activeCompany.meta, "data": transformCompanyEdit(changeCompany) }
         if (changeCompany.name !== "") {
             axios
-                .put(activeCompany.meta.location, changeCompany)
+                .put(activeCompany.meta.location, companySave)
                 .then((res) => {
                     setIsChanged(true)
                 })
@@ -70,10 +72,10 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
     }
 
     const Companytypes = () => {
-        const optionsdefault = [<option id="default" value="default">Rolle auswählen</option>]
+        const optionsdefault = [<option key="default" id="default" value="default">Rolle auswählen</option>]
         const options = listCompanytypes.map((role: DataWithMeta<Companytype>) => {
             return (
-                <option id={role.meta.location} value={role.data.name}>{role.data.name}</option>
+                <option key={role.meta.location} id={role.meta.location} value={role.data.name}>{role.data.name}</option>
             )
         })
         return optionsdefault.concat(options)
@@ -113,9 +115,9 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
                                 </Form.Group>
                             </Col>
                             <Col>
-                                <Form.Group>
+                                <Form.Group controlId="companyCompanytype">
                                     <Form.Label className="standardDesign">Firmenrolle</Form.Label>
-                                    <Form.Select className="standardDesign">
+                                    <Form.Select className="standardDesign" key="companyCompanytype">
                                         <Companytypes />
                                     </Form.Select>
                                 </Form.Group>

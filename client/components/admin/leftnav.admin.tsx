@@ -15,7 +15,7 @@ const LeftNavigation = ({setRessource}: LeftNavigationInterface) => {
 
     const result = ressourceList.map(ressource => {
         return (
-            <Button id={ressource.name} onClick={(e) => ressourceHandler (e, ressource) }>
+            <Button id={ressource.name} key={ressource.name} onClick={(e) => ressourceHandler (e, ressource) }>
                 {ressource.name}
             </Button>
         )

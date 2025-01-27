@@ -96,8 +96,6 @@ export const PUT = async (req: Request, res: Response) => {
         const dbData= await getCompanytypeById(Number(req.params.id))
         const companytype = normalize_companytype(dbData)
         const dbHash = sha256(JSON.stringify(companytype.data))
-        console.log(dbHash)
-        console.log(req.body.meta.etag)
         if (dbHash === req.body.meta.etag) {
             try {
                 await putCompanytypeById(Number(req.params.id), req.body.data)

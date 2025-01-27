@@ -9,7 +9,7 @@ const loggerSequelize = logger.extend('sequelize')
 const sequelizeLogger = (sql: any, stuff: any) => loggerSequelize(sql)
 
 if (!process.env.DB_NAME || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.DB_HOST) {
-    console.log('No database config found: ', process.env)
+    loggerSequelize('No database config found: ', process.env)
     process.exit(1)
 }
 
