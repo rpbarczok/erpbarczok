@@ -33,7 +33,8 @@ const AddCompanytypes = ({ setIsChanged }: AddCompanytypesInterface) => {
             <span>Neue Firmenrolle hinzufügen</span>
             <Button className="standardDesign" variant="outline-dark" onClick={() => setShow(true)}><Plus /></Button>
         </ListGroup.Item>
-        <InputCompanytypes show={show} setShow={setShow}
+        <InputCompanytypes title="Neue Firmenrolle hinzufügen" 
+            show={show} setShow={setShow}
             handleSubmit={handleSubmitNew}
             companytype={companytype} setCompanytype={setCompanytype} />
     </>

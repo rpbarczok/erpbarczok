@@ -14,7 +14,6 @@ interface TabsNavigationInterface {
 export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeForm }: TabsNavigationInterface) {
 
     const handleClose = (tab: FormTab) => {
-        console.log(tab)
         const index = tabs.indexOf(tab)
         if (tabs.length > 1) {
             const newTabs = tabs.filter((tab, i) => i !== index)
@@ -34,7 +33,6 @@ export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeFor
     }
 
     function handleDragStart(e: React.DragEvent<HTMLElement>) {
-        console.log(e.target)
         const id: string= (e.target as HTMLElement).id
         e.dataTransfer.setData("text", id)
     }

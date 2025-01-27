@@ -9,11 +9,8 @@ export interface Ressource {
     path: string
 }
 
-
-
 export default function Admin() {
     const [ressource, setRessource] = useState<Ressource>({name: "Firmenrolle", path: "companytypes"})
-
 
     const ActiveRessource = () => {
         switch (ressource.path) {
