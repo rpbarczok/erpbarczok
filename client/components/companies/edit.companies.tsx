@@ -12,7 +12,6 @@ interface EditCompaniesInterface {
 }
 
 export default function EditCompanies({ setIsChanged, activeCompany, listCompanytypes }: EditCompaniesInterface) {
-
     const [changeCompany, setChangeCompany] = useState<CompanyEdit>(transformCompany(activeCompany.data))
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -59,9 +58,12 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
     const handleSubmitChange = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         const companySave = {"meta": activeCompany.meta, "data": transformCompanyEdit(changeCompany) }
+        console.log(companySave)
         if (changeCompany.name !== "") {
             axios
-                .put(activeCompany.meta.location, companySave)
+                .put(activeCompany.meta.location, 
+                    companySave.data, 
+                    {headers: {"location": activeCompany.meta.location, "if-match": activeCompany.meta.etag}} )
                 .then((res) => {
                     setIsChanged(true)
                 })

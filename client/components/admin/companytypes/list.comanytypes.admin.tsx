@@ -1,6 +1,6 @@
 import { Companytype } from "components/companies/companies.jsx"
 import { DataWithMeta } from "app.jsx"
-import { Button, ButtonGroup, ListGroup } from "react-bootstrap"
+import { Button, ButtonGroup, Col, ListGroup } from "react-bootstrap"
 import { Pencil, Trash } from "react-bootstrap-icons"
 import { useState } from "react"
 import axios from "axios"
@@ -13,13 +13,13 @@ interface ListCompanytypesInterface {
 
 const ListCompanytypes = ({ listCompanytypes, setIsChanged }: ListCompanytypesInterface) => {
     const [show, setShow] = useState<boolean>(false) // to handle the modal
-    const [companytypeChange, setCompanytypeChange] = useState<Companytype>({name: ""})
+    const [companytypeChange, setCompanytypeChange] = useState<Companytype>({ name: "" })
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>, companytype: DataWithMeta<Companytype>) => {
         e.preventDefault()
         const userConfirmed = window.confirm("Willst du wirklich die Firmenrolle löschen?")
         if (userConfirmed) {
-            axios.delete(companytype.location)
+            axios.delete(companytype.meta.location)
                 .then((res) => {
                     setIsChanged(true)
                     setShow(false)
@@ -42,7 +42,10 @@ const ListCompanytypes = ({ listCompanytypes, setIsChanged }: ListCompanytypesIn
             e.preventDefault()
             if (companytypeChange.name !== "") {
                 axios
-                    .put(element.location, companytypeChange)
+                    .put(
+                        element.meta.location,
+                        companytypeChange,
+                        { 'headers': { 'location': element.meta.location, 'if-match': element.meta.etag } })
                     .then((res) => {
                         setIsChanged(true)
                         setShow(false)
@@ -55,14 +58,24 @@ const ListCompanytypes = ({ listCompanytypes, setIsChanged }: ListCompanytypesIn
 
         return (
             <>
-                <ListGroup.Item className="standardDesign lineWithButton" key={element.location}>
-                    <span>{element.data.name}</span>
-                    <ButtonGroup className="function-button standardDesign">
-                        <Button className="standardDesign" variant="outline-dark" onClick={(e) => handleEdit(e, element)}><Pencil /></Button>
-                        <Button className="standardDesign" variant="outline-dark" onClick={(e) => handleDelete(e, element)}><Trash /></Button>
-                    </ButtonGroup>
+                <ListGroup.Item className="standardDesign lineWithButton" key={element.meta.location}>
+                    <Col xs={6}>
+                        <span>{element.data.name}</span>
+                    </Col>
+                    <Col xs={6}>
+                        <ButtonGroup className="function-button standardDesign">
+                            <Button className="standardDesign" variant="outline-dark" onClick={(e) => handleEdit(e, element)}><Pencil /></Button>
+                            <Button className="standardDesign" variant="outline-dark" onClick={(e) => handleDelete(e, element)}><Trash /></Button>
+                        </ButtonGroup>
+                    </Col>
+                    <Col xs={0}>
+                        <InputCompanytypes
+                            title="Firmenrolle ändern"
+                            show={show} setShow={setShow}
+                            handleSubmit={handleSubmitEdit}
+                            companytype={companytypeChange} setCompanytype={setCompanytypeChange} />
+                    </Col>
                 </ListGroup.Item>
-                <InputCompanytypes show={show} setShow={setShow} handleSubmit={handleSubmitEdit} companytype={companytypeChange} setCompanytype={setCompanytypeChange} />
             </>
         )
     })

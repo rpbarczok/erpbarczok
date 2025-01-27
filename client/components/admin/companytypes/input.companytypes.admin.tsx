@@ -8,9 +8,10 @@ interface InputCompanytypesInterface {
     handleSubmit: MouseEventHandler
     companytype: Companytype
     setCompanytype: React.Dispatch<React.SetStateAction<Companytype>>
+    title: string
 }
 
-const InputCompanytypes = ({show, setShow, handleSubmit, companytype, setCompanytype}:InputCompanytypesInterface) => {
+const InputCompanytypes = ({show, setShow, handleSubmit, companytype, setCompanytype, title}:InputCompanytypesInterface) => {
 
     const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
@@ -23,7 +24,7 @@ const InputCompanytypes = ({show, setShow, handleSubmit, companytype, setCompany
     <Form>
         <Modal show={show} onHide={() => setShow(false)}>
             <Modal.Header closeButton>
-                <Modal.Title>Neue Firmenrolle hinzufügen</Modal.Title>
+                <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Row>
