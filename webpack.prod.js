@@ -1,13 +1,13 @@
 import { merge } from 'webpack-merge'
 import common from './webpack.common.js'
 import WorkboxPlugin from 'workbox-webpack-plugin'
-import CopyPlugin from 'copy-webpack-plugin'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 
 const config = merge(common, {
     mode: 'production',
     devtool: 'source-map',
     plugins: [
-        new CopyPlugin({
+        new CopyWebpackPlugin({
             patterns: [
                 {
                     // copy everything from src public to build destination directory
