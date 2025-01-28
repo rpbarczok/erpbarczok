@@ -1,3 +1,5 @@
+import '../../../style.css'
+import '../admin.css'
 import { Companytype } from "components/companies/companies.jsx"
 import { DataWithMeta } from "app.jsx"
 import { Button, ButtonGroup, Col, ListGroup } from "react-bootstrap"

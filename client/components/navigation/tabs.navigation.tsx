@@ -1,3 +1,5 @@
+import '../../style.css'
+import './navigation.css'
 import {Nav} from 'react-bootstrap'
 import {XLg} from 'react-bootstrap-icons'
 import React from 'react'

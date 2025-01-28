@@ -1,3 +1,5 @@
+import '../../style.css'
+import './admin.css'
 import { Ressource } from "./admin.jsx"
 
 const ressourceList: Ressource[] = [{

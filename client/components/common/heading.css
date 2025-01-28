@@ -1,0 +1,12 @@
+.stammForm {
+    background-color: lightcyan;
+}
+
+.adminForm {
+    background-color: lightcoral;
+}
+
+.heading {
+    border-radius: 25px 0 0 0;
+    padding: 10px 0 5px 10px;
+}

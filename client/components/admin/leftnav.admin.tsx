@@ -1,3 +1,5 @@
+import '../../style.css'
+import './admin.css'
 import ressourceList from './ressourcelist.jsx'
 import {Button} from 'react-bootstrap'
 import { Ressource } from './admin.jsx'

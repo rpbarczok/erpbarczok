@@ -1,3 +1,5 @@
+import '../../../style.css'
+import '../admin.css'
 import { Button, ListGroup } from "react-bootstrap"
 import { Plus } from "react-bootstrap-icons"
 import { useState, MouseEvent } from "react"

@@ -1,3 +1,5 @@
+import '../../style.css'
+import './companies.css'
 import { Col, Row } from 'react-bootstrap'
 import Heading from '../common/heading.jsx'
 import EditCompanies from './edit.companies.jsx'

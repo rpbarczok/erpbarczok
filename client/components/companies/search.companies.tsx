@@ -1,3 +1,5 @@
+import '../../style.css'
+import './companies.css'
 import React, { ChangeEvent } from "react"
 import {Form} from 'react-bootstrap'
 

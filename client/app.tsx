@@ -1,3 +1,4 @@
+import './style.css'
 import React, { useState } from "react"
 import { Container, Row } from 'react-bootstrap'
 import Companies from './components/companies/companies.jsx'

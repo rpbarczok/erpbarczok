@@ -1,3 +1,5 @@
+import '../../style.css'
+import './navigation.css'
 import {Row} from 'react-bootstrap'
 import RibbonNavigation from './ribbon.navigation.jsx'
 import TabsNavigation from './tabs.navigation.jsx'

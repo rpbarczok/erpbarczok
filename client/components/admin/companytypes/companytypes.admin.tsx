@@ -1,3 +1,5 @@
+import '../../../style.css'
+import '../admin.css'
 import { ListGroup, Row } from 'react-bootstrap'
 import { useState, useEffect } from 'react'
 import axios from 'axios'

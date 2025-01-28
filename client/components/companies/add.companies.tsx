@@ -1,3 +1,5 @@
+import '../../style.css'
+import './companies.css'
 import { Col, Row, Button, Form, Modal } from "react-bootstrap"
 import React, { ChangeEvent, MouseEvent, useState } from 'react'
 import axios from 'axios'

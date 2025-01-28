@@ -1,3 +1,5 @@
+import '../../style.css'
+import './companies.css'
 import { ListGroup } from 'react-bootstrap'
 import React, { useState, useEffect } from 'react'
 import { DataWithMeta } from '../../app.jsx'
