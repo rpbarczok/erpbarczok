@@ -82,7 +82,7 @@ export default function Companies() {
             axios.get(active)
                 .then(result => {
                     if (result.data) {
-                        const company = {"meta": {'location': result.headers.location, 'etag': result.headers['if-match']}, 'data': result.data}
+                        const company = {"meta": {'location': result.headers.location, 'etag': result.headers.etag}, 'data': result.data}
                         setActiveCompany(company)
                     }
                 })

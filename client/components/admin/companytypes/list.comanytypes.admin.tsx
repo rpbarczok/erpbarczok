@@ -32,13 +32,13 @@ const ListCompanytypes = ({ listCompanytypes, setIsChanged }: ListCompanytypesIn
         }
     }
 
-    const handleEdit = (e: React.MouseEvent<HTMLButtonElement>, companytype: DataWithMeta<Companytype>) => {
-        e.preventDefault()
-        setCompanytypeChange(companytype.data)
-        setShow(true)
-    }
-
     return listCompanytypes.map(element => {
+
+        const handleEdit = (e: React.MouseEvent<HTMLButtonElement>, companytype: DataWithMeta<Companytype>) => {
+            e.preventDefault()
+            setCompanytypeChange(companytype.data)
+            setShow(true)
+        }
 
         const handleSubmitEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
             e.preventDefault()
@@ -66,7 +66,7 @@ const ListCompanytypes = ({ listCompanytypes, setIsChanged }: ListCompanytypesIn
                     </Col>
                     <Col xs={6}>
                         <ButtonGroup className="function-button standardDesign">
-                            <Button className="standardDesign" variant="outline-dark" onClick={(e) => handleEdit(e, element)}><Pencil /></Button>
+                            <Button className="standardDesign" key={element.meta.location} variant="outline-dark" onClick={(e) => handleEdit(e, element)}><Pencil /></Button>
                             <Button className="standardDesign" variant="outline-dark" onClick={(e) => handleDelete(e, element)}><Trash /></Button>
                         </ButtonGroup>
                     </Col>
