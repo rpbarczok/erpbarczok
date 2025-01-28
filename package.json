@@ -8,20 +8,15 @@
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "dotenvx run -f .env -- tsx server/typescript/start.ts",
     "client": "webpack serve --config webpack.dev.js",
-
     "buildclient": "webpack --config webpack.prod.js",
     "buildserver": "rm -fR server/ecmascript && tsc",
-    
     "starttestdb": "npm run stoptestdb ; docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",
     "stoptestdb": "docker kill testdb",
-    
     "ecmatest": "npx mocha --config mocha-ecmascript-rc.cjs",
     "tstest": "npx mocha --config mocha-typescript-rc.cjs",
     "test": "npm run starttestdb && npm run tstest && npm run stoptestdb",
-    
     "purebuild": "npm run buildclient && npm run buildserver && npm run ecmatest",
     "build": "npm run starttestdb && npm run purebuild && npm run stoptestdb",
-    
     "dockerbuild": "npm run starttestdb && docker buildx build -t erpbarczok:latest --network host . && npm run stoptestdb",
     "docker": "docker compose up"
   },
@@ -56,6 +51,7 @@
     "axios": "^1.7.9",
     "babel-loader": "^9.2.1",
     "concurrently": "^9.1.2",
+    "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^7.1.2",
     "expect": "^29.7.0",
     "express": "^4.21.2",
