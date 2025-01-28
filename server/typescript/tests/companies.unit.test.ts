@@ -121,6 +121,7 @@ describe('Company Unit Tests', function () {
             await expect(putCompanyById(17, { "name": "Firma D", "abbr": "FRD" })).rejects.toBeInstanceOf(NotFoundError)
         })
     })
+    
     describe('Test DeleteCompanyById', function () {
 
         it('deleteCompanyById resolves', async () => {

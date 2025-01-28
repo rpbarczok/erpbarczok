@@ -36,7 +36,7 @@ const startApp = async () => {
 
     // handle CORS
 
-    const corsOptions: CorsOptions = { "origin": false, exposedHeaders: ["location", "if-match"] }
+    const corsOptions: CorsOptions = { "origin": false, exposedHeaders: ["location", "if-match", "etag"] }
     if (process.env.NODE_ENV != 'production') {
         corsOptions.origin = [
             "http://localhost:3000",
@@ -87,7 +87,6 @@ const startApp = async () => {
         }
         )
     )
-
     // add API error handler
     app.set("json spaces", 2)
     app.use((err: any, req: Request, res: Response, next: NextFunction) => {

@@ -1,0 +1,11 @@
+{
+    "name": "Panda2",
+    "start_url": "/",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "./panda.png",
+            "sizes": "512x512"
+        }
+    ]
+}
