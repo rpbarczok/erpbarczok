@@ -51,7 +51,6 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, li
 
     const handleSubmitNew = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        console.log(company)
         if (company.name !== "") {
             axios
                 .post(`/companies/`, company)

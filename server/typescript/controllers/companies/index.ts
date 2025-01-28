@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 import { getAllCompanies, addCompany } from '../../services/companies.js'
-import { Meta, MetaContent, MetaHeader } from '../../app.js'
+import { Meta, MetaEtag} from '../../app.js'
 import { Company } from '../../models/companies.js'
 import { sha256 } from '../../hasher.js'
 import { Operation } from '../../apiSpecAssembler.js'
@@ -22,25 +22,20 @@ export function normalizeCompany(company: Company) {
     return result
 }
 
-export function normalizeCompanyMetaData(company: Company): Meta<CompanyResponse> {
+export function normalizeCompanyMeta(company: Company): Meta<CompanyResponse> {
     const data: CompanyResponse = normalizeCompany(company)
-    const meta: MetaContent = normalizeCompanyMetaContent(company)
+    const meta: MetaEtag = normalizeCompanyLocationEtag(company)
     return { meta: meta, data: data }
 }
 
-export function normalizeCompanyMetaHeader(company: Company): MetaHeader {
-    const companyResponse: CompanyResponse = normalizeCompany(company)
-    return { "location": "/companies/" + company.id, "if-match": sha256(JSON.stringify(companyResponse)) }
-}
-
-export function normalizeCompanyMetaContent(company: Company): MetaContent {
+export function normalizeCompanyLocationEtag(company: Company): MetaEtag {
     const companyResponse: CompanyResponse = normalizeCompany(company)
     return { "location": "/companies/" + company.id, "etag": sha256(JSON.stringify(companyResponse)) }
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const allCompanies = await getAllCompanies()
-    const allCompaniesResponse: Meta<CompanyResponse>[] = allCompanies.map((row) => (normalizeCompanyMetaData(row)))
+    const allCompaniesResponse: Meta<CompanyResponse>[] = allCompanies.map((row) => (normalizeCompanyMeta(row)))
     res
         .status(200)
         .json(allCompaniesResponse)
@@ -122,8 +117,8 @@ GET.apiSpec = {
 }
 
 export const POST: Operation = async (req: Request, res: Response) => {
-    res.status(201)
-        .set(normalizeCompanyMetaHeader(await addCompany(req.body)))
+    res.status(204)
+        .set(normalizeCompanyLocationEtag(await addCompany(req.body)))
         .end()
 }
 POST.apiSpec = {
@@ -144,21 +139,7 @@ POST.apiSpec = {
     },
     "responses": {
         "201": {
-            "description": "Successfull operation",
-            "headers": {
-                "location": {
-                    "description": "Relative URI of the new company",
-                    "schema": {
-                        "$ref": "#/components/schemas/location"
-                    }
-                },
-                "if-match": {
-                    "description": "Etag of the new company",
-                    "schema": {
-                        "$ref": "#/components/schemas/etag"
-                    }
-                }
-            }
+            "$ref": "#/components/responses/201"
         },
         "400": {
             "$ref": "#/components/responses/400-validation-error"

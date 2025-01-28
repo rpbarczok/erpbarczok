@@ -9,20 +9,14 @@ import baseLogger from './logger.js'
 import loadControllers from './apiSpecAssembler.js'
 import initSequelize from './models/index.js'
 import path from 'path'
-import { error_formatter } from './services/error.js'
 
-export interface MetaContent {
+export interface MetaEtag {
     location: string
     etag: string
 }
 
-export interface MetaHeader {
-    location: string
-    "if-match": string
-}
-
 export interface Meta<T> {
-    meta: MetaContent
+    meta: MetaEtag
     data: T
 }
 

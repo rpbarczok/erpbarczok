@@ -54,14 +54,14 @@ export const deleteCompanytypeById = (id:number) => new Promise<void>(async (res
         reject(error_formatter(500, err))
     }
 })
-export const putCompanytypeById = (id: number, body: CompanytypeResponse) => new Promise<void>(async (resolve, reject) => {
+export const putCompanytypeById = (id: number, body: CompanytypeResponse) => new Promise<Companytype>(async (resolve, reject) => {
     try {
         const companytype = await Companytype.findByPk(id)
         if (companytype === null) {
             reject(new NotFoundError())
         } else {
-            await companytype.update(body)
-            resolve()
+            const updatedCompanytpye = await companytype.update(body)
+            resolve(updatedCompanytpye)
         }
     }
     catch (err) {

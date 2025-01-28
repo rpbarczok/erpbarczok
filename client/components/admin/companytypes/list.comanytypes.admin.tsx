@@ -25,7 +25,7 @@ const ListCompanytypes = ({ listCompanytypes, setIsChanged }: ListCompanytypesIn
                     setShow(false)
                 })
                 .catch(function (error) {
-                    console.log(error)
+                    throw error
                 })
         }
     }
@@ -51,7 +51,7 @@ const ListCompanytypes = ({ listCompanytypes, setIsChanged }: ListCompanytypesIn
                         setShow(false)
                     })
                     .catch(function (error) {
-                        console.log(error)
+                        throw error
                     })
             }
         }

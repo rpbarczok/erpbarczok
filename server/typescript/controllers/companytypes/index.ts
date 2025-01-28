@@ -1,5 +1,4 @@
-import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
-import { Meta, MetaContent, MetaHeader } from '../../app.js'
+import { Meta, MetaEtag } from '../../app.js'
 import { sha256 } from '../../hasher.js'
 import { Companytype } from '../../models/companytypes.js'
 import { getAllCompanytypes, addCompanytype } from '../../services/companytypes.js'
@@ -15,29 +14,25 @@ export function normalizeCompanytype(companytype: Companytype): CompanytypeRespo
     return result
 }
 
-export function normalizeCompanytypeMetaContent(companytype: Companytype): MetaContent {
+export function normalizeCompanytypeLocationEtag(companytype: Companytype): MetaEtag {
     const companytypeResponse: CompanytypeResponse = normalizeCompanytype(companytype)
     return { "location": "/companytypes/" + companytype.id, "etag": sha256(JSON.stringify(companytypeResponse)) }
 }
 
-export function normalizeCompanytypeMetaHeader(companytype: Companytype): MetaHeader {
-    const companytypeResponse: CompanytypeResponse = normalizeCompanytype(companytype)
-    return { "location": "/companytypes/" + companytype.id, "if-match": sha256(JSON.stringify(companytypeResponse)) }
-}
-
-export function normalizeCompanytypeMetaData(companytype: Companytype): Meta<CompanytypeResponse> {
+export function normalizeCompanytypeMeta(companytype: Companytype): Meta<CompanytypeResponse> {
     const data: CompanytypeResponse = normalizeCompanytype(companytype)
-    const meta = normalizeCompanytypeMetaContent(companytype)
+    const meta = normalizeCompanytypeLocationEtag(companytype)
     return { meta: meta, data: data }
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const allCompanytypes = await getAllCompanytypes()
-    const allCompanytypeResponse: Meta<CompanytypeResponse>[] = allCompanytypes.map(row => normalizeCompanytypeMetaData(row))
+    const allCompanytypeResponse: Meta<CompanytypeResponse>[] = allCompanytypes.map(row => normalizeCompanytypeMeta(row))
     res
     .status(200)
     .json(allCompanytypeResponse)
 }
+
 GET.apiSpec = {
     "summary": "Get a list of all company types",
     "description": "GET request on all companies",
@@ -72,19 +67,28 @@ GET.apiSpec = {
                         "example-of-three-companytypes": {
                             "value": [
                                 {
-                                    "location": "/companytypes/1",
+                                    "meta": {
+                                        "location": "/companytypes/1",
+                                        "etag": "656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
+                                    },
                                     "data": {
                                         "name": "Kunde"
                                     }
                                 },
                                 {
-                                    "location": "/companytypes/2",
+                                    "meta": {
+                                        "location": "/companytypes/2",
+                                        "etag": "656da9646b5a65673e5a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
+                                    },
                                     "data": {
                                         "name": "Interessent"
                                     }
                                 },
                                 {
-                                    "location": "/companytypes/3",
+                                    "meta": {
+                                        "location": "/companytypes/3",
+                                        "etag": "656da9646b5a65673e4a1f504ac3d44262e2da0d939413619ef0fd33850f818a"
+                                    },
                                     "data": {
                                         "name": "Spediteur"
                                     }
@@ -108,7 +112,7 @@ GET.apiSpec = {
 }
 export const POST:Operation = async (req: Request, res: Response) => {
     const newCompanytype = await addCompanytype(req.body)
-    const newCompanytypeMeta = normalizeCompanytypeMetaHeader(newCompanytype)
+    const newCompanytypeMeta = normalizeCompanytypeLocationEtag(newCompanytype)
     res
         .status(201)
         .set(newCompanytypeMeta)
@@ -132,21 +136,7 @@ POST.apiSpec = {
     },
     "responses": {
         "201": {
-            "description": "Successfull operation",
-            "headers": {
-                "location": {
-                    "description": "Relative URI of the new company type",
-                    "schema": {
-                        "$ref": "#/components/schemas/location"
-                    }
-                },
-                "if-match": {
-                    "description": "Etag of the new company",
-                    "schema": {
-                        "$ref": "#/components/schemas/etag"
-                    }
-                }
-            }
+            "$ref": "#/components/responses/201"
         },
         "400": {
             "$ref": "#/components/responses/400-validation-error"

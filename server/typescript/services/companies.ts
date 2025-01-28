@@ -62,14 +62,14 @@ export const deleteCompanyById = (id: number) => new Promise<void>(async (resolv
         reject(error_formatter(500, err))
     }
 })
-export const putCompanyById = (id: number, body: CompanyResponse) => new Promise<void>(async (resolve, reject) => {
+export const putCompanyById = (id: number, body: CompanyResponse) => new Promise<Company>(async (resolve, reject) => {
     try {
         const company = await Company.findByPk(id)
         if (company === null) {
             reject(new NotFoundError())
         } else {
-            await company.update(update_company(body))
-            resolve()
+            const updatedCompany = await company.update(update_company(body))
+            resolve(updatedCompany)
         }
     }
     catch (err) {

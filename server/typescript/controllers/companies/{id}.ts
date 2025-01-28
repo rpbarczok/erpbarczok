@@ -2,24 +2,26 @@ import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { getCompanyById, deleteCompanyById, putCompanyById } from '../../services/companies.js'
 import { NotFoundError, error_formatter } from "../../services/error.js"
 import type { Request, Response } from 'express'
-import { sha256 } from '../../hasher.js'
-import { CompanyResponse, normalizeCompany, normalizeCompanyMetaHeader, normalizeCompanyMetaData, normalizeCompanyMetaContent } from './index.js'
+import { CompanyResponse, normalizeCompany, normalizeCompanyLocationEtag } from './index.js'
 import { Operation } from '../../apiSpecAssembler.js'
-import { MetaHeader } from '../../app.js'
+import { MetaEtag } from '../../app.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
     try {
         const company = await getCompanyById(Number(req.params.id))
         const companyResponse: CompanyResponse = normalizeCompany(company)
-        const companyResponseMeta: MetaHeader = normalizeCompanyMetaHeader(company)
+        const companyResponseMeta: MetaEtag = normalizeCompanyLocationEtag(company)
         res
             .status(200)
             .set(companyResponseMeta)
             .json(companyResponse)
     }
     catch (err) {
-        if (err instanceof NotFoundError) res.status(404).json({ "status": 404, "message": "not found" })
-        else throw err
+        if (err instanceof NotFoundError) {
+            res.status(404).json({ "status": 404, "message": "not found" })
+        } else {
+            throw err
+        }
     }
 }
 
@@ -52,7 +54,7 @@ GET.apiSpec = {
                         "$ref": "#/components/schemas/location"
                     }
                 },
-                "if-match": {
+                "etag": {
                     "description": "Etag of the requested company",
                     "schema": {
                         "$ref": "#/components/schemas/etag"
@@ -77,8 +79,14 @@ export const DELETE: Operation = async (req: Request, res: Response) => {
             .end()
     }
     catch (err) {
-        if (err instanceof NotFoundError) res.status(404).json({ status: 404, message: "not found" })
-        else throw err
+        if (err instanceof NotFoundError) {
+            res
+                .status(404)
+                .json({ status: 404, message: "not found" })
+        }
+        else {
+            throw err
+        }
     }
 }
 DELETE.apiSpec = {
@@ -103,24 +111,35 @@ DELETE.apiSpec = {
 export const PUT: Operation = async (req: Request, res: Response) => {
     try {
         const dbCompany = await getCompanyById(Number(req.params.id))
-        const dbCompanyMeta = normalizeCompanyMetaContent(dbCompany)
+        const dbCompanyMeta = normalizeCompanyLocationEtag(dbCompany)
         if (dbCompanyMeta.etag === req.headers['if-match']) {
             try {
-                await putCompanyById(Number(req.params.id), req.body)
+                const updatedCompany = await putCompanyById(Number(req.params.id), req.body)
+                const companyHeader = normalizeCompanyLocationEtag(updatedCompany)
                 res.status(204)
+                    .set(companyHeader)
                     .end()
             }
             catch (err) {
-                res.status(500).json(error_formatter(500, err))
+                res
+                    .status(500)
+                    .json(error_formatter(500, err))
             }
         }
         else {
-            res.status(412).json({ status: 412, message: "Precondition failed" })
+            res
+                .status(412)
+                .json({ status: 412, message: "Precondition failed" })
         }
     }
     catch (err) {
-        if (err instanceof NotFoundError) res.status(404).json({ status: 404, message: "not found" })
-        else throw err
+        if (err instanceof NotFoundError) {
+            res
+                .status(404)
+                .json({ status: 404, message: "not found" })
+        } else {
+            throw err
+        }
     }
 }
 PUT.apiSpec = {
@@ -146,7 +165,7 @@ PUT.apiSpec = {
     ],
     "responses": {
         "204": {
-            "$ref": "#/components/responses/204-success"
+            "$ref": "#/components/responses/204-updated"
         },
         "400": {
             "$ref": "#/components/responses/400-validation-error"

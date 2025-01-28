@@ -45,11 +45,54 @@
                 "schema": {
                     "$ref": "#/components/schemas/etag"
                 }
+            },
+            "etag": {
+                "name": "etag",
+                "in": "header",
+                "description": "etag of the dataset",
+                "required": true,
+                "schema": {
+                    "$ref": "#/components/schemas/etag"
+                }
             }
         },
         "responses": {
+            "201": {
+                "description": "Successfull operation",
+                "headers": {
+                    "location": {
+                        "description": "Relative URI of the new entity",
+                        "schema": {
+                            "$ref": "#/components/schemas/location"
+                        }
+                    },
+                    "etag": {
+                        "description": "Etag of the new entity",
+                        "schema": {
+                            "$ref": "#/components/schemas/etag"
+                        }
+                    }
+                }
+            },
+            "204-updated": {
+                "description": "Successfull operation",
+                "headers": {
+                    "location": {
+                        "description": "Relative URI of the updated entity",
+                        "schema": {
+                            "$ref": "#/components/schemas/location"
+                        }
+                    },
+                    "etag": {
+                        "description": "Etag of the updated entity",
+                        "schema": {
+                            "$ref": "#/components/schemas/etag"
+                        }
+                    }
+                }
+            },
             "204-success": {
-                "description": "Successfull operation, no further content"
+                "description": "Successfull operation"
             },
             "400-validation-error": {
                 "description": "Bad request",
@@ -210,7 +253,7 @@
             "error412": {
                 "value": {
                     "status": 412,
-                    "message": "precondition failed"
+                    "message": "Precondition failed"
                 }
             }
         }

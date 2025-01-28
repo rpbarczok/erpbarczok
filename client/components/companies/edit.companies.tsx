@@ -23,7 +23,7 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
                     setIsChanged(true)
                 })
                 .catch(function (error) {
-                    console.log(error)
+                    throw error
                 })
         }
     }
@@ -57,18 +57,17 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
 
     const handleSubmitChange = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        const companySave = {"meta": activeCompany.meta, "data": transformCompanyEdit(changeCompany) }
-        console.log(companySave)
+        const companySave = { "meta": activeCompany.meta, "data": transformCompanyEdit(changeCompany) }
         if (changeCompany.name !== "") {
             axios
-                .put(activeCompany.meta.location, 
-                    companySave.data, 
-                    {headers: {"location": activeCompany.meta.location, "if-match": activeCompany.meta.etag}} )
+                .put(activeCompany.meta.location,
+                    companySave.data,
+                    { headers: { "location": activeCompany.meta.location, "if-match": activeCompany.meta.etag } })
                 .then((res) => {
                     setIsChanged(true)
                 })
                 .catch(function (error) {
-                    console.log(error)
+                    throw error
                 })
         }
     }

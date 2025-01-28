@@ -7,10 +7,10 @@ import { Companytype } from '../models/companytypes.js'
 
 
 describe('Companytype Unit Tests', function () {
-    this.timeout(7000)
+    this.timeout(5000)
     before(async function () {
         await sequelize.sync({ force: true })
-    });
+    })
 
     describe('test getAllCompanytyps / addCompanytype', function () {
          it('should return [] for a fresh and empty DB', async () => {
@@ -51,7 +51,9 @@ describe('Companytype Unit Tests', function () {
 
     describe('Test putCompanytypeById(id)', function () {
         it('putCompanytypeById(1) change name to "Spediteur"', async () => {
-            await expect(putCompanytypeById(1, { "name": "Spediteur" })).resolves.toBeUndefined()
+            await expect(putCompanytypeById(1, { "name": "Spediteur" })).resolves.toEqual(
+                expect.any(Companytype) && expect.objectContaining({dataValues: { "id": 1, "name": "Spediteur", updatedAt: expect.any(Date), createdAt: expect.any(Date) }})
+            )
         })
 
         it('getCompanyById(1) returns {"id": 1, "name": "Spediteur"} after Name Change', async () => {
@@ -62,7 +64,9 @@ describe('Companytype Unit Tests', function () {
 
         it('putCompanytypeId(1) remove name returns error', async () => {
             // @ts-ignore:next-line
-            await expect(putCompanytypeById(1, {})).resolves.toBeUndefined()
+            await expect(putCompanytypeById(1, {})).resolves.toEqual(
+                expect.any(Companytype) && expect.objectContaining({dataValues: { "id": 1, "name": "Spediteur", updatedAt: expect.any(Date), createdAt: expect.any(Date) }})
+            )
         })
 
         it('getCompanytypeById(1) returns {"id": 1, "name": "Spediteur"}', async () => {
@@ -75,6 +79,7 @@ describe('Companytype Unit Tests', function () {
             await expect(putCompanytypeById(17, { "name": "Sonstiges" })).rejects.toBeInstanceOf(NotFoundError)
         })
     })
+
     describe('Test DeleteCompanytypeById', function () {
         it('deleteCompanytypeById resolves', async () => {
             await expect(deleteCompanytypeById(1)).resolves.toBeUndefined
@@ -89,5 +94,5 @@ describe('Companytype Unit Tests', function () {
                 expect.any(Companytype) && expect.objectContaining({dataValues: { "id": 2, "name": "Lieferant", updatedAt: expect.any(Date), createdAt: expect.any(Date) }})
             ])
         })
-    }) 
+    })
 })

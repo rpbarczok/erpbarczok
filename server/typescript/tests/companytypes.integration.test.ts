@@ -4,7 +4,6 @@ import startingApp from '../app.js'
 import sequelize from '../models/index.js'
 import { expect } from 'expect'
 import { App } from 'supertest/types.js'
-import { Companytype } from '../models/companytypes.js'
 import { sha256 } from '../hasher.js'
 
 
@@ -16,7 +15,7 @@ const etagB = sha256(JSON.stringify(companytypeB))
 const etagC = sha256(JSON.stringify(companytypeC))
 
 describe('/companytypes/ HTTP integration Tests', function () {
-    this.timeout(7000)
+    this.timeout(5000)
     let app: App
 
     before(async function () {
@@ -45,7 +44,7 @@ describe('/companytypes/ HTTP integration Tests', function () {
                 .expect(201, '')
                 .expect("location", "/companytypes/1")
             expect(response.headers["location"]).toEqual("/companytypes/1")
-            expect(response.headers["if-match"]).toEqual(sha256(JSON.stringify(companytypeA)))
+            expect(response.headers["etag"]).toEqual(sha256(JSON.stringify(companytypeA)))
         })
 
         it('Post /companytypes with name', async () => {
@@ -56,7 +55,7 @@ describe('/companytypes/ HTTP integration Tests', function () {
                 .expect(201, '')
                 .expect("location", "/companytypes/2")
             expect(response.headers["location"]).toEqual("/companytypes/2")
-            expect(response.headers["if-match"]).toEqual(sha256(JSON.stringify(companytypeB)))
+            expect(response.headers["etag"]).toEqual(sha256(JSON.stringify(companytypeB)))
         })
 
         it('Post /companytypes without name fails', async () => {
@@ -112,7 +111,6 @@ describe('/companytypes/ HTTP integration Tests', function () {
     })
 
     describe('GET /companytypes/{id}', function () {
-        this.timeout(7000)
 
         it('Get existing companytype succeeds', async () => {
             const response = await request(app)
@@ -121,7 +119,7 @@ describe('/companytypes/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(200, companytypeB)
             expect(response.headers['location']).toEqual("/companytypes/2")
-            expect(response.headers['if-match']).toEqual(etagB)
+            expect(response.headers['etag']).toEqual(etagB)
         })
 
         it('Get non existing companytype fails', async () => {
@@ -167,17 +165,19 @@ describe('/companytypes/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(200, companytypeB)
             expect(response.headers["location"]).toEqual("/companytypes/2")
-            expect(response.headers["if-match"]).toEqual(etagB)
+            expect(response.headers["etag"]).toEqual(etagB)
         })
 
         it('Change name of existing companytype', async () => {
-            await request(app)
+            const response = await request(app)
                 .put('/companytypes/2')
                 .set('Accept', 'application/json')
                 .set('location', '/companytypes/2')
                 .set('if-match', etagB)
                 .send(companytypeC)
                 .expect(204, '')
+            expect(response.headers['location']).toEqual('/companytypes/2')
+            expect(response.headers['etag']).toEqual(etagC)
         })
 
         it('Get existing companytype succeeds after Name Change', async () => {
@@ -187,72 +187,72 @@ describe('/companytypes/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(200, companytypeC)
             expect(response.headers['location']).toBe('/companytypes/2')
-            expect(response.headers['if-match']).toBe(etagC)
+            expect(response.headers['etag']).toBe(etagC)
         })
 
-            it('Put companytypes on changed dataset fails with error 412', async () => {
+        it('Put companytypes on changed dataset fails with error 412', async () => {
+            const response = await request(app)
+                .put('/companytypes/2')
+                .set('Accept', 'application/json')
+                .set('location', '/companytypes/2')
+                .set('if-match', etagA)
+                .send(companytypeC)
+                .expect(412)
+            expect(response.body.status).toBe(412)
+            expect(response.body.message).toMatch("Precondition failed")
+        })
+
+        describe('DELETE /companytypes/{id}', function () {
+            it('Deleting existing companytypes succeeds', async () => {
                 const response = await request(app)
-                    .put('/companytypes/2')
+                    .delete('/companytypes/1')
                     .set('Accept', 'application/json')
-                    .set('location', '/companytypes/2')
-                    .set('if-match', etagA)
-                    .send(companytypeC)
-                    .expect(412)
-                expect(response.body.status).toBe(412)
-                expect(response.body.message).toMatch("Precondition failed")
+                    .expect(204, '')
             })
 
-            describe('DELETE /companytypes/{id}', function () {
-                it('Deleting existing companytypes succeeds', async () => {
-                    const response = await request(app)
-                        .delete('/companytypes/1')
-                        .set('Accept', 'application/json')
-                        .expect(204, '')
-                })
+            it('Deleting nonexisting companytype fails', async () => {
+                const response = await request(app)
+                    .delete('/companytypes/1')
+                    .set('Accept', 'application/json')
+                    .expect('Content-Type', /json/)
+                    .expect(404)
+                expect(response.body.status).toBe(404)
+                expect(response.body.message).toBe("not found")
+                expect(response.body.errors).toBeNull
+            })
 
-                it('Deleting nonexisting companytype fails', async () => {
-                    const response = await request(app)
-                        .delete('/companytypes/1')
-                        .set('Accept', 'application/json')
-                        .expect('Content-Type', /json/)
-                        .expect(404)
-                    expect(response.body.status).toBe(404)
-                    expect(response.body.message).toBe("not found")
-                    expect(response.body.errors).toBeNull
-                })
+            it('Deleting companytype with negative id fails', async () => {
+                const response = await request(app)
+                    .delete('/companytypes/-1')
+                    .set('Accept', 'application/json')
+                    .expect('Content-Type', /json/)
+                    .expect(400)
+                expect(response.body.status).toBe(400)
+                expect(response.body.message).toMatch("must be >= 1")
+                expect(response.body.errors).toBeInstanceOf(Array)
+            })
 
-                it('Deleting companytype with negative id fails', async () => {
-                    const response = await request(app)
-                        .delete('/companytypes/-1')
-                        .set('Accept', 'application/json')
-                        .expect('Content-Type', /json/)
-                        .expect(400)
-                    expect(response.body.status).toBe(400)
-                    expect(response.body.message).toMatch("must be >= 1")
-                    expect(response.body.errors).toBeInstanceOf(Array)
-                })
+            it('Deleting companytype with id 0 fails', async () => {
+                const response = await request(app)
+                    .delete('/companytypes/0')
+                    .set('Accept', 'application/json')
+                    .expect('Content-Type', /json/)
+                    .expect(400)
+                expect(response.body.status).toBe(400)
+                expect(response.body.message).toMatch("must be >= 1")
+                expect(response.body.errors).toBeInstanceOf(Array)
+            })
 
-                it('Deleting companytype with id 0 fails', async () => {
-                    const response = await request(app)
-                        .delete('/companytypes/0')
-                        .set('Accept', 'application/json')
-                        .expect('Content-Type', /json/)
-                        .expect(400)
-                    expect(response.body.status).toBe(400)
-                    expect(response.body.message).toMatch("must be >= 1")
-                    expect(response.body.errors).toBeInstanceOf(Array)
-                })
-
-                it('Deleting companytype strange id fails', async () => {
-                    const response = await request(app)
-                        .delete('/companytypes/foo')
-                        .set('Accept', 'application/json')
-                        .expect('Content-Type', /json/)
-                        .expect(400)
-                    expect(response.body.status).toBe(400)
-                    expect(response.body.message).toMatch("must be integer")
-                    expect(response.body.errors).toBeInstanceOf(Array)
-                })
+            it('Deleting companytype strange id fails', async () => {
+                const response = await request(app)
+                    .delete('/companytypes/foo')
+                    .set('Accept', 'application/json')
+                    .expect('Content-Type', /json/)
+                    .expect(400)
+                expect(response.body.status).toBe(400)
+                expect(response.body.message).toMatch("must be integer")
+                expect(response.body.errors).toBeInstanceOf(Array)
+            })
         })
     })
 })

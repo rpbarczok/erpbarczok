@@ -20,7 +20,7 @@ const companyBA3 = { "name": "Firma C", "abbr": "FRC", "www": "www.example.de" }
 const etagBA3 = sha256(JSON.stringify(companyBA3))
 
 describe('/companies/ HTTP integration Tests', function () {
-    this.timeout(7000)
+    this.timeout(5000)
     let app: App
 
     before(async function () {
@@ -29,7 +29,6 @@ describe('/companies/ HTTP integration Tests', function () {
     });
 
     describe('GET /companies/ and POST /companies/', function () {
-        this.timeout(7000)
 
         it('should succeed with 200 and return [] for a fresh and empty DB', async () => {
             const response = await request(app)
@@ -47,7 +46,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .post('/companies/')
                 .send(companyA)
                 .set('Accept', "application/json")
-                .expect(201, '')
+                .expect(204, '')
                 .expect("location", "/companies/1")
 
         })
@@ -57,7 +56,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .post('/companies/')
                 .send(companyB)
                 .set('Accept', "application/json")
-                .expect(201, '')
+                .expect(204, '')
                 .expect('location', '/companies/2')
         })
 
@@ -136,7 +135,6 @@ describe('/companies/ HTTP integration Tests', function () {
     })
 
     describe('GET /companies/{id}', function () {
-        this.timeout(7000)
 
         it('Get existing company succeeds', async () => {
             const response = await request(app)
@@ -145,7 +143,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(200, companyB)
             expect(response.headers['location']).toBe('/companies/2')
-            expect(response.headers['if-match']).toBe(etagB)
+            expect(response.headers['etag']).toBe(etagB)
         })
 
         it('Get non existing company fails', async () => {
@@ -221,7 +219,6 @@ describe('/companies/ HTTP integration Tests', function () {
     })
 
     describe('PUT /companies/{id}', function () {
-        this.timeout(7000)
 
         it('Get existing company succeeds', async () => {
             const response = await request(app)
@@ -230,196 +227,206 @@ describe('/companies/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(200, companyB)
             expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['if-match']).toEqual(etagB)
+            expect(response.headers['etag']).toEqual(etagB)
         })
 
         it('Change name of existing company', async () => {
-            await request(app)
+            const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
                 .set('location', '/companytypes/2')
                 .set('if-match', etagB)
                 .send(companyBA)
                 .expect(204, '')
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA)
         })
 
-                it('Get existing company succeeds after Name Change', async () => {
-                    const response = await request(app)
-                        .get('/companies/2')
-                        .set('Accept', 'application/json')
-                        .expect('Content-Type', /json/)
-                        .expect(200, companyBA)
-                    expect(response.headers['location']).toEqual('/companies/2')
-                    expect(response.headers['if-match']).toEqual(etagBA)
-                })
-
-                it('PUT: add abbr to existing company succeeds', async () => {
-                    const response = await request(app)
-                        .put('/companies/2')
-                        .set('Accept', 'application/json')
-                        .set('location', '/companytypes/2')
-                        .set('if-match', etagBA)
-                        .send(companyBA2)
-                        .expect(204, '')
-                })
-
-                it('Get existing company succeeds after abbr added.', async () => {
-                    const response = await request(app)
-                        .get('/companies/2')
-                        .set('Accept', 'application/json')
-                        .expect('Content-Type', /json/)
-                        .expect(200, companyBA2)
-                    expect(response.headers['location']).toEqual('/companies/2')
-                    expect(response.headers['if-match']).toEqual(etagBA2)
-            })
-
-            it('PUT: add www to existing company succeeds', async () => {
-                const response = await request(app)
-                    .put('/companies/2')
-                    .set('Accept', 'application/json')
-                    .set('location', '/companytypes/2')
-                    .set('if-match', etagBA2)
-                    .send(companyBA3)
-                    .expect(204, '')
-            })
-
-            it('Get existing company succeeds after www added.', async () => {
-                const response = await request(app)
-                    .get('/companies/2')
-                    .set('Accept', 'application/json')
-                    .expect('Content-Type', /json/)
-                    .expect(200, companyBA3)
-                expect(response.headers['location']).toEqual('/companies/2')
-                expect(response.headers['if-match']).toEqual(etagBA3)
-            })
-
-            it('PUT: remove www from existing company succeeds', async () => {
-                const response = await request(app)
-                    .put('/companies/2')
-                    .set('Accept', 'application/json')
-                    .set('location', '/companytypes/2')
-                    .set('if-match', etagBA3)
-                    .send(companyBA2)
-                    .expect(204, '')
-            })
-
-            it('Get existing company succeeds after www removed', async () => {
-                const response = await request(app)
-                    .get('/companies/2')
-                    .set('Accept', 'application/json')
-                    .expect('Content-Type', /json/)
-                    .expect(200, companyBA2)
-                expect(response.headers['location']).toEqual('/companies/2')
-                expect(response.headers['if-match']).toEqual(etagBA2)
-            })
-
-            it('PUT: remove abbr from existing company succeeds', async () => {
-                const response = await request(app)
-                    .put('/companies/2')
-                    .set('Accept', 'application/json')
-                    .set('location', '/companytypes/2')
-                    .set('if-match', etagBA2)
-                    .send(companyBA)
-                    .expect(204, '')
-
-            })
-
-            it('Get existing company succeeds after abbr removed', async () => {
-                const response = await request(app)
-                    .get('/companies/2')
-                    .set('Accept', 'application/json')
-                    .expect('Content-Type', /json/)
-                    .expect(200, companyBA)
-                expect(response.headers['location']).toEqual('/companies/2')
-                expect(response.headers['if-match']).toEqual(etagBA)
-            })
-
-            it('Put company on changed dataset fails with error 412', async () => {
-                const response = await request(app)
-                    .put('/companies/2')
-                    .set('Accept', 'application/json')
-                    .set('location', '/companytypes/2')
-                    .set('if-match', etagBA3)
-                    .send(companyBA2)
-                    .expect(412)
-                expect(response.body.status).toBe(412)
-                expect(response.body.message).toMatch("Precondition failed")
-            })
-
-            it('PUT: remove name form existing company fails', async () => {
-                const response = await request(app)
-                    .put('/companies/2')
-                    .set('Accept', 'application/json')
-                    .set('location', '/companytypes/2')
-                    .set('if-match', etagBA)
-                    .send({})
-                    .expect(400)
-                expect(response.body.status).toBe(400)
-                expect(response.body.message).toMatch("must have required property 'name'")
-                expect(response.body.errors).toBeInstanceOf(Array)
-            })
-
-            it('Get existing company succeeds after name removal faild', async () => {
-                const response = await request(app)
-                    .get('/companies/2')
-                    .set('Accept', 'application/json')
-                    .expect('Content-Type', /json/)
-                    .expect(200, companyBA)
-                    expect(response.headers['location']).toEqual('/companies/2')
-                    expect(response.headers['if-match']).toEqual(etagBA)
-            })
+        it('Get existing company succeeds after Name Change', async () => {
+            const response = await request(app)
+                .get('/companies/2')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200, companyBA)
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA)
         })
 
-        describe('DELETE /companies/{id}', function () {
-            it('Deleting existing company succeeds', async () => {
-                const response = await request(app)
-                    .delete('/companies/1')
-                    .set('Accept', 'application/json')
-                    .expect(204, '')
-            })
+        it('PUT: add abbr to existing company succeeds', async () => {
+            const response = await request(app)
+                .put('/companies/2')
+                .set('Accept', 'application/json')
+                .set('location', '/companytypes/2')
+                .set('if-match', etagBA)
+                .send(companyBA2)
+                .expect(204, '')
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA2)
+        })
 
-            it('Deleting nonexisting item fails', async () => {
-                const response = await request(app)
-                    .delete('/companies/1')
-                    .set('Accept', 'application/json')
-                    .expect('Content-Type', /json/)
-                    .expect(404)
-                expect(response.body.status).toBe(404)
-                expect(response.body.message).toBe("not found")
-                expect(response.body.errors).toBeNull
-            })
+        it('Get existing company succeeds after abbr added.', async () => {
+            const response = await request(app)
+                .get('/companies/2')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200, companyBA2)
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA2)
+        })
 
-            it('Deleting item with negative id fails', async () => {
-                const response = await request(app)
-                    .delete('/companies/-1')
-                    .set('Accept', 'application/json')
-                    .expect('Content-Type', /json/)
-                    .expect(400)
-                expect(response.body.status).toBe(400)
-                expect(response.body.message).toMatch("must be >= 1")
-                expect(response.body.errors).toBeInstanceOf(Array)
-            })
+        it('PUT: add www to existing company succeeds', async () => {
+            const response = await request(app)
+                .put('/companies/2')
+                .set('Accept', 'application/json')
+                .set('location', '/companytypes/2')
+                .set('if-match', etagBA2)
+                .send(companyBA3)
+                .expect(204, '')
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA3)
+        })
 
-            it('Deleting item with id 0 fails', async () => {
-                const response = await request(app)
-                    .delete('/companies/0')
-                    .set('Accept', 'application/json')
-                    .expect('Content-Type', /json/)
-                    .expect(400)
-                expect(response.body.status).toBe(400)
-                expect(response.body.message).toMatch("must be >= 1")
-                expect(response.body.errors).toBeInstanceOf(Array)
-            })
+        it('Get existing company succeeds after www added.', async () => {
+            const response = await request(app)
+                .get('/companies/2')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200, companyBA3)
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA3)
+        })
 
-            it('Deleting strange id fails', async () => {
-                const response = await request(app)
-                    .delete('/companies/foo')
-                    .set('Accept', 'application/json')
-                    .expect('Content-Type', /json/)
-                    .expect(400)
-                expect(response.body.status).toBe(400)
-                expect(response.body.message).toMatch("must be integer")
-                expect(response.body.errors).toBeInstanceOf(Array)
-            })
+        it('PUT: remove www from existing company succeeds', async () => {
+            const response = await request(app)
+                .put('/companies/2')
+                .set('Accept', 'application/json')
+                .set('location', '/companytypes/2')
+                .set('if-match', etagBA3)
+                .send(companyBA2)
+                .expect(204, '')
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA2)
+        })
+
+        it('Get existing company succeeds after www removed', async () => {
+            const response = await request(app)
+                .get('/companies/2')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200, companyBA2)
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA2)
+        })
+
+        it('PUT: remove abbr from existing company succeeds', async () => {
+            const response = await request(app)
+                .put('/companies/2')
+                .set('Accept', 'application/json')
+                .set('location', '/companytypes/2')
+                .set('if-match', etagBA2)
+                .send(companyBA)
+                .expect(204, '')
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA)
+
+        })
+
+        it('Get existing company succeeds after abbr removed', async () => {
+            const response = await request(app)
+                .get('/companies/2')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200, companyBA)
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA)
+        })
+
+        it('Put company on changed dataset fails with error 412', async () => {
+            const response = await request(app)
+                .put('/companies/2')
+                .set('Accept', 'application/json')
+                .set('location', '/companytypes/2')
+                .set('if-match', etagBA3)
+                .send(companyBA2)
+                .expect(412)
+            expect(response.body.status).toBe(412)
+            expect(response.body.message).toMatch("Precondition failed")
+        })
+
+        it('PUT: remove name form existing company fails', async () => {
+            const response = await request(app)
+                .put('/companies/2')
+                .set('Accept', 'application/json')
+                .set('location', '/companytypes/2')
+                .set('if-match', etagBA)
+                .send({})
+                .expect(400)
+            expect(response.body.status).toBe(400)
+            expect(response.body.message).toMatch("must have required property 'name'")
+            expect(response.body.errors).toBeInstanceOf(Array)
+        })
+
+        it('Get existing company succeeds after name removal failed', async () => {
+            const response = await request(app)
+                .get('/companies/2')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200, companyBA)
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA)
+        })
+    })
+
+    describe('DELETE /companies/{id}', function () {
+        it('Deleting existing company succeeds', async () => {
+            const response = await request(app)
+                .delete('/companies/1')
+                .set('Accept', 'application/json')
+                .expect(204, '')
+        })
+
+        it('Deleting nonexisting item fails', async () => {
+            const response = await request(app)
+                .delete('/companies/1')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(404)
+            expect(response.body.status).toBe(404)
+            expect(response.body.message).toBe("not found")
+            expect(response.body.errors).toBeNull
+        })
+
+        it('Deleting item with negative id fails', async () => {
+            const response = await request(app)
+                .delete('/companies/-1')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(400)
+            expect(response.body.status).toBe(400)
+            expect(response.body.message).toMatch("must be >= 1")
+            expect(response.body.errors).toBeInstanceOf(Array)
+        })
+
+        it('Deleting item with id 0 fails', async () => {
+            const response = await request(app)
+                .delete('/companies/0')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(400)
+            expect(response.body.status).toBe(400)
+            expect(response.body.message).toMatch("must be >= 1")
+            expect(response.body.errors).toBeInstanceOf(Array)
+        })
+
+        it('Deleting strange id fails', async () => {
+            const response = await request(app)
+                .delete('/companies/foo')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(400)
+            expect(response.body.status).toBe(400)
+            expect(response.body.message).toMatch("must be integer")
+            expect(response.body.errors).toBeInstanceOf(Array)
+        })
     })
 })
