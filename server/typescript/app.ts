@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express'
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import cors, { CorsOptions } from 'cors'
-import { apiSpec } from "./openapi.cjs"
+import { apiSpec } from "./openapi.js"
 import swaggerUi from 'swagger-ui-express'
 import OpenApiValidator from 'express-openapi-validator'
 import baseLogger from './logger.js'
