@@ -4,7 +4,7 @@ import { Col, Row, Button, ButtonGroup, Form } from 'react-bootstrap'
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Company, CompanyEdit, Companytype } from './companies.jsx'
-import { DataWithMeta } from '../../app.jsx'
+import { DataWithMeta } from '../app.jsx'
 import { transformCompany, transformCompanyEdit } from './companies.jsx'
 
 interface EditCompaniesInterface {

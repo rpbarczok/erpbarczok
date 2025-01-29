@@ -5,13 +5,13 @@ import sequelize from '../models/index.js'
 import { NotFoundError } from '../services/error.js'
 import { Company } from '../models/companies.js'
 
-describe('Company Unit Tests', function () {
+describe('Company Unit Tests', async function () {
     this.timeout(5000)
     before(async function () {
         await sequelize.sync({ force: true })
     });
 
-    describe('test getAllCompanies / addCompany', function () {
+    describe('test getAllCompanies / addCompany', async function () {
 
         it('should return [] for a fresh and empty DB', async () => {
             await expect(getAllCompanies()).resolves.toHaveLength(0)
@@ -37,7 +37,7 @@ describe('Company Unit Tests', function () {
         })
     })
 
-    describe('Test getCompanyById(id)', function () {
+    describe('Test getCompanyById(id)', async function () {
 
         it('getCompanyById(1) returns {"id": 1, "name": "Firma C", "abbr": "FRC", www: "www.firmaa.com"}', async () => {
             await expect(getCompanyById(1)).resolves.toEqual(
@@ -54,7 +54,7 @@ describe('Company Unit Tests', function () {
         })
     })
 
-    describe('Test getCompanyById(id)', function () {
+    describe('Test getCompanyById(id)', async function () {
 
         it('putCompanyById(1) change name to "Firma C"', async () => {
             await expect(putCompanyById(1, { "name": "Firma C", "abbr": "FRA" })).resolves.toEqual(
@@ -122,7 +122,7 @@ describe('Company Unit Tests', function () {
         })
     })
     
-    describe('Test DeleteCompanyById', function () {
+    describe('Test DeleteCompanyById', async function () {
 
         it('deleteCompanyById resolves', async () => {
             await expect(deleteCompanyById(1)).resolves.toBeUndefined

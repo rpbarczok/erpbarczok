@@ -1,9 +1,8 @@
 import '../../style.css'
 import './navigation.css'
-import groupForm, {Form } from './forms.js'
+import groupForm, {Form, FormTab } from './forms.js'
 import {Navbar, Nav, NavDropdown, Container} from 'react-bootstrap'
 import React from 'react'
-import { FormTab } from '../../app.jsx'
 
 interface RibbonNavigationInterface {
     tabs: FormTab[]
@@ -18,9 +17,9 @@ export default function RibbonNavigation({tabs, setTabs, setActiveForm}: RibbonN
         const isFormOpen: boolean = tabsId.includes(form.id)
 
         // add new Tab
-        const addTabs: FormTab[] = [...tabs, ...(isFormOpen ? [] : [{ name: form.name, id: form.id}])]
-        setActiveForm(form) 
-        setTabs(addTabs) 
+        const addTabs: FormTab[] = [...tabs, ...(isFormOpen ? [] : [form])]
+        setTabs(addTabs)
+        setActiveForm(form)  
     }  
 
     function Groups() {

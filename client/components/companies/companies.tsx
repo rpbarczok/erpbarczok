@@ -8,7 +8,7 @@ import AddCompanies from './add.companies.jsx'
 import ListCompanies from './list.companies.jsx'
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { DataWithMeta } from '../../app.js'
+import { DataWithMeta } from '../app.jsx'
 
 export interface Companytype {
     "name": string

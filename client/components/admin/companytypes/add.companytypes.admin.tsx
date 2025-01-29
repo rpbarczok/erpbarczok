@@ -3,7 +3,7 @@ import '../admin.css'
 import { Button, ListGroup } from "react-bootstrap"
 import { Plus } from "react-bootstrap-icons"
 import { useState, MouseEvent } from "react"
-import { Companytype } from "components/companies/companies.jsx"
+import { Companytype } from '../../companies/companies.jsx'
 import axios from 'axios'
 import InputCompanytypes from "./input.companytypes.admin.jsx"
 

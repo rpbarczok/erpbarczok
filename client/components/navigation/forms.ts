@@ -15,6 +15,11 @@ export interface FormNav extends FormGroup {
     forms: Form[]
 }
 
+export interface FormTab {
+    name: string
+    id: string
+}
+
 const formArray: Form[] = [
     { name: "Startseite", id: "startForm", group: "start", order: 0},
     { name: "Anfragen", id: "anfragenForm", group: "pro", order: 2},

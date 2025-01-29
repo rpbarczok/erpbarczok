@@ -14,16 +14,16 @@ const etagA = sha256(JSON.stringify(companytypeA))
 const etagB = sha256(JSON.stringify(companytypeB))
 const etagC = sha256(JSON.stringify(companytypeC))
 
-describe('/companytypes/ HTTP integration Tests', function () {
+describe('/companytypes/ HTTP integration Tests', async function () {
     this.timeout(5000)
     let app: App
 
-    before(async function () {
+    before(async function () { 
         app = await startingApp
         await sequelize.sync({ force: true })
     });
 
-    describe('GET /companytypes/ and POST /companytypes/', function () {
+    describe('GET /companytypes/ and POST /companytypes/', async function () {
 
         it('should succeed with 200 and return [] for a fresh and empty DB', async () => {
             const response = await request(app)
@@ -110,7 +110,7 @@ describe('/companytypes/ HTTP integration Tests', function () {
         })
     })
 
-    describe('GET /companytypes/{id}', function () {
+    describe('GET /companytypes/{id}', async function () {
 
         it('Get existing companytype succeeds', async () => {
             const response = await request(app)
@@ -156,7 +156,7 @@ describe('/companytypes/ HTTP integration Tests', function () {
         })
     })
 
-    describe('PUT /companytypes/{id}', function () {
+    describe('PUT /companytypes/{id}', async function () {
 
         it('Get existing companytype succeeds', async () => {
             const response = await request(app)

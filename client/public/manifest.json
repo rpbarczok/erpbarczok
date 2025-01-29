@@ -1,5 +1,6 @@
 {
     "name": "Panda2",
+    "shortname": "Panda2",
     "start_url": "/",
     "display": "standalone",
     "icons": [

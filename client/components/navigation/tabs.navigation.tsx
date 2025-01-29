@@ -3,7 +3,7 @@ import './navigation.css'
 import {Nav} from 'react-bootstrap'
 import {XLg} from 'react-bootstrap-icons'
 import React from 'react'
-import { FormTab } from '../../app.jsx'
+import { FormTab } from './forms.js'
 
 interface TabsNavigationInterface {
     tabs: FormTab[]
@@ -16,9 +16,18 @@ interface TabsNavigationInterface {
 export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeForm }: TabsNavigationInterface) {
 
     const handleClose = (tab: FormTab) => {
+        console.log("hier startet was neues: ")
+        console.log("Tab: ", tab)
         const index = tabs.indexOf(tab)
+        console.log("Index: ", index)
+        console.log("Länge von tabs: ", tabs.length)
         if (tabs.length > 1) {
             const newTabs = tabs.filter((tab, i) => i !== index)
+            console.log("Tabs:", tabs)
+            console.log("newTabs:", newTabs)
+            console.log("activeForm", activeForm)
+            console.log("tab davor:", tabs[index-1])
+            console.log("tab danach: ", tabs[index+1])
             setTabs(newTabs)
             if (tab === activeForm) {
                 if (index === tabs.length - 1) {

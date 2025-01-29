@@ -6,13 +6,13 @@ import { NotFoundError } from '../services/error.js'
 import { Companytype } from '../models/companytypes.js'
 
 
-describe('Companytype Unit Tests', function () {
+describe('Companytype Unit Tests', async function () {
     this.timeout(5000)
     before(async function () {
         await sequelize.sync({ force: true })
     })
 
-    describe('test getAllCompanytyps / addCompanytype', function () {
+    describe('test getAllCompanytyps / addCompanytype', async function () {
          it('should return [] for a fresh and empty DB', async () => {
             await expect(getAllCompanytypes()).resolves.toHaveLength(0)
         })
@@ -37,7 +37,7 @@ describe('Companytype Unit Tests', function () {
         })
     })
 
-     describe('Test getCompanytypeById(id)', function () {
+     describe('Test getCompanytypeById(id)', async function () {
         it('getCompanytypeById(1) returns {"id": 1, "name": "Kunde"}', async () => {
             await expect(getCompanytypeById(1)).resolves.toEqual(
                 expect.any(Companytype) && expect.objectContaining({dataValues: { "id": 1, "name": "Kunde", updatedAt: expect.any(Date), createdAt: expect.any(Date) }})
@@ -49,7 +49,7 @@ describe('Companytype Unit Tests', function () {
         })
     })
 
-    describe('Test putCompanytypeById(id)', function () {
+    describe('Test putCompanytypeById(id)', async function () {
         it('putCompanytypeById(1) change name to "Spediteur"', async () => {
             await expect(putCompanytypeById(1, { "name": "Spediteur" })).resolves.toEqual(
                 expect.any(Companytype) && expect.objectContaining({dataValues: { "id": 1, "name": "Spediteur", updatedAt: expect.any(Date), createdAt: expect.any(Date) }})
@@ -80,7 +80,7 @@ describe('Companytype Unit Tests', function () {
         })
     })
 
-    describe('Test DeleteCompanytypeById', function () {
+    describe('Test DeleteCompanytypeById', async function () {
         it('deleteCompanytypeById resolves', async () => {
             await expect(deleteCompanytypeById(1)).resolves.toBeUndefined
         })

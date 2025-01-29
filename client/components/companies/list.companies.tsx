@@ -2,9 +2,8 @@ import '../../style.css'
 import './companies.css'
 import { ListGroup } from 'react-bootstrap'
 import React, { useState, useEffect } from 'react'
-import { DataWithMeta } from '../../app.jsx'
+import { DataWithMeta } from '../app.jsx'
 import { Company } from "./companies.jsx"
-import { List } from 'react-bootstrap-icons'
 
 interface ListCompaniesInterface {
     search: string

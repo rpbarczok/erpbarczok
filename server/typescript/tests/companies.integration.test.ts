@@ -19,7 +19,7 @@ const etagBA2 = sha256(JSON.stringify(companyBA2))
 const companyBA3 = { "name": "Firma C", "abbr": "FRC", "www": "www.example.de" }
 const etagBA3 = sha256(JSON.stringify(companyBA3))
 
-describe('/companies/ HTTP integration Tests', function () {
+describe('/companies/ HTTP integration Tests', async function () {
     this.timeout(5000)
     let app: App
 
@@ -28,7 +28,7 @@ describe('/companies/ HTTP integration Tests', function () {
         await sequelize.sync({ force: true })
     });
 
-    describe('GET /companies/ and POST /companies/', function () {
+    describe('GET /companies/ and POST /companies/', async function () {
 
         it('should succeed with 200 and return [] for a fresh and empty DB', async () => {
             const response = await request(app)
@@ -134,7 +134,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
     })
 
-    describe('GET /companies/{id}', function () {
+    describe('GET /companies/{id}', async function () {
 
         it('Get existing company succeeds', async () => {
             const response = await request(app)
@@ -218,7 +218,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
     })
 
-    describe('PUT /companies/{id}', function () {
+    describe('PUT /companies/{id}', async function () {
 
         it('Get existing company succeeds', async () => {
             const response = await request(app)
@@ -377,7 +377,7 @@ describe('/companies/ HTTP integration Tests', function () {
         })
     })
 
-    describe('DELETE /companies/{id}', function () {
+    describe('DELETE /companies/{id}', async function () {
         it('Deleting existing company succeeds', async () => {
             const response = await request(app)
                 .delete('/companies/1')

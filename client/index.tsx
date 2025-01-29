@@ -1,12 +1,12 @@
 import { createRoot } from "react-dom/client"
-import App from './app.jsx'
+import App from './components/app.jsx'
 import React from "react"
 import './style.css'
-import serviceWorkerRegistry from 'serviceworker.js'
+import serviceWorkerRegistry from './components/serviceworker.js'
 
 const root = createRoot(document.getElementById("root") as HTMLElement)
 root.render(
   <App />
 )
 
-serviceWorkerRegistry()
+if (process.env.NODE_ENV === "production") serviceWorkerRegistry()
