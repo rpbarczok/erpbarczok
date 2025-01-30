@@ -1,10 +1,15 @@
-import { DataTypes, Model, CreationOptional, InferAttributes, InferCreationAttributes, Sequelize } from "sequelize"
+import { DataTypes, Model, CreationOptional, InferAttributes, InferCreationAttributes, Sequelize, ForeignKey, NonAttribute } from "sequelize"
+import { Companytype } from "./companytypes.js"
 
 export class Company extends Model<InferAttributes<Company>, InferCreationAttributes<Company>> {
     declare id: CreationOptional<number>
     declare name: string
     declare abbr: string | null
     declare www: string | null
+    declare CompanytypeId: ForeignKey<Companytype['id']>
+    declare createdAt: CreationOptional<Date>
+    declare updatedAt: CreationOptional<Date>
+    declare Companytype?: NonAttribute<Companytype>
 }
 
 const initializeCompany = (sequelize: Sequelize) => {
@@ -26,7 +31,9 @@ const initializeCompany = (sequelize: Sequelize) => {
         www: {
             type: DataTypes.STRING,
             comment: "Internetadresse der Firma"
-        }
+        },
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
     },
         {
             sequelize,

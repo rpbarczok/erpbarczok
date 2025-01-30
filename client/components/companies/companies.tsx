@@ -16,18 +16,20 @@ export interface Companytype {
 
 export interface Company {
     "name": string
+    "companytype": string
     "abbr"?: string
     "www"?: string
 }
 
 export interface CompanyEdit {
     "name": string
+    "companytype": string
     "abbr": string
     "www": string
 }
 
 export function transformCompanyEdit(company: CompanyEdit): Company {
-    const result: Company = { name: company.name }
+    const result: Company = { name: company.name, companytype: company.companytype }
     if (company.abbr !== "") {
         result.abbr = company.abbr
     }
@@ -38,7 +40,7 @@ export function transformCompanyEdit(company: CompanyEdit): Company {
 }
 
 export function transformCompany(company: Company): CompanyEdit {
-    const result: CompanyEdit = { name: company.name, abbr: "", www: "" }
+    const result: CompanyEdit = { name: company.name, companytype: company.companytype, abbr: "", www: "" }
     if (company.abbr) {
         result.abbr = company.abbr
     }
@@ -52,7 +54,7 @@ export default function Companies() {
     const [isChanged, setIsChanged] = useState<boolean>(true)
     const [listCompanies, setListCompanies] = useState<DataWithMeta<Company>[]>([])
     const [listCompanytypes, setListCompanytypes] = useState<DataWithMeta<Companytype>[]>([])
-    const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>({ "meta": { "location": "", "etag": "" }, "data": { "abbr": "", "name": "", "www": "" } })
+    const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>({ "meta": { "location": "", "etag": "" }, "data": {"name": "", "companytype": "" ,"abbr": "", "www": ""} })
     const [search, setSearch] = useState<string>("")
     const [isNew, setIsNew] = useState<boolean>(false)
 
@@ -77,7 +79,7 @@ export default function Companies() {
 
     function handleChangeActive(active: string) {
         if (active === "" || active === undefined) {
-            setActiveCompany({ "meta": { "location": "", "etag": "" }, "data": { "abbr": "", "name": "", "www": "" } })
+            setActiveCompany({ "meta": { "location": "", "etag": "" }, "data": { "name": "", "companytype": "", "abbr": "", "www": "" } })
         } else {
             axios.get(active)
                 .then(result => {

@@ -15,7 +15,7 @@ interface AddCompaniesInterface {
 
 export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, listCompanytypes}: AddCompaniesInterface) {
     const [show, setShow] = useState<boolean>(false) // to handle the modal
-    const [company, setCompany] = useState<Company>({ name: "", abbr: "", www: "" })
+    const [company, setCompany] = useState<Company>({ name: '', companytype: 'default', abbr: "", www: "" })
     const handleShow = () => setShow(true)
     const handleClose = () => setShow(false)
 
@@ -43,11 +43,11 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, li
         })
     }
 
-    const handleChangeCompanytype = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleChangeCompanytype = (e: ChangeEvent<HTMLSelectElement>) => {
         e.preventDefault()
         setCompany({
             ...company,
-            www: e.target.value
+            companytype: e.target.value
         })
     }
 
@@ -61,8 +61,10 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, li
                     setIsNew(true)
                     onChangeActive(res.headers.location)
                     setCompany({
-                        abbr: "",
-                        name: ""
+                        name: '',
+                        abbr: '',
+                        www: '',
+                        companytype: 'default'
                     })
                     setShow(false)
                 })
@@ -70,10 +72,10 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, li
     }
 
     const Companytypes = () => {
-        const optionsdefault = [<option id="default" value="default">Rolle auswählen</option>]
+        const optionsdefault = [<option id="default" value="default" selected ={company.companytype==='default'} >Rolle auswählen</option>]
         const options = listCompanytypes.map((role: DataWithMeta<Companytype>) => {
             return (
-                <option id={role.meta.location} value={role.data.name}>{role.data.name}</option>
+                <option id={role.meta.location} value={role.data.name} selected={company.companytype===role.data.name}>{role.data.name}</option>
             )
         })
         return optionsdefault.concat(options)
@@ -112,7 +114,7 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, li
                             <Col>
                                 <Form.Group>
                                     <Form.Label>Firmenrolle</Form.Label>
-                                    <Form.Select>
+                                    <Form.Select onChange={handleChangeCompanytype}>
                                         <Companytypes />
                                     </Form.Select>
                                 </Form.Group>

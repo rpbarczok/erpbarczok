@@ -1,12 +1,16 @@
-import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize } from "sequelize"
+import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize, NonAttribute } from "sequelize"
+import { Company } from "./companies.js"
 
-export class Companytype extends Model<InferAttributes<Companytype>, InferCreationAttributes<Companytype>> {
+export class Companytype extends Model<InferAttributes<Companytype, {omit: 'company'}>, InferCreationAttributes<Companytype, {omit: 'company'}>> {
     declare id: CreationOptional<number>
-    declare name:string
- }
+    declare name: string
+    declare createdAt: CreationOptional<Date>
+    declare updatedAt: CreationOptional<Date>
+    declare company?: NonAttribute<Company>;
+}
 
 const initializeCompanytype = (sequelize: Sequelize) => {
-    
+
     Companytype.init({
         id: {
             type: DataTypes.INTEGER,
@@ -17,7 +21,9 @@ const initializeCompanytype = (sequelize: Sequelize) => {
             type: DataTypes.STRING,
             allowNull: false,
             comment: 'Typ der Firma',
-        }
+        },
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
     },
         {
             sequelize,

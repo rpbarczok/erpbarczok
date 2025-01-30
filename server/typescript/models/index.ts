@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize"
-import initializeCompany, { Company} from './companies.js'
-import initializeCompanytype, {Companytype} from "./companytypes.js"
+import initializeCompany, { Company } from './companies.js'
+import initializeCompanytype, { Companytype } from "./companytypes.js"
 import baseLogger from "../logger.js"
 import setDefaultValues from './default-values.js'
 
@@ -23,7 +23,9 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
 initializeCompanytype(sequelize)
 initializeCompany(sequelize)
 
-Company.belongsTo(Companytype)
+Company.belongsTo(Companytype, {
+    onDelete: 'NO ACTION'
+})
 Companytype.hasMany(Company)
 
 try {

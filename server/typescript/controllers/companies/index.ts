@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 import { getAllCompanies, addCompany } from '../../services/companies.js'
-import { Meta, MetaEtag} from '../../app.js'
+import { Meta, MetaEtag } from '../../app.js'
 import { Company } from '../../models/companies.js'
 import { sha256 } from '../../hasher.js'
 import { Operation } from '../../apiSpecAssembler.js'
@@ -9,10 +9,18 @@ export interface CompanyResponse {
     name: string
     abbr?: string | null
     www?: string | null
+    companytype: string
+}
+
+export interface CompanyCreate {
+    name: string
+    abbr?: string | null
+    www?: string | null
+    CompanytypeId: number
 }
 
 export function normalizeCompany(company: Company) {
-    const result: CompanyResponse = { name: company.name }
+    const result: CompanyResponse = { name: company.name, companytype: company.Companytype!.name}
     if (company.abbr) {
         result.abbr = company.abbr
     }
@@ -81,7 +89,8 @@ GET.apiSpec = {
                                     },
                                     "data": {
                                         "name": "Firma A",
-                                        "abbr": "FRA"
+                                        "abbr": "FRA",
+                                        "companytype": "Kunde"
                                     }
                                 },
                                 {
@@ -91,7 +100,8 @@ GET.apiSpec = {
                                     },
                                     "data": {
                                         "name": "Firma B",
-                                        "abbr": "FRB"
+                                        "abbr": "FRB",
+                                        "companytype": "Lieferant"
                                     }
                                 },
                                 {
@@ -101,7 +111,8 @@ GET.apiSpec = {
                                     },
                                     "data": {
                                         "name": "Firma C",
-                                        "abbr": "FRC"
+                                        "abbr": "FRC",
+                                        "companytype": "Spediteur"
                                     }
                                 }
                             ]
@@ -117,8 +128,9 @@ GET.apiSpec = {
 }
 
 export const POST: Operation = async (req: Request, res: Response) => {
+    const newCompany = await addCompany(req.body)
     res.status(204)
-        .set(normalizeCompanyLocationEtag(await addCompany(req.body)))
+        .set(normalizeCompanyLocationEtag(newCompany))
         .end()
 }
 POST.apiSpec = {

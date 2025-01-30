@@ -34,6 +34,7 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
         e.preventDefault()
         setChangeCompany({
             "name": e.target.value,
+            "companytype": changeCompany.companytype,
             "abbr": changeCompany.abbr,
             "www": changeCompany.www
         })
@@ -43,6 +44,7 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
         e.preventDefault()
         setChangeCompany({
             "name": changeCompany.name,
+            "companytype": changeCompany.companytype,
             "abbr": e.target.value,
             "www": changeCompany.www
         })
@@ -52,8 +54,19 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
         e.preventDefault()
         setChangeCompany({
             "name": changeCompany.name,
+            "companytype": changeCompany.companytype,
             "abbr": changeCompany.abbr,
             "www": e.target.value
+        })
+    }
+
+    const handleChangeCompanytype = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        e.preventDefault()
+        setChangeCompany({
+            "name": changeCompany.name,
+            "companytype": e.target.value,
+            "abbr": changeCompany.abbr,
+            "www": changeCompany.www
         })
     }
 
@@ -75,10 +88,10 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
     }
 
     const Companytypes = () => {
-        const optionsdefault = [<option key="default" id="default" value="default">Rolle auswählen</option>]
+        const optionsdefault = [<option key="default" id="default" value="default" selected={changeCompany.companytype === 'default'}>Rolle auswählen</option>]
         const options = listCompanytypes.map((role: DataWithMeta<Companytype>) => {
             return (
-                <option key={role.meta.location} id={role.meta.location} value={role.data.name}>{role.data.name}</option>
+                <option key={role.meta.location} id={role.meta.location} value={role.data.name} selected={changeCompany.companytype === role.data.name}>{role.data.name}</option>
             )
         })
         return optionsdefault.concat(options)
@@ -113,14 +126,14 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
                         <Row className="defaultRow">
                             <Col xs={8}>
                                 <Form.Group controlId="companyWWW">
-                                    <Form.Label className="standardDesign">Internet Adresse</Form.Label >
+                                    <Form.Label className="standardDesign">Internetadresse</Form.Label >
                                     <Form.Control type="text" className="standardDesign" value={changeCompany.www} onChange={handleChangeWWW} />
                                 </Form.Group>
                             </Col>
                             <Col>
                                 <Form.Group controlId="companyCompanytype">
                                     <Form.Label className="standardDesign">Firmenrolle</Form.Label>
-                                    <Form.Select className="standardDesign" key="companyCompanytype">
+                                    <Form.Select className="standardDesign" key="companyCompanytype" onChange={handleChangeCompanytype}>
                                         <Companytypes />
                                     </Form.Select>
                                 </Form.Group>

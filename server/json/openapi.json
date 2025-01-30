@@ -198,6 +198,10 @@
                     "www": {
                         "type": "string",
                         "example": "www.example.org"
+                    },
+                    "companytype": {
+                        "type": "string",
+                        "example": "Kunde"
                     }
                 }
             },
@@ -225,7 +229,8 @@
                 "value": {
                     "name": "Firma A",
                     "abbr": "FRA",
-                    "www": "www.example.de"
+                    "www": "www.example.de",
+                    "companytype": "Kunde"
                 }
             },
             "companytype": {

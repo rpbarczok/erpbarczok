@@ -8,16 +8,18 @@ import { Companytype } from '../models/companytypes.js'
 import { sha256 } from '../hasher.js'
 
 
-const companyA = { "name": "Firma A", "abbr": "FRA", "www": "www.firmaa.com" }
+const companyA = { "name": "Firma A", "companytype": "Kunde", "abbr": "FRA", "www": "www.firmaa.com",  }
 const etagA = sha256(JSON.stringify(companyA))
-const companyB = { "name": "Firma B" }
+const companyB = { "name": "Firma B", "companytype": "Lieferant" }
 const etagB = sha256(JSON.stringify(companyB))
-const companyBA = { "name": "Firma C" }
+const companyBA = { "name": "Firma C", "companytype": "Lieferant" }
 const etagBA = sha256(JSON.stringify(companyBA))
-const companyBA2 = { "name": "Firma C", "abbr": "FRC" }
+const companyBA2 = { "name": "Firma C", "companytype": "Lieferant", "abbr": "FRC"  }
 const etagBA2 = sha256(JSON.stringify(companyBA2))
-const companyBA3 = { "name": "Firma C", "abbr": "FRC", "www": "www.example.de" }
+const companyBA3 = { "name": "Firma C", "companytype": "Lieferant", "abbr": "FRC", "www": "www.example.de" }
 const etagBA3 = sha256(JSON.stringify(companyBA3))
+const companyBA4 = { "name": "Firma C", "companytype": "Kunde", "abbr": "FRC", "www": "www.example.de" }
+const etagBA4 = sha256(JSON.stringify(companyBA4))
 
 describe('/companies/ HTTP integration Tests', async function () {
     this.timeout(5000)
@@ -26,6 +28,14 @@ describe('/companies/ HTTP integration Tests', async function () {
     before(async function () {
         app = await startingApp
         await sequelize.sync({ force: true })
+        await Companytype.bulkCreate([
+            {
+                name: "Kunde"
+            },
+            {
+                name: "Lieferant"
+            }
+        ])
     });
 
     describe('GET /companies/ and POST /companies/', async function () {
@@ -41,14 +51,14 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body).toEqual([])
         })
 
-        it('Post /company with name and abbr succeeds', async () => {
+        it('Post /company with name, companytype and abbr succeeds', async () => {
             const response = await request(app)
                 .post('/companies/')
                 .send(companyA)
                 .set('Accept', "application/json")
                 .expect(204, '')
                 .expect("location", "/companies/1")
-
+                .expect("etag", etagA)
         })
 
         it('Post /company with name only succeeds', async () => {
@@ -292,6 +302,41 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA3)
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA3)
+        })
+
+        it('PUT: change companytype from existing company succeeds', async () => {
+            const response = await request(app)
+                .put('/companies/2')
+                .set('Accept', 'application/json')
+                .set('location', '/companytypes/2')
+                .set('if-match', etagBA3)
+                .send(companyBA4)
+                .expect(204, '')
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA4)
+        })
+        
+        it('Get existing company succeeds after companytype changed.', async () => {
+            const response = await request(app)
+                .get('/companies/2')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200, companyBA4)
+            expect(response.headers['location']).toEqual('/companies/2')
+            expect(response.headers['etag']).toEqual(etagBA4)
+        })
+
+
+        it('PUT: change companytype back from existing company succeeds', async () => {
+            const response = await request(app)
+                .put('/companies/2')
+                .set('Accept', 'application/json')
+                .set('location', '/companytypes/2')
+                .set('if-match', etagBA4)
+                .send(companyBA3)
+                .expect(204, '')
             expect(response.headers['location']).toEqual('/companies/2')
             expect(response.headers['etag']).toEqual(etagBA3)
         })
