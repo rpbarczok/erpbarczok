@@ -1,6 +1,6 @@
 import path from 'node:path'
 import baseLogger from "./logger.js"
-import { apiSpec as apiSpecBase } from './openapi.cjs'
+import { apiSpec as apiSpecBase } from './openapi.js'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { Request, Response, RequestHandler, NextFunction } from 'express'
 
