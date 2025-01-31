@@ -1,5 +1,5 @@
-import request from 'supertest'
 import './utils/testenv.js'
+import request from 'supertest'
 import startingApp from '../app.js'
 import sequelize from '../models/index.js'
 import { expect } from 'expect'
@@ -86,7 +86,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         it('Add company with to long abbr fails', async () => {
             const response = await request(app)
                 .post('/companies/')
-                .send({ "name": "Firma D", "abbr": "Firma" })
+                .send({ "name": "Firma D", "abbr": "Firma", "companytype": "Kunde" })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(400)
@@ -98,7 +98,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         it('Add a company with extra attributes fails', async () => {
             const response = await request(app)
                 .post('/companies/')
-                .send({ "name": "Firma D", "abbr": "FRD", "extra": "bla" })
+                .send({ "name": "Firma D", "abbr": "FRD", "extra": "bla", "companytype": "Kunde" })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(400)
@@ -110,7 +110,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         it('Add a company with invalid name type fails (array)', async () => {
             const response = await request(app)
                 .post('/companies/')
-                .send({ "name": {} })
+                .send({ "name": {}, "companytype": "Kunde" })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(400)
@@ -122,7 +122,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         it('Add a company with invalid abbr type fails (array)', async () => {
             const response = await request(app)
                 .post('/companies/')
-                .send({ "name": "Firma E", "abbr": {} })
+                .send({ "name": "Firma E", "abbr": {}, "companytype": "Kunde" })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(400)
@@ -134,7 +134,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         it('Add a company with invalid www type fails (array)', async () => {
             const response = await request(app)
                 .post('/companies/')
-                .send({ "name": "Firma E", "www": {} })
+                .send({ "name": "Firma E", "www": {}, "companytype": "Kunde" })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(400)

@@ -36,6 +36,7 @@ export const GET: Operation = async (req: Request, res: Response) => {
 GET.apiSpec = {
     "summary": "Get a list of all company types",
     "description": "GET request on all companies",
+    "operationId": "getCompanytypes",
     "tags": [
         "Companytype"
     ],
@@ -103,10 +104,10 @@ GET.apiSpec = {
             }
         },
         "400": {
-            "$ref": "#/components/responses/400-validation-error"
+            "$ref": "#/components/responses/400_validation_error"
         },
         "404": {
-            "$ref": "#/components/responses/404-not-found-error"
+            "$ref": "#/components/responses/404_not_found_error"
         }
     }
 }
@@ -121,6 +122,7 @@ export const POST:Operation = async (req: Request, res: Response) => {
 POST.apiSpec = {
     "summary": "Add new company type",
     "description": "POST request for a new company type",
+    "operationId": "postCompanytype",
     "tags": [
         "Companytype"
     ],
@@ -139,7 +141,7 @@ POST.apiSpec = {
             "$ref": "#/components/responses/201"
         },
         "400": {
-            "$ref": "#/components/responses/400-validation-error"
+            "$ref": "#/components/responses/400_validation_error"
         }
     }
 }

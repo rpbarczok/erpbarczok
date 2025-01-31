@@ -2,13 +2,13 @@ import '../../style.css'
 import './companies.css'
 import { ListGroup } from 'react-bootstrap'
 import React, { useState, useEffect } from 'react'
-import { DataWithMeta } from '../app.jsx'
+import { DataWithMeta } from '../forms.jsx'
 import { Company } from "./companies.jsx"
 
 interface ListCompaniesInterface {
     search: string
     activeCompany: DataWithMeta<Company>
-    onChangeActive: Function
+    onChangeActive: (active: number) => void
     isNew: boolean
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
     listCompanies: DataWithMeta<Company>[]
@@ -36,7 +36,7 @@ export default function ListCompanies({ search, activeCompany, onChangeActive, i
         })
 
         if (newList.length === 0) {
-            onChangeActive("")
+            onChangeActive(0)
         } else {
             if (!newList.some((e) => e.meta.location === activeCompany.meta.location)) {
                 onChangeActive(newList[0].meta.location)
@@ -46,11 +46,6 @@ export default function ListCompanies({ search, activeCompany, onChangeActive, i
         setListFiltered(newList)
         setIsNew(false)
     }, [search, listCompanies])
-
-    const handleClick = (e: React.MouseEvent<Element, MouseEvent>, active: string) => {
-        e.preventDefault()
-        onChangeActive(active)
-    }
 
     if (listFiltered.length === 0) {
         return (

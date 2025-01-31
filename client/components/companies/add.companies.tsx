@@ -2,18 +2,19 @@ import '../../style.css'
 import './companies.css'
 import { Col, Row, Button, Form, Modal } from "react-bootstrap"
 import React, { ChangeEvent, MouseEvent, useState } from 'react'
-import axios from 'axios'
-import { DataWithMeta } from 'components/app.jsx'
+import { client } from '../../utils/openapiclientaxios.js'
+import { DataWithMeta } from '../forms.jsx'
 import { Company, Companytype } from "./companies.jsx"
+import { removeBeforeLastDigits } from 'utils/removeBeforeLastDigits.js'
 
 interface AddCompaniesInterface {
-    setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
+    setCompanyIsChanged: React.Dispatch<React.SetStateAction<boolean>>
     onChangeActive: Function
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
     listCompanytypes: DataWithMeta<Companytype>[]
 }
 
-export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, listCompanytypes}: AddCompaniesInterface) {
+export default function AddCompanies({setCompanyIsChanged, onChangeActive, setIsNew, listCompanytypes}: AddCompaniesInterface) {
     const [show, setShow] = useState<boolean>(false) // to handle the modal
     const [company, setCompany] = useState<Company>({ name: '', companytype: 'default', abbr: "", www: "" })
     const handleShow = () => setShow(true)
@@ -54,12 +55,11 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, li
     const handleSubmitNew = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         if (company.name !== "") {
-            axios
-                .post(`/companies/`, company)
+            client.postCompany(null, company)
                 .then((res) => {
-                    setIsChanged(true)
+                    setCompanyIsChanged(true)
                     setIsNew(true)
-                    onChangeActive(res.headers.location)
+                    onChangeActive(Number(removeBeforeLastDigits(res.headers.location)))
                     setCompany({
                         name: '',
                         abbr: '',
@@ -75,7 +75,7 @@ export default function AddCompanies({setIsChanged, onChangeActive, setIsNew, li
         const optionsdefault = [<option id="default" value="default" selected ={company.companytype==='default'} >Rolle auswählen</option>]
         const options = listCompanytypes.map((role: DataWithMeta<Companytype>) => {
             return (
-                <option id={role.meta.location} value={role.data.name} selected={company.companytype===role.data.name}>{role.data.name}</option>
+                <option id={String(role.meta.location)} value={role.data.name} selected={company.companytype===role.data.name}>{role.data.name}</option>
             )
         })
         return optionsdefault.concat(options)

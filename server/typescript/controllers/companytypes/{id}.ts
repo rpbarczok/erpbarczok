@@ -24,8 +24,14 @@ export const GET: Operation = async (req: Request, res: Response) => {
 GET.apiSpec = {
     "summary": "Get a certain companytype",
     "description": "GET request on a certain companytype by id {id}",
+    "operationId": "getCompanytypeById",
     "tags": [
         "Companytype"
+    ],
+    "parameters": [
+        {
+            "$ref": "#/components/parameters/id-in-path"
+        }
     ],
     "responses": {
         "200": {
@@ -59,10 +65,10 @@ GET.apiSpec = {
             }
         },
         "400": {
-            "$ref": "#/components/responses/400-validation-error"
+            "$ref": "#/components/responses/400_validation_error"
         },
         "404": {
-            "$ref": "#/components/responses/404-not-found-error"
+            "$ref": "#/components/responses/404_not_found_error"
         }
     }
 }
@@ -80,18 +86,24 @@ export const DELETE: Operation = async (req: Request, res: Response) => {
 DELETE.apiSpec = {
     "summary": "Remove a certain company type",
     "description": "DELETE request on company type by id {id}",
+    "operationId": "deleteCompanytypeById",
     "tags": [
         "Companytype"
+    ],    
+    "parameters": [
+        {
+            "$ref": "#/components/parameters/id-in-path"
+        }
     ],
     "responses": {
         "204": {
-            "$ref": "#/components/responses/204-success"
+            "$ref": "#/components/responses/204_success"
         },
         "400": {
-            "$ref": "#/components/responses/400-validation-error"
+            "$ref": "#/components/responses/400_validation_error"
         },
         "404": {
-            "$ref": "#/components/responses/404-not-found-error"
+            "$ref": "#/components/responses/404_not_found_error"
         }
     }
 }
@@ -134,6 +146,7 @@ export const PUT: Operation = async (req: Request, res: Response) => {
 PUT.apiSpec = {
     "summary": "Updates company type with id {id}",
     "description": "Put request on company type by id {id}",
+    "operationId": "putCompanytypeById",
     "tags": [
         "Companytype"
     ],
@@ -150,28 +163,23 @@ PUT.apiSpec = {
     "parameters": [
         {
             "$ref": "#/components/parameters/if-match"
+        },
+        {
+            "$ref": "#/components/parameters/id-in-path"
         }
     ],
     "responses": {
         "204": {
-            "$ref": "#/components/responses/204-updated"
+            "$ref": "#/components/responses/204_updated"
         },
         "400": {
-            "$ref": "#/components/responses/400-validation-error"
+            "$ref": "#/components/responses/400_validation_error"
         },
         "404": {
-            "$ref": "#/components/responses/404-not-found-error"
+            "$ref": "#/components/responses/404_not_found_error"
         },
         "412": {
-            "$ref": "#/components/responses/412-precondition-error"
+            "$ref": "#/components/responses/412_precondition_error"
         }
     }
-}
-
-export const apiSpec: OpenAPIV3.PathItemObject = {
-    "parameters": [
-        {
-            "$ref": "#/components/parameters/id-in-path"
-        }
-    ]
 }

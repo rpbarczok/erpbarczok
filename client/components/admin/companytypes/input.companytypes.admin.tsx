@@ -19,7 +19,7 @@ const InputCompanytypes = ({ show, setShow, handleSubmit, companytype, setCompan
     const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
         setCompanytype({
-            meta: companytype?companytype.meta: {location: '', etag:''},
+            meta: companytype?companytype.meta: {location: 0, etag:''},
             data: {
                 name: e.target.value
             }

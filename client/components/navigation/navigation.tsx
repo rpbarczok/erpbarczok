@@ -4,7 +4,7 @@ import {Row} from 'react-bootstrap'
 import RibbonNavigation from './ribbon.navigation.jsx'
 import TabsNavigation from './tabs.navigation.jsx'
 import React from 'react'
-import { FormTab } from './forms.js'
+import { FormTab } from './ribbon.js'
 
 interface NavigationInterface {
     tabs: FormTab[]

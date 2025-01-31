@@ -52,6 +52,7 @@ export const GET: Operation = async (req: Request, res: Response) => {
 GET.apiSpec = {
     "summary": "Get a list of all companies",
     "description": "GET request on all companies",
+    "operationId": "getCompanies",
     "tags": [
         "Company"
     ],
@@ -136,6 +137,7 @@ export const POST: Operation = async (req: Request, res: Response) => {
 POST.apiSpec = {
     "summary": "Create new company",
     "description": "POST request for a new company, response new id",
+    "operationId": "postCompany",
     "tags": [
         "Company"
     ],
@@ -154,7 +156,7 @@ POST.apiSpec = {
             "$ref": "#/components/responses/201"
         },
         "400": {
-            "$ref": "#/components/responses/400-validation-error"
+            "$ref": "#/components/responses/400_validation_error"
         }
     }
 }

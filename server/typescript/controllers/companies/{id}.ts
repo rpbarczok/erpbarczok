@@ -29,8 +29,14 @@ export const GET: Operation = async (req: Request, res: Response) => {
 GET.apiSpec = {
     "summary": "Get a certain company",
     "description": "GET request on a certain company by id {id}",
+    "operationId": "getCompanyById",
     "tags": [
         "Company"
+    ],
+    "parameters": [
+        {
+            "$ref": "#/components/parameters/id-in-path"
+        }
     ],
     "responses": {
         "200": {
@@ -63,10 +69,10 @@ GET.apiSpec = {
             }
         },
         "400": {
-            "$ref": "#/components/responses/400-validation-error"
+            "$ref": "#/components/responses/400_validation_error"
         },
         "404": {
-            "$ref": "#/components/responses/404-not-found-error"
+            "$ref": "#/components/responses/404_not_found_error"
         }
     }
 }
@@ -92,18 +98,24 @@ export const DELETE: Operation = async (req: Request, res: Response) => {
 DELETE.apiSpec = {
     "summary": "Remove a certain company",
     "description": "DELETE request on company by id {id}",
+    "operationId": "deleteCompanyById",
     "tags": [
         "Company"
     ],
+    "parameters": [
+        {
+            "$ref": "#/components/parameters/id-in-path"
+        }
+    ],
     "responses": {
         "204": {
-            "$ref": "#/components/responses/204-success"
+            "$ref": "#/components/responses/204_success"
         },
         "400": {
-            "$ref": "#/components/responses/400-validation-error"
+            "$ref": "#/components/responses/400_validation_error"
         },
         "404": {
-            "$ref": "#/components/responses/404-not-found-error"
+            "$ref": "#/components/responses/404_not_found_error"
         }
     }
 }
@@ -145,6 +157,7 @@ export const PUT: Operation = async (req: Request, res: Response) => {
 PUT.apiSpec = {
     "summary": "Updates company with id {id}",
     "description": "Put request on company by id {id}",
+    "operationId": "putCompanyById",
     "tags": [
         "Company"
     ],
@@ -161,28 +174,23 @@ PUT.apiSpec = {
     "parameters": [
         {
             "$ref": "#/components/parameters/if-match"
+        },
+        {
+            "$ref": "#/components/parameters/id-in-path"
         }
     ],
     "responses": {
         "204": {
-            "$ref": "#/components/responses/204-updated"
+            "$ref": "#/components/responses/204_updated"
         },
         "400": {
-            "$ref": "#/components/responses/400-validation-error"
+            "$ref": "#/components/responses/400_validation_error"
         },
         "404": {
-            "$ref": "#/components/responses/404-not-found-error"
+            "$ref": "#/components/responses/404_not_found_error"
         },
         "412": {
-            "$ref": "#/components/responses/412-precondition-error"
+            "$ref": "#/components/responses/412_precondition_error"
         }
     }
-}
-
-export const apiSpec: OpenAPIV3.PathItemObject = {
-    "parameters": [
-        {
-            "$ref": "#/components/parameters/id-in-path"
-        }
-    ]
 }
