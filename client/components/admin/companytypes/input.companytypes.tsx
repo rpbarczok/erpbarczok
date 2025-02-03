@@ -2,8 +2,8 @@ import '../../../style.css'
 import '../admin.css'
 import { Form, Modal, Row, Col, Button } from "react-bootstrap"
 import { ChangeEvent, MouseEventHandler } from "react"
-import { Companytype } from "components/companies/companies.jsx"
-import { DataWithMeta } from 'components/app.js'
+import { Companytype } from './companytypes.jsx'
+import { DataWithMeta } from 'components/forms.jsx'
 
 interface InputCompanytypesInterface {
     show: boolean

@@ -1,7 +1,7 @@
 import { error_formatter, NotFoundError } from './error.js'
 import { Company } from '../models/companies.js'
 import { Companytype } from '../models/companytypes.js'
-import { CompanyResponse, CompanyCreate } from '../controllers/companies/index.js'
+import { CompanyClient, CompanyServer } from '../controllers/companies/index.js'
 
 export const getAllCompanies = () => new Promise<Company[]>(async function (resolve, reject) {
     try {
@@ -13,12 +13,10 @@ export const getAllCompanies = () => new Promise<Company[]>(async function (reso
     }
 })
 
-export const addCompany = (body: CompanyResponse) => new Promise<Company>(async function (resolve, reject) {
+export const addCompany = (body: CompanyClient) => new Promise<Company>(async function (resolve, reject) {
     const companytype = await Companytype.findOne({ where: { name: body.companytype } })
     if (companytype) {
-        const company: CompanyCreate = { name: body.name, CompanytypeId: companytype.id }
-        if (body.abbr) company.abbr = body.abbr
-        if (body.www) company.www = body.www
+        const company = { name: body.name, companytypeId: companytype.id, abbr: body.abbr, www: body.www }
         try {
             const newCompany = await Company.create(company)
             const newCompanyInclude = await Company.findByPk(newCompany.id, {include: Companytype})
@@ -62,7 +60,7 @@ export const deleteCompanyById = (id: number) => new Promise<void>(async (resolv
         reject(error_formatter(500, err))
     }
 })
-export const putCompanyById = (id: number, body: CompanyResponse) => new Promise<Company>(async (resolve, reject) => {
+export const putCompanyById = (id: number, body: CompanyClient) => new Promise<Company>(async (resolve, reject) => {
     try {
         if (body.name && body.companytype) {
             const company = await Company.findByPk(id, { include: Companytype })
@@ -71,7 +69,7 @@ export const putCompanyById = (id: number, body: CompanyResponse) => new Promise
             } else {
                 const companytype = await Companytype.findOne({ where: { name: body.companytype } })
                 if (companytype) {
-                    const data: CompanyCreate = { name: body.name, CompanytypeId: companytype.id }
+                    const data: CompanyServer = { name: body.name, companytypeId: companytype.id }
                     body.abbr ? data.abbr = body.abbr : data.abbr = null
                     body.www ? data.www = body.www : data.www = null
                     const updatedRow = await Company.update(data, { returning: true, where: { id: id } })

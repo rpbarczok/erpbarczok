@@ -1,7 +1,7 @@
 import '../../../style.css'
 import '../admin.css'
-import { Companytype } from "components/companies/companies.jsx"
-import { DataWithMeta } from 'components/app.jsx'
+import { Companytype } from './companytypes.js'
+import { DataWithMeta } from 'components/forms.jsx'
 import { Button, ButtonGroup, Col, ListGroup } from "react-bootstrap"
 import { Pencil, Trash } from "react-bootstrap-icons"
 

@@ -4,8 +4,9 @@ import { Col, Row, Button, Form, Modal } from "react-bootstrap"
 import React, { ChangeEvent, MouseEvent, useState } from 'react'
 import { client } from '../../utils/openapiclientaxios.js'
 import { DataWithMeta } from '../forms.jsx'
-import { Company, Companytype } from "./companies.jsx"
+import { Company } from "./companies.jsx"
 import { removeBeforeLastDigits } from 'utils/removeBeforeLastDigits.js'
+import { Companytype } from 'components/admin/companytypes/companytypes.js'
 
 interface AddCompaniesInterface {
     setCompanyIsChanged: React.Dispatch<React.SetStateAction<boolean>>

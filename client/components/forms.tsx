@@ -5,7 +5,7 @@ import '../style.css'
 import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
 import { useEffect, useState } from "react"
 import { client } from "utils/openapiclientaxios.js"
-import { Companytype } from "./companies/companies.jsx"
+import { Companytype } from "./admin/companytypes/companytypes.js"
 
 interface Meta {
     location: number

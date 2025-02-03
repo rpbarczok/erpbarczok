@@ -3,10 +3,10 @@ import './admin.css'
 import { Row, Col, Button } from 'react-bootstrap'
 import Heading from '../common/heading.jsx'
 import LeftNavAdmin from './leftnav.admin.jsx'
-import Companytypes from './companytypes/companytypes.admin.jsx'
+import Companytypes from './companytypes/companytypes.jsx'
 import { useState } from 'react'
 import { DataWithMeta } from 'components/forms.jsx'
-import { Companytype } from 'components/companies/companies.js'
+import { Companytype } from './companytypes/companytypes.jsx'
 
 export interface Ressource {
     name: string

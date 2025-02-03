@@ -10,10 +10,7 @@ import { useState, useEffect } from 'react'
 import { DataWithMeta } from '../forms.jsx'
 import { client } from '../../utils/openapiclientaxios.js'
 import { removeBeforeLastDigits } from '../../utils/removeBeforeLastDigits.js'
-
-export interface Companytype {
-    "name": string
-}
+import { Companytype } from 'components/admin/companytypes/companytypes.js'
 
 export interface Company {
     "name": string
@@ -22,37 +19,8 @@ export interface Company {
     "www"?: string
 }
 
-export interface CompanyEdit {
-    "name": string
-    "companytype": string
-    "abbr": string
-    "www": string
-}
-
-export function transformCompanyEdit(company: CompanyEdit): Company {
-    const result: Company = { name: company.name, companytype: company.companytype }
-    if (company.abbr !== "") {
-        result.abbr = company.abbr
-    }
-    if (company.www !== "") {
-        result.www = company.www
-    }
-    return result
-}
-
 interface CompanyInterface {
     listCompanytypes: DataWithMeta<Companytype>[]
-}
-
-export function transformCompany(company: Company): CompanyEdit {
-    const result: CompanyEdit = { name: company.name, companytype: company.companytype, abbr: "", www: "" }
-    if (company.abbr) {
-        result.abbr = company.abbr
-    }
-    if (company.www) {
-        result.www = company.www
-    }
-    return result
 }
 
 export default function Companies({listCompanytypes}: CompanyInterface) {

@@ -5,22 +5,22 @@ import { Company } from '../../models/companies.js'
 import { sha256 } from '../../hasher.js'
 import { Operation } from '../../apiSpecAssembler.js'
 
-export interface CompanyResponse {
+export interface CompanyClient {
     name: string
     abbr?: string | null
     www?: string | null
     companytype: string
 }
 
-export interface CompanyCreate {
+export interface CompanyServer {
     name: string
     abbr?: string | null
     www?: string | null
-    CompanytypeId: number
+    companytypeId: number
 }
 
 export function normalizeCompany(company: Company) {
-    const result: CompanyResponse = { name: company.name, companytype: company.Companytype!.name}
+    const result: CompanyClient = { name: company.name, companytype: company.companytype!.name}
     if (company.abbr) {
         result.abbr = company.abbr
     }
@@ -30,20 +30,20 @@ export function normalizeCompany(company: Company) {
     return result
 }
 
-export function normalizeCompanyMeta(company: Company): Meta<CompanyResponse> {
-    const data: CompanyResponse = normalizeCompany(company)
+export function normalizeCompanyMeta(company: Company): Meta<CompanyClient> {
+    const data: CompanyClient = normalizeCompany(company)
     const meta: MetaEtag = normalizeCompanyLocationEtag(company)
     return { meta: meta, data: data }
 }
 
 export function normalizeCompanyLocationEtag(company: Company): MetaEtag {
-    const companyResponse: CompanyResponse = normalizeCompany(company)
-    return { "location": "/companies/" + company.id, "etag": sha256(JSON.stringify(companyResponse)) }
+    const companyClient: CompanyClient = normalizeCompany(company)
+    return { "location": "/companies/" + company.id, "etag": sha256(JSON.stringify(companyClient)) }
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const allCompanies = await getAllCompanies()
-    const allCompaniesResponse: Meta<CompanyResponse>[] = allCompanies.map((row) => (normalizeCompanyMeta(row)))
+    const allCompaniesResponse: Meta<CompanyClient>[] = allCompanies.map((row) => (normalizeCompanyMeta(row)))
     res
         .status(200)
         .json(allCompaniesResponse)

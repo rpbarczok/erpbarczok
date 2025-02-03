@@ -5,32 +5,32 @@ import { getAllCompanytypes, addCompanytype } from '../../services/companytypes.
 import { Request, Response } from 'express'
 import { Operation } from '../../apiSpecAssembler.js'
 
-export interface CompanytypeResponse {
+export interface CompanytypeServer {
     name: string
 }
 
-export function normalizeCompanytype(companytype: Companytype): CompanytypeResponse {
-    const result: CompanytypeResponse = { name: companytype.name }
+export function normalizeCompanytype(companytype: Companytype): CompanytypeServer {
+    const result: CompanytypeServer = { name: companytype.name }
     return result
 }
 
 export function normalizeCompanytypeLocationEtag(companytype: Companytype): MetaEtag {
-    const companytypeResponse: CompanytypeResponse = normalizeCompanytype(companytype)
-    return { "location": "/companytypes/" + companytype.id, "etag": sha256(JSON.stringify(companytypeResponse)) }
+    const companytypeServer: CompanytypeServer = normalizeCompanytype(companytype)
+    return { "location": "/companytypes/" + companytype.id, "etag": sha256(JSON.stringify(companytypeServer)) }
 }
 
-export function normalizeCompanytypeMeta(companytype: Companytype): Meta<CompanytypeResponse> {
-    const data: CompanytypeResponse = normalizeCompanytype(companytype)
+export function normalizeCompanytypeMeta(companytype: Companytype): Meta<CompanytypeServer> {
+    const data: CompanytypeServer = normalizeCompanytype(companytype)
     const meta = normalizeCompanytypeLocationEtag(companytype)
     return { meta: meta, data: data }
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const allCompanytypes = await getAllCompanytypes()
-    const allCompanytypeResponse: Meta<CompanytypeResponse>[] = allCompanytypes.map(row => normalizeCompanytypeMeta(row))
+    const allCompanytypeServer: Meta<CompanytypeServer>[] = allCompanytypes.map(row => normalizeCompanytypeMeta(row))
     res
     .status(200)
-    .json(allCompanytypeResponse)
+    .json(allCompanytypeServer)
 }
 
 GET.apiSpec = {

@@ -1,14 +1,16 @@
 import '../../../style.css'
 import '../admin.css'
 import { ListGroup, Row } from 'react-bootstrap'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { DataWithMeta } from '../../forms.jsx'
-import { Companytype } from 'components/companies/companies.jsx'
-import AddCompanytypes from './add.companytypes.admin.jsx'
-import ListCompanytypes from './list.comanytypes.admin.jsx'
-import InputCompanytypes from './input.companytypes.admin.jsx'
+import AddCompanytypes from './add.companytypes.jsx'
+import ListCompanytypes from './list.comanytypes.jsx'
+import InputCompanytypes from './input.companytypes.jsx'
 import { client } from '../../../utils/openapiclientaxios.js'
 
+export interface Companytype {
+    "name": string
+}
 
 interface CompanytypesInterface {
     listCompanytypes: DataWithMeta<Companytype>[]

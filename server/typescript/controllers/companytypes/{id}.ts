@@ -2,19 +2,19 @@ import { getCompanytypeById, deleteCompanytypeById, putCompanytypeById } from '.
 import { error_formatter, NotFoundError } from "../../services/error.js"
 import type { Request, Response } from 'express'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
-import { CompanytypeResponse, normalizeCompanytype, normalizeCompanytypeLocationEtag } from './index.js'
+import { CompanytypeServer, normalizeCompanytype, normalizeCompanytypeLocationEtag } from './index.js'
 import { Operation } from '../../apiSpecAssembler.js'
 import { MetaEtag } from '../../app.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
     try {
         const companytype = await getCompanytypeById(Number(req.params.id))
-        const companytypeResponse: CompanytypeResponse = normalizeCompanytype(companytype)
-        const companytypeResponseMeta: MetaEtag = normalizeCompanytypeLocationEtag(companytype)
+        const companytypeServer: CompanytypeServer = normalizeCompanytype(companytype)
+        const companytypeServerMeta: MetaEtag = normalizeCompanytypeLocationEtag(companytype)
         res
             .status(200)
-            .set(companytypeResponseMeta)
-            .json(companytypeResponse)
+            .set(companytypeServerMeta)
+            .json(companytypeServer)
     }
     catch (err) {
         if (err instanceof NotFoundError) res.status(404).json({ "status": 404, "message": "not found" })

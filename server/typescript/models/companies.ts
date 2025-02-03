@@ -6,10 +6,10 @@ export class Company extends Model<InferAttributes<Company>, InferCreationAttrib
     declare name: string
     declare abbr: string | null
     declare www: string | null
-    declare CompanytypeId: ForeignKey<Companytype['id']>
+    declare companytypeId: ForeignKey<Companytype['id']>
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
-    declare Companytype?: NonAttribute<Companytype>
+    declare companytype?: NonAttribute<Companytype>
 }
 
 const initializeCompany = (sequelize: Sequelize) => {
@@ -37,7 +37,8 @@ const initializeCompany = (sequelize: Sequelize) => {
     },
         {
             sequelize,
-            modelName: "Company"
+            modelName: "company",
+            tableName: "companies"
         }
     )
 }

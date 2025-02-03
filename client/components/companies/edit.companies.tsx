@@ -2,10 +2,10 @@ import '../../style.css'
 import './companies.css'
 import { Col, Row, Button, ButtonGroup, Form } from 'react-bootstrap'
 import React, { useState } from 'react'
-import { Company, CompanyEdit, Companytype } from './companies.jsx'
+import { Company} from './companies.jsx'
 import { DataWithMeta } from '../forms.jsx'
-import { transformCompany, transformCompanyEdit } from './companies.jsx'
 import { client } from '../../utils/openapiclientaxios.js'
+import { Companytype } from 'components/admin/companytypes/companytypes.js'
 
 interface EditCompaniesInterface {
     setCompanyIsChanged: React.Dispatch<React.SetStateAction<boolean>>
@@ -14,7 +14,7 @@ interface EditCompaniesInterface {
 }
 
 export default function EditCompanies({ setCompanyIsChanged, activeCompany, listCompanytypes }: EditCompaniesInterface) {
-    const [changeCompany, setChangeCompany] = useState<CompanyEdit>(transformCompany(activeCompany.data))
+    const [changeCompany, setChangeCompany] = useState<Company>(activeCompany.data)
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
@@ -74,7 +74,7 @@ export default function EditCompanies({ setCompanyIsChanged, activeCompany, list
         e.preventDefault()
         if (changeCompany.name !== "") {
             client.putCompanyById({ id: activeCompany.meta.location, "if-match": activeCompany.meta.etag },
-                transformCompanyEdit(changeCompany))
+                changeCompany)
                 .then((res) => {
                     setCompanyIsChanged(true)
                 })

@@ -1,20 +1,19 @@
-import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { getCompanyById, deleteCompanyById, putCompanyById } from '../../services/companies.js'
 import { NotFoundError, error_formatter } from "../../services/error.js"
 import type { Request, Response } from 'express'
-import { CompanyResponse, normalizeCompany, normalizeCompanyLocationEtag } from './index.js'
+import { CompanyClient, normalizeCompany, normalizeCompanyLocationEtag } from './index.js'
 import { Operation } from '../../apiSpecAssembler.js'
 import { MetaEtag } from '../../app.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
     try {
         const company = await getCompanyById(Number(req.params.id))
-        const companyResponse: CompanyResponse = normalizeCompany(company)
+        const companyClient: CompanyClient = normalizeCompany(company)
         const companyResponseMeta: MetaEtag = normalizeCompanyLocationEtag(company)
         res
             .status(200)
             .set(companyResponseMeta)
-            .json(companyResponse)
+            .json(companyClient)
     }
     catch (err) {
         if (err instanceof NotFoundError) {
