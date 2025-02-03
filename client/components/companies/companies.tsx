@@ -6,13 +6,11 @@ import EditCompanies from './edit.companies.jsx'
 import SearchCompanies from './search.companies.jsx'
 import AddCompanies from './add.companies.jsx'
 import ListCompanies from './list.companies.jsx'
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import { DataWithMeta } from '../app.jsx'
-
-export interface Companytype {
-    "name": string
-}
+import { useState, useEffect } from 'react'
+import { DataWithMeta } from '../forms.jsx'
+import { client } from '../../utils/openapiclientaxios.js'
+import { removeBeforeLastDigits } from '../../utils/removeBeforeLastDigits.js'
+import { Companytype } from 'components/admin/companytypes/companytypes.js'
 
 export interface Company {
     "name": string
@@ -21,70 +19,45 @@ export interface Company {
     "www"?: string
 }
 
-export interface CompanyEdit {
-    "name": string
-    "companytype": string
-    "abbr": string
-    "www": string
+interface CompanyInterface {
+    listCompanytypes: DataWithMeta<Companytype>[]
 }
 
-export function transformCompanyEdit(company: CompanyEdit): Company {
-    const result: Company = { name: company.name, companytype: company.companytype }
-    if (company.abbr !== "") {
-        result.abbr = company.abbr
-    }
-    if (company.www !== "") {
-        result.www = company.www
-    }
-    return result
-}
-
-export function transformCompany(company: Company): CompanyEdit {
-    const result: CompanyEdit = { name: company.name, companytype: company.companytype, abbr: "", www: "" }
-    if (company.abbr) {
-        result.abbr = company.abbr
-    }
-    if (company.www) {
-        result.www = company.www
-    }
-    return result
-}
-
-export default function Companies() {
-    const [isChanged, setIsChanged] = useState<boolean>(true)
+export default function Companies({listCompanytypes}: CompanyInterface) {
+    const [companyIsChanged, setCompanyIsChanged] = useState<boolean>(true)
     const [listCompanies, setListCompanies] = useState<DataWithMeta<Company>[]>([])
-    const [listCompanytypes, setListCompanytypes] = useState<DataWithMeta<Companytype>[]>([])
-    const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>({ "meta": { "location": "", "etag": "" }, "data": {"name": "", "companytype": "" ,"abbr": "", "www": ""} })
+    const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>({ "meta": { "location": 0, "etag": "" }, "data": { "name": "", "companytype": "", "abbr": "", "www": "" } })
     const [search, setSearch] = useState<string>("")
     const [isNew, setIsNew] = useState<boolean>(false)
 
     useEffect(() => {
-        if (isChanged) {
-            axios.get("/companies/")
+        if (companyIsChanged) {
+            client.getCompanies()
                 .then(result => {
-                    setListCompanies(result?.data)
+                    const newList = result?.data.map(row => {
+                        const newRow: DataWithMeta<Company> = {
+                            meta: {
+                                location: Number(removeBeforeLastDigits(row.meta.location)),
+                                etag: row.meta.etag
+                            },
+                            data: row.data
+                        }
+                        return (newRow)
+                    })
+                    setListCompanies(newList)
                 })
-            setIsChanged(false)
+            setCompanyIsChanged(false)
         }
-    }, [isChanged])
+    }, [companyIsChanged])
 
-    useEffect(() => {
-        {
-            axios.get("/companytypes/")
-                .then(result => {
-                    setListCompanytypes(result?.data)
-                })
-        }
-    }, [])
-
-    function handleChangeActive(active: string) {
-        if (active === "" || active === undefined) {
-            setActiveCompany({ "meta": { "location": "", "etag": "" }, "data": { "name": "", "companytype": "", "abbr": "", "www": "" } })
+    function handleChangeActive(active: number) {
+        if (active === 0 || active === undefined) {
+            setActiveCompany({ "meta": { "location": 0, "etag": "" }, "data": { "name": "", "companytype": "", "abbr": "", "www": "" } })
         } else {
-            axios.get(active)
+            client.getCompanyById(active)
                 .then(result => {
                     if (result.data) {
-                        const company = {"meta": {'location': result.headers.location, 'etag': result.headers.etag}, 'data': result.data}
+                        const company = { "meta": { 'location': Number(removeBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
                         setActiveCompany(company)
                     }
                 })
@@ -110,7 +83,7 @@ export default function Companies() {
                 </Col>
                 <Col>
                     <AddCompanies
-                        setIsChanged={setIsChanged}
+                        setCompanyIsChanged={setCompanyIsChanged}
                         onChangeActive={handleChangeActive}
                         setIsNew={setIsNew}
                         listCompanytypes={listCompanytypes}
@@ -121,7 +94,9 @@ export default function Companies() {
             </Row>
             <hr />
             <Row id="edit">
-                {activeCompany.meta.location === "" ? <p>Keine Firma gefunden</p> : <EditCompanies key={activeCompany.meta.location} setIsChanged={setIsChanged} activeCompany={activeCompany} listCompanytypes={listCompanytypes} />}
+                {activeCompany.meta.location === 0 ? 
+                <p>Keine Firma gefunden</p> : 
+                <EditCompanies key={activeCompany.meta.location} setCompanyIsChanged={setCompanyIsChanged} activeCompany={activeCompany} listCompanytypes={listCompanytypes} />}
             </Row>
         </>
     )

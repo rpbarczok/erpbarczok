@@ -22,7 +22,6 @@ WORKDIR /home/node
 COPY --from=build  /home/node/package.json ./package.json 
 COPY --from=build --chown=node:node /home/node/server/ecmascript ./server/ecmascript
 COPY --from=build --chown=node:node /home/node/server/public ./server/public
-COPY --from=build --chown=node:node /home/node/server/json ./server/json
 
 RUN npm install --omit=dev
 

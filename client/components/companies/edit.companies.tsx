@@ -2,27 +2,27 @@ import '../../style.css'
 import './companies.css'
 import { Col, Row, Button, ButtonGroup, Form } from 'react-bootstrap'
 import React, { useState } from 'react'
-import axios from 'axios'
-import { Company, CompanyEdit, Companytype } from './companies.jsx'
-import { DataWithMeta } from '../app.jsx'
-import { transformCompany, transformCompanyEdit } from './companies.jsx'
+import { Company} from './companies.jsx'
+import { DataWithMeta } from '../forms.jsx'
+import { client } from '../../utils/openapiclientaxios.js'
+import { Companytype } from 'components/admin/companytypes/companytypes.js'
 
 interface EditCompaniesInterface {
-    setIsChanged: React.Dispatch<React.SetStateAction<boolean>>
+    setCompanyIsChanged: React.Dispatch<React.SetStateAction<boolean>>
     activeCompany: DataWithMeta<Company>
     listCompanytypes: DataWithMeta<Companytype>[]
 }
 
-export default function EditCompanies({ setIsChanged, activeCompany, listCompanytypes }: EditCompaniesInterface) {
-    const [changeCompany, setChangeCompany] = useState<CompanyEdit>(transformCompany(activeCompany.data))
+export default function EditCompanies({ setCompanyIsChanged, activeCompany, listCompanytypes }: EditCompaniesInterface) {
+    const [changeCompany, setChangeCompany] = useState<Company>(activeCompany.data)
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         const userConfirmed = window.confirm("Willst du wirklich die Firma löschen?")
         if (userConfirmed) {
-            axios.delete(activeCompany.meta.location)
+            client.deleteCompanyById(activeCompany.meta.location)
                 .then((res) => {
-                    setIsChanged(true)
+                    setCompanyIsChanged(true)
                 })
                 .catch(function (error) {
                     throw error
@@ -72,14 +72,11 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
 
     const handleSubmitChange = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        const companySave = { "meta": activeCompany.meta, "data": transformCompanyEdit(changeCompany) }
         if (changeCompany.name !== "") {
-            axios
-                .put(activeCompany.meta.location,
-                    companySave.data,
-                    { headers: { "location": activeCompany.meta.location, "if-match": activeCompany.meta.etag } })
+            client.putCompanyById({ id: activeCompany.meta.location, "if-match": activeCompany.meta.etag },
+                changeCompany)
                 .then((res) => {
-                    setIsChanged(true)
+                    setCompanyIsChanged(true)
                 })
                 .catch(function (error) {
                     throw error
@@ -88,10 +85,10 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
     }
 
     const Companytypes = () => {
-        const optionsdefault = [<option key="default" id="default" value="default" selected={changeCompany.companytype === 'default'}>Rolle auswählen</option>]
+        const optionsdefault = [<option key="default" id="default" value='default'>Rolle auswählen</option>]
         const options = listCompanytypes.map((role: DataWithMeta<Companytype>) => {
             return (
-                <option key={role.meta.location} id={role.meta.location} value={role.data.name} selected={changeCompany.companytype === role.data.name}>{role.data.name}</option>
+                <option key={role.meta.location} id={String(role.meta.location)} value={role.data.name} >{role.data.name}</option>
             )
         })
         return optionsdefault.concat(options)
@@ -133,7 +130,7 @@ export default function EditCompanies({ setIsChanged, activeCompany, listCompany
                             <Col>
                                 <Form.Group controlId="companyCompanytype">
                                     <Form.Label className="standardDesign">Firmenrolle</Form.Label>
-                                    <Form.Select className="standardDesign" key="companyCompanytype" onChange={handleChangeCompanytype}>
+                                    <Form.Select className="standardDesign" key="companyCompanytype" value={changeCompany.companytype} onChange={handleChangeCompanytype}>
                                         <Companytypes />
                                     </Form.Select>
                                 </Form.Group>

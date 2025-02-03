@@ -2,8 +2,8 @@ import '../../../style.css'
 import '../admin.css'
 import { Form, Modal, Row, Col, Button } from "react-bootstrap"
 import { ChangeEvent, MouseEventHandler } from "react"
-import { Companytype } from "components/companies/companies.jsx"
-import { DataWithMeta } from 'components/app.js'
+import { Companytype } from './companytypes.jsx'
+import { DataWithMeta } from 'components/forms.jsx'
 
 interface InputCompanytypesInterface {
     show: boolean
@@ -19,7 +19,7 @@ const InputCompanytypes = ({ show, setShow, handleSubmit, companytype, setCompan
     const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
         setCompanytype({
-            meta: companytype?companytype.meta: {location: '', etag:''},
+            meta: companytype?companytype.meta: {location: 0, etag:''},
             data: {
                 name: e.target.value
             }

@@ -1,5 +1,4 @@
 import {Col, Row} from 'react-bootstrap'
-import React from 'react'
 import './heading.css'
 import '../../style.css'
 

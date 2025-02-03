@@ -27,7 +27,8 @@ const initializeCompanytype = (sequelize: Sequelize) => {
     },
         {
             sequelize,
-            modelName: "Companytype"
+            modelName: "companytype",
+            tableName: "companytypes"
         }
     )
 }

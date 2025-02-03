@@ -74,7 +74,7 @@
                     }
                 }
             },
-            "204-updated": {
+            "204_updated": {
                 "description": "Successfull operation",
                 "headers": {
                     "location": {
@@ -91,10 +91,10 @@
                     }
                 }
             },
-            "204-success": {
+            "204_success": {
                 "description": "Successfull operation"
             },
-            "400-validation-error": {
+            "400_validation_error": {
                 "description": "Bad request",
                 "content": {
                     "application/json": {
@@ -109,7 +109,7 @@
                     }
                 }
             },
-            "404-not-found-error": {
+            "404_not_found_error": {
                 "description": "Not found",
                 "content": {
                     "application/json": {
@@ -124,7 +124,7 @@
                     }
                 }
             },
-            "412-precondition-error": {
+            "412_precondition_error": {
                 "description": "precondition failed",
                 "content": {
                     "application/json": {
@@ -182,7 +182,8 @@
             "company": {
                 "type": "object",
                 "required": [
-                    "name"
+                    "name",
+                    "companytype"
                 ],
                 "additionalProperties": false,
                 "properties": {
