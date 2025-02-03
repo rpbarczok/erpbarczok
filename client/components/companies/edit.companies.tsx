@@ -2,19 +2,22 @@ import '../../style.css'
 import './companies.css'
 import { Col, Row, Button, ButtonGroup, Form } from 'react-bootstrap'
 import React, { useState } from 'react'
-import { Company} from './companies.jsx'
+import { Company } from './companies.jsx'
 import { DataWithMeta } from '../forms.jsx'
 import { client } from '../../utils/openapiclientaxios.js'
-import { Companytype } from 'components/admin/companytypes/companytypes.js'
+import { Companytype } from 'components/admin/companytypes/companytypes.jsx'
+import { InputCompanies } from './input.companies.jsx'
 
 interface EditCompaniesInterface {
     setCompanyIsChanged: React.Dispatch<React.SetStateAction<boolean>>
     activeCompany: DataWithMeta<Company>
     listCompanytypes: DataWithMeta<Companytype>[]
+    changeCompany: DataWithMeta<Company>
+    setChangeCompany: React.Dispatch<React.SetStateAction<DataWithMeta<Company>>>
+    handleSubmit: React.MouseEventHandler<HTMLButtonElement>
 }
 
-export default function EditCompanies({ setCompanyIsChanged, activeCompany, listCompanytypes }: EditCompaniesInterface) {
-    const [changeCompany, setChangeCompany] = useState<Company>(activeCompany.data)
+export default function EditCompanies({ setCompanyIsChanged, activeCompany, listCompanytypes, changeCompany, setChangeCompany, handleSubmit }: EditCompaniesInterface) {
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
@@ -30,70 +33,6 @@ export default function EditCompanies({ setCompanyIsChanged, activeCompany, list
         }
     }
 
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault()
-        setChangeCompany({
-            "name": e.target.value,
-            "companytype": changeCompany.companytype,
-            "abbr": changeCompany.abbr,
-            "www": changeCompany.www
-        })
-    }
-
-    const handleChangeAbbr = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault()
-        setChangeCompany({
-            "name": changeCompany.name,
-            "companytype": changeCompany.companytype,
-            "abbr": e.target.value,
-            "www": changeCompany.www
-        })
-    }
-
-    const handleChangeWWW = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault()
-        setChangeCompany({
-            "name": changeCompany.name,
-            "companytype": changeCompany.companytype,
-            "abbr": changeCompany.abbr,
-            "www": e.target.value
-        })
-    }
-
-    const handleChangeCompanytype = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        e.preventDefault()
-        setChangeCompany({
-            "name": changeCompany.name,
-            "companytype": e.target.value,
-            "abbr": changeCompany.abbr,
-            "www": changeCompany.www
-        })
-    }
-
-    const handleSubmitChange = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault()
-        if (changeCompany.name !== "") {
-            client.putCompanyById({ id: activeCompany.meta.location, "if-match": activeCompany.meta.etag },
-                changeCompany)
-                .then((res) => {
-                    setCompanyIsChanged(true)
-                })
-                .catch(function (error) {
-                    throw error
-                })
-        }
-    }
-
-    const Companytypes = () => {
-        const optionsdefault = [<option key="default" id="default" value='default'>Rolle auswählen</option>]
-        const options = listCompanytypes.map((role: DataWithMeta<Companytype>) => {
-            return (
-                <option key={role.meta.location} id={String(role.meta.location)} value={role.data.name} >{role.data.name}</option>
-            )
-        })
-        return optionsdefault.concat(options)
-    }
-
     return (
         <>
             <Row id="edit">
@@ -101,41 +40,12 @@ export default function EditCompanies({ setCompanyIsChanged, activeCompany, list
                     <Form>
                         <Row>
                             <ButtonGroup className="function-button standardDesign">
-                                <Button className="standardDesign" variant="outline-primary" onClick={handleSubmitChange}>Abspeichern</Button>
+                                <Button className="standardDesign" variant="outline-primary" onClick={handleSubmit}>Abspeichern</Button>
                                 <Button className="standardDesign" variant="outline-primary" disabled >Rückgängig</Button>
                                 <Button className="standardDesign" variant="outline-primary" onClick={handleDelete}>Löschen</Button>
                             </ButtonGroup>
                         </Row>
-                        <Row className="defaultRow">
-                            <Col xs={8}>
-                                <Form.Group controlId="companyName">
-                                    <Form.Label className="standardDesign">Firmenname</Form.Label>
-                                    <Form.Control className="standardDesign" type="text" value={changeCompany.name} onChange={handleChangeName} />
-                                </Form.Group>
-                            </Col>
-                            <Col>
-                                <Form.Group controlId="companyAbbr">
-                                    <Form.Label className="standardDesign">Kürzel</Form.Label >
-                                    <Form.Control type="text" className="standardDesign" value={changeCompany.abbr} onChange={handleChangeAbbr} />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row className="defaultRow">
-                            <Col xs={8}>
-                                <Form.Group controlId="companyWWW">
-                                    <Form.Label className="standardDesign">Internetadresse</Form.Label >
-                                    <Form.Control type="text" className="standardDesign" value={changeCompany.www} onChange={handleChangeWWW} />
-                                </Form.Group>
-                            </Col>
-                            <Col>
-                                <Form.Group controlId="companyCompanytype">
-                                    <Form.Label className="standardDesign">Firmenrolle</Form.Label>
-                                    <Form.Select className="standardDesign" key="companyCompanytype" value={changeCompany.companytype} onChange={handleChangeCompanytype}>
-                                        <Companytypes />
-                                    </Form.Select>
-                                </Form.Group>
-                            </Col>
-                        </Row>
+                        <InputCompanies changeCompany={changeCompany} setChangeCompany={setChangeCompany} listCompanytypes={listCompanytypes}/>
                     </Form>
                 </Col>
                 <Col>

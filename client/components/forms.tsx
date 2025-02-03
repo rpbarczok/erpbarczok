@@ -1,11 +1,11 @@
 import Companies from "./companies/companies.jsx"
 import Admin from "./admin/admin.jsx"
-import { FormTab } from "./navigation/ribbon.jsx"
+import { FormTab } from "./navigation/ribbon.js"
 import '../style.css'
 import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
 import { useEffect, useState } from "react"
 import { client } from "utils/openapiclientaxios.js"
-import { Companytype } from "./admin/companytypes/companytypes.js"
+import { Companytype } from "./admin/companytypes/companytypes.jsx"
 
 interface Meta {
     location: number
