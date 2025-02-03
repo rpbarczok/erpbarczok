@@ -1,7 +1,7 @@
 import '../../style.css'
 import './companies.css'
 import { Col, Row, Button, ButtonGroup, Form } from 'react-bootstrap'
-import React, { useState } from 'react'
+import React from 'react'
 import { Company } from './companies.jsx'
 import { DataWithMeta } from '../forms.jsx'
 import { client } from '../../utils/openapiclientaxios.js'

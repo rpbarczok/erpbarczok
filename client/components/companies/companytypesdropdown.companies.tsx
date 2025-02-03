@@ -1,6 +1,5 @@
 import { DataWithMeta } from "components/forms.jsx"
 import { Companytype } from "components/admin/companytypes/companytypes.jsx"
-import { Company } from "./companies.jsx"
 
 interface CompanytypesComponent {
     listCompanytypes: DataWithMeta<Companytype>[]

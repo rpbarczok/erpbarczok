@@ -1,7 +1,7 @@
 import '../../style.css'
 import './admin.css'
 import { Row, Col, Button } from 'react-bootstrap'
-import Heading from '../common/heading.jsx'
+import Heading from '../headings/heading.jsx'
 import LeftNavAdmin from './leftnav.admin.jsx'
 import Companytypes from './companytypes/companytypes.jsx'
 import { useState } from 'react'
