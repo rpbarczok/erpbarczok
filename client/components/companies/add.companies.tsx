@@ -1,24 +1,41 @@
 import '../../style.css'
 import './companies.css'
 import { Button, Form, Modal } from "react-bootstrap"
-import React, { MouseEvent, useState } from 'react'
+import React from 'react'
 import { DataWithMeta } from '../forms.jsx'
-import { Company } from "./companies.jsx"
+import { ChangeCompanyAction, Company } from "./companies.jsx"
 import { Companytype } from 'components/admin/companytypes/companytypes.jsx'
 import { InputCompanies } from './input.companies.jsx'
-
+import { blandCompany } from './companies.jsx'
+import { Notification, Notifications } from '../../components/notifications/notifications.jsx'
+import { useState } from 'react'
 
 interface AddCompaniesInterface {
     changeCompany: DataWithMeta<Company>
-    setChangeCompany: React.Dispatch<React.SetStateAction<DataWithMeta<Company>>>
+    changeCompanyDispatch: React.ActionDispatch<[action: ChangeCompanyAction]>
     listCompanytypes: DataWithMeta<Companytype>[]
     handleSubmit: React.MouseEventHandler<HTMLButtonElement>
     show: boolean
     setShow: React.Dispatch<React.SetStateAction<boolean>>
+    notifications: Notification[]
+    removeNotification: Function
 }
 
-export default function AddCompanies({listCompanytypes, changeCompany, setChangeCompany, handleSubmit, show, setShow}: AddCompaniesInterface) {
-    const handleShow = () => setShow(true)
+export default function AddCompanies({
+    listCompanytypes,
+    changeCompany,
+    handleSubmit,
+    show,
+    setShow,
+    changeCompanyDispatch,
+    notifications,
+    removeNotification
+}: AddCompaniesInterface) {
+
+    const handleShow = () => {
+        changeCompanyDispatch({type: 'companyChange', newValue: blandCompany})
+        setShow(true)
+    }
     const handleClose = () => setShow(false)
 
     return (
@@ -30,7 +47,8 @@ export default function AddCompanies({listCompanytypes, changeCompany, setChange
                         <Modal.Title>Neue Firma hinzufügen</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <InputCompanies changeCompany={changeCompany} setChangeCompany={setChangeCompany} listCompanytypes={listCompanytypes}/>
+                        <Notifications label='addCompanies' notifications={notifications} removeNotification={removeNotification}/>
+                        <InputCompanies changeCompany={changeCompany} changeCompanyDispatch={changeCompanyDispatch} listCompanytypes={listCompanytypes} />
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>Abbrechen</Button>

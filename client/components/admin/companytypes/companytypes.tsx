@@ -87,7 +87,7 @@ const Companytypes = ({listCompanytypes, setIsCompanytypeChanged} : Companytypes
                 <h1>Firmenrolle</h1>
             </Row>
             <Row>
-                < ListGroup className="standardDesign" id="company-list" >
+                < ListGroup className="standardDesign" key="company-list" >
                     <ListCompanytypes
                         listCompanytypes={listCompanytypes}
                         handleModal={handleModal}
