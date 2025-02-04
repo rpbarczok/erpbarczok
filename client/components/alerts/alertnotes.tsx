@@ -8,9 +8,11 @@ interface AlertNotesComponent {
 }
 
 export const AlertNotes = ({ alertNotes, setAlertNotes}: AlertNotesComponent) => {
+    let i = 0
     const result = alertNotes.map(note => {
+        i += 1
         return (
-            <Alert key={note.key} variant={note.variant} onClose={() => setAlertNotes(a => a.filter(n => n !== note))} dismissible>{note.message}</Alert>
+            <Alert key={i} variant={note.variant} onClose={() => setAlertNotes(a => a.filter(n => n !== note))} dismissible>{note.message}</Alert>
         )
     }
     )

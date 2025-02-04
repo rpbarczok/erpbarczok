@@ -22,9 +22,7 @@ export interface Company {
 
 export interface AlertNote {
     variant: string
-    key: string
     message: string
-    isExpired: boolean
 }
 
 interface CompanyInterface {
@@ -79,6 +77,15 @@ export default function Companies({ listCompanytypes }: CompanyInterface) {
         }
     }
 
+    function createAlertNote(alertNote: AlertNote) {
+        setAlertNotes(a => [
+            ...a,
+            alertNote
+        ]
+        ),
+        setTimeout(() => setAlertNotes(a => a.filter(note => note !== alertNote)) ,5000)
+    }
+
     const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         if (changeCompany.data.name !== "") {
@@ -87,73 +94,48 @@ export default function Companies({ listCompanytypes }: CompanyInterface) {
                 client.postCompany(null, changeCompany.data)
                     .then((res) => {
                         handleChangeActive(Number(removeBeforeLastDigits(res.headers.location)))
-                        setAlertNotes([
-                            ...alertNotes,
-                            {
+                        const alertNote ={
                                 variant: 'success',
-                                key: `companyString${(Number(removeBeforeLastDigits(res.headers.location)))}`,
                                 message: `Neue Firma '${changeCompany.data.name}' erfolgreich erstellt`,
-                                isExpired: false
                             }
-                        ])
+                        createAlertNote(alertNote)
                         setCompanyIsChanged(true)
                         setIsNew(true)
                         setShow(false)
                         setChangeCompany(blandCompany)
                     })
                     .catch((error) => {
-                        setAlertNotes([
-                            ...alertNotes,
-                            {
+                        const alertNote = {
                                 variant: 'danger',
-                                key: `companyString`,
                                 message: `Fehler bei Erstellung der neuen Firma: ${error.message}`,
-                                isExpired: false
-                            }])
+                            }
+                            createAlertNote(alertNote)
                     })
             } else {
                 if (changeCompany.data === activeCompany.data) {
                     const key = `company${Date.now()}`
-
                     const alertNote =   {
                         variant: 'info',
-                        key: key,
                         message: `Die Daten der Firma '${changeCompany.data.name}' wurden nicht verändert.`,
-                        isExpired: false
                     }
-                    setAlertNotes(a => [
-                        ...a,
-                        alertNote
-                    ]
-                    ),
-                    setTimeout(() => setAlertNotes(a => a.filter(note => note !== alertNote)) ,5000)
+                    createAlertNote(alertNote)
                 } else {
                     client.putCompanyById({ id: changeCompany.meta.location, "if-match": changeCompany.meta.etag },
                         changeCompany.data)
                         .then((res) => {
-                            setAlertNotes([
-                                ...alertNotes,
-                                {
+                            const alertNote={
                                     variant: 'success',
-                                    key: `company${String(changeCompany.meta.location)}`,
                                     message: `Neue Firma '${changeCompany.data.name}' erfolgreich überarbeitet.`,
-                                    isExpired: false
                                 }
-                            ]
-                            )
+                            createAlertNote(alertNote)
                             setCompanyIsChanged(true)
                         })
                         .catch(function (error) {
-                            setAlertNotes([
-                                ...alertNotes,
-                                {
+                            const alertNote ={
                                     variant: 'danger',
-                                    key: `company${String(changeCompany.meta.location)}`,
                                     message: `Fehler beim Abspeichern der Firmendaten: ${error.message}`,
-                                    isExpired: false
                                 }
-                            ]
-                            )
+                            createAlertNote(alertNote)
                         })
                 }
             }
