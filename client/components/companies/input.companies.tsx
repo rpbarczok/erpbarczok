@@ -1,60 +1,35 @@
 import { Row, ButtonGroup, Button, Col, Form } from "react-bootstrap"
 import { CompanytypesDropdown } from "./companytypesdropdown.companies.jsx"
-import { Company } from "./companies.jsx"
+import { ChangeCompanyAction, Company } from "./companies.jsx"
 import { DataWithMeta } from "components/forms.jsx"
 import { Companytype } from "components/admin/companytypes/companytypes.jsx"
 
 interface InputCompaniesComponent {
     changeCompany: DataWithMeta<Company>
-    setChangeCompany: React.Dispatch<React.SetStateAction<DataWithMeta<Company>>>
     listCompanytypes: DataWithMeta<Companytype>[]
+    changeCompanyDispatch: React.ActionDispatch<[action: ChangeCompanyAction]>
 }
 
-export const InputCompanies = ({ changeCompany, setChangeCompany, listCompanytypes }: InputCompaniesComponent) => {
-    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+export const InputCompanies = ({ changeCompany, listCompanytypes, changeCompanyDispatch }: InputCompaniesComponent) => {
+
+    const handleChangeName  = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
-        setChangeCompany(
-            {
-                meta: changeCompany.meta,
-                data: {
-                    ...changeCompany.data,
-                    "name": e.target.value,
-                }
-            })
+        changeCompanyDispatch({type: 'nameChange', newValue: e.target.value })
     }
 
     const handleChangeAbbr = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
-        setChangeCompany(
-            {
-                meta: changeCompany.meta,
-                data: {
-                    ...changeCompany.data,
-                    "abbr": e.target.value,
-                }
-            })
+        changeCompanyDispatch({type: 'abbrChange', newValue: e.target.value })
     }
 
     const handleChangeWWW = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
-        setChangeCompany({
-            meta: changeCompany.meta,
-            data: {
-                ...changeCompany.data,
-                "www": e.target.value,
-            }
-        })
+        changeCompanyDispatch({type: 'wwwChange', newValue: e.target.value })
     }
 
     const handleChangeCompanytype = (e: React.ChangeEvent<HTMLSelectElement>) => {
         e.preventDefault()
-        setChangeCompany({
-            meta: changeCompany.meta,
-            data: {
-                ...changeCompany.data,
-                "companytype": e.target.value,
-            }
-        })
+        changeCompanyDispatch({type: 'companytypeChange', newValue: e.target.value })
     }
 
     return (

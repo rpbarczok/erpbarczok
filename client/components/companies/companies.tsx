@@ -6,12 +6,14 @@ import EditCompanies from './edit.companies.jsx'
 import SearchCompanies from './search.companies.jsx'
 import AddCompanies from './add.companies.jsx'
 import ListCompanies from './list.companies.jsx'
-import { useState, useEffect, MouseEvent } from 'react'
+import { useState, useEffect, MouseEvent, useReducer } from 'react'
 import { DataWithMeta } from '../forms.jsx'
 import { client } from '../../utils/openapiclientaxios.js'
 import { removeBeforeLastDigits } from '../../utils/removeBeforeLastDigits.js'
 import { Companytype } from 'components/admin/companytypes/companytypes.jsx'
-import { AlertNotes } from 'components/alerts/alertnotes.jsx'
+import { Notifications, Notification } from 'components/notifications/notifications.jsx'
+import { changeCompanyReducer } from './company.reducer.js'
+import { useNotification } from 'components/notifications/usenotification.js'
 
 export interface Company {
     "name": string
@@ -20,16 +22,16 @@ export interface Company {
     "www"?: string
 }
 
-export interface AlertNote {
-    variant: string
-    message: string
+export interface ChangeCompanyAction {
+    type: 'nameChange' | 'abbrChange' | 'wwwChange' | 'companytypeChange' | 'companyChange'
+    newValue: string | DataWithMeta<Company>
 }
 
 interface CompanyInterface {
     listCompanytypes: DataWithMeta<Companytype>[]
 }
 
-export const blandCompany = { "meta": { "location": 0, "etag": "" }, "data": { "name": "", "companytype": "default", "abbr": "", "www": "" } }
+export const blandCompany: DataWithMeta<Company> = { "meta": { "location": 0, "etag": "" }, "data": { "name": "", "companytype": "default", "abbr": "", "www": "" } }
 
 export default function Companies({ listCompanytypes }: CompanyInterface) {
 
@@ -38,9 +40,9 @@ export default function Companies({ listCompanytypes }: CompanyInterface) {
     const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>(blandCompany)
     const [search, setSearch] = useState<string>("")
     const [isNew, setIsNew] = useState<boolean>(false)
-    const [changeCompany, setChangeCompany] = useState<DataWithMeta<Company>>(blandCompany)
     const [show, setShow] = useState<boolean>(false) // to handle the modal
-    const [alertNotes, setAlertNotes] = useState<AlertNote[]>([])
+    const [notifications, addNotification, removeNotification] = useNotification()
+    const [changeCompany, changeCompanyDispatch] = useReducer(changeCompanyReducer, blandCompany)
 
     useEffect(() => {
         if (companyIsChanged) {
@@ -62,6 +64,7 @@ export default function Companies({ listCompanytypes }: CompanyInterface) {
         }
     }, [companyIsChanged])
 
+
     function handleChangeActive(active: number) {
         if (active === 0 || active === undefined) {
             setActiveCompany(blandCompany)
@@ -71,19 +74,10 @@ export default function Companies({ listCompanytypes }: CompanyInterface) {
                     if (result.data) {
                         const company = { "meta": { 'location': Number(removeBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
                         setActiveCompany(company)
-                        setChangeCompany(company)
+                        changeCompanyDispatch({ type: 'companyChange', newValue: company })
                     }
                 })
         }
-    }
-
-    function createAlertNote(alertNote: AlertNote) {
-        setAlertNotes(a => [
-            ...a,
-            alertNote
-        ]
-        ),
-        setTimeout(() => setAlertNotes(a => a.filter(note => note !== alertNote)) ,5000)
     }
 
     const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
@@ -94,51 +88,80 @@ export default function Companies({ listCompanytypes }: CompanyInterface) {
                 client.postCompany(null, changeCompany.data)
                     .then((res) => {
                         handleChangeActive(Number(removeBeforeLastDigits(res.headers.location)))
-                        const alertNote ={
-                                variant: 'success',
-                                message: `Neue Firma '${changeCompany.data.name}' erfolgreich erstellt`,
-                            }
-                        createAlertNote(alertNote)
+                        const notification: Notification = {
+                            variant: 'success',
+                            message: `Neue Firma '${changeCompany.data.name}' erfolgreich erstellt`,
+                            label: 'mainCompanies'
+                        }
+                        addNotification(notification)
                         setCompanyIsChanged(true)
                         setIsNew(true)
                         setShow(false)
-                        setChangeCompany(blandCompany)
+                        changeCompanyDispatch({ type: 'companyChange', newValue: blandCompany })
                     })
                     .catch((error) => {
-                        const alertNote = {
-                                variant: 'danger',
-                                message: `Fehler bei Erstellung der neuen Firma: ${error.message}`,
-                            }
-                            createAlertNote(alertNote)
+                        const notification: Notification = {
+                            variant: 'danger',
+                            message: `Fehler bei Erstellung der neuen Firma: ${error.message}`,
+                            label: 'addCompanies'
+                        }
+                        addNotification(notification)
                     })
             } else {
                 if (changeCompany.data === activeCompany.data) {
-                    const key = `company${Date.now()}`
-                    const alertNote =   {
+                    const notification: Notification = {
                         variant: 'info',
-                        message: `Die Daten der Firma '${changeCompany.data.name}' wurden nicht verändert.`,
+                        message: `Es wurden keine Änderungen der Daten der Firma '${changeCompany.data.name}' eingegeben.`,
+                        label: 'mainCompanies'
                     }
-                    createAlertNote(alertNote)
+                    addNotification(notification)
                 } else {
                     client.putCompanyById({ id: changeCompany.meta.location, "if-match": changeCompany.meta.etag },
                         changeCompany.data)
                         .then((res) => {
-                            const alertNote={
-                                    variant: 'success',
-                                    message: `Neue Firma '${changeCompany.data.name}' erfolgreich überarbeitet.`,
-                                }
-                            createAlertNote(alertNote)
+                            const notification: Notification = {
+                                variant: 'success',
+                                message: `Neue Firma '${changeCompany.data.name}' erfolgreich überarbeitet.`,
+                                label: 'mainCompanies'
+                            }
+                            addNotification(notification)
                             setCompanyIsChanged(true)
                         })
                         .catch(function (error) {
-                            const alertNote ={
-                                    variant: 'danger',
-                                    message: `Fehler beim Abspeichern der Firmendaten: ${error.message}`,
-                                }
-                            createAlertNote(alertNote)
+                            const notification: Notification = {
+                                variant: 'danger',
+                                message: `Fehler beim Abspeichern der Firmendaten: ${error.message}`,
+                                label: 'mainCompanies'
+                            }
+                            addNotification(notification)
                         })
                 }
             }
+        }
+    }
+
+    const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        const userConfirmed = window.confirm("Willst du wirklich die Firma löschen?")
+        if (userConfirmed) {
+            client.deleteCompanyById(activeCompany.meta.location)
+                .then((res) => {
+                    setCompanyIsChanged(true)
+                    const notification: Notification = {
+                        variant: 'warning',
+                        message: `Firma wurde gelöscht. Aktuell gibt es keine Möglichkeit, die Daten zurückzuholen`,
+                        label: 'mainCompanies'
+                    }
+                    addNotification(notification)
+                })
+                .catch(error => {
+                    const notification: Notification = {
+                        variant: 'danger',
+                        message: `Löschen der Firma hat nicht geklappt: ${error.message}` ,
+                        label: 'mainCompanies'
+                    }
+                    addNotification(notification)
+                })
         }
     }
 
@@ -164,29 +187,31 @@ export default function Companies({ listCompanytypes }: CompanyInterface) {
                         listCompanytypes={listCompanytypes}
                         handleSubmit={handleSubmit}
                         changeCompany={changeCompany}
-                        setChangeCompany={setChangeCompany}
+                        changeCompanyDispatch={changeCompanyDispatch}
                         setShow={setShow}
                         show={show}
-                        alertNotes={alertNotes}
+                        notifications={notifications}
+                        removeNotification={removeNotification}
                     />
                 </Col>
                 <Col>
                 </Col>
             </Row>
             <hr />
-            <AlertNotes alertNotes={alertNotes} setAlertNotes={setAlertNotes}/>
+            <Notifications
+                notifications={notifications}
+                removeNotification={removeNotification} 
+                label='mainCompanies'/>
             <Row id="edit">
                 {activeCompany.meta.location === 0 ?
                     <p>Keine Firma gefunden</p> :
                     <EditCompanies
                         key={activeCompany.meta.location}
-                        setCompanyIsChanged={setCompanyIsChanged}
-                        activeCompany={activeCompany}
                         listCompanytypes={listCompanytypes}
                         changeCompany={changeCompany}
-                        setChangeCompany={setChangeCompany}
+                        changeCompanyDispatch={changeCompanyDispatch}
                         handleSubmit={handleSubmit}
-
+                        handleDelete={handleDelete}
                     />}
             </Row>
         </>
