@@ -9,7 +9,6 @@ import InputCompanytypes from './input.companytypes.jsx'
 import { client } from '../../../utils/openapiclientaxios.js'
 import { Notifier, Notifiers } from 'components/notifiers/notifiers.jsx'
 import { useNotifier } from 'components/notifiers/usenotifier.js'
-import { TestComponent } from './test.jsx'
 
 export interface Companytype {
     "name": string
