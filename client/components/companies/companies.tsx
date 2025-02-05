@@ -11,9 +11,9 @@ import { DataWithMeta } from '../forms.jsx'
 import { client } from '../../utils/openapiclientaxios.js'
 import { removeBeforeLastDigits } from '../../utils/removeBeforeLastDigits.js'
 import { Companytype } from 'components/admin/companytypes/companytypes.jsx'
-import { Notifications, Notification } from 'components/notifications/notifications.jsx'
+import { Notifiers, Notifier } from 'components/notifiers/notifiers.jsx'
 import { changeCompanyReducer } from './company.reducer.js'
-import { useNotification } from 'components/notifications/usenotification.js'
+import { useNotifier } from 'components/notifiers/usenotifier.js'
 
 export interface Company {
     "name": string
@@ -41,7 +41,7 @@ export default function Companies({ listCompanytypes }: CompanyInterface) {
     const [search, setSearch] = useState<string>("")
     const [isNew, setIsNew] = useState<boolean>(false)
     const [show, setShow] = useState<boolean>(false) // to handle the modal
-    const [notifications, addNotification, removeNotification] = useNotification()
+    const [notifiers, addNotifier, removeNotifier] = useNotifier()
     const [changeCompany, changeCompanyDispatch] = useReducer(changeCompanyReducer, blandCompany)
 
     useEffect(() => {
@@ -77,6 +77,14 @@ export default function Companies({ listCompanytypes }: CompanyInterface) {
                         changeCompanyDispatch({ type: 'companyChange', newValue: company })
                     }
                 })
+                .catch(error => {
+                    const notifier: Notifier = {
+                        variant: 'danger',
+                        message: `Diese Firma wurde nicht gefunden.`,
+                        label: 'mainCompanies'
+                    }
+                    addNotifier(notifier)
+                })
         }
     }
 
@@ -84,56 +92,55 @@ export default function Companies({ listCompanytypes }: CompanyInterface) {
         e.preventDefault()
         if (changeCompany.data.name !== "") {
             if (changeCompany.meta.location === 0) {
-                console.log(changeCompany)
                 client.postCompany(null, changeCompany.data)
                     .then((res) => {
                         handleChangeActive(Number(removeBeforeLastDigits(res.headers.location)))
-                        const notification: Notification = {
+                        const notifier: Notifier = {
+                            message: `Neue Firma erfolgreich erstellt`,
                             variant: 'success',
-                            message: `Neue Firma '${changeCompany.data.name}' erfolgreich erstellt`,
                             label: 'mainCompanies'
                         }
-                        addNotification(notification)
+                        addNotifier(notifier)
                         setCompanyIsChanged(true)
                         setIsNew(true)
                         setShow(false)
                         changeCompanyDispatch({ type: 'companyChange', newValue: blandCompany })
                     })
                     .catch((error) => {
-                        const notification: Notification = {
+                        const notifier: Notifier = {
                             variant: 'danger',
                             message: `Fehler bei Erstellung der neuen Firma: ${error.message}`,
                             label: 'addCompanies'
                         }
-                        addNotification(notification)
+                        addNotifier(notifier)
                     })
             } else {
                 if (changeCompany.data === activeCompany.data) {
-                    const notification: Notification = {
+                    const notifier: Notifier = {
                         variant: 'info',
                         message: `Es wurden keine Änderungen der Daten der Firma '${changeCompany.data.name}' eingegeben.`,
                         label: 'mainCompanies'
                     }
-                    addNotification(notification)
+                    addNotifier(notifier)
                 } else {
                     client.putCompanyById({ id: changeCompany.meta.location, "if-match": changeCompany.meta.etag },
                         changeCompany.data)
                         .then((res) => {
-                            const notification: Notification = {
+                            const notifier: Notifier = {
                                 variant: 'success',
                                 message: `Neue Firma '${changeCompany.data.name}' erfolgreich überarbeitet.`,
                                 label: 'mainCompanies'
                             }
-                            addNotification(notification)
+                            addNotifier(notifier)
                             setCompanyIsChanged(true)
                         })
                         .catch(function (error) {
-                            const notification: Notification = {
+                            const notifier: Notifier = {
                                 variant: 'danger',
                                 message: `Fehler beim Abspeichern der Firmendaten: ${error.message}`,
                                 label: 'mainCompanies'
                             }
-                            addNotification(notification)
+                            addNotifier(notifier)
                         })
                 }
             }
@@ -147,20 +154,20 @@ export default function Companies({ listCompanytypes }: CompanyInterface) {
             client.deleteCompanyById(activeCompany.meta.location)
                 .then((res) => {
                     setCompanyIsChanged(true)
-                    const notification: Notification = {
+                    const notifier: Notifier = {
                         variant: 'warning',
                         message: `Firma wurde gelöscht. Aktuell gibt es keine Möglichkeit, die Daten zurückzuholen`,
                         label: 'mainCompanies'
                     }
-                    addNotification(notification)
+                    addNotifier(notifier)
                 })
                 .catch(error => {
-                    const notification: Notification = {
+                    const notifier: Notifier = {
                         variant: 'danger',
-                        message: `Löschen der Firma hat nicht geklappt: ${error.message}` ,
+                        message: `Löschen der Firma hat nicht geklappt: ${error.message}`,
                         label: 'mainCompanies'
                     }
-                    addNotification(notification)
+                    addNotifier(notifier)
                 })
         }
     }
@@ -190,18 +197,18 @@ export default function Companies({ listCompanytypes }: CompanyInterface) {
                         changeCompanyDispatch={changeCompanyDispatch}
                         setShow={setShow}
                         show={show}
-                        notifications={notifications}
-                        removeNotification={removeNotification}
+                        notifiers={notifiers}
+                        removeNotifier={removeNotifier}
                     />
                 </Col>
                 <Col>
                 </Col>
             </Row>
             <hr />
-            <Notifications
-                notifications={notifications}
-                removeNotification={removeNotification} 
-                label='mainCompanies'/>
+            <Notifiers
+                notifiers={notifiers}
+                removeNotifier={removeNotifier}
+                label='mainCompanies' />
             <Row id="edit">
                 {activeCompany.meta.location === 0 ?
                     <p>Keine Firma gefunden</p> :

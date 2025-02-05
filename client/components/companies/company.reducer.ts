@@ -1,5 +1,5 @@
 import { DataWithMeta } from "components/forms.jsx"
-import { Company } from "./companies.js"
+import { Company } from "./companies.jsx"
 import { ChangeCompanyAction } from "./companies.js"
 
 export function changeCompanyReducer(changeCompany: DataWithMeta<Company>, action: ChangeCompanyAction): DataWithMeta<Company> {

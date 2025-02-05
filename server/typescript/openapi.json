@@ -124,6 +124,21 @@
                     }
                 }
             },
+            "409_conflict": {
+                "description": "Conflict: Used when you try to delete something, that is still referenced in der DB",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/error"
+                        },
+                        "examples": {
+                            "409": {
+                                "$ref": "#/components/examples/error412"
+                            }
+                        }
+                    }
+                }
+            },
             "412_precondition_error": {
                 "description": "precondition failed",
                 "content": {
@@ -175,7 +190,8 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Kunde"
+                        "example": "Kunde",
+                        "maxLength": 20
                     }
                 }
             },
@@ -254,6 +270,12 @@
                 "value": {
                     "status": 404,
                     "message": "Not found"
+                }
+            },
+            "error409": {
+                "value": {
+                    "status": 409,
+                    "message": "Entity can not be deleted since it is still referenced"
                 }
             },
             "error412": {

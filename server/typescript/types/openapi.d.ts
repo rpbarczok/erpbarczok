@@ -44,6 +44,7 @@ declare namespace Components {
         }
         export type $400ValidationError = Schemas.Error;
         export type $404NotFoundError = Schemas.Error;
+        export type $409Conflict = Schemas.Error;
         export type $412PreconditionError = Schemas.Error;
     }
     namespace Schemas {
@@ -146,6 +147,7 @@ declare namespace Paths {
             export type $204 = Components.Responses.$204Success;
             export type $400 = Components.Responses.$400ValidationError;
             export type $404 = Components.Responses.$404NotFoundError;
+            export type $409 = Components.Responses.$409Conflict;
         }
     }
     namespace GetCompanies {

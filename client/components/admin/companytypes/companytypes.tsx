@@ -7,6 +7,9 @@ import AddCompanytypes from './add.companytypes.jsx'
 import ListCompanytypes from './list.comanytypes.jsx'
 import InputCompanytypes from './input.companytypes.jsx'
 import { client } from '../../../utils/openapiclientaxios.js'
+import { Notifier, Notifiers } from 'components/notifiers/notifiers.jsx'
+import { useNotifier } from 'components/notifiers/usenotifier.js'
+import { TestComponent } from './test.jsx'
 
 export interface Companytype {
     "name": string
@@ -17,10 +20,11 @@ interface CompanytypesInterface {
     setIsCompanytypeChanged: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const Companytypes = ({listCompanytypes, setIsCompanytypeChanged} : CompanytypesInterface) => {
+const Companytypes = ({ listCompanytypes, setIsCompanytypeChanged }: CompanytypesInterface) => {
     const [companytypeChange, setCompanytypeChange] = useState<DataWithMeta<Companytype> | undefined>({ meta: { location: 0, etag: "" }, data: { name: "" } })
     const [show, setShow] = useState<boolean>(false) // to handle the modal
     const [title, setTitle] = useState<string>("Firmenrolle")
+    const [notifiers, addNotifier, removeNotifier] = useNotifier()
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>, companytype: DataWithMeta<Companytype>) => {
         e.preventDefault()
@@ -28,11 +32,31 @@ const Companytypes = ({listCompanytypes, setIsCompanytypeChanged} : Companytypes
         if (userConfirmed) {
             client.deleteCompanytypeById(companytype.meta.location)
                 .then((res) => {
+                    const notifier: Notifier = {
+                        message: 'Die Firmenrolle wurde erfolgreich gelöscht.',
+                        variant: 'info',
+                        label: 'mainCompanytypes'
+                    }
+                    addNotifier(notifier)
                     setIsCompanytypeChanged(true)
                     setShow(false)
                 })
-                .catch(function (error) {
-                    throw error
+                .catch(error => {
+                    if (error.status === 409) {
+                        const notifier: Notifier = {
+                            message: `Die Firmenrolle konnte nicht gelöscht werden, weil sie noch referenziert wird.`,
+                            variant: 'danger',
+                            label: 'mainCompanytypes'
+                        }
+                        addNotifier(notifier)
+                    } else {
+                        const notifier: Notifier = {
+                            message: `Fehler beim Löschen der Firmenrolle: ${error.message}`,
+                            variant: 'danger',
+                            label: 'mainCompanytypes'
+                        }
+                        addNotifier(notifier)
+                    }
                 })
         }
     }
@@ -50,35 +74,70 @@ const Companytypes = ({listCompanytypes, setIsCompanytypeChanged} : Companytypes
         }
     }
 
-    const handleSubmitEdit = (e: React.MouseEvent<Element>, companytype: DataWithMeta<Companytype>) => {
+    const handleSubmit = (e: React.MouseEvent<Element>, companytype: DataWithMeta<Companytype>) => {
         e.preventDefault()
         if (companytype) {
             if (companytype.data.name !== '') {
                 if (companytype.meta.location !== 0) {
-                    client.putCompanytypeById(
-                        companytype.meta.location, 
-                        companytype.data, 
-                        { 'headers': { 'location': 'companytypes/' + String(companytype.meta.location), 'if-match': companytype.meta.etag } })
+                    client.putCompanytypeById({ id: companytype.meta.location, 'if-match': companytype.meta.etag }, companytype.data)
                         .then((res) => {
+                            const notifier: Notifier = {
+                                message: `Die Firmenrolle wurde erfolgreich geändert.`,
+                                variant: 'success',
+                                label: 'mainCompanytypes'
+                            }
+                            addNotifier(notifier)
+                            console.log(notifier)
                             setIsCompanytypeChanged(true)
                             setShow(false)
                             setCompanytypeChange(undefined)
                         })
-                        .catch(function (error) {
-                            throw error
+                        .catch(error => {
+                            const notifier: Notifier = {
+                                message: `Fehler beim Ändern der Firmenrolle: ${error.message}`,
+                                variant: 'danger',
+                                label: 'mainCompanytypes'
+                            }
+                            addNotifier(notifier)
                         })
                 } else {
                     client.postCompanytype(null, companytype.data)
                         .then((res) => {
+                            const notifier: Notifier = {
+                                message: `Die neue Firmenrolle wurde erfolgreich abgespeichert.`,
+                                variant: 'success',
+                                label: 'mainCompanytypes'
+                            }
+                            addNotifier(notifier)
                             setIsCompanytypeChanged(true)
                             setCompanytypeChange(undefined)
                             setShow(false)
                         })
+                        .catch(error => {
+                            const notifier: Notifier = {
+                                message: `Fehler beim Speichern der neuen Firmenrolle: ${error.message}`,
+                                variant: 'danger',
+                                label: 'mainCompanytypes'
+                            }
+                            addNotifier(notifier)
+                        })
                 }
-
+            } else {
+                const notifier: Notifier = {
+                    message: `Bitte eine Bezeichnung für die Firmenrolle eingeben.`,
+                    variant: 'info',
+                    label: 'addCompanytypes'
+                }
+                addNotifier(notifier)
             }
+        } else {
+            const notifier: Notifier = {
+                message: `Bitte etwas eingeben.`,
+                variant: 'info',
+                label: 'addCompanytypes'
+            }
+            addNotifier(notifier)
         }
-
     }
 
     return (
@@ -87,7 +146,8 @@ const Companytypes = ({listCompanytypes, setIsCompanytypeChanged} : Companytypes
                 <h1>Firmenrolle</h1>
             </Row>
             <Row>
-                < ListGroup className="standardDesign" key="company-list" >
+                <Notifiers notifiers={notifiers} removeNotifier={removeNotifier} label="mainCompanytypes" />
+                <ListGroup className="standardDesign" key="company-list" >
                     <ListCompanytypes
                         listCompanytypes={listCompanytypes}
                         handleModal={handleModal}
@@ -98,8 +158,11 @@ const Companytypes = ({listCompanytypes, setIsCompanytypeChanged} : Companytypes
                 <InputCompanytypes
                     title={title}
                     show={show} setShow={setShow}
-                    handleSubmit={handleSubmitEdit}
-                    companytype={companytypeChange} setCompanytype={setCompanytypeChange} />
+                    handleSubmit={handleSubmit}
+                    companytype={companytypeChange}
+                    setCompanytype={setCompanytypeChange}
+                    notifiers={notifiers}
+                    removeNotifier={removeNotifier} />
             </Row>
         </>
     )

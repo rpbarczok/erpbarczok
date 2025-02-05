@@ -5,6 +5,8 @@ import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.j
 import { CompanytypeServer, normalizeCompanytype, normalizeCompanytypeLocationEtag } from './index.js'
 import { Operation } from '../../apiSpecAssembler.js'
 import { MetaEtag } from '../../app.js'
+import { Companytype } from '../../models/companytypes.js'
+import { Company } from '../../models/companies.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
     try {
@@ -75,8 +77,18 @@ GET.apiSpec = {
 
 export const DELETE: Operation = async (req: Request, res: Response) => {
     try {
-        await deleteCompanytypeById(Number(req.params.id))
-        res.status(204).end()
+        const {count, rows} = await Company.findAndCountAll({
+            where: {
+                companytypeId: Number(req.params.id) 
+            }
+        })
+        if (count === 0) {
+            await deleteCompanytypeById(Number(req.params.id))
+            res.status(204).end()
+        } else {
+            res.status(409).end()
+        }
+
     }
     catch (err) {
         if (err instanceof NotFoundError) res.status(404).json({ status: 404, message: "not found" })
@@ -104,6 +116,9 @@ DELETE.apiSpec = {
         },
         "404": {
             "$ref": "#/components/responses/404_not_found_error"
+        },
+        "409": {
+            "$ref": "#/components/responses/409_conflict"
         }
     }
 }

@@ -7,8 +7,7 @@ import { ChangeCompanyAction, Company } from "./companies.jsx"
 import { Companytype } from 'components/admin/companytypes/companytypes.jsx'
 import { InputCompanies } from './input.companies.jsx'
 import { blandCompany } from './companies.jsx'
-import { Notification, Notifications } from '../../components/notifications/notifications.jsx'
-import { useState } from 'react'
+import { Notifier, Notifiers } from '../notifiers/notifiers.jsx'
 
 interface AddCompaniesInterface {
     changeCompany: DataWithMeta<Company>
@@ -17,8 +16,8 @@ interface AddCompaniesInterface {
     handleSubmit: React.MouseEventHandler<HTMLButtonElement>
     show: boolean
     setShow: React.Dispatch<React.SetStateAction<boolean>>
-    notifications: Notification[]
-    removeNotification: Function
+    notifiers: Notifier[]
+    removeNotifier: Function
 }
 
 export default function AddCompanies({
@@ -28,8 +27,8 @@ export default function AddCompanies({
     show,
     setShow,
     changeCompanyDispatch,
-    notifications,
-    removeNotification
+    notifiers,
+    removeNotifier
 }: AddCompaniesInterface) {
 
     const handleShow = () => {
@@ -47,7 +46,7 @@ export default function AddCompanies({
                         <Modal.Title>Neue Firma hinzufügen</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Notifications label='addCompanies' notifications={notifications} removeNotification={removeNotification}/>
+                        <Notifiers label='addCompanies' notifiers={notifiers} removeNotifier={removeNotifier}/>
                         <InputCompanies changeCompany={changeCompany} changeCompanyDispatch={changeCompanyDispatch} listCompanytypes={listCompanytypes} />
                     </Modal.Body>
                     <Modal.Footer>

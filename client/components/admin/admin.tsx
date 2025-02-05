@@ -36,12 +36,12 @@ export default function Admin({ listCompanytypes, setIsCompanytypeChanged }: Adm
                 <Heading title="Administratoren-Bereich" cssClass='adminForm' />
             </Row>
             <Row>
-                <Col>
+                <Col xs={2}>
                     <LeftNavAdmin
                         setRessource={setRessource}
                     />
                 </Col>
-                <Col>
+                <Col xs={5}>
                     <ActiveRessource />
                 </Col>
                 <Col>

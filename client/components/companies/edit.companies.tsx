@@ -4,7 +4,6 @@ import { Col, Row, Button, ButtonGroup, Form } from 'react-bootstrap'
 import React from 'react'
 import { ChangeCompanyAction, Company } from './companies.jsx'
 import { DataWithMeta } from '../forms.jsx'
-import { client } from '../../utils/openapiclientaxios.js'
 import { Companytype } from 'components/admin/companytypes/companytypes.jsx'
 import { InputCompanies } from './input.companies.jsx'
 

@@ -19,6 +19,7 @@ export interface DataWithMeta<T> {
 const Forms = ({ activeForm }: { activeForm: FormTab }) => {
     const [listCompanytypes, setListCompanytypes] = useState<DataWithMeta<Companytype>[]>([])
     const [isCompanytypeChanged, setIsCompanytypeChanged] = useState<boolean>(true)
+    
     useEffect(() => {
         {
             if (isCompanytypeChanged) {
