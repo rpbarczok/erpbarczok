@@ -7,7 +7,7 @@ import { ChangeCompanyAction, Company } from "./companies.jsx"
 import { Companytype } from 'components/admin/companytypes/companytypes.jsx'
 import { InputCompanies } from './input.companies.jsx'
 import { blandCompany } from './companies.jsx'
-import { Notifier, Notifiers } from '../notifiers/notifiers.jsx'
+import { Note, Notes } from '../notifiers/notifiers.jsx'
 
 interface AddCompaniesInterface {
     changeCompany: DataWithMeta<Company>
@@ -16,8 +16,9 @@ interface AddCompaniesInterface {
     handleSubmit: React.MouseEventHandler<HTMLButtonElement>
     show: boolean
     setShow: React.Dispatch<React.SetStateAction<boolean>>
-    notifiers: Notifier[]
-    removeNotifier: Function
+    notes: Note[]
+    removeNote: (note: Note) => void,
+    activeCompany: DataWithMeta<Company>
 }
 
 export default function AddCompanies({
@@ -27,15 +28,19 @@ export default function AddCompanies({
     show,
     setShow,
     changeCompanyDispatch,
-    notifiers,
-    removeNotifier
+    notes,
+    removeNote,
+    activeCompany
 }: AddCompaniesInterface) {
 
     const handleShow = () => {
         changeCompanyDispatch({type: 'companyChange', newValue: blandCompany})
         setShow(true)
     }
-    const handleClose = () => setShow(false)
+    const handleClose = () => {
+        changeCompanyDispatch({type: 'companyChange', newValue: activeCompany})
+        setShow(false)
+    }
 
     return (
         <>
@@ -46,7 +51,7 @@ export default function AddCompanies({
                         <Modal.Title>Neue Firma hinzufügen</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Notifiers label='addCompanies' notifiers={notifiers} removeNotifier={removeNotifier}/>
+                        <Notes notes={notes} removeNote={removeNote}/>
                         <InputCompanies changeCompany={changeCompany} changeCompanyDispatch={changeCompanyDispatch} listCompanytypes={listCompanytypes} />
                     </Modal.Body>
                     <Modal.Footer>

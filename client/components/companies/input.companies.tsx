@@ -11,7 +11,7 @@ interface InputCompaniesComponent {
 }
 
 export const InputCompanies = ({ changeCompany, listCompanytypes, changeCompanyDispatch }: InputCompaniesComponent) => {
-
+    
     const handleChangeName  = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
         changeCompanyDispatch({type: 'nameChange', newValue: e.target.value })

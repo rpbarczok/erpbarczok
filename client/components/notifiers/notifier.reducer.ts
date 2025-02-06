@@ -1,26 +1,26 @@
-import { Notifier } from "./notifiers.jsx"
+import { Note } from "./notifiers.jsx"
 
 interface NotifierAction {
-    type: 'addNotifier' | 'removeNotifier'
-    notifier: Notifier
+    type: 'addNote' | 'removeNote'
+    note: Note
 }
 
-export function notifierReducer(notifiers: Notifier[], action: NotifierAction) {
-    const deleteNotifier = (notifier: Notifier) => {
-        return (a: Notifier[]) => a.filter(n => n !== notifier)
+export function notifierReducer(notes: Note[], action: NotifierAction) {
+    const deleteNote = (note: Note) => {
+        return (a: Note[]) => a.filter(n => n !== note)
     }
     
     switch (action.type) {
-        case 'addNotifier': {
-            setTimeout(() => deleteNotifier(action.notifier), 5000)
-            return((a: Notifier[]) => [
+        case 'addNote': {
+            setTimeout(() => deleteNote(action.note), 5000)
+            return((a: Note[]) => [
                 ...a,
-                action.notifier
+                action.note
             ]
             )
         }
-        case 'removeNotifier': {
-            deleteNotifier(action.notifier)
+        case 'removeNote': {
+            deleteNote(action.note)
         }
     }
 }

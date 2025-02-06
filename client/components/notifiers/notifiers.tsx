@@ -1,34 +1,27 @@
 import { Alert } from "react-bootstrap"
 
-type labelNotifier = 'mainCompanies' | 'addCompanies' | 'mainCompanytypes' | 'addCompanytypes' 
-
-export interface Notifier {
+export interface Note {
     variant: 'success' | 'info' | 'danger' | 'warning'
     message: string
-    label: labelNotifier
 }
 
-interface NotifiersComponent {
-    notifiers: Notifier[]
-    removeNotifier: Function
-    label: labelNotifier
+interface NotesComponent {
+    notes: Note[]
+    removeNote: (note: Note) => void
 }
 
-export const Notifiers = ({ notifiers, removeNotifier, label }: NotifiersComponent) => {
+export const Notes = ({ notes, removeNote }: NotesComponent) => {
 
-    const handleClose = (e: CloseEvent, note: Notifier) => {
-        removeNotifier(note)
+    const handleClose = (e: CloseEvent, note: Note) => {
+        removeNote(note)
     }
 
-    const filter = notifiers.filter(note => note.label === label)
-
     let i = 0
-    const result = filter.map(note => {
+    return notes.map(note => {
         i += 1
         return (
             <Alert key={i} variant={note.variant} onClose={(e) => handleClose(e, note)} dismissible>{note.message}</Alert>
         )
     }
     )
-    return result
 }

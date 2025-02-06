@@ -6,7 +6,7 @@ import { FormTab } from './navigation/ribbon.js'
 import Forms from './forms.jsx'
 
 export default function App() {
-    const startPage: FormTab = { name: "Admin", id: "adminForm" }
+    const startPage: FormTab = { name: "Stammdaten", id: "stammForm" }
     const [activeForm, setActiveForm] = useState<FormTab>(startPage)
     const [tabs, setTabs] = useState<FormTab[]>([startPage])
 
