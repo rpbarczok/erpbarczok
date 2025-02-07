@@ -10,8 +10,6 @@ import { client } from '../../utils/openapiclientaxios.js'
 import { removeBeforeLastDigits } from '../../utils/removeBeforeLastDigits.js'
 import { useCompanytypes } from 'components/admin/companytypes/useCompanytypes.js'
 import ChangeFrameCompanies from './changeFrame.companies.jsx'
-import AddCompanies from './add.companies.jsx'
-import EditCompanies from './edit.companies.jsx'
 
 export interface Company {
     "name": string

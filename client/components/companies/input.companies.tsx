@@ -3,7 +3,7 @@ import { CompanytypesDropdown } from "./companytypesdropdown.companies.jsx"
 import { Company } from "./companies.jsx"
 import { DataWithMeta } from "components/forms.jsx"
 import { Companytype } from "components/admin/companytypes/companytypes.jsx"
-import { useEffect, useReducer } from "react"
+import { useReducer } from "react"
 import { changedCompanyReducer } from "./company.reducer.js"
 
 interface InputCompaniesComponent {
@@ -16,24 +16,6 @@ interface InputCompaniesComponent {
 export const InputCompanies = ({ changedCompanyBasis, listCompanytypes, handleSubmit, handleDelete }: InputCompaniesComponent) => {
     
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, changedCompanyBasis)
-
-
-        // useEffect(function logChangedCompanyBasis() {
-        //     {
-        //         changedCompanyDispatch({type: 'companyChange', newValue: changedCompanyBasis})
-
-        //     }
-        // }, [changedCompanyBasis])
-
-        // useEffect(function logChangedCompany() {
-        //     {
-        //         console.log("New changedCompany:", JSON.stringify(changedCompany))
-
-        //         return () => {
-        //             console.log("terminating changedCompany")
-        //         }
-        //     }
-        // }, [changedCompany])
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()

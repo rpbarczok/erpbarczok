@@ -77,7 +77,6 @@ const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytype
                                 setIsCompanytypeChanged(true)
                             })
                             .catch(error => {
-                                console.log(error)
                                 const note: Note = {
                                     message: `Fehler beim Ändern der Firmenrolle: ${error.message}`,
                                     variant: 'danger'

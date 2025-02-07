@@ -2,7 +2,7 @@ import { Companytype } from "components/admin/companytypes/companytypes.jsx"
 import { DataWithMeta } from "components/forms.jsx"
 import { Company } from "./companies.jsx"
 import { Note, Notes } from "components/notifiers/notifiers.jsx"
-import { Button, ButtonGroup, Col, Form, Modal, Row } from "react-bootstrap"
+import { Button, Col, Form, Modal, Row } from "react-bootstrap"
 import { InputCompanies } from "./input.companies.jsx"
 import React, { MouseEvent, useState } from "react"
 import { client } from "utils/openapiclientaxios.js"
@@ -15,13 +15,12 @@ interface ChangeFrameCompaniesComponent {
     onChangeActive?: (active: number) => void
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     setIsNew?: React.Dispatch<React.SetStateAction<boolean>>
-
 }
 
 const ChangeFrameCompanies = ({ listCompanytypes, changedCompanyBasis, onChangeActive, setIsCompanyChanged, setIsNew }: ChangeFrameCompaniesComponent) => {
     const [show, setShow] = useState<boolean>(false)
-    const [editNotes, removeEditNote, addEditNote] = useNotifier()
-    const [addNotes, removeAddNote, addAddNote] = useNotifier()
+    const [editNotes, addEditNote, removeEditNote] = useNotifier()
+    const [addNotes, addAddNote, removeAddNote] = useNotifier()
 
     const handleSubmit = (e: MouseEvent<HTMLButtonElement>, changedCompany: DataWithMeta<Company>) => {
         e.preventDefault()
@@ -38,7 +37,6 @@ const ChangeFrameCompanies = ({ listCompanytypes, changedCompanyBasis, onChangeA
                         setIsCompanyChanged(true)
                         setIsNew(true)
                         setShow(false)
-                        console.log("Note: ", JSON.stringify(note))
                     })
                     .catch((error) => {
                         const note: Note = {
@@ -46,7 +44,6 @@ const ChangeFrameCompanies = ({ listCompanytypes, changedCompanyBasis, onChangeA
                             message: `Fehler bei Erstellung der neuen Firma: ${error.message}`,
                         }
                         addAddNote(note)
-                        console.log("Note: ", JSON.stringify(note))
                     })
             } else {
                 const note: Note = {
@@ -54,7 +51,6 @@ const ChangeFrameCompanies = ({ listCompanytypes, changedCompanyBasis, onChangeA
                     message: `Bitte einen Namen und eine Firmenrolle eintragen`,
                 }
                 addAddNote(note)
-                console.log("Note: ", JSON.stringify(note))
             }
         } else {
             if (changedCompany.data.name !== "" || changedCompany.data.companytype !== "default") {
@@ -64,7 +60,6 @@ const ChangeFrameCompanies = ({ listCompanytypes, changedCompanyBasis, onChangeA
                         message: `Keine Änderung in der Firma'${changedCompany.data.name}' vorgenommen.`,
                     }
                     addEditNote(note)
-                    console.log("Note: ", JSON.stringify(note))
                 } else {
                     client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
                         changedCompany.data)
@@ -75,7 +70,6 @@ const ChangeFrameCompanies = ({ listCompanytypes, changedCompanyBasis, onChangeA
                             }
                             addEditNote(note)
                             setIsCompanyChanged(true)
-                            console.log("Note: ", JSON.stringify(note))
                         })
                         .catch(function (error) {
                             const note: Note = {
@@ -83,7 +77,6 @@ const ChangeFrameCompanies = ({ listCompanytypes, changedCompanyBasis, onChangeA
                                 message: `Fehler beim Abspeichern der Firmendaten: ${error.message}`,
                             }
                             addEditNote(note)
-                            console.log("Note: ", JSON.stringify(note))
                         })
                 }
             } else {
@@ -92,7 +85,6 @@ const ChangeFrameCompanies = ({ listCompanytypes, changedCompanyBasis, onChangeA
                     message: `Bitte mindestens einen Namen und eine Firmenrolle eintragen`,
                 }
                 addEditNote(note)
-                console.log("Note: ", JSON.stringify(note))
             }
         }
         

@@ -25,6 +25,7 @@ interface ListItemComponent {
 const ListItem = ({ companytype, setIsCompanytypeChanged, addMainNote }: ListItemComponent) => {
     const title = 'Neue Firmenrolle anlegen'
     const [show, setShow] = useState(false)
+    
     const handleModal = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         setShow(true)
