@@ -43,7 +43,6 @@ const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytype
                 if (changedCompanytype.meta.location === 0) {
                     client.postCompanytype(null, changedCompanytype.data)
                         .then((res) => {
-                            console.log(res)
                             const note: Note = {
                                 message: `Die neue Firmenrolle wurde erfolgreich abgespeichert.`,
                                 variant: 'success'

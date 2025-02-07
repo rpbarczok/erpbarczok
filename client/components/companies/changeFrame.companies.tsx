@@ -1,113 +1,165 @@
-import { Companytype } from "components/admin/companytypes/companytypes.js"
-import { DataWithMeta } from "components/forms.js"
-import { Company } from "./companies.js"
-import { Note } from "components/notifiers/notifiers.js"
+import { Companytype } from "components/admin/companytypes/companytypes.jsx"
+import { DataWithMeta } from "components/forms.jsx"
+import { Company } from "./companies.jsx"
+import { Note, Notes } from "components/notifiers/notifiers.jsx"
+import { Button, ButtonGroup, Col, Form, Modal, Row } from "react-bootstrap"
+import { InputCompanies } from "./input.companies.jsx"
+import React, { MouseEvent, useState } from "react"
+import { client } from "utils/openapiclientaxios.js"
+import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
+import { useNotifier } from "components/notifiers/useNotifier.js"
 
 interface ChangeFrameCompaniesComponent {
     listCompanytypes: DataWithMeta<Companytype>[]
-    activeCompany: DataWithMeta<Company>
-    addMainNotes: (note: Note) => void
+    changedCompanyBasis: DataWithMeta<Company>
+    onChangeActive?: (active: number) => void
+    setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
+    setIsNew?: React.Dispatch<React.SetStateAction<boolean>>
+
 }
 
-const ChangeFrameCompanies = ({ listCompanytypes, activeCompany, addMainNotes }: ChangeFrameCompaniesComponent) => {
-    return (<></>)
+const ChangeFrameCompanies = ({ listCompanytypes, changedCompanyBasis, onChangeActive, setIsCompanyChanged, setIsNew }: ChangeFrameCompaniesComponent) => {
+    const [show, setShow] = useState<boolean>(false)
+    const [editNotes, removeEditNote, addEditNote] = useNotifier()
+    const [addNotes, removeAddNote, addAddNote] = useNotifier()
 
+    const handleSubmit = (e: MouseEvent<HTMLButtonElement>, changedCompany: DataWithMeta<Company>) => {
+        e.preventDefault()
+        if (onChangeActive && setIsNew) {
+            if (changedCompany.data.name !== "" || changedCompany.data.companytype !== "default") {
+                client.postCompany(null, changedCompany.data)
+                    .then((res) => {
+                        onChangeActive(Number(removeBeforeLastDigits(res.headers.location)))
+                        const note: Note = {
+                            message: `Neue Firma erfolgreich erstellt`,
+                            variant: 'success',
+                        }
+                        addEditNote(note)
+                        setIsCompanyChanged(true)
+                        setIsNew(true)
+                        setShow(false)
+                        console.log("Note: ", JSON.stringify(note))
+                    })
+                    .catch((error) => {
+                        const note: Note = {
+                            variant: 'danger',
+                            message: `Fehler bei Erstellung der neuen Firma: ${error.message}`,
+                        }
+                        addAddNote(note)
+                        console.log("Note: ", JSON.stringify(note))
+                    })
+            } else {
+                const note: Note = {
+                    variant: 'danger',
+                    message: `Bitte einen Namen und eine Firmenrolle eintragen`,
+                }
+                addAddNote(note)
+                console.log("Note: ", JSON.stringify(note))
+            }
+        } else {
+            if (changedCompany.data.name !== "" || changedCompany.data.companytype !== "default") {
+                if (changedCompany.data === changedCompanyBasis.data) {
+                    const note: Note = {
+                        variant: 'info',
+                        message: `Keine Änderung in der Firma'${changedCompany.data.name}' vorgenommen.`,
+                    }
+                    addEditNote(note)
+                    console.log("Note: ", JSON.stringify(note))
+                } else {
+                    client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
+                        changedCompany.data)
+                        .then((res) => {
+                            const note: Note = {
+                                variant: 'success',
+                                message: `Neue Firma '${changedCompany.data.name}' erfolgreich überarbeitet.`,
+                            }
+                            addEditNote(note)
+                            setIsCompanyChanged(true)
+                            console.log("Note: ", JSON.stringify(note))
+                        })
+                        .catch(function (error) {
+                            const note: Note = {
+                                variant: 'danger',
+                                message: `Fehler beim Abspeichern der Firmendaten: ${error.message}`,
+                            }
+                            addEditNote(note)
+                            console.log("Note: ", JSON.stringify(note))
+                        })
+                }
+            } else {
+                const note: Note = {
+                    variant: 'danger',
+                    message: `Bitte mindestens einen Namen und eine Firmenrolle eintragen`,
+                }
+                addEditNote(note)
+                console.log("Note: ", JSON.stringify(note))
+            }
+        }
+        
+    }
 
-    // <Row id="edit">
-// {activeCompany.meta.location === 0 ?
-//     <p>Keine Firma gefunden</p> :
-//     <EditCompanies
-//         key={activeCompany.meta.location}
-//         listCompanytypes={listCompanytypes}
-//         changeCompany={changeCompany}
-//         changeCompanyDispatch={changeCompanyDispatch}
-//         handleSubmit={handleSubmit}
-//         handleDelete={handleDelete}
-//     />}
-// </Row>
+    const handleDelete = (e: React.MouseEvent<HTMLButtonElement>, company: DataWithMeta<Company>) => {
+        e.preventDefault()
+        const userConfirmed = window.confirm("Willst du wirklich die Firma löschen?")
+        if (userConfirmed) {
+            client.deleteCompanyById(company.meta.location)
+                .then((res) => {
+                    setIsCompanyChanged(true)
+                    const note: Note = {
+                        variant: 'warning',
+                        message: `Firma wurde gelöscht. Aktuell gibt es keine Möglichkeit, die Daten zurückzuholen`,
+                    }
+                    addEditNote(note)
+                })
+                .catch(error => {
+                    const note: Note = {
+                        variant: 'danger',
+                        message: `Löschen der Firma hat nicht geklappt: ${error.message}`,
+                    }
+                    addEditNote(note)
+                })
+
+        }
+    }
+
+    if (changedCompanyBasis.meta.location === 0) {
+        return (
+            <>
+                <Button className="standardDesign" variant="outline-primary" onClick={() => setShow(true)}>Firma hinzufügen</Button>
+                <Form>
+                    <Modal show={show} onHide={() => setShow(false)}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Neue Firma hinzufügen</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                        <Notes notes={addNotes} removeNote={removeAddNote} />
+                        <InputCompanies changedCompanyBasis={changedCompanyBasis} listCompanytypes={listCompanytypes} handleSubmit={handleSubmit} />
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={() => setShow(false)}>Abbrechen</Button>
+                        </Modal.Footer>
+                    </Modal>
+                </Form>
+            </>
+        )
+    } else {
+        return (
+            <>
+                <Row id="edit">
+                    <Col id='company' xl={5} lg={6} xs={12}>
+                        <Form>
+                            <Notes notes={editNotes} removeNote={removeEditNote} />
+                            <InputCompanies changedCompanyBasis={changedCompanyBasis} listCompanytypes={listCompanytypes} handleDelete={handleDelete} handleSubmit={handleSubmit} />
+                        </Form>
+                    </Col>
+                    <Col>
+                        CompanyAddition
+                    </Col>
+                </Row>
+            </>
+        )
+    }
 
 }
 
 export default ChangeFrameCompanies
-// const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
-//     e.preventDefault()
-//     if (changeCompany.data.name !== "") {
-//         if (changeCompany.meta.location === 0) {
-//             client.postCompany(null, changeCompany.data)
-//                 .then((res) => {
-//                     handleChangeActive(Number(removeBeforeLastDigits(res.headers.location)))
-//                     const note: Note = {
-//                         message: `Neue Firma erfolgreich erstellt`,
-//                         variant: 'success',
-//                     }
-//                     addNote(note)
-//                     setCompanyIsChanged(true)
-//                     setIsNew(true)
-//                     setShow(false)
-//                     changeCompanyDispatch({ type: 'companyChange', newValue: blandCompany })
-//                 })
-//                 .catch((error) => {
-//                     const note: Note = {
-//                         variant: 'danger',
-//                         message: `Fehler bei Erstellung der neuen Firma: ${error.message}`,
-//                     }
-//                     addNote(note)
-//                 })
-//         } else {
-//             if (changeCompany.data === activeCompany.data) {
-//                 const note: Note = {
-//                     variant: 'info',
-//                     message: `Es wurden keine Änderungen der Daten der Firma '${changeCompany.data.name}' eingegeben.`,
-//                 }
-//                 addNote(note)
-//             } else {
-//                 client.putCompanyById({ id: changeCompany.meta.location, "if-match": changeCompany.meta.etag },
-//                     changeCompany.data)
-//                     .then((res) => {
-//                         const note: Note = {
-//                             variant: 'success',
-//                             message: `Neue Firma '${changeCompany.data.name}' erfolgreich überarbeitet.`,
-//                         }
-//                         addNote(note)
-//                         setCompanyIsChanged(true)
-//                     })
-//                     .catch(function (error) {
-//                         const note: Note = {
-//                             variant: 'danger',
-//                             message: `Fehler beim Abspeichern der Firmendaten: ${error.message}`,
-//                         }
-//                         addNote(note)
-//                     })
-//             }
-//         }
-//     } else {
-//         const note: Note = {
-//             variant: 'danger',
-//             message: `Bitte mindestens einen Namen und eine Firmenrolle eintragen`,
-//         }
-//         addNote(note)
-//     }
-// }
-
-// const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
-//     e.preventDefault()
-//     const userConfirmed = window.confirm("Willst du wirklich die Firma löschen?")
-//     if (userConfirmed) {
-//         client.deleteCompanyById(activeCompany.meta.location)
-//             .then((res) => {
-//                 setCompanyIsChanged(true)
-//                 const note: Note = {
-//                     variant: 'warning',
-//                     message: `Firma wurde gelöscht. Aktuell gibt es keine Möglichkeit, die Daten zurückzuholen`,
-//                 }
-//                 addNote(note)
-//             })
-//             .catch(error => {
-//                 const note: Note = {
-//                     variant: 'danger',
-//                     message: `Löschen der Firma hat nicht geklappt: ${error.message}`,
-//                 }
-//                 addNote(note)
-//             })
-//     }
-// }

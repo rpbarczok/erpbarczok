@@ -2,19 +2,16 @@ import '../../style.css'
 import './companies.css'
 import { Col, Row } from 'react-bootstrap'
 import Heading from '../headings/heading.jsx'
-import EditCompanies from './edit.companies.jsx'
 import SearchCompanies from './search.companies.jsx'
-import AddCompanies from './add.companies.jsx'
 import ListCompanies from './list.companies.jsx'
-import { useState, useEffect, MouseEvent, useReducer } from 'react'
+import { useState, useEffect } from 'react'
 import { DataWithMeta } from '../forms.jsx'
 import { client } from '../../utils/openapiclientaxios.js'
 import { removeBeforeLastDigits } from '../../utils/removeBeforeLastDigits.js'
-import { Notes, Note } from 'components/notifiers/notifiers.jsx'
-import { changeCompanyReducer } from './company.reducer.js'
-import { useNotifier } from 'components/notifiers/useNotifier.js'
 import { useCompanytypes } from 'components/admin/companytypes/useCompanytypes.js'
 import ChangeFrameCompanies from './changeFrame.companies.jsx'
+import AddCompanies from './add.companies.jsx'
+import EditCompanies from './edit.companies.jsx'
 
 export interface Company {
     "name": string
@@ -23,7 +20,7 @@ export interface Company {
     "www"?: string
 }
 
-export interface ChangeCompanyAction {
+export interface ChangedCompanyAction {
     type: 'nameChange' | 'abbrChange' | 'wwwChange' | 'companytypeChange' | 'companyChange'
     newValue: string | DataWithMeta<Company>
 }
@@ -32,16 +29,12 @@ export const blandCompany: DataWithMeta<Company> = { "meta": { "location": 0, "e
 
 export default function Companies() {
 
-    const [companyIsChanged, setCompanyIsChanged] = useState<boolean>(true)
+    const [companyIsChanged, setIsCompanyChanged] = useState<boolean>(true)
     const [listCompanies, setListCompanies] = useState<DataWithMeta<Company>[]>([])
     const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>(blandCompany)
     const [search, setSearch] = useState<string>("")
     const [isNew, setIsNew] = useState<boolean>(false)
-    const [show, setShow] = useState<boolean>(false) // to handle the modal
-    const [isCompanytypeChanged, setIsCompanytypeChanged] = useState(true)
-
-    const [notes, removeNote, addNote] = useNotifier()
-    const listCompanytypes = useCompanytypes(isCompanytypeChanged, setIsCompanytypeChanged)
+    const [listCompanytypes] = useCompanytypes()
 
     useEffect(() => {
         if (companyIsChanged) {
@@ -59,7 +52,7 @@ export default function Companies() {
                     })
                     setListCompanies(newList)
                 })
-            setCompanyIsChanged(false)
+            setIsCompanyChanged(false)
         }
     }, [companyIsChanged])
 
@@ -75,11 +68,7 @@ export default function Companies() {
                     }
                 })
                 .catch(error => {
-                    const note: Note = {
-                        variant: 'danger',
-                        message: `Diese Firma wurde nicht gefunden.`,
-                    }
-                    addNote(note)
+                    throw error
                 })
         }
     }
@@ -96,21 +85,34 @@ export default function Companies() {
                 <Col>
                     <ListCompanies
                         search={search}
-                        activeCompany={activeCompany} onChangeActive={handleChangeActive}
+                        activeCompany={activeCompany}
+                        onChangeActive={handleChangeActive}
                         isNew={isNew} setIsNew={setIsNew}
                         listCompanies={listCompanies}
                     />
                 </Col>
                 <Col>
-                    <ChangeFrameCompanies listCompanytypes={listCompanies} activeCompany={activeCompany} addMainNotes={addNote}/>
+                    <ChangeFrameCompanies
+                        listCompanytypes={listCompanytypes}
+                        changedCompanyBasis={blandCompany}
+                        setIsCompanyChanged={setIsCompanyChanged}
+                        setIsNew={setIsNew}
+                        onChangeActive={handleChangeActive}
+                    />
                 </Col>
                 <Col>
                 </Col>
             </Row>
             <hr />
             <Row>
-                <Notes notes={notes} removeNote={removeNote}/>
-                <ChangeFrameCompanies listCompanytypes={listCompanies} activeCompany={activeCompany} addMainNotes={addNote} />
+                {activeCompany.meta.location === 0
+                    ? <p>Keine Firma gefunden</p>
+                    : <ChangeFrameCompanies
+                        key={activeCompany.meta.location}
+                        listCompanytypes={listCompanytypes}
+                        changedCompanyBasis={activeCompany}
+                        setIsCompanyChanged={setIsCompanyChanged}
+                    />}
             </Row>
         </>
     )

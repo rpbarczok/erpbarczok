@@ -1,15 +1,14 @@
 import { DataWithMeta } from "components/forms.jsx"
-import { Company } from "./companies.jsx"
-import { ChangeCompanyAction } from "./companies.js"
+import { Company, ChangedCompanyAction } from "./companies.jsx"
 
-export function changeCompanyReducer(changeCompany: DataWithMeta<Company>, action: ChangeCompanyAction): DataWithMeta<Company> {
+export function changedCompanyReducer(changedCompany: DataWithMeta<Company>, action: ChangedCompanyAction): DataWithMeta<Company> {
     if (typeof action.newValue === 'string') {
         switch (action.type) {
             case 'nameChange': {
                 return {
-                    meta: changeCompany.meta,
+                    meta: changedCompany.meta,
                     data: {
-                        ...changeCompany.data,
+                        ...changedCompany.data,
                         "name": action.newValue,
                     }
                 }
@@ -17,9 +16,9 @@ export function changeCompanyReducer(changeCompany: DataWithMeta<Company>, actio
             case 'abbrChange': {
                 return (
                     {
-                        meta: changeCompany.meta,
+                        meta: changedCompany.meta,
                         data: {
-                            ...changeCompany.data,
+                            ...changedCompany.data,
                             "abbr": action.newValue,
                         }
                     })
@@ -27,29 +26,30 @@ export function changeCompanyReducer(changeCompany: DataWithMeta<Company>, actio
             case 'wwwChange': {
                 return (
                     {
-                        meta: changeCompany.meta,
+                        meta: changedCompany.meta,
                         data: {
-                            ...changeCompany.data,
+                            ...changedCompany.data,
                             "www": action.newValue,
                         }
                     })
             }
             case 'companytypeChange': {
                 return ({
-                    meta: changeCompany.meta,
+                    meta: changedCompany.meta,
                     data: {
-                        ...changeCompany.data,
+                        ...changedCompany.data,
                         "companytype": action.newValue,
                     }
                 })
             }
+            default: {
+                throw Error('Unknwon action: ' + action.type)
+            }
         }
     } else {
         if (action.type === 'companyChange') {
-            return (
-                action.newValue
-            )
+            return action.newValue
         }
     }
-    throw Error('Unknwon action: ' + action.type)
+    throw new Error('Unknown action: ' + action.type)
 }

@@ -30,7 +30,6 @@ const Companytypes = () => {
             </Row>
             <Notes notes={mainNotes} removeNote={removeMainNote}/>
             <Row>
-                {/* <Notes notes={notes} removeNote={removeNote} label="mainCompanytypes" /> */}
                 <ListGroup className="standardDesign" key="company-list" >
                     <ListCompanytypes 
                     fullList={fullList} 
