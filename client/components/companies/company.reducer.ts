@@ -2,6 +2,7 @@ import { DataWithMeta } from "components/forms.jsx"
 import { Company, ChangedCompanyAction } from "./companies.jsx"
 
 export function changedCompanyReducer(changedCompany: DataWithMeta<Company>, action: ChangedCompanyAction): DataWithMeta<Company> {
+
     if (typeof action.newValue === 'string') {
         switch (action.type) {
             case 'nameChange': {

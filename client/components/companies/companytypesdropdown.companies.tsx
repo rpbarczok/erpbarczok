@@ -6,10 +6,10 @@ interface CompanytypesComponent {
 }
 
 export const CompanytypesDropdown = ({ listCompanytypes }: CompanytypesComponent) => {
-    const optionsdefault = [<option key="default" id="default" value='default'>Rolle auswählen</option>]
+    const optionsdefault = [<option key="default" value=''>Rolle auswählen</option>]
     const options = listCompanytypes.map((role: DataWithMeta<Companytype>) => {
         return (
-            <option key={role.meta.location} id={String(role.meta.location)} value={role.data.name} >{role.data.name}</option>
+            <option key={role.meta.location} value={role.data.name} >{role.data.name}</option>
         )
     })
     return optionsdefault.concat(options)

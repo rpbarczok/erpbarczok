@@ -26,6 +26,7 @@ const ListItem = ({ companytype, setIsCompanytypeChanged, addMainNote }: ListIte
     const title = 'Neue Firmenrolle anlegen'
     const [show, setShow] = useState(false)
     
+    
     const handleModal = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         setShow(true)
