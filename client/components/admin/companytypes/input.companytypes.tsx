@@ -1,7 +1,7 @@
 import '../../../style.css'
 import '../admin.css'
-import { Form, Modal, Row, Col, Button } from "react-bootstrap"
-import React, { ChangeEvent, MouseEventHandler, useState } from "react"
+import { Form, Modal, Button } from "react-bootstrap"
+import React, { ChangeEvent, useState } from "react"
 import { Companytype } from './companytypes.jsx'
 import { DataWithMeta } from 'components/forms.jsx'
 import { client } from 'utils/openapiclientaxios.js'
@@ -21,6 +21,9 @@ const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytype
 
     const [changedCompanytype, setChangedCompanytype] = useState<DataWithMeta<Companytype>>(companytype)
     const [notes, addNote, removeNote] = useNotifier()
+    const [validated, setValidated] = useState<boolean>(false)
+
+    const isNotChanged: boolean = (companytype.data.name === changedCompanytype.data.name)
 
     const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
@@ -30,96 +33,78 @@ const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytype
         })
     }
 
-    const handleSubmit = (e: React.MouseEvent<Element>) => {
+    const handleClose = () => {
+        setValidated(false)
+        setShow(false)
+    }
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>, companytype: DataWithMeta<Companytype>) => {
+        const form = e.currentTarget
         e.preventDefault()
-        if (changedCompanytype) {
-            if (changedCompanytype.data.name === '') {
-                const note: Note = {
-                    message: `Bitte einen Namen eingeben.`,
-                    variant: 'danger'
-                }
-                addNote(note)
-            } else {
-                if (changedCompanytype.meta.location === 0) {
-                    client.postCompanytype(null, changedCompanytype.data)
-                        .then((res) => {
-                            const note: Note = {
-                                message: `Die neue Firmenrolle wurde erfolgreich abgespeichert.`,
-                                variant: 'success'
-                            }
-                            addMainNote(note)
-                            setShow(false)
-                            setIsCompanytypeChanged(true)
-                        })
-                        .catch(error => {
-                            const note: Note = {
-                                message: `Fehler beim Speichern der neuen Firmenrolle: ${error.message}`,
-                                variant: 'danger',
-                            }
-                            addNote(note)
-                        })
-                } else {
-                    if (changedCompanytype.data.name === companytype.data.name) {
+        e.stopPropagation()
+        if (form.checkValidity() === false) {
+            setValidated(true)
+        } else {
+            if (changedCompanytype.meta.location === 0) {
+                client.postCompanytype(null, changedCompanytype.data)
+                    .then((res) => {
                         const note: Note = {
-                            message: `Es wurden keine Veränderungen festgestellt.`,
-                            variant: 'info'
+                            message: `Die neue Firmenrolle wurde erfolgreich abgespeichert.`,
+                            variant: 'success'
+                        }
+                        addMainNote(note)
+                        setShow(false)
+                        setIsCompanytypeChanged(true)
+                    })
+                    .catch(error => {
+                        const note: Note = {
+                            message: `Fehler beim Speichern der neuen Firmenrolle: ${error.message}`,
+                            variant: 'danger',
                         }
                         addNote(note)
-                    } else {
-                        client.putCompanytypeById({ id: changedCompanytype.meta.location, 'if-match': changedCompanytype.meta.etag }, changedCompanytype.data)
-                            .then((res) => {
-                                const note: Note = {
-                                    message: `Die Firmenrolle wurde erfolgreich geändert.`,
-                                    variant: 'success'
-                                }
-                                addMainNote(note)
-                                setShow(false)
-                                setIsCompanytypeChanged(true)
-                            })
-                            .catch(error => {
-                                const note: Note = {
-                                    message: `Fehler beim Ändern der Firmenrolle: ${error.message}`,
-                                    variant: 'danger'
-                                }
-                                addNote(note)
-                            })
-                    }
-                }
+                    })
+            } else {
+                client.putCompanytypeById({ id: changedCompanytype.meta.location, 'if-match': changedCompanytype.meta.etag }, changedCompanytype.data)
+                    .then((res) => {
+                        const note: Note = {
+                            message: `Die Firmenrolle wurde erfolgreich geändert.`,
+                            variant: 'success'
+                        }
+                        addMainNote(note)
+                        setShow(false)
+                        setIsCompanytypeChanged(true)
+                    })
+                    .catch(error => {
+                        const note: Note = {
+                            message: `Fehler beim Ändern der Firmenrolle: ${error.message}`,
+                            variant: 'danger'
+                        }
+                        addNote(note)
+                    })
             }
-        } else {
-            const note: Note = {
-                message: `Bitte eine Bezeichnung für die Firmenrolle eingeben.`,
-                variant: 'danger',
-            }
-            addNote(note)
         }
     }
 
     return (
-        <Form>
-            <Modal show={show} onHide={() => setShow(false)}>
+        <Modal show={show} onHide={() => handleClose()}>
+            <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, changedCompanytype)}>
                 <Modal.Header closeButton>
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Row>
-                        <Notes notes={notes} removeNote={removeNote} />
-                    </Row>
-                    <Row>
-                        <Col>
-                            <Form.Group controlId="formFirmenname">
-                                <Form.Label>Firmenname</Form.Label>
-                                <Form.Control type="text" value={changedCompanytype.data.name} onChange={handleChangeName} />
-                            </Form.Group>
-                        </Col>
-                    </Row>
+                    <Form.Group controlId="formFirmenname">
+                        <Form.Label>Firmenname</Form.Label>
+                        <Form.Control required type="text" value={changedCompanytype.data.name} onChange={handleChangeName} />
+                        <Form.Control.Feedback type="invalid">
+                            Bitte eine Firmenrolle eintragen.
+                        </Form.Control.Feedback>
+                    </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShow(false)}>Abbrechen</Button>
-                    <Button type="submit" variant='primary' onClick={(e) => handleSubmit(e)} >Abspeichern</Button>
+                    {changedCompanytype.data.name === '' || isNotChanged ? '' : <Button type="submit" variant='primary'>Abspeichern</Button>}
+                    <Button variant="secondary" onClick={() => handleClose()}>Abbrechen</Button>
                 </Modal.Footer>
-            </Modal>
-        </Form>
+            </Form>
+        </Modal>
     )
 }
 

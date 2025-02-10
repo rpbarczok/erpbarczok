@@ -1,6 +1,6 @@
 import '../../style.css'
 import './companies.css'
-import { Col, Row } from 'react-bootstrap'
+import { Button, ButtonGroup, Col, Row } from 'react-bootstrap'
 import Heading from '../headings/heading.jsx'
 import SearchCompanies from './search.companies.jsx'
 import ListCompanies from './list.companies.jsx'
@@ -9,7 +9,9 @@ import { DataWithMeta } from '../forms.jsx'
 import { client } from '../../utils/openapiclientaxios.js'
 import { removeBeforeLastDigits } from '../../utils/removeBeforeLastDigits.js'
 import { useCompanytypes } from 'components/admin/companytypes/useCompanytypes.js'
-import ChangeFrameCompanies from './changeFrame.companies.jsx'
+import { InputCompanies } from './input.companies.jsx'
+import { Note } from 'components/notifiers/notifiers.jsx'
+import { useNotifier } from 'components/notifiers/useNotifier.js'
 
 export interface Company {
     "name": string
@@ -33,6 +35,9 @@ export default function Companies() {
     const [search, setSearch] = useState<string>("")
     const [isNew, setIsNew] = useState<boolean>(false)
     const [listCompanytypes] = useCompanytypes()
+    const [show, setShow] = useState<boolean>(false)
+    const [newCompanyClick, setNewCompanyClick] = useState<number>(0)
+    const [editNotes, addEditNote, removeEditNote] = useNotifier()
 
     useEffect(() => {
         if (companyIsChanged) {
@@ -71,6 +76,35 @@ export default function Companies() {
         }
     }
 
+    const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        const userConfirmed = window.confirm(`Willst du die Firma '${activeCompany.data.name}' wirklich löschen?`)
+        if (userConfirmed) {
+            client.deleteCompanyById(activeCompany.meta.location)
+                .then((res) => {
+                    setIsCompanyChanged(true)
+                    const note: Note = {
+                        variant: 'warning',
+                        message: `Firma wurde gelöscht. Aktuell gibt es keine Möglichkeit, die Daten zurückzuholen`,
+                    }
+                    addEditNote(note)
+                })
+                .catch(error => {
+                    const note: Note = {
+                        variant: 'danger',
+                        message: `Löschen der Firma hat nicht geklappt: ${error.message}`,
+                    }
+                    addEditNote(note)
+                })
+
+        }
+    }
+
+    const handleShow = () => {
+        setNewCompanyClick(newCompanyClick + 1)
+        setShow(true)
+    }
+
     return (
         <>
             <Row id="heading">
@@ -90,13 +124,20 @@ export default function Companies() {
                     />
                 </Col>
                 <Col>
-                    <ChangeFrameCompanies
-                        listCompanytypes={listCompanytypes}
-                        changedCompanyBasis={blandCompany}
-                        setIsCompanyChanged={setIsCompanyChanged}
-                        setIsNew={setIsNew}
-                        onChangeActive={handleChangeActive}
-                    />
+                    <ButtonGroup vertical>
+                        <Button className="standardDesign" variant="outline-primary" onClick={handleShow}>Firma hinzufügen</Button>
+                        <InputCompanies
+                            key={String(newCompanyClick)}
+                            listCompanytypes={listCompanytypes}
+                            company={blandCompany}
+                            setIsCompanyChanged={setIsCompanyChanged}
+                            addEditNote={addEditNote}
+                            setIsNew={setIsNew}
+                            onChangeActive={handleChangeActive}
+                            show={show} setShow={setShow}
+                        />
+                        <Button className="standardDesign" variant="outline-danger" onClick={(e) => handleDelete(e)}>Firma löschen</Button>
+                    </ButtonGroup >
                 </Col>
                 <Col>
                 </Col>
@@ -105,12 +146,12 @@ export default function Companies() {
             <Row>
                 {activeCompany.meta.location === 0
                     ? <p>Keine Firma gefunden</p>
-                    : <ChangeFrameCompanies
+                    : <InputCompanies
                         key={activeCompany.meta.location}
                         listCompanytypes={listCompanytypes}
-                        changedCompanyBasis={activeCompany}
-                        setIsCompanyChanged={setIsCompanyChanged}
-                    />}
+                        company={activeCompany}
+                        setIsCompanyChanged={setIsCompanyChanged} 
+                        editNotes={editNotes} addEditNote={addEditNote} removeEditNote={removeEditNote}/>}
             </Row>
         </>
     )
