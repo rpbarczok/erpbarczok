@@ -58,4 +58,5 @@ async function loadControllers() {
 
 const controllers = await loadControllers()
 
+
 export default controllers

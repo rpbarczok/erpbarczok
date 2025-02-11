@@ -1,5 +1,5 @@
 import {OpenAPIClientAxios} from 'openapi-client-axios'
-import {Client} from "../../server/typescript/types/openapi.js"
+import {Client} from "../types/openapi.d.js"
 
 const api = new OpenAPIClientAxios({ definition: '/api-docs/'})
 
