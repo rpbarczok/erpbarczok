@@ -8,7 +8,7 @@
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "dotenvx run -f .env -- tsx server/typescript/start.ts",
     "client": "webpack serve --config webpack.dev.js",
-    "createtypes": "npm run server && npx openapicmd typegen http://localhost:8080/api-docs/ > server/typescript/types/openapi.d.ts",
+    "createtypes": "npm run server && npx openapicmd typegen http://localhost:8080/api-docs/ > client/types/openapi.d.ts",
     "buildclient": "webpack --config webpack.prod.js",
     "buildserver": "rm -fR server/ecmascript && tsc",
     "starttestdb": "npm run stoptestdb ; docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",

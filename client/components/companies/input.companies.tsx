@@ -130,7 +130,7 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
                 </Col>
                 <Col>
                     <Form.Group controlId="companyAbbr">
-                        <Form.Label className="standardDesign">Kürzel (max 3. Zeichen)</Form.Label >
+                        <Form.Label className="standardDesign">Kürzel (max 3 Zeichen)</Form.Label >
                         <Form.Control maxLength={3} type="text" className="standardDesign" value={changedCompany.data.abbr} onChange={handleChangeAbbr} />
                     </Form.Group>
                 </Col>
