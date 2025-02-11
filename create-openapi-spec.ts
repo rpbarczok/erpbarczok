@@ -6,8 +6,8 @@ const openapiSpecAssembler = async () => {
     const apiPaths = apiSpecBase.paths
     for (const apiPath in apiPaths) {
         const controllerPath = apiPath.slice(-1) === '/' ?
-            path.join(import.meta.dirname, 'server/ecmascript/controllers', apiPath, 'index.js') :
-            path.join(import.meta.dirname, 'server/ecmascript/controllers', apiPath) + '.js'
+            path.join(import.meta.dirname, 'server/typescript/controllers', apiPath, 'index.ts') :
+            path.join(import.meta.dirname, 'server/typescript/controllers', apiPath) + '.ts'
         const controller = await import(controllerPath)
 
         if (controller.apiSpec) {

@@ -9,7 +9,7 @@
     "server": "dotenvx run -f .env -- tsx server/typescript/start.ts",
     "client": "webpack serve --config webpack.dev.js",
 
-    "create_openapi_spec": "npm run buildserver & node create-openapi-spec.js",
+    "create_openapi_spec": "tsx create-openapi-spec.ts",
     "createtypes": "npm run create_openapi_spec && npx openapicmd typegen client/public/openapi.js > client/types/openapi.d.ts",
     "buildclient": "npm run createtypes && webpack --config webpack.prod.js",
     "buildserver": "rm -fR server/ecmascript && tsc",
