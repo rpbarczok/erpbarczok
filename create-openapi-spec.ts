@@ -1,9 +1,9 @@
-import apiSpecBase from './server/typescript/openapi.json' with { type: 'json' }
+import {apiSpec} from './server/typescript/openapi.js'
 import path from 'node:path'
 import fs from 'node:fs'
 
 const openapiSpecAssembler = async () => {
-    const apiPaths = apiSpecBase.paths
+    const apiPaths = apiSpec.paths
     for (const apiPath in apiPaths) {
         const controllerPath = apiPath.slice(-1) === '/' ?
             path.join(import.meta.dirname, 'server/typescript/controllers', apiPath, 'index.ts') :
@@ -11,7 +11,7 @@ const openapiSpecAssembler = async () => {
         const controller = await import(controllerPath)
 
         if (controller.apiSpec) {
-            Object.assign(apiSpecBase.paths[apiPath], controller.apiSpec)
+            Object.assign(apiSpec.paths[apiPath], controller.apiSpec)
         }
 
         for (const apiVerbCap of ["GET", "PUT", "POST", "DELETE"]) {
@@ -19,17 +19,30 @@ const openapiSpecAssembler = async () => {
 
             if (operation && operation.apiSpec) {
                 const apiVerbMin = apiVerbCap.toLowerCase()
-                apiSpecBase.paths[apiPath][apiVerbMin] = operation.apiSpec
+                apiSpec.paths[apiPath][apiVerbMin] = operation.apiSpec
             }
         }
     }
 
-    const target = path.join(import.meta.dirname, 'client/public/openapi.json')
-    fs.writeFile(target, JSON.stringify(apiSpecBase), err => {
+    const target = path.join(import.meta.dirname, 'client/utils/openapi.ts')
+    const content = `
+    import {Document} from 'openapi-client-axios'
+    export const openapiSpec: Document = ${JSON.stringify(apiSpec,null, 4)}
+    `
+    fs.writeFile(target, content, err => {
         if (err) {
             console.log(err)
         } else {
             console.log('OpenapiSpec-File for client successfully created')
+        }
+    })
+
+    const targetJSON = path.join(import.meta.dirname, 'client/utils/openapi.json')
+    fs.writeFile(targetJSON, JSON.stringify(apiSpec,null, 4), err => {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log('OpenapiSpec-Json-File for client successfully created')
         }
     })
 }

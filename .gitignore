@@ -5,3 +5,5 @@ server/ecmascript
 server/public
 docker-compose.yml
 client/types
+client/utils/openapi.json
+client/utils/openapi.ts

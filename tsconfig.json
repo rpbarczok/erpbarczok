@@ -2,7 +2,6 @@
   "compilerOptions": {
     "outDir": "server/ecmascript",
     "module": "NodeNext",
-    "resolveJsonModule": true,
     "strict": true
     //"removeComments": true
   },
