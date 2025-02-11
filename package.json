@@ -10,7 +10,7 @@
     "client": "webpack serve --config webpack.dev.js",
 
     "create_openapi_spec": "tsx create-openapi-spec.ts",
-    "createtypes": "npm run create_openapi_spec && mkdir client/types && npx openapicmd typegen client/public/openapi.js > client/types/openapi.d.ts",
+    "createtypes": "npm run create_openapi_spec && mkdir client/types && npx openapicmd typegen client/public/openapi.json > client/types/openapi.d.ts",
     "buildclient": "npm run createtypes && webpack --config webpack.prod.js",
     "buildserver": "rm -fR server/ecmascript && tsc",
     "starttestdb": "npm run stoptestdb ; docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",
