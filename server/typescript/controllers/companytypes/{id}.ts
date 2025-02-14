@@ -1,11 +1,9 @@
 import { getCompanytypeById, deleteCompanytypeById, putCompanytypeById } from '../../services/companytypes.js'
 import { error_formatter, NotFoundError } from "../../services/error.js"
 import type { Request, Response } from 'express'
-import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { CompanytypeServer, normalizeCompanytype, normalizeCompanytypeLocationEtag } from './index.js'
 import { Operation } from '../../apiSpecAssembler.js'
 import { MetaEtag } from '../../app.js'
-import { Companytype } from '../../models/companytypes.js'
 import { Company } from '../../models/companies.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {

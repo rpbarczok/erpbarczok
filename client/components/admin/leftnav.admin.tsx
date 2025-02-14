@@ -1,6 +1,6 @@
 import '../../style.css'
 import './admin.css'
-import ressourceList from './ressourcelist.jsx'
+import {ressourceList} from './ressourcelist.jsx'
 import {Button} from 'react-bootstrap'
 import { Ressource } from './admin.jsx'
 
@@ -8,7 +8,7 @@ interface LeftNavigationInterface {
     setRessource: React.Dispatch<React.SetStateAction<Ressource>>
 }
 
-const LeftNavigation = ({setRessource}: LeftNavigationInterface) => {
+export const LeftNavigation = ({setRessource}: LeftNavigationInterface) => {
     
     const ressourceHandler = (e: React.MouseEvent<HTMLButtonElement>, ressource: Ressource) => {
         e.preventDefault()
@@ -24,5 +24,3 @@ const LeftNavigation = ({setRessource}: LeftNavigationInterface) => {
     })
     return result
 }
-
-export default LeftNavigation

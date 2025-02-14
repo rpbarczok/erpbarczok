@@ -12,7 +12,7 @@ export class Company extends Model<InferAttributes<Company>, InferCreationAttrib
     declare companytype?: NonAttribute<Companytype>
 }
 
-const initializeCompany = (sequelize: Sequelize) => {
+export const initializeCompany = (sequelize: Sequelize) => {
     Company.init({
         id: {
             type: DataTypes.INTEGER,
@@ -42,5 +42,3 @@ const initializeCompany = (sequelize: Sequelize) => {
         }
     )
 }
-
-export default initializeCompany

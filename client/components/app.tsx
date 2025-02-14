@@ -1,11 +1,11 @@
 import '../style.css'
 import { useState } from "react"
 import { Container, Row } from 'react-bootstrap'
-import Navigation from './navigation/navigation.jsx'
+import { Navigation } from './navigation/navigation.jsx'
 import { FormTab } from './navigation/ribbon.js'
-import Forms from './forms.jsx'
+import { Forms } from './forms.jsx'
 
-export default function App() {
+export function App() {
     const startPage: FormTab = { name: "Stammdaten", id: "stammForm" }
     const [activeForm, setActiveForm] = useState<FormTab>(startPage)
     const [tabs, setTabs] = useState<FormTab[]>([startPage])
@@ -20,7 +20,7 @@ export default function App() {
                 />
             </Row>
             <Row>
-                <Forms activeForm={activeForm}  />
+                <Forms activeForm={activeForm} />
             </Row>
             <Row>
                 Footer

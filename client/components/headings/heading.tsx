@@ -7,7 +7,7 @@ interface HeadingInterface {
     cssClass: string
 }
 
-export default function Heading({title, cssClass }: HeadingInterface) {
+export function Heading({title, cssClass }: HeadingInterface) {
     return (
         <Row className={"heading " + cssClass }>
             <Col>

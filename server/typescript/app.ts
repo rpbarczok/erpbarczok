@@ -5,9 +5,9 @@ import cors, { CorsOptions } from 'cors'
 import { apiSpec } from "./openapi.js"
 import swaggerUi from 'swagger-ui-express'
 import OpenApiValidator from 'express-openapi-validator'
-import baseLogger from './logger.js'
-import loadControllers from './apiSpecAssembler.js'
-import initSequelize from './models/index.js'
+import {baseLogger} from './logger.js'
+import {apiControllers} from './apiSpecAssembler.js'
+import {sequelize} from './models/index.js'
 import path from 'path'
 
 export interface MetaEtag {
@@ -25,9 +25,9 @@ const startApp = async () => {
 
     const logger = baseLogger.extend('app')
     const morganLogger = baseLogger.extend('morgan')
-    const controllers = loadControllers
+    const controllers = apiControllers
     logger("All controllers:", controllers)
-    const sequelize = initSequelize
+    const initSequelize = sequelize
 
     app.use(morgan('dev', { stream: { write: msg => { morganLogger(msg); return true } } }))
     app.use(express.json())
@@ -36,7 +36,7 @@ const startApp = async () => {
 
     // handle CORS
 
-    const corsOptions: CorsOptions = { "origin": false, exposedHeaders: ["location", "if-match", "etag"] }
+    const corsOptions: CorsOptions = { "origin": false, exposedHeaders: ["location", "if-match", "etag", 'Authorization'] }
     if (process.env.NODE_ENV != 'production') {
         corsOptions.origin = [
             "http://localhost:3000",
@@ -111,6 +111,4 @@ const startApp = async () => {
     return app
 }
 
-const startingApp = startApp()
-
-export default startingApp
+export const startingApp = startApp()

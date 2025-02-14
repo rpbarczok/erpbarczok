@@ -1,8 +1,8 @@
 import { Sequelize } from "sequelize"
-import initializeCompany, { Company } from './companies.js'
-import initializeCompanytype, { Companytype } from "./companytypes.js"
-import baseLogger from "../logger.js"
-import setDefaultValues from './default-values.js'
+import { initializeCompany, Company } from './companies.js'
+import { initializeCompanytype, Companytype } from "./companytypes.js"
+import { baseLogger } from "../logger.js"
+import { setDefaultValues } from './default-values.js'
 
 const logger = baseLogger.extend('models:index')
 const loggerSequelize = logger.extend('sequelize')
@@ -13,7 +13,7 @@ if (!process.env.DB_NAME || !process.env.DB_USER || !process.env.DB_PASSWORD || 
     process.exit(1)
 }
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+export const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
     dialect: 'postgres',
     logging: sequelizeLogger,
@@ -47,5 +47,3 @@ try {
 } catch (err: any) {
     logger("Failed to set default values")
 }
-
-export default sequelize

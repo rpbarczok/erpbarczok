@@ -5,6 +5,8 @@ import { CompanyClient, normalizeCompany, normalizeCompanyLocationEtag } from '.
 import { Operation } from '../../apiSpecAssembler.js'
 import { MetaEtag } from '../../app.js'
 
+
+
 export const GET: Operation = async (req: Request, res: Response) => {
     try {
         const company = await getCompanyById(Number(req.params.id))

@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client"
-import App from './components/app.jsx'
+import {App} from './components/app.jsx'
 import './style.css'
-import serviceWorkerRegistry from './utils/serviceworker.js'
+import {serviceWorkerRegistry} from './utils/serviceworker.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { StrictMode } from "react"
 

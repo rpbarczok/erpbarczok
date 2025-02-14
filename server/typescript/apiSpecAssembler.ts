@@ -1,5 +1,5 @@
 import path from 'node:path'
-import baseLogger from "./logger.js"
+import {baseLogger} from "./logger.js"
 import { apiSpec as apiSpecBase } from './openapi.js'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { Request, Response, RequestHandler, NextFunction } from 'express'
@@ -56,7 +56,4 @@ async function loadControllers() {
     return (controllers)
 }
 
-const controllers = await loadControllers()
-
-
-export default controllers
+export const apiControllers = await loadControllers()

@@ -1,9 +1,9 @@
 import '../../style.css'
 import './admin.css'
 import { Row, Col } from 'react-bootstrap'
-import Heading from '../headings/heading.jsx'
-import LeftNavAdmin from './leftnav.admin.jsx'
-import Companytypes from './companytypes/companytypes.jsx'
+import { Heading } from '../headings/heading.jsx'
+import { LeftNavigation } from './leftnav.admin.jsx'
+import { Companytypes } from './companytypes/companytypes.jsx'
 import { useState } from 'react'
 
 export interface Ressource {
@@ -11,13 +11,13 @@ export interface Ressource {
     path: string
 }
 
-export default function Admin() {
+export function Admin() {
     const [ressource, setRessource] = useState<Ressource>({ name: "Firmenrolle", path: "companytypes" })
 
     const ActiveRessource = () => {
         switch (ressource.path) {
             case "companytypes":
-                return <Companytypes/>
+                return <Companytypes />
         }
     }
 
@@ -28,7 +28,7 @@ export default function Admin() {
             </Row>
             <Row>
                 <Col xs={2}>
-                    <LeftNavAdmin
+                    <LeftNavigation
                         setRessource={setRessource}
                     />
                 </Col>

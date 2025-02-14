@@ -3,9 +3,9 @@ import '../../../style.css'
 import '../admin.css'
 import { Companytype } from './companytypes.jsx'
 import { DataWithMeta } from 'components/forms.jsx'
-import { Button, ButtonGroup, Col, Form, ListGroup, Modal, Row } from "react-bootstrap"
+import { Button, ButtonGroup, Col, ListGroup, Row } from "react-bootstrap"
 import { Pencil, Trash, Plus } from "react-bootstrap-icons"
-import InputCompanytypes from './input.companytypes.jsx'
+import { InputCompanytypes } from './input.companytypes.jsx'
 import { client } from 'utils/openapiclientaxios.js'
 import { Note } from 'components/notifiers/notifiers.js'
 
@@ -25,8 +25,8 @@ interface ListItemComponent {
 const ListItem = ({ companytype, setIsCompanytypeChanged, addMainNote }: ListItemComponent) => {
     const title = 'Neue Firmenrolle anlegen'
     const [show, setShow] = useState(false)
-    
-    
+
+
     const handleModal = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         setShow(true)
@@ -78,8 +78,8 @@ const ListItem = ({ companytype, setIsCompanytypeChanged, addMainNote }: ListIte
                             show={show}
                             setShow={setShow}
                             companytype={companytype}
-                            title={`Firmenrolle ${companytype.data.name}`} 
-                            addMainNote = {addMainNote}/>
+                            title={`Firmenrolle ${companytype.data.name}`}
+                            addMainNote={addMainNote} />
                     </ButtonGroup>
                 </Col>
             </Row>
@@ -88,18 +88,16 @@ const ListItem = ({ companytype, setIsCompanytypeChanged, addMainNote }: ListIte
 }
 
 
-const ListCompanytypes = ({ fullList, setIsCompanytypeChanged, addMainNote }: ListCompanytypesComponent) => {
+export const ListCompanytypes = ({ fullList, setIsCompanytypeChanged, addMainNote }: ListCompanytypesComponent) => {
 
 
     return fullList.map(companytype => {
         return (
-           <ListItem 
-           companytype={companytype} 
-           key={String(companytype.meta.location)} 
-           setIsCompanytypeChanged={setIsCompanytypeChanged} 
-           addMainNote={addMainNote} />
+            <ListItem
+                companytype={companytype}
+                key={String(companytype.meta.location)}
+                setIsCompanytypeChanged={setIsCompanytypeChanged}
+                addMainNote={addMainNote} />
         )
     })
 }
-
-export default ListCompanytypes

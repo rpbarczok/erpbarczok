@@ -5,7 +5,7 @@ import React, { ChangeEvent, useState } from "react"
 import { Companytype } from './companytypes.jsx'
 import { DataWithMeta } from 'components/forms.jsx'
 import { client } from 'utils/openapiclientaxios.js'
-import { Note, Notes } from 'components/notifiers/notifiers.jsx'
+import { Note } from 'components/notifiers/notifiers.jsx'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
 
 interface InputCompanytypesInterface {
@@ -17,7 +17,7 @@ interface InputCompanytypesInterface {
     addMainNote: (note: Note) => void
 }
 
-const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytypeChanged, addMainNote }: InputCompanytypesInterface) => {
+export const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytypeChanged, addMainNote }: InputCompanytypesInterface) => {
 
     const [changedCompanytype, setChangedCompanytype] = useState<DataWithMeta<Companytype>>(companytype)
     const [notes, addNote, removeNote] = useNotifier()
@@ -107,5 +107,3 @@ const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytype
         </Modal>
     )
 }
-
-export default InputCompanytypes

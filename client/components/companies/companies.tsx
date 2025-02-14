@@ -1,9 +1,9 @@
 import '../../style.css'
 import './companies.css'
 import { Button, ButtonGroup, Col, Row } from 'react-bootstrap'
-import Heading from '../headings/heading.jsx'
-import SearchCompanies from './search.companies.jsx'
-import ListCompanies from './list.companies.jsx'
+import { Heading } from '../headings/heading.jsx'
+import { SearchCompanies } from './search.companies.jsx'
+import { ListCompanies } from './list.companies.jsx'
 import { useState, useEffect } from 'react'
 import { DataWithMeta } from '../forms.jsx'
 import { client } from '../../utils/openapiclientaxios.js'
@@ -27,7 +27,7 @@ export interface ChangedCompanyAction {
 
 export const blandCompany: DataWithMeta<Company> = { "meta": { "location": 0, "etag": "" }, "data": { "name": "", "companytype": "default", "abbr": "", "www": "" } }
 
-export default function Companies() {
+export function Companies() {
 
     const [companyIsChanged, setIsCompanyChanged] = useState<boolean>(true)
     const [listCompanies, setListCompanies] = useState<DataWithMeta<Company>[]>([])
@@ -150,8 +150,8 @@ export default function Companies() {
                         key={activeCompany.meta.location}
                         listCompanytypes={listCompanytypes}
                         company={activeCompany}
-                        setIsCompanyChanged={setIsCompanyChanged} 
-                        editNotes={editNotes} addEditNote={addEditNote} removeEditNote={removeEditNote}/>}
+                        setIsCompanyChanged={setIsCompanyChanged}
+                        editNotes={editNotes} addEditNote={addEditNote} removeEditNote={removeEditNote} />}
             </Row>
         </>
     )

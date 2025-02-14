@@ -1,7 +1,7 @@
 import '../../style.css'
 import './navigation.css'
-import groupForm, {Form, FormTab } from './ribbon.js'
-import {Navbar, Nav, NavDropdown, Container} from 'react-bootstrap'
+import { groupForm, Form, FormTab } from './ribbon.js'
+import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap'
 import React from 'react'
 
 interface RibbonNavigationInterface {
@@ -9,7 +9,7 @@ interface RibbonNavigationInterface {
     setTabs: React.Dispatch<React.SetStateAction<FormTab[]>>
     setActiveForm: React.Dispatch<React.SetStateAction<FormTab>>
 }
-export default function RibbonNavigation({tabs, setTabs, setActiveForm}: RibbonNavigationInterface) {
+export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigationInterface) {
 
     const handleClick = (form: FormTab) => {
         //check whether tab is already open
@@ -19,15 +19,15 @@ export default function RibbonNavigation({tabs, setTabs, setActiveForm}: RibbonN
         // add new Tab
         const addTabs: FormTab[] = [...tabs, ...(isFormOpen ? [] : [form])]
         setTabs(addTabs)
-        setActiveForm(form)  
-    }  
+        setActiveForm(form)
+    }
 
     function Groups() {
-        
-        function Forms({forms}: {forms: Form[]}) {
+
+        function Forms({ forms }: { forms: Form[] }) {
             const formsList = forms.map(f => {
                 return (
-                    <NavDropdown.Item key={f.id} onClick ={() =>handleClick(f)} >
+                    <NavDropdown.Item key={f.id} onClick={() => handleClick(f)} >
                         {f.name}
                     </NavDropdown.Item>
                 )

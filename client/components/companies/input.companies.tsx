@@ -10,7 +10,6 @@ import { useNotifier } from "components/notifiers/useNotifier.js"
 import { client } from "utils/openapiclientaxios.js"
 import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
 import { Note } from "components/notifiers/notifiers.jsx"
-import e from "express"
 
 interface InputCompaniesComponent {
     listCompanytypes: DataWithMeta<Companytype>[]
