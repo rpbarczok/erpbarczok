@@ -184,34 +184,43 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
             </>
         )
     } else if (editNotes && removeEditNote) {
-        return (
-            <>
-                <Row id="edit">
-                    <Col id='company' xl={5} lg={6} xs={12}>
-                        <Row id="edit">
-                            <Col id='company' xl={5} lg={6} xs={12}></Col>
-                            <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
-                                <Row>
-                                    <ButtonGroup className="function-button standardDesign">
-                                        <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Abspeichern</Button>
-                                        <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
-                                    </ButtonGroup>
-                                </Row>
-                                <Row>
-                                    <Col className="standardDesign">
-                                        <Notes notes={editNotes} removeNote={removeEditNote} />
-                                    </Col>
-                                </Row>
-                                {input}
-                            </Form>
-                        </Row>
-                    </Col>
-                    <Col>
-                        CompanyAddition
-                    </Col>
-                </Row >
-            </>
-        )
+        if (auth.isAuthenticated) {
+            return (
+                <>
+                    <Row id="edit">
+                        <Col id='company' xl={5} lg={6} xs={12}>
+                            <Row id="edit">
+                                <Col id='company' xl={5} lg={6} xs={12}></Col>
+                                <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
+                                    <Row>
+                                        <ButtonGroup className="function-button standardDesign">
+                                            <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Abspeichern</Button>
+                                            <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
+                                        </ButtonGroup>
+                                    </Row>
+                                    <Row>
+                                        <Col className="standardDesign">
+                                            <Notes notes={editNotes} removeNote={removeEditNote} />
+                                        </Col>
+                                    </Row>
+                                    {input}
+                                </Form>
+                            </Row>
+                        </Col>
+                        <Col>
+                            CompanyAddition
+                        </Col>
+                    </Row >
+                </>
+            )
+        } else {
+            return (
+                <div>
+                    Bitte loggen Sie sich noch mal ein
+                </div>
+            )
+        }
+        
 
     }
 }

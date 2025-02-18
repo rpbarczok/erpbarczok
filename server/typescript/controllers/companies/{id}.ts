@@ -4,7 +4,6 @@ import type { Request, Response } from 'express'
 import { CompanyClient, normalizeCompany, normalizeCompanyLocationEtag } from './index.js'
 import { Operation } from '../../apiSpecAssembler.js'
 import { MetaEtag } from '../../app.js'
-import { jwtCheck } from '../../utils/auth.js'
 
 
 
@@ -32,6 +31,11 @@ GET.apiSpec = {
     "summary": "Get a certain company",
     "description": "GET request on a certain company by id {id}",
     "operationId": "getCompanyById",
+    "security": [
+        { "OAuth2": [
+            "openid"
+        ] }
+    ],
     "tags": [
         "Company"
     ],
@@ -101,6 +105,11 @@ DELETE.apiSpec = {
     "summary": "Remove a certain company",
     "description": "DELETE request on company by id {id}",
     "operationId": "deleteCompanyById",
+    "security": [
+        { "OAuth2": [
+            "openid"
+        ] }
+    ],
     "tags": [
         "Company"
     ],
@@ -160,6 +169,11 @@ PUT.apiSpec = {
     "summary": "Updates company with id {id}",
     "description": "Put request on company by id {id}",
     "operationId": "putCompanyById",
+    "security": [
+        { "OAuth2": [
+            "openid"
+        ] }
+    ],
     "tags": [
         "Company"
     ],

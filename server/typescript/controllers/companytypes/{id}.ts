@@ -28,6 +28,11 @@ GET.apiSpec = {
     "summary": "Get a certain companytype",
     "description": "GET request on a certain companytype by id {id}",
     "operationId": "getCompanytypeById",
+    "security": [
+        { "OAuth2": [
+            "openid"
+        ] }
+    ],
     "tags": [
         "Companytype"
     ],
@@ -100,6 +105,11 @@ DELETE.apiSpec = {
     "summary": "Remove a certain company type",
     "description": "DELETE request on company type by id {id}",
     "operationId": "deleteCompanytypeById",
+    "security": [
+        { "OAuth2": [
+            "openid"
+        ] }
+    ],
     "tags": [
         "Companytype"
     ],
@@ -163,6 +173,11 @@ PUT.apiSpec = {
     "summary": "Updates company type with id {id}",
     "description": "Put request on company type by id {id}",
     "operationId": "putCompanytypeById",
+    "security": [
+        { "OAuth2": [
+            "openid"
+        ] }
+    ],
     "tags": [
         "Companytype"
     ],

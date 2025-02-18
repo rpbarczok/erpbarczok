@@ -42,6 +42,7 @@ export function normalizeCompanyLocationEtag(company: Company): MetaEtag {
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
+    // @ts-ignore
     const allCompanies = await getAllCompanies()
     const allCompaniesResponse: Meta<CompanyClient>[] = allCompanies.map((row) => (normalizeCompanyMeta(row)))
     res
@@ -53,6 +54,11 @@ GET.apiSpec = {
     "summary": "Get a list of all companies",
     "description": "GET request on all companies",
     "operationId": "getCompanies",
+    "security": [
+        { "OAuth2": [
+            "admin"
+        ] }
+    ],
     "tags": [
         "Company"
     ],
@@ -138,6 +144,11 @@ POST.apiSpec = {
     "summary": "Create new company",
     "description": "POST request for a new company, response new id",
     "operationId": "postCompany",
+    "security": [
+        { "OAuth2": [
+            "openid"
+        ] }
+    ],
     "tags": [
         "Company"
     ],

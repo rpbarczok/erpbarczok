@@ -4,10 +4,10 @@ import morgan from 'morgan'
 import cors, { CorsOptions } from 'cors'
 import { apiSpec } from "./openapi.js"
 import swaggerUi from 'swagger-ui-express'
-import OpenApiValidator from 'express-openapi-validator'
-import {baseLogger} from './logger.js'
-import {apiControllers} from './apiSpecAssembler.js'
-import {sequelize} from './models/index.js'
+import OpenApiValidator, { middleware } from 'express-openapi-validator'
+import { baseLogger } from './logger.js'
+import { apiControllers } from './apiSpecAssembler.js'
+import { sequelize } from './models/index.js'
 import path from 'path'
 import { jwtCheck } from './utils/auth.js'
 
@@ -51,6 +51,7 @@ const startApp = async () => {
 
     app.use(express.static(path.join(import.meta.dirname, '..', 'public')))
 
+
     // mitteilen, wo das OAS-Document ist
 
     app.use('/api-docs', (req, res, next) => { res.json(apiSpec) })
@@ -62,6 +63,10 @@ const startApp = async () => {
             url: `/api-docs`
         }
     }))
+
+    // Authorication
+
+    app.use(jwtCheck)
 
     // validate API calls
     app.use(
@@ -84,7 +89,8 @@ const startApp = async () => {
 
                     }
                 }
-            }
+            },
+            validateSecurity: true
         }
         )
     )

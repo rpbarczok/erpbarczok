@@ -45,20 +45,38 @@ export function Companies() {
     useEffect(() => {
         if (companyIsChanged) {
             try {
-                client.getCompanies(null, null, { headers: { 'Authorization': `Bearer ${token}` }})
-                .then(result => {
-                    const newList = result?.data.map(row => {
-                        const newRow: DataWithMeta<Company> = {
-                            meta: {
-                                location: Number(removeBeforeLastDigits(row.meta.location)),
-                                etag: row.meta.etag
-                            },
-                            data: row.data
-                        }
-                        return (newRow)
+                if (auth.isAuthenticated) {
+                    client.getCompanies(null, null, { headers: { 'Authorization': `Bearer ${token}` }})
+                    .then(result => {
+                        const newList = result?.data.map(row => {
+                            const newRow: DataWithMeta<Company> = {
+                                meta: {
+                                    location: Number(removeBeforeLastDigits(row.meta.location)),
+                                    etag: row.meta.etag
+                                },
+                                data: row.data
+                            }
+                            return (newRow)
+                        })
+                        setListCompanies(newList)
                     })
-                    setListCompanies(newList)
-                })
+                } else {
+                    client.getCompanies()
+                    .then(result => {
+                        const newList = result?.data.map(row => {
+                            const newRow: DataWithMeta<Company> = {
+                                meta: {
+                                    location: Number(removeBeforeLastDigits(row.meta.location)),
+                                    etag: row.meta.etag
+                                },
+                                data: row.data
+                            }
+                            return (newRow)
+                        })
+                        setListCompanies(newList)
+                    })
+                }
+               
             setIsCompanyChanged(false)
             } catch (error) {
                throw error
@@ -70,7 +88,7 @@ export function Companies() {
         if (active === 0 || active === undefined) {
             setActiveCompany(blandCompany)
         } else {
-            client.getCompanyById(active, { headers: { Authorization: `Bearer ${token}` }})
+            client.getCompanyById(active, null, { headers: { Authorization: `Bearer ${token}` }})
                 .then(result => {
                     if (result.data) {
                         const company = { "meta": { 'location': Number(removeBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
