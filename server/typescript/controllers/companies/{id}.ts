@@ -4,6 +4,7 @@ import type { Request, Response } from 'express'
 import { CompanyClient, normalizeCompany, normalizeCompanyLocationEtag } from './index.js'
 import { Operation } from '../../apiSpecAssembler.js'
 import { MetaEtag } from '../../app.js'
+import { jwtCheck } from '../../utils/auth.js'
 
 
 

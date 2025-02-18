@@ -32,8 +32,10 @@
     "express-openapi-validator": "^5.4.2",
     "jwks-rsa": "^3.1.0",
     "morgan": "^1.10.0",
+    "oidc-client-ts": "^3.1.0",
     "pg": "^8.13.1",
     "pg-hstore": "^2.3.4",
+    "react-oidc-context": "^3.2.0",
     "sequelize": "^6.37.5",
     "swagger-ui-express": "^5.0.1"
   },

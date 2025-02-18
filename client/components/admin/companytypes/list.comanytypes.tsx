@@ -8,6 +8,7 @@ import { Pencil, Trash, Plus } from "react-bootstrap-icons"
 import { InputCompanytypes } from './input.companytypes.jsx'
 import { client } from 'utils/openapiclientaxios.js'
 import { Note } from 'components/notifiers/notifiers.js'
+import { useAuth } from 'react-oidc-context'
 
 
 interface ListCompanytypesComponent {
@@ -23,6 +24,7 @@ interface ListItemComponent {
 }
 
 const ListItem = ({ companytype, setIsCompanytypeChanged, addMainNote }: ListItemComponent) => {
+    const auth = useAuth()
     const title = 'Neue Firmenrolle anlegen'
     const [show, setShow] = useState(false)
 
@@ -34,9 +36,10 @@ const ListItem = ({ companytype, setIsCompanytypeChanged, addMainNote }: ListIte
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
+        const token = auth.user?.access_token
         const userConfirmed = window.confirm(`Willst du wirklich die Firmenrolle ${companytype.data.name} löschen?`)
         if (userConfirmed) {
-            client.deleteCompanytypeById(companytype.meta.location)
+            client.deleteCompanytypeById(companytype.meta.location, { headers: { Authorization: `Bearer ${token}` }})
                 .then((res) => {
                     const note: Note = {
                         message: 'Die Firmenrolle wurde erfolgreich gelöscht.',

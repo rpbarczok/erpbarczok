@@ -12,6 +12,7 @@ import { useCompanytypes } from 'components/admin/companytypes/useCompanytypes.j
 import { InputCompanies } from './input.companies.jsx'
 import { Note } from 'components/notifiers/notifiers.jsx'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
+import { useAuth } from 'react-oidc-context'
 
 export interface Company {
     "name": string
@@ -38,10 +39,13 @@ export function Companies() {
     const [show, setShow] = useState<boolean>(false)
     const [newCompanyClick, setNewCompanyClick] = useState<number>(0)
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
+    const auth = useAuth()
+    const token = auth.user?.access_token
 
     useEffect(() => {
         if (companyIsChanged) {
-            client.getCompanies()
+            try {
+                client.getCompanies(null, null, { headers: { 'Authorization': `Bearer ${token}` }})
                 .then(result => {
                     const newList = result?.data.map(row => {
                         const newRow: DataWithMeta<Company> = {
@@ -56,6 +60,9 @@ export function Companies() {
                     setListCompanies(newList)
                 })
             setIsCompanyChanged(false)
+            } catch (error) {
+               throw error
+            }
         }
     }, [companyIsChanged])
 
@@ -63,7 +70,7 @@ export function Companies() {
         if (active === 0 || active === undefined) {
             setActiveCompany(blandCompany)
         } else {
-            client.getCompanyById(active)
+            client.getCompanyById(active, { headers: { Authorization: `Bearer ${token}` }})
                 .then(result => {
                     if (result.data) {
                         const company = { "meta": { 'location': Number(removeBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
@@ -80,7 +87,7 @@ export function Companies() {
         e.preventDefault()
         const userConfirmed = window.confirm(`Willst du die Firma '${activeCompany.data.name}' wirklich löschen?`)
         if (userConfirmed) {
-            client.deleteCompanyById(activeCompany.meta.location)
+            client.deleteCompanyById(activeCompany.meta.location, { headers: { Authorization: `Bearer ${token}` }})
                 .then((res) => {
                     setIsCompanyChanged(true)
                     const note: Note = {

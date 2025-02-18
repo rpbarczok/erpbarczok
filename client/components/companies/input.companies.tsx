@@ -10,6 +10,7 @@ import { useNotifier } from "components/notifiers/useNotifier.js"
 import { client } from "utils/openapiclientaxios.js"
 import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
 import { Note } from "components/notifiers/notifiers.jsx"
+import { useAuth } from "react-oidc-context"
 
 interface InputCompaniesComponent {
     listCompanytypes: DataWithMeta<Companytype>[]
@@ -28,6 +29,8 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
     const [addNotes, addAddNote, removeAddNote] = useNotifier()
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, company)
     const [validated, setValidated] = useState<boolean>(false)
+    const auth = useAuth()
+    const token = auth.user?.access_token
 
     const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
         company.data.abbr === changedCompany.data.abbr &&
@@ -42,7 +45,7 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
             setValidated(true)
         } else {
             if (onChangeActive && setIsNew && setShow) {
-                client.postCompany(null, changedCompany.data)
+                client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
                     .then((res) => {
                         onChangeActive(Number(removeBeforeLastDigits(res.headers.location)))
                         const note: Note = {
@@ -63,7 +66,8 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
                     })
             } else {
                 client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
-                    changedCompany.data)
+                    changedCompany.data,
+                    { headers: { Authorization: `Bearer ${token}` } })
                     .then((res) => {
                         const note: Note = {
                             variant: 'success',

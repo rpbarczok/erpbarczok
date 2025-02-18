@@ -9,6 +9,7 @@ import {baseLogger} from './logger.js'
 import {apiControllers} from './apiSpecAssembler.js'
 import {sequelize} from './models/index.js'
 import path from 'path'
+import { jwtCheck } from './utils/auth.js'
 
 export interface MetaEtag {
     location: string
@@ -87,6 +88,8 @@ const startApp = async () => {
         }
         )
     )
+
+
     // add API error handler
     app.set("json spaces", 2)
     app.use((err: any, req: Request, res: Response, next: NextFunction) => {
