@@ -19,7 +19,7 @@ const onSigninCallback = (_user: User | void): void => {
 const oidcConfig: AuthProviderProps = {
   authority: `https://dev-xny0abm7nsusygw7.eu.auth0.com/`,
   client_id: "CHzm5u0oVYPYlIbY6JinPgQG2ll9kG3t",
-  redirect_uri: "http://localhost:3000/",
+  redirect_uri: "https://erpbarczok.keltsch.net/",
   userStore: new WebStorageStateStore({ store: window.localStorage }),
   onSigninCallback: onSigninCallback,
   scope: "openid offline_access",
