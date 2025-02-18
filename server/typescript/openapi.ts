@@ -251,7 +251,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                 "type": "oauth2",
                 "flows": {
                     "authorizationCode": {
-                        "authorizationUrl": "https://dev-xny0abm7nsusygw7.eu.auth0.com",
+                        "authorizationUrl": "https://dev-xny0abm7nsusygw7.eu.auth0.com/authorization",
                         "tokenUrl": "https://dev-xny0abm7nsusygw7.eu.auth0.com/oauth/token",
                         "scopes": {
                             "openid": "Grants all access"

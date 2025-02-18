@@ -56,7 +56,7 @@ GET.apiSpec = {
     "operationId": "getCompanies",
     "security": [
         { "OAuth2": [
-            "admin"
+            "openid"
         ] }
     ],
     "tags": [
