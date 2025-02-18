@@ -4,11 +4,12 @@ import morgan from 'morgan'
 import cors, { CorsOptions } from 'cors'
 import { apiSpec } from "./openapi.js"
 import swaggerUi from 'swagger-ui-express'
-import OpenApiValidator from 'express-openapi-validator'
-import baseLogger from './logger.js'
-import loadControllers from './apiSpecAssembler.js'
-import initSequelize from './models/index.js'
+import OpenApiValidator, { middleware } from 'express-openapi-validator'
+import { baseLogger } from './logger.js'
+import { apiControllers } from './apiSpecAssembler.js'
+import { sequelize } from './models/index.js'
 import path from 'path'
+import { jwtCheck } from './utils/auth.js'
 
 export interface MetaEtag {
     location: string
@@ -25,9 +26,9 @@ const startApp = async () => {
 
     const logger = baseLogger.extend('app')
     const morganLogger = baseLogger.extend('morgan')
-    const controllers = loadControllers
+    const controllers = apiControllers
     logger("All controllers:", controllers)
-    const sequelize = initSequelize
+    const initSequelize = sequelize
 
     app.use(morgan('dev', { stream: { write: msg => { morganLogger(msg); return true } } }))
     app.use(express.json())
@@ -36,7 +37,7 @@ const startApp = async () => {
 
     // handle CORS
 
-    const corsOptions: CorsOptions = { "origin": false, exposedHeaders: ["location", "if-match", "etag"] }
+    const corsOptions: CorsOptions = { "origin": false, exposedHeaders: ["location", "if-match", "etag", 'Authorization'] }
     if (process.env.NODE_ENV != 'production') {
         corsOptions.origin = [
             "http://localhost:3000",
@@ -50,6 +51,7 @@ const startApp = async () => {
 
     app.use(express.static(path.join(import.meta.dirname, '..', 'public')))
 
+
     // mitteilen, wo das OAS-Document ist
 
     app.use('/api-docs', (req, res, next) => { res.json(apiSpec) })
@@ -61,6 +63,10 @@ const startApp = async () => {
             url: `/api-docs`
         }
     }))
+
+    // Authorication
+
+    app.use(jwtCheck)
 
     // validate API calls
     app.use(
@@ -83,10 +89,13 @@ const startApp = async () => {
 
                     }
                 }
-            }
+            },
+            validateSecurity: true
         }
         )
     )
+
+
     // add API error handler
     app.set("json spaces", 2)
     app.use((err: any, req: Request, res: Response, next: NextFunction) => {
@@ -111,6 +120,4 @@ const startApp = async () => {
     return app
 }
 
-const startingApp = startApp()
-
-export default startingApp
+export const startingApp = startApp()

@@ -1,9 +1,9 @@
 import '../../style.css'
 import './companies.css'
 import { Button, ButtonGroup, Col, Row } from 'react-bootstrap'
-import Heading from '../headings/heading.jsx'
-import SearchCompanies from './search.companies.jsx'
-import ListCompanies from './list.companies.jsx'
+import { Heading } from '../headings/heading.jsx'
+import { SearchCompanies } from './search.companies.jsx'
+import { ListCompanies } from './list.companies.jsx'
 import { useState, useEffect } from 'react'
 import { DataWithMeta } from '../forms.jsx'
 import { client } from '../../utils/openapiclientaxios.js'
@@ -12,6 +12,7 @@ import { useCompanytypes } from 'components/admin/companytypes/useCompanytypes.j
 import { InputCompanies } from './input.companies.jsx'
 import { Note } from 'components/notifiers/notifiers.jsx'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
+import { useAuth } from 'react-oidc-context'
 
 export interface Company {
     "name": string
@@ -27,7 +28,7 @@ export interface ChangedCompanyAction {
 
 export const blandCompany: DataWithMeta<Company> = { "meta": { "location": 0, "etag": "" }, "data": { "name": "", "companytype": "default", "abbr": "", "www": "" } }
 
-export default function Companies() {
+export function Companies() {
 
     const [companyIsChanged, setIsCompanyChanged] = useState<boolean>(true)
     const [listCompanies, setListCompanies] = useState<DataWithMeta<Company>[]>([])
@@ -38,24 +39,48 @@ export default function Companies() {
     const [show, setShow] = useState<boolean>(false)
     const [newCompanyClick, setNewCompanyClick] = useState<number>(0)
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
+    const auth = useAuth()
+    const token = auth.user?.access_token
 
     useEffect(() => {
         if (companyIsChanged) {
-            client.getCompanies()
-                .then(result => {
-                    const newList = result?.data.map(row => {
-                        const newRow: DataWithMeta<Company> = {
-                            meta: {
-                                location: Number(removeBeforeLastDigits(row.meta.location)),
-                                etag: row.meta.etag
-                            },
-                            data: row.data
-                        }
-                        return (newRow)
+            try {
+                if (auth.isAuthenticated) {
+                    client.getCompanies(null, null, { headers: { 'Authorization': `Bearer ${token}` }})
+                    .then(result => {
+                        const newList = result?.data.map(row => {
+                            const newRow: DataWithMeta<Company> = {
+                                meta: {
+                                    location: Number(removeBeforeLastDigits(row.meta.location)),
+                                    etag: row.meta.etag
+                                },
+                                data: row.data
+                            }
+                            return (newRow)
+                        })
+                        setListCompanies(newList)
                     })
-                    setListCompanies(newList)
-                })
+                } else {
+                    client.getCompanies()
+                    .then(result => {
+                        const newList = result?.data.map(row => {
+                            const newRow: DataWithMeta<Company> = {
+                                meta: {
+                                    location: Number(removeBeforeLastDigits(row.meta.location)),
+                                    etag: row.meta.etag
+                                },
+                                data: row.data
+                            }
+                            return (newRow)
+                        })
+                        setListCompanies(newList)
+                    })
+                }
+               
             setIsCompanyChanged(false)
+            } catch (error) {
+               throw error
+            }
         }
     }, [companyIsChanged])
 
@@ -63,7 +88,7 @@ export default function Companies() {
         if (active === 0 || active === undefined) {
             setActiveCompany(blandCompany)
         } else {
-            client.getCompanyById(active)
+            client.getCompanyById(active, null, { headers: { Authorization: `Bearer ${token}` }})
                 .then(result => {
                     if (result.data) {
                         const company = { "meta": { 'location': Number(removeBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
@@ -80,7 +105,7 @@ export default function Companies() {
         e.preventDefault()
         const userConfirmed = window.confirm(`Willst du die Firma '${activeCompany.data.name}' wirklich löschen?`)
         if (userConfirmed) {
-            client.deleteCompanyById(activeCompany.meta.location)
+            client.deleteCompanyById(activeCompany.meta.location, { headers: { Authorization: `Bearer ${token}` }})
                 .then((res) => {
                     setIsCompanyChanged(true)
                     const note: Note = {
@@ -150,8 +175,8 @@ export default function Companies() {
                         key={activeCompany.meta.location}
                         listCompanytypes={listCompanytypes}
                         company={activeCompany}
-                        setIsCompanyChanged={setIsCompanyChanged} 
-                        editNotes={editNotes} addEditNote={addEditNote} removeEditNote={removeEditNote}/>}
+                        setIsCompanyChanged={setIsCompanyChanged}
+                        editNotes={editNotes} addEditNote={addEditNote} removeEditNote={removeEditNote} />}
             </Row>
         </>
     )

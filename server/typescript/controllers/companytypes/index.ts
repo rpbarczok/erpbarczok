@@ -37,6 +37,11 @@ GET.apiSpec = {
     "summary": "Get a list of all company types",
     "description": "GET request on all companies",
     "operationId": "getCompanytypes",
+    "security": [
+        { "OAuth2": [
+            "openid"
+        ] }
+    ],
     "tags": [
         "Companytype"
     ],
@@ -123,6 +128,11 @@ POST.apiSpec = {
     "summary": "Add new company type",
     "description": "POST request for a new company type",
     "operationId": "postCompanytype",
+    "security": [
+        { "OAuth2": [
+            "openid"
+        ] }
+    ],
     "tags": [
         "Companytype"
     ],

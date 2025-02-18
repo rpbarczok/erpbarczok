@@ -10,7 +10,7 @@ import { useNotifier } from "components/notifiers/useNotifier.js"
 import { client } from "utils/openapiclientaxios.js"
 import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
 import { Note } from "components/notifiers/notifiers.jsx"
-import e from "express"
+import { useAuth } from "react-oidc-context"
 
 interface InputCompaniesComponent {
     listCompanytypes: DataWithMeta<Companytype>[]
@@ -29,6 +29,8 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
     const [addNotes, addAddNote, removeAddNote] = useNotifier()
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, company)
     const [validated, setValidated] = useState<boolean>(false)
+    const auth = useAuth()
+    const token = auth.user?.access_token
 
     const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
         company.data.abbr === changedCompany.data.abbr &&
@@ -43,7 +45,7 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
             setValidated(true)
         } else {
             if (onChangeActive && setIsNew && setShow) {
-                client.postCompany(null, changedCompany.data)
+                client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
                     .then((res) => {
                         onChangeActive(Number(removeBeforeLastDigits(res.headers.location)))
                         const note: Note = {
@@ -64,7 +66,8 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
                     })
             } else {
                 client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
-                    changedCompany.data)
+                    changedCompany.data,
+                    { headers: { Authorization: `Bearer ${token}` } })
                     .then((res) => {
                         const note: Note = {
                             variant: 'success',
@@ -181,34 +184,43 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
             </>
         )
     } else if (editNotes && removeEditNote) {
-        return (
-            <>
-                <Row id="edit">
-                    <Col id='company' xl={5} lg={6} xs={12}>
-                        <Row id="edit">
-                            <Col id='company' xl={5} lg={6} xs={12}></Col>
-                            <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
-                                <Row>
-                                    <ButtonGroup className="function-button standardDesign">
-                                        <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Abspeichern</Button>
-                                        <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
-                                    </ButtonGroup>
-                                </Row>
-                                <Row>
-                                    <Col className="standardDesign">
-                                        <Notes notes={editNotes} removeNote={removeEditNote} />
-                                    </Col>
-                                </Row>
-                                {input}
-                            </Form>
-                        </Row>
-                    </Col>
-                    <Col>
-                        CompanyAddition
-                    </Col>
-                </Row >
-            </>
-        )
+        if (auth.isAuthenticated) {
+            return (
+                <>
+                    <Row id="edit">
+                        <Col id='company' xl={5} lg={6} xs={12}>
+                            <Row id="edit">
+                                <Col id='company' xl={5} lg={6} xs={12}></Col>
+                                <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
+                                    <Row>
+                                        <ButtonGroup className="function-button standardDesign">
+                                            <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Abspeichern</Button>
+                                            <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
+                                        </ButtonGroup>
+                                    </Row>
+                                    <Row>
+                                        <Col className="standardDesign">
+                                            <Notes notes={editNotes} removeNote={removeEditNote} />
+                                        </Col>
+                                    </Row>
+                                    {input}
+                                </Form>
+                            </Row>
+                        </Col>
+                        <Col>
+                            CompanyAddition
+                        </Col>
+                    </Row >
+                </>
+            )
+        } else {
+            return (
+                <div>
+                    Bitte loggen Sie sich noch mal ein
+                </div>
+            )
+        }
+        
 
     }
 }

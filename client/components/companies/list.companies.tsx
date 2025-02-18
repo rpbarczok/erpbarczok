@@ -14,7 +14,7 @@ interface ListCompaniesInterface {
     listCompanies: DataWithMeta<Company>[]
 }
 
-export default function ListCompanies({ search, activeCompany, onChangeActive, isNew, setIsNew, listCompanies }: ListCompaniesInterface) {
+export function ListCompanies({ search, activeCompany, onChangeActive, isNew, setIsNew, listCompanies }: ListCompaniesInterface) {
 
     const [listFiltered, setListFiltered] = useState<DataWithMeta<Company>[]>([])
 

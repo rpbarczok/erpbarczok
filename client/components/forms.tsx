@@ -1,5 +1,5 @@
-import Companies from "./companies/companies.jsx"
-import Admin from "./admin/admin.jsx"
+import { Companies } from "./companies/companies.jsx"
+import { Admin } from "./admin/admin.jsx"
 import { FormTab } from "./navigation/ribbon.js"
 import '../style.css'
 
@@ -13,16 +13,14 @@ export interface DataWithMeta<T> {
     "data": T
 }
 
-const Forms = ({ activeForm }: { activeForm: FormTab }) => {
+export const Forms = ({ activeForm }: { activeForm: FormTab }) => {
 
     switch (activeForm.id) {
         case 'stammForm':
-            return <Companies/>
+            return <Companies />
         case 'adminForm':
-            return <Admin/>
+            return <Admin />
         default:
             return <h1> {activeForm.name}: Work in Progress</h1>
     }
 }
-
-export default Forms

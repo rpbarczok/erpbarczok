@@ -8,7 +8,7 @@ interface SearchCompaniesInterface {
     setSearch: React.Dispatch<React.SetStateAction<string>>
 }
 
-export default function SearchCompanies({search, setSearch}: SearchCompaniesInterface) {
+export function SearchCompanies({search, setSearch}: SearchCompaniesInterface) {
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value)

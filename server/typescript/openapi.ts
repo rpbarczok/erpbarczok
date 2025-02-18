@@ -1,7 +1,8 @@
 
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
+import { Http2ServerRequest } from 'node:http2'
 
-export const apiSpec:  OpenAPIV3.DocumentV3 = {
+export const apiSpec: OpenAPIV3.DocumentV3 = {
     "openapi": "3.0.3",
     "info": {
         "title": "Panda 2.0",
@@ -241,6 +242,20 @@ export const apiSpec:  OpenAPIV3.DocumentV3 = {
                     "errors": {
                         "type": "array",
                         "items": {}
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "OAuth2": {
+                "type": "oauth2",
+                "flows": {
+                    "authorizationCode": {
+                        "authorizationUrl": "https://dev-xny0abm7nsusygw7.eu.auth0.com",
+                        "tokenUrl": "https://dev-xny0abm7nsusygw7.eu.auth0.com/oauth/token",
+                        "scopes": {
+                            "openid": "Grants all access"
+                        }
                     }
                 }
             }

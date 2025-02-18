@@ -1,20 +1,20 @@
 import './utils/testenv.js'
 import request from 'supertest'
-import startingApp from '../app.js'
-import sequelize from '../models/index.js'
+import { startingApp } from '../app.js'
+import { sequelize } from '../models/index.js'
 import { expect } from 'expect'
 import { App } from 'supertest/types.js'
 import { Companytype } from '../models/companytypes.js'
 import { sha256 } from '../hasher.js'
 
 
-const companyA = { "name": "Firma A", "companytype": "Kunde", "abbr": "FRA", "www": "www.firmaa.com",  }
+const companyA = { "name": "Firma A", "companytype": "Kunde", "abbr": "FRA", "www": "www.firmaa.com", }
 const etagA = sha256(JSON.stringify(companyA))
 const companyB = { "name": "Firma B", "companytype": "Lieferant" }
 const etagB = sha256(JSON.stringify(companyB))
 const companyBA = { "name": "Firma C", "companytype": "Lieferant" }
 const etagBA = sha256(JSON.stringify(companyBA))
-const companyBA2 = { "name": "Firma C", "companytype": "Lieferant", "abbr": "FRC"  }
+const companyBA2 = { "name": "Firma C", "companytype": "Lieferant", "abbr": "FRC" }
 const etagBA2 = sha256(JSON.stringify(companyBA2))
 const companyBA3 = { "name": "Firma C", "companytype": "Lieferant", "abbr": "FRC", "www": "www.example.de" }
 const etagBA3 = sha256(JSON.stringify(companyBA3))
@@ -317,7 +317,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.headers['location']).toEqual('/companies/2')
             expect(response.headers['etag']).toEqual(etagBA4)
         })
-        
+
         it('Get existing company succeeds after companytype changed.', async () => {
             const response = await request(app)
                 .get('/companies/2')

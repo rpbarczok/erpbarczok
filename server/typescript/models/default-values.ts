@@ -1,6 +1,6 @@
 import { Companytype } from "./companytypes.js"
 
-const setDefaultValues = () => {
+export const setDefaultValues = () => {
     Companytype.bulkCreate([
         {
             name: "Kunde"
@@ -16,5 +16,3 @@ const setDefaultValues = () => {
         }
     ])
 }
-
-export default setDefaultValues

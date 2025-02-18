@@ -8,7 +8,6 @@
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "dotenvx run -f .env -- tsx server/typescript/start.ts",
     "client": "webpack serve --config webpack.dev.js",
-
     "create_openapi_spec": "tsx create-openapi-spec.ts",
     "createtypes": "npm run create_openapi_spec && mkdir -p client/types && npx openapicmd typegen client/utils/openapi.json > client/types/openapi.d.ts",
     "buildclient": "npm run createtypes && webpack --config webpack.prod.js",
@@ -29,10 +28,14 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "debug": "^4.4.0",
+    "express-jwt": "^8.5.1",
     "express-openapi-validator": "^5.4.2",
+    "jwks-rsa": "^3.1.0",
     "morgan": "^1.10.0",
+    "oidc-client-ts": "^3.1.0",
     "pg": "^8.13.1",
     "pg-hstore": "^2.3.4",
+    "react-oidc-context": "^3.2.0",
     "sequelize": "^6.37.5",
     "swagger-ui-express": "^5.0.1"
   },

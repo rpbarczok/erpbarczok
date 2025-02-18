@@ -1,12 +1,11 @@
 import { getCompanytypeById, deleteCompanytypeById, putCompanytypeById } from '../../services/companytypes.js'
 import { error_formatter, NotFoundError } from "../../services/error.js"
 import type { Request, Response } from 'express'
-import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { CompanytypeServer, normalizeCompanytype, normalizeCompanytypeLocationEtag } from './index.js'
 import { Operation } from '../../apiSpecAssembler.js'
 import { MetaEtag } from '../../app.js'
-import { Companytype } from '../../models/companytypes.js'
 import { Company } from '../../models/companies.js'
+import { jwtCheck } from '../../utils/auth.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
     try {
@@ -23,10 +22,17 @@ export const GET: Operation = async (req: Request, res: Response) => {
         else throw err
     }
 }
+
+
 GET.apiSpec = {
     "summary": "Get a certain companytype",
     "description": "GET request on a certain companytype by id {id}",
     "operationId": "getCompanytypeById",
+    "security": [
+        { "OAuth2": [
+            "openid"
+        ] }
+    ],
     "tags": [
         "Companytype"
     ],
@@ -77,9 +83,9 @@ GET.apiSpec = {
 
 export const DELETE: Operation = async (req: Request, res: Response) => {
     try {
-        const {count, rows} = await Company.findAndCountAll({
+        const { count, rows } = await Company.findAndCountAll({
             where: {
-                companytypeId: Number(req.params.id) 
+                companytypeId: Number(req.params.id)
             }
         })
         if (count === 0) {
@@ -99,9 +105,14 @@ DELETE.apiSpec = {
     "summary": "Remove a certain company type",
     "description": "DELETE request on company type by id {id}",
     "operationId": "deleteCompanytypeById",
+    "security": [
+        { "OAuth2": [
+            "openid"
+        ] }
+    ],
     "tags": [
         "Companytype"
-    ],    
+    ],
     "parameters": [
         {
             "$ref": "#/components/parameters/id-in-path"
@@ -162,6 +173,11 @@ PUT.apiSpec = {
     "summary": "Updates company type with id {id}",
     "description": "Put request on company type by id {id}",
     "operationId": "putCompanytypeById",
+    "security": [
+        { "OAuth2": [
+            "openid"
+        ] }
+    ],
     "tags": [
         "Companytype"
     ],

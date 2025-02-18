@@ -1,6 +1,6 @@
 import http from 'http'
-import startingApp from './app.js'
-import baseLogger from './logger.js'
+import { startingApp } from './app.js'
+import { baseLogger } from './logger.js'
 
 
 const main = async () => {

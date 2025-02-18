@@ -12,8 +12,7 @@ interface TabsNavigationInterface {
     activeForm: FormTab
 }
 
-
-export default function TabsNavigation({ tabs, setTabs, setActiveForm, activeForm }: TabsNavigationInterface) {
+export function TabsNavigation({ tabs, setTabs, setActiveForm, activeForm }: TabsNavigationInterface) {
 
     const handleClose = (tab: FormTab) => {
         const index = tabs.indexOf(tab)

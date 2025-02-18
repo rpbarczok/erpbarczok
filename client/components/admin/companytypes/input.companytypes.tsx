@@ -5,8 +5,9 @@ import React, { ChangeEvent, useState } from "react"
 import { Companytype } from './companytypes.jsx'
 import { DataWithMeta } from 'components/forms.jsx'
 import { client } from 'utils/openapiclientaxios.js'
-import { Note, Notes } from 'components/notifiers/notifiers.jsx'
+import { Note } from 'components/notifiers/notifiers.jsx'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
+import { useAuth } from 'react-oidc-context'
 
 interface InputCompanytypesInterface {
     show: boolean
@@ -17,12 +18,12 @@ interface InputCompanytypesInterface {
     addMainNote: (note: Note) => void
 }
 
-const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytypeChanged, addMainNote }: InputCompanytypesInterface) => {
+export const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytypeChanged, addMainNote }: InputCompanytypesInterface) => {
 
     const [changedCompanytype, setChangedCompanytype] = useState<DataWithMeta<Companytype>>(companytype)
     const [notes, addNote, removeNote] = useNotifier()
     const [validated, setValidated] = useState<boolean>(false)
-
+    const auth = useAuth()
     const isNotChanged: boolean = (companytype.data.name === changedCompanytype.data.name)
 
     const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
@@ -41,11 +42,12 @@ const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytype
         const form = e.currentTarget
         e.preventDefault()
         e.stopPropagation()
+        const token=auth.user?.access_token
         if (form.checkValidity() === false) {
             setValidated(true)
         } else {
             if (changedCompanytype.meta.location === 0) {
-                client.postCompanytype(null, changedCompanytype.data)
+                client.postCompanytype(null, changedCompanytype.data, { headers: { Authorization: `Bearer ${token}` }})
                     .then((res) => {
                         const note: Note = {
                             message: `Die neue Firmenrolle wurde erfolgreich abgespeichert.`,
@@ -63,7 +65,7 @@ const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytype
                         addNote(note)
                     })
             } else {
-                client.putCompanytypeById({ id: changedCompanytype.meta.location, 'if-match': changedCompanytype.meta.etag }, changedCompanytype.data)
+                client.putCompanytypeById({ id: changedCompanytype.meta.location, 'if-match': changedCompanytype.meta.etag }, changedCompanytype.data,{ headers: { Authorization: `Bearer ${token}` }})
                     .then((res) => {
                         const note: Note = {
                             message: `Die Firmenrolle wurde erfolgreich geändert.`,
@@ -107,5 +109,3 @@ const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytype
         </Modal>
     )
 }
-
-export default InputCompanytypes
