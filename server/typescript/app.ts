@@ -10,6 +10,7 @@ import { apiControllers } from './apiSpecAssembler.js'
 import { sequelize } from './models/index.js'
 import path from 'path'
 import { jwtCheck } from './utils/auth.js'
+import { Request as JWTRequest } from 'express-jwt'
 
 export interface MetaEtag {
     location: string
@@ -90,7 +91,17 @@ const startApp = async () => {
                     }
                 }
             },
-            validateSecurity: true
+            validateSecurity: {
+                handlers: {
+                    OAuth2: (req: JWTRequest, scopes) => {
+                        if (scopes.length === 0) return true
+                        if (!req.auth?.scope) return false
+                        if ((req.auth.scope as string).split(" ").some((e) => scopes.includes(e))) return true
+                        console.log("User has not the required scopes: User scopes: " + req.auth.scope + ", Required Scopes: " + scopes)
+                        return false
+                    }
+                }
+            }
         }
         )
     )
