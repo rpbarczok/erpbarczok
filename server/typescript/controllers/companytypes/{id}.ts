@@ -107,7 +107,7 @@ DELETE.apiSpec = {
     "operationId": "deleteCompanytypeById",
     "security": [
         { "OAuth2": [
-            "openid"
+            "admin"
         ] }
     ],
     "tags": [
@@ -175,7 +175,7 @@ PUT.apiSpec = {
     "operationId": "putCompanytypeById",
     "security": [
         { "OAuth2": [
-            "openid"
+            "admin"
         ] }
     ],
     "tags": [

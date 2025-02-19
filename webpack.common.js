@@ -25,7 +25,15 @@ const config = {
             {
                 test: /\.css$/i,
                 use: ['style-loader', 'css-loader']
-            }
+            },
+            {
+                test: /\.(png|jpe?g|gif)$/i,
+                use: [
+                  {
+                    loader: 'file-loader',
+                  },
+                ],
+              }
         ]
     },
     resolve: {
@@ -34,7 +42,7 @@ const config = {
             '.js': ['.ts', '.js'],
             '.jsx': ['.tsx', '.jsx']
         },
-        extensions: ['.js','.jsx', '.ts' ,'.tsx', '.css']
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.css']
     }
 }
 

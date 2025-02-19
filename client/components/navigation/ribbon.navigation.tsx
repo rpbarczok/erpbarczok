@@ -65,10 +65,15 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
         )
     }
 
+    const logOutHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        await auth.removeUser()
+        await auth.revokeTokens()
+    }
+
     const LoginInfo = () => {
         return (
             <div className="ms-auto ribbonDesign">
-                Logged in as {auth.user?.profile?.sub?.split("|")[1]} <Button className="standardDesign" variant="outline-primary" onClick={() => void auth.removeUser()}>Log out</Button>
+                Logged in as {auth.user?.profile?.sub?.split("|")[1]} <Button className="standardDesign" variant="outline-primary" onClick={logOutHandler}>Log out</Button>
             </div>
         )
     }
