@@ -14,6 +14,7 @@
   },
   "include": [
     "components/**/*",
-    "index.tsx"
+    "index.tsx",
+    "types/declarations.d.ts"
 , "utils/openapiclientaxios.ts", "utils/serviceworker.ts"  ]
 }

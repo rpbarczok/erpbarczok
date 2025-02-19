@@ -16,15 +16,21 @@ const onSigninCallback = (_user: User | void): void => {
     window.location.pathname
   )
 }
+
 const oidcConfig: AuthProviderProps = {
-  authority: `https://dev-xny0abm7nsusygw7.eu.auth0.com/`,
-  client_id: "CHzm5u0oVYPYlIbY6JinPgQG2ll9kG3t",
-  redirect_uri: "http://localhost:3000/",
+  //@ts-ignore
+  authority: `https://${window.idp_server}/`,
+  //@ts-ignore
+  client_id: window.client_id,
+  //@ts-ignore
+  redirect_uri: window.redirect_url,
   userStore: new WebStorageStateStore({ store: window.localStorage }),
   onSigninCallback: onSigninCallback,
-  scope: "openid offline_access",
+  //@ts-ignore
+  scope: window.scope,
   extraQueryParams: {
-    audience: "http://localhost:8080"
+    //@ts-ignore
+    audience: window.audience
   }
 }
 

@@ -11,6 +11,7 @@ import { sequelize } from './models/index.js'
 import path from 'path'
 import { jwtCheck } from './utils/auth.js'
 import { Request as JWTRequest } from 'express-jwt'
+import jsesc from 'jsesc'
 
 export interface MetaEtag {
     location: string
@@ -41,8 +42,7 @@ const startApp = async () => {
     const corsOptions: CorsOptions = { "origin": false, exposedHeaders: ["location", "if-match", "etag", 'Authorization'] }
     if (process.env.NODE_ENV != 'production') {
         corsOptions.origin = [
-            "http://localhost:3000",
-            "http://localhost:8080"
+            "http://localhost:3000"
         ]
     }
 
@@ -56,6 +56,19 @@ const startApp = async () => {
     // mitteilen, wo das OAS-Document ist
 
     app.use('/api-docs', (req, res, next) => { res.json(apiSpec) })
+
+    app.get('/config.js', (req, res, next) => {
+        res
+            .set("content-type", "text/javascript; charset=utf-8")
+            .send(`
+window.client_id = '${jsesc(process.env.CLIENT_ID)}';
+window.idp_server = '${jsesc(process.env.IDP_SERVER)}';
+window.redirect_url = '${jsesc(process.env.REDIRECT_URL)}';
+window.audience = '${jsesc(process.env.AUDIENCE)}';
+window.scope = '${jsesc(process.env.SCOPE)}';
+`
+            )
+    })
 
     // Swagger UI an der Stelle /docs einrichten
 

@@ -130,7 +130,7 @@ POST.apiSpec = {
     "operationId": "postCompanytype",
     "security": [
         { "OAuth2": [
-            "openid"
+            "admin"
         ] }
     ],
     "tags": [

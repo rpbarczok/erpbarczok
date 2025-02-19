@@ -1,3 +1,9 @@
-.login-page {
-    text-align: center;
+.login-title {
+    max-width: 700px
+}
+
+.login-button {
+    width: 100%;
+    margin: 7px 0 0 0;
+    max-width: 700px;
 }

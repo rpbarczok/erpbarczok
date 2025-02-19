@@ -1,5 +1,6 @@
 import { merge } from 'webpack-merge'
 import common from './webpack.common.js'
+import path from 'path'
 
 const config = merge(common, {
     mode: 'development',
@@ -8,9 +9,12 @@ const config = merge(common, {
         port: 3000,
         hot: true,
         open: false,
+        static: {
+            directory: path.resolve(import.meta.dirname, 'client/public')
+        },
         proxy: [
             {
-                context: ['/companies', '/companytypes', '/api-docs/'],
+                context: ['/companies', '/companytypes', '/api-docs/', '/config.js'],
                 target: 'http://localhost:8080'
             }
         ]
