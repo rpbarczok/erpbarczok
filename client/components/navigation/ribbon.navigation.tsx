@@ -10,6 +10,7 @@ interface RibbonNavigationInterface {
     setTabs: React.Dispatch<React.SetStateAction<FormTab[]>>
     setActiveForm: React.Dispatch<React.SetStateAction<FormTab>>
 }
+
 export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigationInterface) {
 
     const auth = useAuth()
@@ -43,19 +44,33 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
             )
         }
 
-        const groupList = groupForm.map(g => {
-            if (g.forms.length === 1) {
-                return (
-                    <Nav.Link className="ribbonDesign" key={g.id} onClick={() => handleClick(g.forms[0])}>
-                        {g.forms[0].name}
-                    </Nav.Link>
-                )
-            } else {
-                return (
-                    <NavDropdown key={g.id} className="ribbonDesign" title={g.name}>
-                        <Forms forms={g.forms} />
-                    </NavDropdown>
-                )
+        const groupFormAuth = groupForm.map(g => {
+            const userScope = ["public"]
+            if  (auth.user?.scopes) {
+                const scopes = auth.user?.scopes
+                userScope.concat(scopes)
+            }
+            const groupFormsAuth = g.forms.filter(f => {
+                f.scopes.split(" ").some(e => userScope.includes(e))
+            })
+            return {...g, forms: groupFormsAuth}
+        })
+
+        const groupList = groupFormAuth.map(g => {
+            if (g.forms.length !==0) {
+                if (g.forms.length === 1) {
+                    return (
+                        <Nav.Link className="ribbonDesign" key={g.id} onClick={() => handleClick(g.forms[0])}>
+                            {g.forms[0].name}
+                        </Nav.Link>
+                    )
+                } else {
+                    return (
+                        <NavDropdown key={g.id} className="ribbonDesign" title={g.name}>
+                            <Forms forms={g.forms} />
+                        </NavDropdown>
+                    )
+                }
             }
         })
         return (

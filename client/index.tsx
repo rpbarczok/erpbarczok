@@ -17,32 +17,51 @@ const onSigninCallback = (_user: User | void): void => {
   )
 }
 
-
-const oidcConfig: AuthProviderProps = {
-  //@ts-ignore
-  authority: `https://${window.idp_server}/`,
-  //@ts-ignore
-  client_id: window.client_id,
-  //@ts-ignore
-  redirect_uri: window.redirect_url,
-  userStore: new WebStorageStateStore({ store: window.localStorage }),
-  onSigninCallback: onSigninCallback,
-  //@ts-ignore
-  permission: window.permission,
-  //@ts-ignore
-  scope: window.scope,
-  extraQueryParams: {
-    //@ts-ignore
-    audience: window.audience
-  }
+interface WindowAuth extends Window {
+  idp_server?: string
+  client_id?: string
+  redirect_uri?: string
+  scope?: string
+  audience?: string
 }
 
-root.render(
-  <StrictMode>
-    <AuthProvider {...oidcConfig}>
-      <App />
-    </AuthProvider >
-  </StrictMode>
-)
+const windowAuth = window as WindowAuth
 
-if (process.env.NODE_ENV === "production") serviceWorkerRegistry()
+if (!windowAuth.idp_server
+  || !windowAuth.client_id
+  || !windowAuth.redirect_uri
+  || !windowAuth.audience) {
+  root.render(
+    <StrictMode>
+      <div>
+        <h1>Konfiguration der Authentifizierungsparameter unvollständig</h1>
+        <p>IDP-Server: {windowAuth.idp_server}</p>
+        <p>Client-ID: {windowAuth.client_id}</p>
+        <p>Redirect URI: {windowAuth.redirect_uri}</p>
+        <p>Audience: {windowAuth.audience}</p>
+      </div>
+    </StrictMode>
+  )
+} else {
+  const oidcConfig: AuthProviderProps = {
+    authority: `https://${windowAuth.idp_server}/`,
+    client_id: windowAuth.client_id,
+    redirect_uri: windowAuth.redirect_uri,
+    userStore: new WebStorageStateStore({ store: window.localStorage }),
+    onSigninCallback: onSigninCallback,
+    scope: windowAuth.scope,
+    extraQueryParams: {
+      audience: windowAuth.audience
+    }
+  }
+
+  root.render(
+    <StrictMode>
+      <AuthProvider {...oidcConfig}>
+        <App />
+      </AuthProvider >
+    </StrictMode>
+  )
+
+  if (process.env.NODE_ENV === "production") serviceWorkerRegistry()
+}

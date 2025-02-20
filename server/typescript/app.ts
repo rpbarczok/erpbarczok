@@ -57,18 +57,15 @@ const startApp = async () => {
 
     app.use('/api-docs', (req, res, next) => { res.json(apiSpec) })
 
-    app.get('/config.js', (req, res, next) => {
-        res
-            .set("content-type", "text/javascript; charset=utf-8")
-            .send(`
-window.client_id = '${jsesc(process.env.CLIENT_ID)}';
-window.idp_server = '${jsesc(process.env.IDP_SERVER)}';
-window.redirect_url = '${jsesc(process.env.REDIRECT_URL)}';
-window.audience = '${jsesc(process.env.AUDIENCE)}';
-window.scope = '${jsesc(process.env.SCOPE)}';
-`
-            )
-    })
+    if (!process.env.CLIENT_ID
+        || !process.env.IDP_SERVER
+        || !process.env.REDIRECT_URI
+        || !process.env.AUDIENCE
+    ) {
+        console.error('Auth config incomplete.')
+        process.exit(1)
+    }
+    
 
     // Swagger UI an der Stelle /docs einrichten
 
