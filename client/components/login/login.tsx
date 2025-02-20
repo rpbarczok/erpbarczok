@@ -21,7 +21,7 @@ export const Login = () => {
             <Row>
                 <Col xxs={1} sm={2} md={3} lg={4}>
                 </Col>
-                <Col >
+                <Col className="text-center">
                     <Image className="img-fluid" src={panda} alt="Können Sie sich ausweisen?" aria-description="Grumpy looking Giant Panda, who wants your credentials!" />
                     <Button className="login-button" size="lg" variant="outline-primary" onClick={signInHandler} > Login </Button>
                 </Col>

@@ -66,8 +66,8 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
     }
 
     const logOutHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        await auth.removeUser()
         await auth.revokeTokens()
+        await auth.removeUser()
     }
 
     const LoginInfo = () => {

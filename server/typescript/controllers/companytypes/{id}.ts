@@ -5,7 +5,6 @@ import { CompanytypeServer, normalizeCompanytype, normalizeCompanytypeLocationEt
 import { Operation } from '../../apiSpecAssembler.js'
 import { MetaEtag } from '../../app.js'
 import { Company } from '../../models/companies.js'
-import { jwtCheck } from '../../utils/auth.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
     try {
@@ -30,7 +29,7 @@ GET.apiSpec = {
     "operationId": "getCompanytypeById",
     "security": [
         { "OAuth2": [
-            "openid"
+            "user"
         ] }
     ],
     "tags": [

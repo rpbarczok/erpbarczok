@@ -17,6 +17,7 @@ const onSigninCallback = (_user: User | void): void => {
   )
 }
 
+
 const oidcConfig: AuthProviderProps = {
   //@ts-ignore
   authority: `https://${window.idp_server}/`,
@@ -26,6 +27,8 @@ const oidcConfig: AuthProviderProps = {
   redirect_uri: window.redirect_url,
   userStore: new WebStorageStateStore({ store: window.localStorage }),
   onSigninCallback: onSigninCallback,
+  //@ts-ignore
+  permission: window.permission,
   //@ts-ignore
   scope: window.scope,
   extraQueryParams: {

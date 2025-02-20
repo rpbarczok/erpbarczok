@@ -105,7 +105,7 @@ export function Companies() {
         e.preventDefault()
         const userConfirmed = window.confirm(`Willst du die Firma '${activeCompany.data.name}' wirklich löschen?`)
         if (userConfirmed) {
-            client.deleteCompanyById(activeCompany.meta.location, { headers: { Authorization: `Bearer ${token}` }})
+            client.deleteCompanyById(activeCompany.meta.location, null,  { headers: { Authorization: `Bearer ${token}` }})
                 .then((res) => {
                     setIsCompanyChanged(true)
                     const note: Note = {

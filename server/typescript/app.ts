@@ -106,11 +106,11 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             },
             validateSecurity: {
                 handlers: {
-                    OAuth2: (req: JWTRequest, scopes) => {
+                    OAuth2: (req: JWTRequest, scopes, schema) => {
                         if (scopes.length === 0) return true
-                        if (!req.auth?.scope) return false
-                        if ((req.auth.scope as string).split(" ").some((e) => scopes.includes(e))) return true
-                        console.log("User has not the required scopes: User scopes: " + req.auth.scope + ", Required Scopes: " + scopes)
+                        if (!req.auth?.permissions) return false
+                        if ((req.auth?.permissions as string[]).some((e) => scopes.includes(e))) return true
+                        console.log("User has not the required scopes: User scopes: " + req.auth?.permissions + ", Required Scopes: " + scopes)
                         return false
                     }
                 }

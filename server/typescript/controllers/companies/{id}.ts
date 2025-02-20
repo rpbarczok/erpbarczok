@@ -33,7 +33,7 @@ GET.apiSpec = {
     "operationId": "getCompanyById",
     "security": [
         { "OAuth2": [
-            "openid"
+            "user"
         ] }
     ],
     "tags": [
@@ -107,7 +107,7 @@ DELETE.apiSpec = {
     "operationId": "deleteCompanyById",
     "security": [
         { "OAuth2": [
-            "openid"
+            "user"
         ] }
     ],
     "tags": [
@@ -171,7 +171,7 @@ PUT.apiSpec = {
     "operationId": "putCompanyById",
     "security": [
         { "OAuth2": [
-            "openid"
+            "user"
         ] }
     ],
     "tags": [

@@ -13,6 +13,7 @@ export function App() {
     const [tabs, setTabs] = useState<FormTab[]>([startPage])
     const auth = useAuth()
 
+    console.log("Auth ", auth)
     if (auth.isLoading) {
         return <div>Loading...</div>
     }

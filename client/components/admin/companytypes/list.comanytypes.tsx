@@ -39,7 +39,7 @@ const ListItem = ({ companytype, setIsCompanytypeChanged, addMainNote }: ListIte
         const token = auth.user?.access_token
         const userConfirmed = window.confirm(`Willst du wirklich die Firmenrolle ${companytype.data.name} löschen?`)
         if (userConfirmed) {
-            client.deleteCompanytypeById(companytype.meta.location, { headers: { Authorization: `Bearer ${token}` }})
+            client.deleteCompanytypeById(companytype.meta.location, null, { headers: { Authorization: `Bearer ${token}` }})
                 .then((res) => {
                     const note: Note = {
                         message: 'Die Firmenrolle wurde erfolgreich gelöscht.',

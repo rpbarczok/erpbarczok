@@ -254,7 +254,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                         "authorizationUrl": "https://dev-xny0abm7nsusygw7.eu.auth0.com/authorization",
                         "tokenUrl": "https://dev-xny0abm7nsusygw7.eu.auth0.com/oauth/token",
                         "scopes": {
-                            "openid": "Grants access to all standard functions",
+                            "user": "Grants access to all standard functions",
                             "admin": "Grants rights to change and add weak entities"
                         }
                     }
