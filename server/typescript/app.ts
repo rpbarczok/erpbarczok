@@ -78,7 +78,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             )
     }
     )
-    
+
     // Swagger UI an der Stelle /docs einrichten
 
     app.use('/docs', swaggerUi.serve, swaggerUi.setup(undefined, {
@@ -115,11 +115,31 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             },
             validateSecurity: {
                 handlers: {
-                    OAuth2: (req: JWTRequest, scopes, schema) => {
-                        if (scopes.length === 0) return true
-                        if (!req.auth?.scope) return false
-                        if ((req.auth?.scope as string).split(" ").some((e) => scopes.includes(e))) return true
-                        console.log("User has not the required scopes: User scopes: " + req.auth?.scope + ", Required Scopes: " + scopes)
+                    OAuth2: (req: JWTRequest, requiredScopesArray, schema) => {
+                        const name = process.env.SCOPE_CLAIM || 'scope'
+                        const userScope: string | string[] = req.auth ? req.auth[name] : []
+                        const userScopeArray: string[] = typeof userScope === 'string' ? userScope.split(" ") : userScope
+
+                        if (requiredScopesArray.length === 0) {
+                            console.log("No scope required. Authorized.")
+                            return true
+                        }
+
+                        if (typeof userScope !== typeof "" && typeof userScope !== typeof []) {
+                            console.log("Scope has the wrong type. Authorization rejected.")
+                            return false
+                        }
+
+                        if (userScopeArray.length === 0) { 
+                            console.log("No scopes provided, but scopes required: ", requiredScopesArray)
+                            return false
+                        }
+
+                        if (userScopeArray.some((e) => requiredScopesArray.includes(e))) {
+                            return true
+                        }
+
+                        console.log("User has not the required scopes: User scopes: " + userScopeArray + ", Required Scopes: " + requiredScopesArray)
                         return false
                     }
                 }

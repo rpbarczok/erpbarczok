@@ -45,7 +45,7 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
         }
 
         const groupFormAuth = groupForm.map(g => {
-            const userScope: string[] = auth.user?.scopes ? auth.user?.scopes.concat(['public']) : []
+            const userScope: string[] = auth.user?.scopes ? auth.user?.scopes.concat(['public']) : ['public']
             const groupFormsAuth = g.forms.filter(f => {
                 const formScopes = new Set(f.scopes.split(" "))
                 return userScope.some(scope => formScopes.has(scope))
@@ -79,8 +79,13 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
     }
 
     const logOutHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        await auth.revokeTokens()
-        await auth.removeUser()
+        try {
+            await auth.revokeTokens()
+            await auth.removeUser()
+        } catch (error) {
+            await auth.removeUser()
+            await auth.signoutRedirect()
+        }        
     }
 
     // return (
