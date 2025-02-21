@@ -31,7 +31,7 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
         function Forms({ forms }: { forms: Form[] }) {
             const formsList = forms.map(f => {
                 return (
-                    <NavDropdown.Item  key={f.id} onClick={() => handleClick(f)} >
+                    <NavDropdown.Item key={f.id} onClick={() => handleClick(f)} >
                         {f.name}
                     </NavDropdown.Item>
                 )
@@ -45,19 +45,25 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
         }
 
         const groupFormAuth = groupForm.map(g => {
-            const userScope = ["public"]
-            if  (auth.user?.scopes) {
-                const scopes = auth.user?.scopes
-                userScope.concat(scopes)
-            }
+            const userScope: string[] = (auth.user?.scopes) ? auth.user?.scopes.concat(['public']) : []
+            console.log(userScope)
             const groupFormsAuth = g.forms.filter(f => {
-                f.scopes.split(" ").some(e => userScope.includes(e))
+                let result = false
+                const formScopes = f.scopes.split(" ")
+                for (let x of userScope) {
+                    if (formScopes.includes(x)) {
+                        result = true
+                        break
+                    }
+                }
+                return result
             })
-            return {...g, forms: groupFormsAuth}
+            return { ...g, forms: groupFormsAuth }
         })
 
+
         const groupList = groupFormAuth.map(g => {
-            if (g.forms.length !==0) {
+            if (g.forms.length !== 0) {
                 if (g.forms.length === 1) {
                     return (
                         <Nav.Link className="ribbonDesign" key={g.id} onClick={() => handleClick(g.forms[0])}>

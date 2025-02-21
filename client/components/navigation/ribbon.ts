@@ -52,7 +52,7 @@ const formArray: Form[] = [
     { name: "Zahlungsaufforderung", id: "zahlForm", group: "rech", scopes: "public user admin", order: 2 },
     { name: "Wechselkurs", id: "wechselForm", group: "sonst", scopes: "public user admin", order: 1 },
     { name: "Taric-Nr", id: "taricForm", group: "sonst", scopes: "public user admin", order: 2 },
-    { name: "Admin", id: "adminForm", group: "admin", scopes: "public admin", order: 0 }]
+    { name: "Admin", id: "adminForm", group: "admin", scopes: "admin", order: 0 }]
 
 //* List of all Groups in Ribbon *//
 const groupArray: FormGroup[] = [
