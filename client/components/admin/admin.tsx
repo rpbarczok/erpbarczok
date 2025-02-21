@@ -27,15 +27,15 @@ export function Admin() {
                 <Heading title="Administratoren-Bereich" cssClass='adminForm' />
             </Row>
             <Row>
-                <Col xs={2}>
+                <Col xs={12} md={2}>
                     <LeftNavigation
                         setRessource={setRessource}
                     />
                 </Col>
-                <Col xs={5}>
+                <Col xs={12} md = {10} lg={9} xl={8} xxl={6}>
                     <ActiveRessource />
                 </Col>
-                <Col>
+                <Col lg = {1} xl={2} xxl={4}>
                 </Col>
             </Row>
         </>

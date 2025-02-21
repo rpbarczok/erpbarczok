@@ -139,10 +139,10 @@ export function Companies() {
                 <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
             </Row>
             <Row className="suche">
-                <Col>
+                <Col xs={12} sm={5} md={4}>
                     <SearchCompanies search={search} setSearch={setSearch} />
                 </Col>
-                <Col>
+                <Col xs={12} sm={7} md={5}>
                     <ListCompanies
                         search={search}
                         activeCompany={activeCompany}
@@ -151,11 +151,14 @@ export function Companies() {
                         listCompanies={listCompanies}
                     />
                 </Col>
-                <Col>
+                <Col className="d-none d-md-block" md={3}>
                     {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonGeneral /> : ''}
                 </Col>
                 <Col>
                 </Col>
+            </Row>
+            <Row className="d-md-none">
+                {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonGeneral /> : ''}
             </Row>
             <hr />
             <Row>
