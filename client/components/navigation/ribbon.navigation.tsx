@@ -45,18 +45,10 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
         }
 
         const groupFormAuth = groupForm.map(g => {
-            const userScope: string[] = (auth.user?.scopes) ? auth.user?.scopes.concat(['public']) : []
-            console.log(userScope)
+            const userScope: string[] = auth.user?.scopes ? auth.user?.scopes.concat(['public']) : []
             const groupFormsAuth = g.forms.filter(f => {
-                let result = false
-                const formScopes = f.scopes.split(" ")
-                for (let x of userScope) {
-                    if (formScopes.includes(x)) {
-                        result = true
-                        break
-                    }
-                }
-                return result
+                const formScopes = new Set(f.scopes.split(" "))
+                return userScope.some(scope => formScopes.has(scope))
             })
             return { ...g, forms: groupFormsAuth }
         })
@@ -94,7 +86,7 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
     const LoginInfo = () => {
         return (
             <div className="ms-auto ribbonDesign">
-                Logged in as {auth.user?.profile?.sub?.split("|")[1]} <Button className="standardDesign" variant="outline-primary" onClick={logOutHandler}>Log out</Button>
+                Logged in as {auth.user?.profile?.email} <Button className="standardDesign" variant="outline-primary" onClick={logOutHandler}>Log out</Button>
             </div>
         )
     }

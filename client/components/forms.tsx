@@ -14,7 +14,7 @@ export interface DataWithMeta<T> {
 }
 
 export const Forms = ({ activeForm }: { activeForm: FormTab }) => {
-
+    
     switch (activeForm.id) {
         case 'stammForm':
             return <Companies />

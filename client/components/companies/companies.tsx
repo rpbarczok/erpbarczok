@@ -36,8 +36,6 @@ export function Companies() {
     const [search, setSearch] = useState<string>("")
     const [isNew, setIsNew] = useState<boolean>(false)
     const [listCompanytypes] = useCompanytypes()
-    const [show, setShow] = useState<boolean>(false)
-    const [newCompanyClick, setNewCompanyClick] = useState<number>(0)
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
     const auth = useAuth()
     const token = auth.user?.access_token
@@ -45,8 +43,7 @@ export function Companies() {
     useEffect(() => {
         if (companyIsChanged) {
             try {
-                if (auth.isAuthenticated) {
-                    client.getCompanies(null, null, { headers: { 'Authorization': `Bearer ${token}` }})
+                client.getCompanies(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
                     .then(result => {
                         const newList = result?.data.map(row => {
                             const newRow: DataWithMeta<Company> = {
@@ -60,26 +57,8 @@ export function Companies() {
                         })
                         setListCompanies(newList)
                     })
-                } else {
-                    client.getCompanies()
-                    .then(result => {
-                        const newList = result?.data.map(row => {
-                            const newRow: DataWithMeta<Company> = {
-                                meta: {
-                                    location: Number(removeBeforeLastDigits(row.meta.location)),
-                                    etag: row.meta.etag
-                                },
-                                data: row.data
-                            }
-                            return (newRow)
-                        })
-                        setListCompanies(newList)
-                    })
-                }
-               
-            setIsCompanyChanged(false)
             } catch (error) {
-               throw error
+                throw error
             }
         }
     }, [companyIsChanged])
@@ -88,7 +67,7 @@ export function Companies() {
         if (active === 0 || active === undefined) {
             setActiveCompany(blandCompany)
         } else {
-            client.getCompanyById(active, null, { headers: { Authorization: `Bearer ${token}` }})
+            client.getCompanyById(active, null, { headers: { Authorization: `Bearer ${token}` } })
                 .then(result => {
                     if (result.data) {
                         const company = { "meta": { 'location': Number(removeBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
@@ -101,34 +80,58 @@ export function Companies() {
         }
     }
 
-    const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault()
-        const userConfirmed = window.confirm(`Willst du die Firma '${activeCompany.data.name}' wirklich löschen?`)
-        if (userConfirmed) {
-            client.deleteCompanyById(activeCompany.meta.location, null,  { headers: { Authorization: `Bearer ${token}` }})
-                .then((res) => {
-                    setIsCompanyChanged(true)
-                    const note: Note = {
-                        variant: 'warning',
-                        message: `Firma wurde gelöscht. Aktuell gibt es keine Möglichkeit, die Daten zurückzuholen`,
-                    }
-                    addEditNote(note)
-                })
-                .catch(error => {
-                    const note: Note = {
-                        variant: 'danger',
-                        message: `Löschen der Firma hat nicht geklappt: ${error.message}`,
-                    }
-                    addEditNote(note)
-                })
 
+    const ButtonGeneral = () => {
+        const [show, setShow] = useState<boolean>(false)
+        const [newCompanyClick, setNewCompanyClick] = useState<number>(0)
+
+        const handleShow = () => {
+            setNewCompanyClick(newCompanyClick + 1)
+            setShow(true)
         }
+
+        const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+            e.preventDefault()
+            const userConfirmed = window.confirm(`Willst du die Firma '${activeCompany.data.name}' wirklich löschen?`)
+            if (userConfirmed) {
+                client.deleteCompanyById(activeCompany.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
+                    .then((res) => {
+                        setIsCompanyChanged(true)
+                        const note: Note = {
+                            variant: 'warning',
+                            message: `Firma wurde gelöscht. Aktuell gibt es keine Möglichkeit, die Daten zurückzuholen`,
+                        }
+                        addEditNote(note)
+                    })
+                    .catch(error => {
+                        const note: Note = {
+                            variant: 'danger',
+                            message: `Löschen der Firma hat nicht geklappt: ${error.message}`,
+                        }
+                        addEditNote(note)
+                    })
+
+            }
+        }
+
+        return (
+            <ButtonGroup vertical>
+                <Button className="standardDesign" variant="outline-primary" onClick={handleShow}>Firma hinzufügen</Button>
+                <InputCompanies
+                    key={String(newCompanyClick)}
+                    listCompanytypes={listCompanytypes}
+                    company={blandCompany}
+                    setIsCompanyChanged={setIsCompanyChanged}
+                    addEditNote={addEditNote}
+                    setIsNew={setIsNew}
+                    onChangeActive={handleChangeActive}
+                    show={show} setShow={setShow}
+                />
+                <Button className="standardDesign" variant="outline-danger" onClick={(e) => handleDelete(e)}>Firma löschen</Button>
+            </ButtonGroup >
+        )
     }
 
-    const handleShow = () => {
-        setNewCompanyClick(newCompanyClick + 1)
-        setShow(true)
-    }
 
     return (
         <>
@@ -149,20 +152,7 @@ export function Companies() {
                     />
                 </Col>
                 <Col>
-                    <ButtonGroup vertical>
-                        <Button className="standardDesign" variant="outline-primary" onClick={handleShow}>Firma hinzufügen</Button>
-                        <InputCompanies
-                            key={String(newCompanyClick)}
-                            listCompanytypes={listCompanytypes}
-                            company={blandCompany}
-                            setIsCompanyChanged={setIsCompanyChanged}
-                            addEditNote={addEditNote}
-                            setIsNew={setIsNew}
-                            onChangeActive={handleChangeActive}
-                            show={show} setShow={setShow}
-                        />
-                        <Button className="standardDesign" variant="outline-danger" onClick={(e) => handleDelete(e)}>Firma löschen</Button>
-                    </ButtonGroup >
+                    {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonGeneral /> : ''}
                 </Col>
                 <Col>
                 </Col>

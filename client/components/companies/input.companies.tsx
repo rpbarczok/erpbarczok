@@ -32,11 +32,6 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
     const auth = useAuth()
     const token = auth.user?.access_token
 
-    const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
-        company.data.abbr === changedCompany.data.abbr &&
-        company.data.www === changedCompany.data.www &&
-        company.data.companytype === changedCompany.data.companytype)
-
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget
         e.preventDefault()
@@ -115,26 +110,20 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
         }
     }
 
-    const handleUndo: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-        e.preventDefault()
-        setValidated(false)
-        changedCompanyDispatch({ type: 'companyChange', newValue: company })
-    }
-
     const input = (
         <>
             <Row className="defaultRow">
                 <Col xs={7}>
                     <Form.Group controlId="companyName">
                         <Form.Label className="standardDesign">Firmenname</Form.Label>
-                        <Form.Control required className="standardDesign" type="text" value={changedCompany.data.name} onChange={handleChangeName} />
+                        <Form.Control required className="standardDesign" type="text" value={changedCompany.data.name} onChange={handleChangeName} disabled={(auth.user?.scope as string).indexOf('user') === -1} />
                         <Form.Control.Feedback type="invalid">Bitte einen Firmennamen eingeben!</Form.Control.Feedback>
                     </Form.Group>
                 </Col>
                 <Col>
                     <Form.Group controlId="companyAbbr">
                         <Form.Label className="standardDesign">Kürzel (max 3 Zeichen)</Form.Label >
-                        <Form.Control maxLength={3} type="text" className="standardDesign" value={changedCompany.data.abbr} onChange={handleChangeAbbr} />
+                        <Form.Control maxLength={3} type="text" className="standardDesign" value={changedCompany.data.abbr} onChange={handleChangeAbbr} disabled={(auth.user?.scope as string).indexOf('user') === -1} />
                     </Form.Group>
                 </Col>
             </Row>
@@ -142,13 +131,13 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
                 <Col xs={7}>
                     <Form.Group controlId="companyWWW">
                         <Form.Label className="standardDesign">Internetadresse</Form.Label >
-                        <Form.Control type="text" className="standardDesign" value={changedCompany.data.www} onChange={handleChangeWWW} />
+                        <Form.Control type="text" className="standardDesign" value={changedCompany.data.www} onChange={handleChangeWWW} disabled={(auth.user?.scope as string).indexOf('user') === -1} />
                     </Form.Group>
                 </Col>
                 <Col>
                     <Form.Group controlId="companyCompanytype">
                         <Form.Label className="standardDesign">Firmenrolle</Form.Label>
-                        <Form.Select className="standardDesign" key="companyCompanytype" required value={changedCompany.data.companytype} onChange={handleChangeCompanytype}>
+                        <Form.Select className="standardDesign" key="companyCompanytype" required value={changedCompany.data.companytype} onChange={handleChangeCompanytype} disabled={(auth.user?.scope as string).indexOf('user') === -1}>
                             <CompanytypesDropdown listCompanytypes={listCompanytypes} />
                         </Form.Select>
                     </Form.Group>
@@ -184,43 +173,54 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
             </>
         )
     } else if (editNotes && removeEditNote) {
-        if (auth.isAuthenticated) {
+
+        const ButtonEdit = () => {
+
+            const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
+                company.data.abbr === changedCompany.data.abbr &&
+                company.data.www === changedCompany.data.www &&
+                company.data.companytype === changedCompany.data.companytype)
+
+            const handleUndo: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+                e.preventDefault()
+                setValidated(false)
+                changedCompanyDispatch({ type: 'companyChange', newValue: company })
+            }
+
             return (
-                <>
-                    <Row id="edit">
-                        <Col id='company' xl={5} lg={6} xs={12}>
-                            <Row id="edit">
-                                <Col id='company' xl={5} lg={6} xs={12}></Col>
-                                <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
-                                    <Row>
-                                        <ButtonGroup className="function-button standardDesign">
-                                            <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Abspeichern</Button>
-                                            <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
-                                        </ButtonGroup>
-                                    </Row>
-                                    <Row>
-                                        <Col className="standardDesign">
-                                            <Notes notes={editNotes} removeNote={removeEditNote} />
-                                        </Col>
-                                    </Row>
-                                    {input}
-                                </Form>
-                            </Row>
-                        </Col>
-                        <Col>
-                            CompanyAddition
-                        </Col>
-                    </Row >
-                </>
-            )
-        } else {
-            return (
-                <div>
-                    Bitte loggen Sie sich noch mal ein
-                </div>
+                <Row>
+                    <ButtonGroup className="function-button standardDesign">
+                        <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Abspeichern</Button>
+                        <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
+                    </ButtonGroup>
+                </Row>
             )
         }
-        
 
+        return (
+            <>
+                <Row id="edit">
+                    <Col id='company' xl={5} lg={6} xs={12}>
+                        <Row id="edit">
+                            <Col id='company' xl={5} lg={6} xs={12}></Col>
+                            <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
+
+                                {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonEdit />: ''}
+
+                                <Row>
+                                    <Col className="standardDesign">
+                                        <Notes notes={editNotes} removeNote={removeEditNote} />
+                                    </Col>
+                                </Row>
+                                {input}
+                            </Form>
+                        </Row>
+                    </Col>
+                    <Col>
+                        CompanyAddition
+                    </Col>
+                </Row >
+            </>
+        )
     }
 }

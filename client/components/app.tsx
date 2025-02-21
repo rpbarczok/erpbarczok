@@ -22,24 +22,24 @@ export function App() {
     }
 
     if (auth.isAuthenticated) {
-        return (
-            <Container fluid>
-                <Row>
-                    <Navigation
-                        tabs={tabs} setTabs={setTabs}
-                        activeForm={activeForm} setActiveForm={setActiveForm}
-                    />
-                </Row>
-                <Row>
-                    <Forms activeForm={activeForm} />
-                </Row>
-                <Row>
-                    Footer
-                </Row>
-            </Container>
+    return (
+        <Container fluid>
+            <Row>
+                <Navigation
+                    tabs={tabs} setTabs={setTabs}
+                    activeForm={activeForm} setActiveForm={setActiveForm}
+                />
+            </Row>
+            <Row>
+                <Forms activeForm={activeForm} />
+            </Row>
+            <Row>
+                Footer
+            </Row>
+        </Container>
 
-        )
-    }
+    )
+}
 
     return (
         <Login/>

@@ -31,11 +31,7 @@ GET.apiSpec = {
     "summary": "Get a certain company",
     "description": "GET request on a certain company by id {id}",
     "operationId": "getCompanyById",
-    "security": [
-        { "OAuth2": [
-            "user"
-        ] }
-    ],
+    "security": [],
     "tags": [
         "Company"
     ],

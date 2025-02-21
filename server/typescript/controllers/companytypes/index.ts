@@ -29,19 +29,15 @@ export const GET: Operation = async (req: Request, res: Response) => {
     const allCompanytypes = await getAllCompanytypes()
     const allCompanytypeServer: Meta<CompanytypeServer>[] = allCompanytypes.map(row => normalizeCompanytypeMeta(row))
     res
-    .status(200)
-    .json(allCompanytypeServer)
+        .status(200)
+        .json(allCompanytypeServer)
 }
 
 GET.apiSpec = {
     "summary": "Get a list of all company types",
     "description": "GET request on all companies",
     "operationId": "getCompanytypes",
-    "security": [
-        { "OAuth2": [
-            "user"
-        ] }
-    ],
+    "security": [],
     "tags": [
         "Companytype"
     ],
@@ -116,7 +112,7 @@ GET.apiSpec = {
         }
     }
 }
-export const POST:Operation = async (req: Request, res: Response) => {
+export const POST: Operation = async (req: Request, res: Response) => {
     const newCompanytype = await addCompanytype(req.body)
     const newCompanytypeMeta = normalizeCompanytypeLocationEtag(newCompanytype)
     res
@@ -129,9 +125,11 @@ POST.apiSpec = {
     "description": "POST request for a new company type",
     "operationId": "postCompanytype",
     "security": [
-        { "OAuth2": [
-            "admin"
-        ] }
+        {
+            "OAuth2": [
+                "admin"
+            ]
+        }
     ],
     "tags": [
         "Companytype"
