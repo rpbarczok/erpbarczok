@@ -1,7 +1,7 @@
 import '../../style.css'
 import './navigation.css'
 import { groupForm, Form, FormTab } from './ribbon.js'
-import { Navbar, Nav, NavDropdown, Container, Col, Button } from 'react-bootstrap'
+import { Navbar, Nav, NavDropdown, Offcanvas } from 'react-bootstrap'
 import React from 'react'
 import { useAuth } from 'react-oidc-context'
 
@@ -83,17 +83,34 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
         await auth.removeUser()
     }
 
-    const LoginInfo = () => {
-        return (
-            <div className="ms-auto ribbonDesign">
-                Logged in as {auth.user?.profile?.email} <Button className="standardDesign" variant="outline-primary" onClick={logOutHandler}>Log out</Button>
-            </div>
-        )
-    }
+    // return (
+    //     <Navbar key="navbar" expand="xl" className='bg-body-secondary justify-content-start'>
+    //         <Navbar.Toggle />
+    //         <Navbar.Collapse>
+    //             <Groups />
+    //         </Navbar.Collapse>
+    //         <Navbar.Text className="ms-auto ribbonDesign">
+    //             <NavDropdown key="account" title={auth.user?.profile?.email}>
+    //                 <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
+    //             </NavDropdown>
+    //         </Navbar.Text>
+    //     </Navbar>
+    // )
+
     return (
-        <Navbar key="navbar" className='bg-body-secondary justify-content-start'>
-            <Groups />
-            <LoginInfo />
+        <Navbar key="navbar" expand="xl" className='bg-body-secondary justify-content-start'>
+            <Navbar.Toggle />
+            <Navbar.Offcanvas id={`offcanvasNavbar-expand-xl`} placement="start">
+                <Offcanvas.Header closeButton />
+                    <Offcanvas.Body>
+                        <Groups />
+                    </Offcanvas.Body>
+            </Navbar.Offcanvas>
+            <Navbar.Text className="ms-auto ribbonDesign">
+                <NavDropdown key="account" title={auth.user?.profile?.email}>
+                    <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
+                </NavDropdown>
+            </Navbar.Text>
         </Navbar>
     )
 } 

@@ -14,6 +14,7 @@ interface TabsNavigationInterface {
 
 export function TabsNavigation({ tabs, setTabs, setActiveForm, activeForm }: TabsNavigationInterface) {
 
+
     const handleClose = (tab: FormTab) => {
         const index = tabs.indexOf(tab)
         if (tabs.length > 1) {
