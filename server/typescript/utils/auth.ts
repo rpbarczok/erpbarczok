@@ -5,12 +5,12 @@ const secret = jwks.expressJwtSecret({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
-    jwksUri: `https://${process.env.IDP_SERVER}/.well-known/jwks.json`
+    jwksUri: process.env.JWKS_URI || `https://${process.env.IDP_SERVER}/.well-known/jwks.json`
 }) as GetVerificationKey
 
 export const  jwtCheck = expressjwt({ 
         secret: secret, 
         audience: process.env.AUDIENCE, 
-        issuer: `https://${process.env.IDP_SERVER}/`, 
+        issuer: process.env.IDP_SERVER, 
         algorithms: ['RS256'], 
-        credentialsRequired: true })
+        credentialsRequired: false })

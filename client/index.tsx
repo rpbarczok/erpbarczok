@@ -44,7 +44,7 @@ if (!windowAuth.idp_server
   )
 } else {
   const oidcConfig: AuthProviderProps = {
-    authority: `https://${windowAuth.idp_server}/`,
+    authority: windowAuth.idp_server,
     client_id: windowAuth.client_id,
     redirect_uri: windowAuth.redirect_uri,
     userStore: new WebStorageStateStore({ store: window.localStorage }),

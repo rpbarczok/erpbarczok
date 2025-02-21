@@ -54,7 +54,11 @@ GET.apiSpec = {
     "summary": "Get a list of all companies",
     "description": "GET request on all companies",
     "operationId": "getCompanies",
-    "security": [],
+    "security": [
+        { "OAuth2": [
+            "user"
+        ] }
+    ],
     "tags": [
         "Company"
     ],
