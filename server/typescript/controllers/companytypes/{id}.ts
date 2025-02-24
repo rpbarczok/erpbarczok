@@ -1,20 +1,20 @@
 import { getCompanytypeById, deleteCompanytypeById, putCompanytypeById } from '../../services/companytypes.js'
 import { error_formatter, NotFoundError } from "../../services/error.js"
 import type { Request, Response } from 'express'
-import { CompanytypeServer, normalizeCompanytype, normalizeCompanytypeLocationEtag } from './index.js'
+import { CompanytypeServer, normalizeCompanytype, createCompanytypeMeta } from './index.js'
 import { Operation } from '../../apiSpecAssembler.js'
-import { MetaEtag } from '../../app.js'
+import { Meta } from '../../app.js'
 import { Company } from '../../models/companies.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
     try {
         const companytype = await getCompanytypeById(Number(req.params.id))
-        const companytypeServer: CompanytypeServer = normalizeCompanytype(companytype)
-        const companytypeServerMeta: MetaEtag = normalizeCompanytypeLocationEtag(companytype)
+        const companytypeNorm: CompanytypeServer = normalizeCompanytype(companytype)
+        const companytypeNormMeta: Meta = createCompanytypeMeta(companytype)
         res
             .status(200)
-            .set(companytypeServerMeta)
-            .json(companytypeServer)
+            .set(companytypeNormMeta)
+            .json(companytypeNorm)
     }
     catch (err) {
         if (err instanceof NotFoundError) res.status(404).json({ "status": 404, "message": "not found" })
@@ -28,7 +28,7 @@ GET.apiSpec = {
     "description": "GET request on a certain companytype by id {id}",
     "operationId": "getCompanytypeById",
     "security": [
-        { "OAuth2": [] }
+        { "openId": [] }
     ],
     "tags": [
         "Companytype"
@@ -55,12 +55,6 @@ GET.apiSpec = {
                 }
             },
             "headers": {
-                "location": {
-                    "description": "Location of the requested companytype",
-                    "schema": {
-                        "$ref": "#/components/schemas/location"
-                    }
-                },
                 "etag": {
                     "description": "Etag of the requested companytype",
                     "schema": {
@@ -103,7 +97,7 @@ DELETE.apiSpec = {
     "description": "DELETE request on company type by id {id}",
     "operationId": "deleteCompanytypeById",
     "security": [
-        { "OAuth2": [
+        { "openId": [
             "admin"
         ] }
     ],
@@ -134,11 +128,11 @@ DELETE.apiSpec = {
 export const PUT: Operation = async (req: Request, res: Response) => {
     try {
         const dbCompanytype = await getCompanytypeById(Number(req.params.id))
-        const dbCompanytypeMeta = normalizeCompanytypeLocationEtag(dbCompanytype)
+        const dbCompanytypeMeta = createCompanytypeMeta(dbCompanytype)
         if (dbCompanytypeMeta.etag === req.headers['if-match']) {
             try {
                 const updatedCompanytype = await putCompanytypeById(Number(req.params.id), req.body)
-                const companytypeHeader = normalizeCompanytypeLocationEtag(updatedCompanytype)
+                const companytypeHeader = createCompanytypeMeta(updatedCompanytype)
                 res
                     .status(204)
                     .set(companytypeHeader)
@@ -171,7 +165,7 @@ PUT.apiSpec = {
     "description": "Put request on company type by id {id}",
     "operationId": "putCompanytypeById",
     "security": [
-        { "OAuth2": [
+        { "openId": [
             "admin"
         ] }
     ],

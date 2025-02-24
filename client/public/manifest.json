@@ -5,8 +5,33 @@
     "display": "standalone",
     "icons": [
         {
-            "src": "./panda.png",
+            "src": "./panda16.png",
+            "sizes": "16x16"
+        },
+        {
+            "src": "./panda32.png",
+            "sizes": "32x32"
+        },
+        {
+            "src": "./panda48.png",
+            "sizes": "48x48"
+        },
+        {
+            "src": "./panda167.png",
+            "sizes": "167x167"
+        },
+        {
+            "src": "./panda180.png",
+            "sizes": "180x180"
+        },
+        {
+            "src": "./panda192.png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "./panda512.png",
             "sizes": "512x512"
         }
+
     ]
 }

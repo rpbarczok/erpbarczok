@@ -1,36 +1,36 @@
-import { Meta, MetaEtag } from '../../app.js'
+import { DataWithMeta, Meta } from '../../app.js'
 import { sha256 } from '../../hasher.js'
 import { Companytype } from '../../models/companytypes.js'
 import { getAllCompanytypes, addCompanytype } from '../../services/companytypes.js'
 import { Request, Response } from 'express'
 import { Operation } from '../../apiSpecAssembler.js'
 
-export interface CompanytypeServer {
+export interface CompanytypeNorm {
     name: string
 }
 
-export function normalizeCompanytype(companytype: Companytype): CompanytypeServer {
-    const result: CompanytypeServer = { name: companytype.name }
+export function normalizeCompanytype(companytype: Companytype): CompanytypeNorm {
+    const result: CompanytypeNorm = { name: companytype.name }
     return result
 }
 
-export function normalizeCompanytypeLocationEtag(companytype: Companytype): MetaEtag {
-    const companytypeServer: CompanytypeServer = normalizeCompanytype(companytype)
-    return { "location": "/companytypes/" + companytype.id, "etag": sha256(JSON.stringify(companytypeServer)) }
+export function createCompanytypeMeta(companytype: Companytype): Meta {
+    const companytypeNorm: CompanytypeNorm = normalizeCompanytype(companytype)
+    return { "location": "/companytypes/" + companytype.id, "etag": sha256(JSON.stringify(companytypeNorm)) }
 }
 
-export function normalizeCompanytypeMeta(companytype: Companytype): Meta<CompanytypeServer> {
-    const data: CompanytypeServer = normalizeCompanytype(companytype)
-    const meta = normalizeCompanytypeLocationEtag(companytype)
+export function combineCompanytypeWithMeta(companytype: Companytype): DataWithMeta<CompanytypeNorm> {
+    const data: CompanytypeNorm = normalizeCompanytype(companytype)
+    const meta = createCompanytypeMeta(companytype)
     return { meta: meta, data: data }
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const allCompanytypes = await getAllCompanytypes()
-    const allCompanytypeServer: Meta<CompanytypeServer>[] = allCompanytypes.map(row => normalizeCompanytypeMeta(row))
+    const allCompanytypesWithMeta: DataWithMeta<CompanytypeNorm>[] = allCompanytypes.map(row => combineCompanytypeWithMeta(row))
     res
         .status(200)
-        .json(allCompanytypeServer)
+        .json(allCompanytypesWithMeta)
 }
 
 GET.apiSpec = {
@@ -114,7 +114,7 @@ GET.apiSpec = {
 }
 export const POST: Operation = async (req: Request, res: Response) => {
     const newCompanytype = await addCompanytype(req.body)
-    const newCompanytypeMeta = normalizeCompanytypeLocationEtag(newCompanytype)
+    const newCompanytypeMeta = createCompanytypeMeta(newCompanytype)
     res
         .status(201)
         .set(newCompanytypeMeta)
@@ -126,7 +126,7 @@ POST.apiSpec = {
     "operationId": "postCompanytype",
     "security": [
         {
-            "OAuth2": [
+            "openId": [
                 "admin"
             ]
         }

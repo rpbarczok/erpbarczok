@@ -1,4 +1,4 @@
-import './utils/testenv.js'
+import './utils/env.test.js'
 import request from 'supertest'
 import { startingApp } from '../app.js'
 import { sequelize } from '../models/index.js'

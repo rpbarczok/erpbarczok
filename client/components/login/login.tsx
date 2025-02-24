@@ -2,7 +2,7 @@ import { Button, Container, Image, Row, Col } from "react-bootstrap"
 import { useAuth } from 'react-oidc-context'
 import './login.css'
 import '../../style.css'
-import panda from './panda_dangerous.jpg'
+import panda from './panda_dangerous.png'
 
 
 export const Login = () => {

@@ -4,7 +4,7 @@ import morgan from 'morgan'
 import cors, { CorsOptions } from 'cors'
 import { apiSpec } from "./openapi.js"
 import swaggerUi from 'swagger-ui-express'
-import OpenApiValidator, { middleware } from 'express-openapi-validator'
+import OpenApiValidator from 'express-openapi-validator'
 import { baseLogger } from './logger.js'
 import { apiControllers } from './apiSpecAssembler.js'
 import { sequelize } from './models/index.js'
@@ -13,13 +13,13 @@ import { jwtCheck } from './utils/auth.js'
 import { Request as JWTRequest } from 'express-jwt'
 import jsesc from 'jsesc'
 
-export interface MetaEtag {
+export interface Meta {
     location: string
     etag: string
 }
 
-export interface Meta<T> {
-    meta: MetaEtag
+export interface DataWithMeta<T> {
+    meta: Meta
     data: T
 }
 
@@ -30,7 +30,6 @@ const startApp = async () => {
     const morganLogger = baseLogger.extend('morgan')
     const controllers = apiControllers
     logger("All controllers:", controllers)
-    const initSequelize = sequelize
 
     app.use(morgan('dev', { stream: { write: msg => { morganLogger(msg); return true } } }))
     app.use(express.json())
@@ -62,6 +61,7 @@ const startApp = async () => {
         || !process.env.REDIRECT_URI
         || !process.env.AUDIENCE
     ) {
+        console.log('Konfigurationsangaben zu Authentifizierung (CLIENT_ID, IDP_SERVER, REDIRECT_URI, AUDIENCE) unvollständig')
         process.exit(1)
     }
 
@@ -87,7 +87,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
         }
     }))
 
-    // Authorication
+    // Authentication
 
     app.use(jwtCheck)
 
@@ -115,17 +115,17 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             },
             validateSecurity: {
                 handlers: {
-                    OAuth2: (req: JWTRequest, requiredScopesArray, schema) => {
+                    openId: (req: JWTRequest, requiredScopesArray, schema) => {
                         const name = process.env.SCOPE_CLAIM || 'scope'
-                        const userScope: string | string[] = req.auth ? req.auth[name] : []
-                        const userScopeArray: string[] = typeof userScope === 'string' ? userScope.split(" ") : userScope
+                        const userScope: string | string[] | unknown = req.auth ? req.auth[name] : []
+                        const userScopeArray: string[] | unknown = typeof userScope === 'string' ? userScope.split(" ") : userScope
 
                         if (requiredScopesArray.length === 0) {
                             console.log("No scope required. Authorized.")
                             return true
                         }
 
-                        if (typeof userScope !== typeof "" && typeof userScope !== typeof []) {
+                        if (!Array.isArray(userScopeArray)) {
                             console.log("Scope has the wrong type. Authorization rejected.")
                             return false
                         }

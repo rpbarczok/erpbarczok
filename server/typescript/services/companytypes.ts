@@ -15,13 +15,13 @@ export const getAllCompanytypes = () => new Promise<Companytype[]>(async functio
     }
 })
 
-export const addCompanytype = (body: CompanytypeServer) => new Promise<Companytype>(async function (resolve, reject) {
-    const companytype = {
-        name: body.name
+export const addCompanytype = (companytype: CompanytypeServer) => new Promise<Companytype>(async function (resolve, reject) {
+    const newCompanytype = {
+        name: companytype.name
     }
     try {
-        const newCompanytype = await Companytype.create(companytype)
-        resolve(newCompanytype)
+        const addedCompanytype = await Companytype.create(newCompanytype)
+        resolve(addedCompanytype)
     } catch (err) {
         reject(error_formatter(500, err))
     }
@@ -54,14 +54,14 @@ export const deleteCompanytypeById = (id: number) => new Promise<void>(async (re
         reject(error_formatter(500, err))
     }
 })
-export const putCompanytypeById = (id: number, body: CompanytypeServer) => new Promise<Companytype>(async (resolve, reject) => {
+export const putCompanytypeById = (id: number, companytype: CompanytypeServer) => new Promise<Companytype>(async (resolve, reject) => {
     try {
-        const companytype = await Companytype.findByPk(id)
-        if (companytype === null) {
+        const oldCompanytype = await Companytype.findByPk(id)
+        if (oldCompanytype === null) {
             reject(new NotFoundError())
         } else {
-            const updatedCompanytpye = await companytype.update(body)
-            resolve(updatedCompanytpye)
+            const updatedCompanytype = await oldCompanytype.update(companytype)
+            resolve(updatedCompanytype)
         }
     }
     catch (err) {

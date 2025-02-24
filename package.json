@@ -36,6 +36,7 @@
     "oidc-client-ts": "^3.1.0",
     "pg": "^8.13.1",
     "pg-hstore": "^2.3.4",
+    "proxy-agent": "^6.5.0",
     "react-oidc-context": "^3.2.0",
     "sequelize": "^6.37.5",
     "swagger-ui-express": "^5.0.1"

@@ -2,6 +2,8 @@
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { Http2ServerRequest } from 'node:http2'
 
+const openIdConnectUrl = `${process.env.IDP_SERVER}.well-known/openid-configuration`
+
 export const apiSpec: OpenAPIV3.DocumentV3 = {
     "openapi": "3.0.3",
     "info": {
@@ -45,15 +47,6 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                 "name": "if-match",
                 "in": "header",
                 "description": "etag in database must match etag specified in if-match as precondition",
-                "required": true,
-                "schema": {
-                    "$ref": "#/components/schemas/etag"
-                }
-            },
-            "etag": {
-                "name": "etag",
-                "in": "header",
-                "description": "etag of the dataset",
                 "required": true,
                 "schema": {
                     "$ref": "#/components/schemas/etag"
@@ -137,7 +130,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                         },
                         "examples": {
                             "409": {
-                                "$ref": "#/components/examples/error412"
+                                "$ref": "#/components/examples/error409"
                             }
                         }
                     }
@@ -247,18 +240,9 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
             }
         },
         "securitySchemes": {
-            "OAuth2": {
-                "type": "oauth2",
-                "flows": {
-                    "authorizationCode": {
-                        "authorizationUrl": "https://dev-xny0abm7nsusygw7.eu.auth0.com/authorization",
-                        "tokenUrl": "https://dev-xny0abm7nsusygw7.eu.auth0.com/oauth/token",
-                        "scopes": {
-                            "user": "Grants access to all standard functions",
-                            "admin": "Grants rights to change and add weak entities"
-                        }
-                    }
-                }
+            "openId": {
+                "type": "openIdConnect",
+                "openIdConnectUrl": `${openIdConnectUrl}`
             }
         },
         "examples": {

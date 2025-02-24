@@ -1,18 +1,18 @@
 import type { Request, Response } from 'express'
 import { getAllCompanies, addCompany } from '../../services/companies.js'
-import { Meta, MetaEtag } from '../../app.js'
+import { DataWithMeta, Meta } from '../../app.js'
 import { Company } from '../../models/companies.js'
 import { sha256 } from '../../hasher.js'
 import { Operation } from '../../apiSpecAssembler.js'
 
-export interface CompanyClient {
+export interface CompanyNorm {
     name: string
     abbr?: string | null
     www?: string | null
     companytype: string
 }
 
-export interface CompanyServer {
+export interface CompanyFK {
     name: string
     abbr?: string | null
     www?: string | null
@@ -20,7 +20,7 @@ export interface CompanyServer {
 }
 
 export function normalizeCompany(company: Company) {
-    const result: CompanyClient = { name: company.name, companytype: company.companytype!.name}
+    const result: CompanyNorm = { name: company.name, companytype: company.companytype!.name}
     if (company.abbr) {
         result.abbr = company.abbr
     }
@@ -30,24 +30,24 @@ export function normalizeCompany(company: Company) {
     return result
 }
 
-export function normalizeCompanyMeta(company: Company): Meta<CompanyClient> {
-    const data: CompanyClient = normalizeCompany(company)
-    const meta: MetaEtag = normalizeCompanyLocationEtag(company)
+export function combineCompanytWithMeta(company: Company): DataWithMeta<CompanyNorm> {
+    const data: CompanyNorm = normalizeCompany(company)
+    const meta: Meta = createCompanyMeta(company)
     return { meta: meta, data: data }
 }
 
-export function normalizeCompanyLocationEtag(company: Company): MetaEtag {
-    const companyClient: CompanyClient = normalizeCompany(company)
-    return { "location": "/companies/" + company.id, "etag": sha256(JSON.stringify(companyClient)) }
+export function createCompanyMeta(company: Company): Meta {
+    const companyNorm: CompanyNorm = normalizeCompany(company)
+    return { "location": "/companies/" + company.id, "etag": sha256(JSON.stringify(companyNorm)) }
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
     // @ts-ignore
     const allCompanies = await getAllCompanies()
-    const allCompaniesResponse: Meta<CompanyClient>[] = allCompanies.map((row) => (normalizeCompanyMeta(row)))
+    const allCompaniesWithMeta: DataWithMeta<CompanyNorm>[] = allCompanies.map((row) => (combineCompanytWithMeta(row)))
     res
         .status(200)
-        .json(allCompaniesResponse)
+        .json(allCompaniesWithMeta)
 }
 
 GET.apiSpec = {
@@ -55,7 +55,7 @@ GET.apiSpec = {
     "description": "GET request on all companies",
     "operationId": "getCompanies",
     "security": [
-        { "OAuth2": [
+        { "openId": [
             "user"
         ] }
     ],
@@ -137,7 +137,7 @@ GET.apiSpec = {
 export const POST: Operation = async (req: Request, res: Response) => {
     const newCompany = await addCompany(req.body)
     res.status(204)
-        .set(normalizeCompanyLocationEtag(newCompany))
+        .set(createCompanyMeta(newCompany))
         .end()
 }
 POST.apiSpec = {
@@ -145,7 +145,7 @@ POST.apiSpec = {
     "description": "POST request for a new company, response new id",
     "operationId": "postCompany",
     "security": [
-        { "OAuth2": [
+        { "openId": [
             "user"
         ] }
     ],

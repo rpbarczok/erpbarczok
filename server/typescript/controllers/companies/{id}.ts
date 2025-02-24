@@ -1,21 +1,21 @@
 import { getCompanyById, deleteCompanyById, putCompanyById } from '../../services/companies.js'
 import { NotFoundError, error_formatter } from "../../services/error.js"
 import type { Request, Response } from 'express'
-import { CompanyClient, normalizeCompany, normalizeCompanyLocationEtag } from './index.js'
+import { CompanyNorm, normalizeCompany, createCompanyMeta } from './index.js'
 import { Operation } from '../../apiSpecAssembler.js'
-import { MetaEtag } from '../../app.js'
+import { Meta } from '../../app.js'
 
 
 
 export const GET: Operation = async (req: Request, res: Response) => {
     try {
         const company = await getCompanyById(Number(req.params.id))
-        const companyClient: CompanyClient = normalizeCompany(company)
-        const companyResponseMeta: MetaEtag = normalizeCompanyLocationEtag(company)
+        const companyNorm: CompanyNorm = normalizeCompany(company)
+        const metaHeader: Meta = createCompanyMeta(company)
         res
             .status(200)
-            .set(companyResponseMeta)
-            .json(companyClient)
+            .set(metaHeader)
+            .json(companyNorm)
     }
     catch (err) {
         if (err instanceof NotFoundError) {
@@ -56,12 +56,6 @@ GET.apiSpec = {
                 }
             },
             "headers": {
-                "location": {
-                    "description": "Location of the requested company",
-                    "schema": {
-                        "$ref": "#/components/schemas/location"
-                    }
-                },
                 "etag": {
                     "description": "Etag of the requested company",
                     "schema": {
@@ -102,7 +96,7 @@ DELETE.apiSpec = {
     "description": "DELETE request on company by id {id}",
     "operationId": "deleteCompanyById",
     "security": [
-        { "OAuth2": [
+        { "openId": [
             "user"
         ] }
     ],
@@ -129,14 +123,14 @@ DELETE.apiSpec = {
 
 export const PUT: Operation = async (req: Request, res: Response) => {
     try {
-        const dbCompany = await getCompanyById(Number(req.params.id))
-        const dbCompanyMeta = normalizeCompanyLocationEtag(dbCompany)
-        if (dbCompanyMeta.etag === req.headers['if-match']) {
+        const oldCompany = await getCompanyById(Number(req.params.id))
+        const oldCompanyWithMeta = createCompanyMeta(oldCompany)
+        if (oldCompanyWithMeta.etag === req.headers['if-match']) {
             try {
                 const updatedCompany = await putCompanyById(Number(req.params.id), req.body)
-                const companyHeader = normalizeCompanyLocationEtag(updatedCompany)
+                const metaHeader = createCompanyMeta(updatedCompany)
                 res.status(204)
-                    .set(companyHeader)
+                    .set(metaHeader)
                     .end()
             }
             catch (err) {
@@ -166,7 +160,7 @@ PUT.apiSpec = {
     "description": "Put request on company by id {id}",
     "operationId": "putCompanyById",
     "security": [
-        { "OAuth2": [
+        { "openId": [
             "user"
         ] }
     ],

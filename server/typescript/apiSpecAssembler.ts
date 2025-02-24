@@ -10,11 +10,11 @@ export interface Operation {
 }
 
 interface PathMap {
-    [x: string]: VerbMap
+    [path: string]: VerbMap
 }
 
 interface VerbMap {
-    [x: string]: Operation
+    [verb: string]: Operation
 }
 
 const logger = baseLogger.extend("apiSpecAssembler")
