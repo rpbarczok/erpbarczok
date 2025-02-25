@@ -30,7 +30,7 @@ export function normalizeCompany(company: Company) {
     return result
 }
 
-export function combineCompanytWithMeta(company: Company): DataWithMeta<CompanyNorm> {
+export function combineCompanyWithMeta(company: Company): DataWithMeta<CompanyNorm> {
     const data: CompanyNorm = normalizeCompany(company)
     const meta: Meta = createCompanyMeta(company)
     return { meta: meta, data: data }
@@ -44,7 +44,7 @@ export function createCompanyMeta(company: Company): Meta {
 export const GET: Operation = async (req: Request, res: Response) => {
     // @ts-ignore
     const allCompanies = await getAllCompanies()
-    const allCompaniesWithMeta: DataWithMeta<CompanyNorm>[] = allCompanies.map((row) => (combineCompanytWithMeta(row)))
+    const allCompaniesWithMeta: DataWithMeta<CompanyNorm>[] = allCompanies.map((row) => (combineCompanyWithMeta(row)))
     res
         .status(200)
         .json(allCompaniesWithMeta)
@@ -55,16 +55,14 @@ GET.apiSpec = {
     "description": "GET request on all companies",
     "operationId": "getCompanies",
     "security": [
-        { "openId": [
-            "user"
-        ] }
+        { "openId": [] }
     ],
     "tags": [
         "Company"
     ],
     "responses": {
         "200": {
-            "description": "Successfull operation",
+            "description": "Successful operation",
             "content": {
                 "application/json": {
                     "schema": {

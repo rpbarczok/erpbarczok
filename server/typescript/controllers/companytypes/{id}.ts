@@ -1,7 +1,7 @@
 import { getCompanytypeById, deleteCompanytypeById, putCompanytypeById } from '../../services/companytypes.js'
 import { error_formatter, NotFoundError } from "../../services/error.js"
 import type { Request, Response } from 'express'
-import { CompanytypeServer, normalizeCompanytype, createCompanytypeMeta } from './index.js'
+import { CompanytypeNorm, normalizeCompanytype, createCompanytypeMeta } from './index.js'
 import { Operation } from '../../apiSpecAssembler.js'
 import { Meta } from '../../app.js'
 import { Company } from '../../models/companies.js'
@@ -9,7 +9,7 @@ import { Company } from '../../models/companies.js'
 export const GET: Operation = async (req: Request, res: Response) => {
     try {
         const companytype = await getCompanytypeById(Number(req.params.id))
-        const companytypeNorm: CompanytypeServer = normalizeCompanytype(companytype)
+        const companytypeNorm: CompanytypeNorm = normalizeCompanytype(companytype)
         const companytypeNormMeta: Meta = createCompanytypeMeta(companytype)
         res
             .status(200)
@@ -40,7 +40,7 @@ GET.apiSpec = {
     ],
     "responses": {
         "200": {
-            "description": "Successfull operation",
+            "description": "Successful operation",
             "content": {
                 "application/json": {
                     "schema": {
@@ -83,7 +83,7 @@ export const DELETE: Operation = async (req: Request, res: Response) => {
             await deleteCompanytypeById(Number(req.params.id))
             res.status(204).end()
         } else {
-            res.status(409).end()
+            res.status(409).json({ status: 409, message: "Conflict" })
         }
 
     }
@@ -120,7 +120,7 @@ DELETE.apiSpec = {
             "$ref": "#/components/responses/404_not_found_error"
         },
         "409": {
-            "$ref": "#/components/responses/409_conflict"
+            "$ref": "#/components/responses/409_conflict_error"
         }
     }
 }

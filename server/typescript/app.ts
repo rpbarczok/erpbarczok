@@ -51,7 +51,6 @@ const startApp = async () => {
 
     app.use(express.static(path.join(import.meta.dirname, '..', 'public')))
 
-
     // mitteilen, wo das OAS-Document ist
 
     app.use('/api-docs', (req, res, next) => { res.json(apiSpec) })

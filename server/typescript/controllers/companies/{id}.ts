@@ -42,7 +42,7 @@ GET.apiSpec = {
     ],
     "responses": {
         "200": {
-            "description": "Successfull operation",
+            "description": "Successful operation",
             "content": {
                 "application/json": {
                     "schema": {
@@ -117,6 +117,9 @@ DELETE.apiSpec = {
         },
         "404": {
             "$ref": "#/components/responses/404_not_found_error"
+        },
+        "409": {
+            "$ref": "#/components/responses/409_conflict_error"
         }
     }
 }

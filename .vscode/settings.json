@@ -1,11 +1,17 @@
 {
     "cSpell.words": [
+        "APIV",
         "blablubber",
         "companytype",
         "companytypes",
         "etag",
+        "expressjwt",
+        "jwks",
         "postgres",
         "sequelize"
     ],
-    "cSpell.language": "en,de-DE"
+    "cSpell.language": "en,de-DE",
+    "cSpell.customDictionaries": {
+
+    }
 }

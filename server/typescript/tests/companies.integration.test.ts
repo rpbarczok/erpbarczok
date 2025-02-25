@@ -6,7 +6,66 @@ import { expect } from 'expect'
 import { App } from 'supertest/types.js'
 import { Companytype } from '../models/companytypes.js'
 import { sha256 } from '../hasher.js'
+import jwt from 'jsonwebtoken'
 
+const iat = Math.floor(Date.now() / 1000)
+const iatADayAgo = iat - 60 * 60 * 24
+const iatAWeekAgo = iat - 8 * 60 * 60 * 24
+
+const audience = process.env.AUDIENCE || 'www.example.com'
+const issuer = process.env.IDP_SERVER || 'www.example.com'
+const scope = process.env.SCOPE || 'openid email admin user'
+const secret = process.env.TEST_SECRET || 'secret'
+const algorithms = process.env.ALGORITHM_TEST?.split(' ') || ['HS256']
+
+//@ts-ignore
+const validTokenAdmin: string = jwt.sign(
+    {
+        "iss": issuer,
+        "aud": audience,
+        "iat": iat,
+        'scope': scope,
+        'expiresIn': '1h',
+        'alg': algorithms[0],
+    },
+    secret
+)
+
+const validTokenGuest: string = jwt.sign(
+    {
+        "iss": issuer,
+        "aud": audience,
+        "iat": iat,
+        'scope': 'openid email',
+        'expiresIn': '1h',
+        'alg': algorithms[0],
+    },
+    secret
+)
+
+const validTokenUser: string = jwt.sign(
+    {
+        "iss": issuer,
+        "aud": audience,
+        "iat": iat,
+        'scope': 'openid email user',
+        'expiresIn': '1h',
+        'alg': algorithms[0],
+    },
+    secret
+)
+
+const expiredToken: string = jwt.sign(
+    {
+        "iss": issuer,
+        "aud": audience,
+        "iat": iatAWeekAgo,
+        'scope': scope,
+        'alg': algorithms[0],
+        'exp': iatADayAgo
+    },
+    secret
+)
 
 const companyA = { "name": "Firma A", "companytype": "Kunde", "abbr": "FRA", "www": "www.firmaa.com", }
 const etagA = sha256(JSON.stringify(companyA))
@@ -40,10 +99,23 @@ describe('/companies/ HTTP integration Tests', async function () {
 
     describe('GET /companies/ and POST /companies/', async function () {
 
-        it('should succeed with 200 and return [] for a fresh and empty DB', async () => {
+        it('GET /companies/ should fail with 401 without AuthN', async () => {
             const response = await request(app)
                 .get('/companies/')
                 .set('Accept', 'application/json')
+                .expect('content-type', /json/)
+                .expect(401)
+            expect(response.headers["content-type"]).toMatch(/json/)
+            expect(response.status).toEqual(401)
+            expect(response.body.status).toEqual(401)
+            expect(response.body.message).toMatch("No authorization token was found")
+        })
+
+        it('GET /companies/ should succeed with 200 and return [] for a fresh and empty DB as Guest', async () => {
+            const response = await request(app)
+                .get('/companies/')
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('content-type', /json/)
                 .expect(200, [])
             expect(response.headers["content-type"]).toMatch(/json/)
@@ -51,30 +123,70 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body).toEqual([])
         })
 
-        it('Post /company with name, companytype and abbr succeeds', async () => {
+        it('GET /companies/ should succeed with 200 and return [] for a fresh and empty DB as User', async () => {
+            const response = await request(app)
+                .get('/companies/')
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenUser}`)
+                .expect('content-type', /json/)
+                .expect(200, [])
+            expect(response.headers["content-type"]).toMatch(/json/)
+            expect(response.status).toEqual(200)
+            expect(response.body).toEqual([])
+        })
+
+        it('GET /companies/ should succeed with 200 and return [] for a fresh and empty DB as Admin', async () => {
+            const response = await request(app)
+                .get('/companies/')
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenAdmin}`)
+                .expect('content-type', /json/)
+                .expect(200, [])
+            expect(response.headers["content-type"]).toMatch(/json/)
+            expect(response.status).toEqual(200)
+            expect(response.body).toEqual([])
+        })
+
+        it('Post /company/ with name, companytype and abbr fails as Guest', async () => {
             const response = await request(app)
                 .post('/companies/')
                 .send(companyA)
                 .set('Accept', "application/json")
+                .set('Authorization', `Bearer ${validTokenGuest}`)
+                .expect(401)
+            expect(response.status).toEqual(401)
+            expect(response.body.status).toEqual(401)
+            expect(response.body.message).toMatch("unauthorized")
+            expect(response.body.errors).toBeInstanceOf(Array)
+        })
+
+        it('Post /company/ with name, companytype and abbr succeeds as User', async () => {
+            const response = await request(app)
+                .post('/companies/')
+                .send(companyA)
+                .set('Accept', "application/json")
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect(204, '')
                 .expect("location", "/companies/1")
                 .expect("etag", etagA)
         })
 
-        it('Post /company with name only succeeds', async () => {
+        it('Post /company/ with name only succeeds', async () => {
             const response = await request(app)
                 .post('/companies/')
                 .send(companyB)
                 .set('Accept', "application/json")
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect(204, '')
                 .expect('location', '/companies/2')
         })
 
-        it('Post /company without name fails', async () => {
+        it('Post /company/ without name fails', async () => {
             const response = await request(app)
                 .post('/companies/')
                 .send({ "abbr": "FRC" })
                 .set('Accept', "application/json")
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)
@@ -83,11 +195,12 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Add company with to long abbr fails', async () => {
+        it('Post /companies/ with to long abbr fails', async () => {
             const response = await request(app)
                 .post('/companies/')
                 .send({ "name": "Firma D", "abbr": "Firma", "companytype": "Kunde" })
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)
@@ -95,11 +208,12 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Add a company with extra attributes fails', async () => {
+        it('Post /companies/ with extra attributes fails', async () => {
             const response = await request(app)
                 .post('/companies/')
                 .send({ "name": "Firma D", "abbr": "FRD", "extra": "bla", "companytype": "Kunde" })
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)
@@ -107,10 +221,11 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Add a company with invalid name type fails (array)', async () => {
+        it('Post /companies/ with invalid name type fails (array)', async () => {
             const response = await request(app)
                 .post('/companies/')
                 .send({ "name": {}, "companytype": "Kunde" })
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(400)
@@ -119,10 +234,11 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Add a company with invalid abbr type fails (array)', async () => {
+        it('Post /companies/ with invalid abbr type fails (array)', async () => {
             const response = await request(app)
                 .post('/companies/')
                 .send({ "name": "Firma E", "abbr": {}, "companytype": "Kunde" })
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(400)
@@ -131,10 +247,11 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Add a company with invalid www type fails (array)', async () => {
+        it('Post /companies/ with invalid www type fails (array)', async () => {
             const response = await request(app)
                 .post('/companies/')
                 .send({ "name": "Firma E", "www": {}, "companytype": "Kunde" })
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(400)
@@ -146,19 +263,53 @@ describe('/companies/ HTTP integration Tests', async function () {
 
     describe('GET /companies/{id}', async function () {
 
-        it('Get existing company succeeds', async () => {
+        it('GET /companies/{id} fails without authN', async () => {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(401)
+            expect(response.body.status).toBe(401)
+            expect(response.body.message).toMatch("No authorization token was found")
+        })
+
+        it('GET /companies/{id} existing company succeeds as Guest', async () => {
+            const response = await request(app)
+                .get('/companies/2')
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyB)
             expect(response.headers['location']).toBe('/companies/2')
             expect(response.headers['etag']).toBe(etagB)
         })
 
-        it('Get non existing company fails', async () => {
+        it('GET /companies/{id} existing company succeeds as User', async () => {
+            const response = await request(app)
+                .get('/companies/2')
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenUser}`)
+                .expect('Content-Type', /json/)
+                .expect(200, companyB)
+            expect(response.headers['location']).toBe('/companies/2')
+            expect(response.headers['etag']).toBe(etagB)
+        })
+
+        it('GET /companies/{id} existing company succeeds as Admin', async () => {
+            const response = await request(app)
+                .get('/companies/2')
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenAdmin}`)
+                .expect('Content-Type', /json/)
+                .expect(200, companyB)
+            expect(response.headers['location']).toBe('/companies/2')
+            expect(response.headers['etag']).toBe(etagB)
+        })
+
+        it('GET /companies/{id} non existing company fails', async () => {
             const response = await request(app)
                 .get('/companies/17')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(404)
@@ -167,10 +318,11 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeNull
         })
 
-        it('Get with negative id fails', async () => {
+        it('GET /companies/{id} with negative id fails', async () => {
             const response = await request(app)
                 .get('/companies/-1')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)
@@ -178,10 +330,11 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeNull
         })
 
-        it('Get with strange id fails', async () => {
+        it('GET /companies/{id} with strange id fails', async () => {
             const response = await request(app)
                 .get('/companies/foo')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)
@@ -193,6 +346,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             const response = await request(app)
                 .get('/companies/')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200)
             expect(response.status).toBe(200)
@@ -223,6 +377,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             const response = await request(app)
                 .get('/something')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(404, { status: 404, message: "not found", errors: [{ path: "/something", message: "not found" }] })
         })
@@ -230,21 +385,34 @@ describe('/companies/ HTTP integration Tests', async function () {
 
     describe('PUT /companies/{id}', async function () {
 
-        it('Get existing company succeeds', async () => {
+        it('GET /companies/{id} existing company succeeds', async () => {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyB)
             expect(response.headers['location']).toEqual('/companies/2')
             expect(response.headers['etag']).toEqual(etagB)
         })
 
-        it('Change name of existing company', async () => {
+        it('PUT /companies/{id} to change name of existing company', async () => {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
-                .set('location', '/companytypes/2')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
+                .set('if-match', etagB)
+                .send(companyBA)
+                .expect(401)
+            expect(response.body.status).toBe(401)
+            expect(response.body.message).toMatch("unauthorized")
+        })
+
+        it('PUT /companies/{id} to change name of existing company', async () => {
+            const response = await request(app)
+                .put('/companies/2')
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('if-match', etagB)
                 .send(companyBA)
                 .expect(204, '')
@@ -252,21 +420,22 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.headers['etag']).toEqual(etagBA)
         })
 
-        it('Get existing company succeeds after Name Change', async () => {
+        it('GET /companies/{id} existing company succeeds after Name Change', async () => {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA)
             expect(response.headers['location']).toEqual('/companies/2')
             expect(response.headers['etag']).toEqual(etagBA)
         })
 
-        it('PUT: add abbr to existing company succeeds', async () => {
+        it('PUT /companies/{id}: add abbr to existing company succeeds', async () => {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
-                .set('location', '/companytypes/2')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('if-match', etagBA)
                 .send(companyBA2)
                 .expect(204, '')
@@ -274,21 +443,22 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.headers['etag']).toEqual(etagBA2)
         })
 
-        it('Get existing company succeeds after abbr added.', async () => {
+        it('GET /companies/{id} existing company succeeds after abbr added.', async () => {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA2)
             expect(response.headers['location']).toEqual('/companies/2')
             expect(response.headers['etag']).toEqual(etagBA2)
         })
 
-        it('PUT: add www to existing company succeeds', async () => {
+        it('PUT /companies/{id}: add www to existing company succeeds', async () => {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
-                .set('location', '/companytypes/2')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('if-match', etagBA2)
                 .send(companyBA3)
                 .expect(204, '')
@@ -296,21 +466,22 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.headers['etag']).toEqual(etagBA3)
         })
 
-        it('Get existing company succeeds after www added.', async () => {
+        it('GET /companies/{id} existing company succeeds after www added.', async () => {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA3)
             expect(response.headers['location']).toEqual('/companies/2')
             expect(response.headers['etag']).toEqual(etagBA3)
         })
 
-        it('PUT: change companytype from existing company succeeds', async () => {
+        it('PUT /companies/{id}: change companytype from existing company succeeds', async () => {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
-                .set('location', '/companytypes/2')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('if-match', etagBA3)
                 .send(companyBA4)
                 .expect(204, '')
@@ -318,10 +489,11 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.headers['etag']).toEqual(etagBA4)
         })
 
-        it('Get existing company succeeds after companytype changed.', async () => {
+        it('GET /companies/{id} existing company succeeds after companytype changed.', async () => {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA4)
             expect(response.headers['location']).toEqual('/companies/2')
@@ -329,11 +501,11 @@ describe('/companies/ HTTP integration Tests', async function () {
         })
 
 
-        it('PUT: change companytype back from existing company succeeds', async () => {
+        it('PUT /companies/{id}: change companytype back from existing company succeeds', async () => {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
-                .set('location', '/companytypes/2')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('if-match', etagBA4)
                 .send(companyBA3)
                 .expect(204, '')
@@ -341,11 +513,11 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.headers['etag']).toEqual(etagBA3)
         })
 
-        it('PUT: remove www from existing company succeeds', async () => {
+        it('PUT /companies/{id}: remove www from existing company succeeds', async () => {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
-                .set('location', '/companytypes/2')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('if-match', etagBA3)
                 .send(companyBA2)
                 .expect(204, '')
@@ -353,21 +525,22 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.headers['etag']).toEqual(etagBA2)
         })
 
-        it('Get existing company succeeds after www removed', async () => {
+        it('GET /companies/{id} existing company succeeds after www removed', async () => {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA2)
             expect(response.headers['location']).toEqual('/companies/2')
             expect(response.headers['etag']).toEqual(etagBA2)
         })
 
-        it('PUT: remove abbr from existing company succeeds', async () => {
+        it('PUT /companies/{id}: remove abbr from existing company succeeds', async () => {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
-                .set('location', '/companytypes/2')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('if-match', etagBA2)
                 .send(companyBA)
                 .expect(204, '')
@@ -376,21 +549,22 @@ describe('/companies/ HTTP integration Tests', async function () {
 
         })
 
-        it('Get existing company succeeds after abbr removed', async () => {
+        it('GET /companies/{id} existing company succeeds after abbr removed', async () => {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA)
             expect(response.headers['location']).toEqual('/companies/2')
             expect(response.headers['etag']).toEqual(etagBA)
         })
 
-        it('Put company on changed dataset fails with error 412', async () => {
+        it('PUT /companies/{id} on changed dataset fails with error 412', async () => {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
-                .set('location', '/companytypes/2')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('if-match', etagBA3)
                 .send(companyBA2)
                 .expect(412)
@@ -398,11 +572,11 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.message).toMatch("Precondition failed")
         })
 
-        it('PUT: remove name form existing company fails', async () => {
+        it('PUT /companies/{id}: remove name form existing company fails', async () => {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
-                .set('location', '/companytypes/2')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('if-match', etagBA)
                 .send({})
                 .expect(400)
@@ -411,10 +585,11 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Get existing company succeeds after name removal failed', async () => {
+        it('GET /companies/{id} existing company succeeds after name removal failed', async () => {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA)
             expect(response.headers['location']).toEqual('/companies/2')
@@ -423,17 +598,40 @@ describe('/companies/ HTTP integration Tests', async function () {
     })
 
     describe('DELETE /companies/{id}', async function () {
-        it('Deleting existing company succeeds', async () => {
+
+        it('DELETE /companytypes/{id} with existing company fails', async () => {
+            const response = await request(app)
+                .delete('/companytypes/1')
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenAdmin}`)
+                .expect(409)
+            expect(response.body.status).toBe(409)
+            expect(response.body.message).toMatch("Conflict")
+        })
+
+        it('DELETE /companies/{id} existing company fails as guest', async () => {
             const response = await request(app)
                 .delete('/companies/1')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenGuest}`)
+                .expect(401)
+            expect(response.body.status).toBe(401)
+            expect(response.body.message).toMatch("unauthorized")
+        })
+
+        it('DELETE /companies/{id} existing company succeeds', async () => {          
+            const response = await request(app)
+                .delete('/companies/1')
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect(204, '')
         })
 
-        it('Deleting nonexisting item fails', async () => {
+        it('DELETE /companies/{id} nonexisting item fails', async () => {
             const response = await request(app)
                 .delete('/companies/1')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
@@ -441,10 +639,11 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeNull
         })
 
-        it('Deleting item with negative id fails', async () => {
+        it('DELETE /companies/{id} with negative id fails', async () => {
             const response = await request(app)
                 .delete('/companies/-1')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)
@@ -452,10 +651,11 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Deleting item with id 0 fails', async () => {
+        it('DELETE /companies/{id} with id 0 fails', async () => {
             const response = await request(app)
                 .delete('/companies/0')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)
@@ -463,10 +663,11 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Deleting strange id fails', async () => {
+        it('DELETE /companies/{id} with strange id fails', async () => {
             const response = await request(app)
                 .delete('/companies/foo')
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)

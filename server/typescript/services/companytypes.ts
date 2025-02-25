@@ -1,7 +1,7 @@
 import { error_formatter, NotFoundError } from './error.js'
 import { baseLogger } from "../logger.js"
 import { Companytype } from "../models/companytypes.js"
-import { CompanytypeServer } from "../controllers/companytypes/index.js"
+import { CompanytypeNorm } from "../controllers/companytypes/index.js"
 
 const logger = baseLogger.extend("services:companytypes")
 
@@ -15,7 +15,7 @@ export const getAllCompanytypes = () => new Promise<Companytype[]>(async functio
     }
 })
 
-export const addCompanytype = (companytype: CompanytypeServer) => new Promise<Companytype>(async function (resolve, reject) {
+export const addCompanytype = (companytype: CompanytypeNorm) => new Promise<Companytype>(async function (resolve, reject) {
     const newCompanytype = {
         name: companytype.name
     }
@@ -54,7 +54,7 @@ export const deleteCompanytypeById = (id: number) => new Promise<void>(async (re
         reject(error_formatter(500, err))
     }
 })
-export const putCompanytypeById = (id: number, companytype: CompanytypeServer) => new Promise<Companytype>(async (resolve, reject) => {
+export const putCompanytypeById = (id: number, companytype: CompanytypeNorm) => new Promise<Companytype>(async (resolve, reject) => {
     try {
         const oldCompanytype = await Companytype.findByPk(id)
         if (oldCompanytype === null) {

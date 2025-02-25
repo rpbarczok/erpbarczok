@@ -55,7 +55,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
         },
         "responses": {
             "201": {
-                "description": "Successfull operation",
+                "description": "Successful operation",
                 "headers": {
                     "location": {
                         "description": "Relative URI of the new entity",
@@ -72,7 +72,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                 }
             },
             "204_updated": {
-                "description": "Successfull operation",
+                "description": "Successful operation",
                 "headers": {
                     "location": {
                         "description": "Relative URI of the updated entity",
@@ -89,7 +89,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                 }
             },
             "204_success": {
-                "description": "Successfull operation"
+                "description": "Successful operation"
             },
             "400_validation_error": {
                 "description": "Bad request",
@@ -121,7 +121,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                     }
                 }
             },
-            "409_conflict": {
+            "409_conflict_error": {
                 "description": "Conflict: Used when you try to delete something, that is still referenced in der DB",
                 "content": {
                     "application/json": {
