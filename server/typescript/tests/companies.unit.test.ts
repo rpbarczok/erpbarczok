@@ -1,5 +1,5 @@
 import { expect } from 'expect'
-import './utils/testenv.js'
+import './utils/env.test.js'
 import { getAllCompanies, addCompany, getCompanyById, deleteCompanyById, putCompanyById } from '../services/companies.js'
 import {sequelize} from '../models/index.js'
 import { NotFoundError } from '../services/error.js'
