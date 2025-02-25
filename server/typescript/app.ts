@@ -25,7 +25,7 @@ export interface DataWithMeta<T> {
 
 const startApp = async () => {
     const app = express()
-
+    const initSequelize = sequelize
     const logger = baseLogger.extend('app')
     const morganLogger = baseLogger.extend('morgan')
     const controllers = apiControllers
@@ -80,11 +80,25 @@ window.scope = '${jsesc(process.env.SCOPE)}';
 
     // Swagger UI an der Stelle /docs einrichten
 
-    app.use('/docs', swaggerUi.serve, swaggerUi.setup(undefined, {
-        swaggerOptions: {
-            url: `/api-docs`
-        }
-    }))
+    app.use(
+        '/docs',
+        swaggerUi.serve,
+        swaggerUi.setup(
+            undefined,
+            {
+                swaggerOptions: {
+                    url: '/api-docs',
+                    oauth: {
+                        clientId: process.env.CLIENT_ID_SWAGGER,
+                        appName: 'Panda2 Swagger',
+                        additionalQueryStringParams: { audience: process.env.AUDIENCE },
+                        scopes: process.env.SCOPE?.split(" ") || ['openid', 'email'],
+                        usePkceWithAuthorizationCodeGrant: true
+                    }
+                }
+            }
+        )
+    )
 
     // Authentication
 
@@ -129,7 +143,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
                             return false
                         }
 
-                        if (userScopeArray.length === 0) { 
+                        if (userScopeArray.length === 0) {
                             console.log("No scopes provided, but scopes required: ", requiredScopesArray)
                             return false
                         }

@@ -14,7 +14,7 @@ const config = merge(common, {
         },
         proxy: [
             {
-                context: ['/companies', '/companytypes', '/api-docs/', '/config.js'],
+                context: ['/companies', '/companytypes', '/api-docs', '/docs', '/config.js'],
                 target: 'http://localhost:8080'
             }
         ]

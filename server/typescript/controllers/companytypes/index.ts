@@ -37,13 +37,15 @@ GET.apiSpec = {
     "summary": "Get a list of all company types",
     "description": "GET request on all companies",
     "operationId": "getCompanytypes",
-    "security": [],
+    "security": [
+        { "openId": [] }
+    ],
     "tags": [
         "Companytype"
     ],
     "responses": {
         "200": {
-            "description": "Successfull operation",
+            "description": "Successful operation",
             "content": {
                 "application/json": {
                     "schema": {

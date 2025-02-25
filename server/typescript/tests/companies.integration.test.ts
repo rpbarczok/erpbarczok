@@ -67,7 +67,7 @@ const expiredToken: string = jwt.sign(
     secret
 )
 
-const companyA = { "name": "Firma A", "companytype": "Kunde", "abbr": "FRA", "www": "www.firmaa.com", }
+const companyA = { "name": "Firma A", "companytype": "Kunde", "abbr": "FRA", "www": "www.firmaA.com", }
 const etagA = sha256(JSON.stringify(companyA))
 const companyB = { "name": "Firma B", "companytype": "Lieferant" }
 const etagB = sha256(JSON.stringify(companyB))

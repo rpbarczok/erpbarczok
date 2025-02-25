@@ -27,8 +27,8 @@ describe('Company Unit Tests', async function () {
         })
 
         it('addCompany works with name and abbr and returns /companies/1', async () => {
-            await expect(addCompany({ name: "Firma A", abbr: "FRA", www: "www.firmaa.com", companytype: "Kunde" })).resolves.toEqual(
-                expect.any(Company) && expect.objectContaining({ "id": 1, "name": "Firma A", "abbr": "FRA", "www": "www.firmaa.com", companytypeId: 1, createdAt: expect.any(Date), updatedAt: expect.any(Date) })
+            await expect(addCompany({ name: "Firma A", abbr: "FRA", www: "www.firmaA.com", companytype: "Kunde" })).resolves.toEqual(
+                expect.any(Company) && expect.objectContaining({ "id": 1, "name": "Firma A", "abbr": "FRA", "www": "www.firmaA.com", companytypeId: 1, createdAt: expect.any(Date), updatedAt: expect.any(Date) })
             )
         })
 
@@ -40,7 +40,7 @@ describe('Company Unit Tests', async function () {
 
         it('getAllCompanies returns 1 und 2', async () => {
             await expect(getAllCompanies()).resolves.toEqual([
-                expect.any(Company) && expect.objectContaining({ "id": 1, "name": "Firma A", "abbr": "FRA", "www": "www.firmaa.com", companytypeId: 1, createdAt: expect.any(Date), updatedAt: expect.any(Date) }),
+                expect.any(Company) && expect.objectContaining({ "id": 1, "name": "Firma A", "abbr": "FRA", "www": "www.firmaA.com", companytypeId: 1, createdAt: expect.any(Date), updatedAt: expect.any(Date) }),
                 expect.any(Company) && expect.objectContaining({ "id": 2, "name": "Firma B", "abbr": null, "www": null, companytypeId: 2, createdAt: expect.any(Date), updatedAt: expect.any(Date) })
             ])
         })
@@ -48,12 +48,12 @@ describe('Company Unit Tests', async function () {
 
     describe('Test getCompanyById(id)', function () {
 
-        it('getCompanyById(1) returns {"id": 1, "name": "Firma C", "abbr": "FRC", www: "www.firmaa.com", companytypeId: 1 }', async () => {
+        it('getCompanyById(1) returns {"id": 1, "name": "Firma C", "abbr": "FRC", www: "www.firmaA.com", companytypeId: 1 }', async () => {
             await expect(getCompanyById(1)).resolves.toEqual(
-                expect.any(Company) && expect.objectContaining({ "id": 1, "name": "Firma A", "abbr": "FRA", "www": "www.firmaa.com", companytypeId: 1, createdAt: expect.any(Date), updatedAt: expect.any(Date) }))
+                expect.any(Company) && expect.objectContaining({ "id": 1, "name": "Firma A", "abbr": "FRA", "www": "www.firmaA.com", companytypeId: 1, createdAt: expect.any(Date), updatedAt: expect.any(Date) }))
         })
 
-        it('getCompanyById(2) returns {"id": 2, "name": "Firma B", "abbr": null, www: null, CompantytypeId: 2 }', async () => {
+        it('getCompanyById(2) returns {"id": 2, "name": "Firma B", "abbr": null, www: null, CompanytypeId: 2 }', async () => {
             await expect(getCompanyById(2)).resolves.toEqual(
                 expect.any(Company) && expect.objectContaining({ "id": 2, "name": "Firma B", "abbr": null, "www": null, companytypeId: 2, createdAt: expect.any(Date), updatedAt: expect.any(Date) }))
         })
