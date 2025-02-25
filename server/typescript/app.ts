@@ -87,8 +87,10 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             undefined,
             {
                 swaggerOptions: {
+                    // https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/configuration.md
                     url: '/api-docs',
                     oauth: {
+                        // https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/oauth2.md
                         clientId: process.env.CLIENT_ID_SWAGGER,
                         appName: 'Panda2 Swagger',
                         additionalQueryStringParams: { audience: process.env.AUDIENCE },

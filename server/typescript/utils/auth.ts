@@ -1,9 +1,9 @@
 import { expressjwt, GetVerificationKey } from 'express-jwt'
 import jwks from 'jwks-rsa'
 import { ProxyAgent } from 'proxy-agent'
+import type {Algorithm} from 'jsonwebtoken'
 
-const algorithms_test = process.env.ALGORITHM_TEST?.split(' ') || ['HS256']
-const algorithms_prod = process.env.ALGORITHM_PROD?.split(' ') || ['RS256']   
+const algorithms = process.env.ALGORITHM?.split(' ') || ['RS256']
 
 const secret_prod = jwks.expressJwtSecret({
     cache: true,
@@ -20,6 +20,5 @@ export const  jwtCheck = expressjwt({
         secret: process.env.NODE_ENV==='test' ? secret_test : secret_prod, 
         audience: process.env.AUDIENCE, 
         issuer: process.env.IDP_SERVER,
-//@ts-ignore
-        algorithms: process.env.NODE_ENV==='test' ? algorithms_test : algorithms_prod,  
+        algorithms: algorithms as Algorithm[],  
         credentialsRequired: true })
