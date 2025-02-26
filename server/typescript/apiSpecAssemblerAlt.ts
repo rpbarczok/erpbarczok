@@ -1,5 +1,5 @@
 import path from 'node:path'
-import {baseLogger} from "./logger.js"
+import { baseLogger } from "./logger.js"
 import { apiSpec as apiSpecBase } from './openapi.js'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { Request, Response, RequestHandler, NextFunction } from 'express'
@@ -21,7 +21,7 @@ const logger = baseLogger.extend("apiSpecAssembler")
 
 const apiPaths = apiSpecBase.paths
 
-async function loadControllers() {
+export const loadControllers = async () => {
     const controllers: PathMap = {}
     for (const apiPath in apiPaths) {
         controllers[apiPath] = {}
@@ -35,8 +35,6 @@ async function loadControllers() {
         logger(`Loading controller ${controllerPath} for API path ${apiPath}`)
 
         const controller = await import(controllerPath)
-
-        pathLogger("successfully imported module.")
 
         if (controller.apiSpec as OpenAPIV3.PathItemObject) {
             Object.assign(apiSpecBase.paths[apiPath], controller.apiSpec)
@@ -55,5 +53,3 @@ async function loadControllers() {
     }
     return (controllers)
 }
-
-export const apiControllers = await loadControllers()

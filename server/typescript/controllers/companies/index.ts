@@ -3,7 +3,7 @@ import { getAllCompanies, addCompany } from '../../services/companies.js'
 import { DataWithMeta, Meta } from '../../app.js'
 import { Company } from '../../models/companies.js'
 import { sha256 } from '../../hasher.js'
-import { Operation } from '../../apiSpecAssembler.js'
+import { Operation } from '../../apiSpecAssemblerAlt.js'
 
 export interface CompanyNorm {
     name: string

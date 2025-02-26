@@ -3,7 +3,7 @@ import { sha256 } from '../../hasher.js'
 import { Companytype } from '../../models/companytypes.js'
 import { getAllCompanytypes, addCompanytype } from '../../services/companytypes.js'
 import { Request, Response } from 'express'
-import { Operation } from '../../apiSpecAssembler.js'
+import { Operation } from '../../apiSpecAssemblerAlt.js'
 
 export interface CompanytypeNorm {
     name: string

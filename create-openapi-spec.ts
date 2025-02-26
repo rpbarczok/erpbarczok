@@ -1,29 +1,11 @@
 import {apiSpec} from './server/typescript/openapi.js'
 import path from 'node:path'
 import fs from 'node:fs'
+import {openapiSpecAssembler} from './server/typescript/utils/apiSpecAssembler.js'
 
-const openapiSpecAssembler = async () => {
-    const apiPaths = apiSpec.paths
-    for (const apiPath in apiPaths) {
-        const controllerPath = apiPath.slice(-1) === '/' ?
-            path.join(import.meta.dirname, 'server/typescript/controllers', apiPath, 'index.ts') :
-            path.join(import.meta.dirname, 'server/typescript/controllers', apiPath) + '.ts'
-        const controller = await import(controllerPath)
-
-        if (controller.apiSpec) {
-            Object.assign(apiSpec.paths[apiPath], controller.apiSpec)
-        }
-
-        for (const apiVerbCap of ["GET", "PUT", "POST", "DELETE"]) {
-            const operation = controller[apiVerbCap]
-
-            if (operation && operation.apiSpec) {
-                const apiVerbMin = apiVerbCap.toLowerCase()
-                apiSpec.paths[apiPath][apiVerbMin] = operation.apiSpec
-            }
-        }
-    }
-
+const writeOpenApiSpec = async () => {
+    openapiSpecAssembler()
+    
     const target = path.join(import.meta.dirname, 'client/utils/openapi.ts')
     const content = `
     import {Document} from 'openapi-client-axios'

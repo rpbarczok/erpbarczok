@@ -6,7 +6,8 @@ import { apiSpec } from "./openapi.js"
 import swaggerUi from 'swagger-ui-express'
 import OpenApiValidator from 'express-openapi-validator'
 import { baseLogger } from './logger.js'
-import { apiControllers } from './apiSpecAssembler.js'
+import { loadControllers } from './utils/apiSpecAssembler.js'
+// import { loadControllers } from './apiSpecAssemblerAlt.js'
 import { sequelize } from './models/index.js'
 import path from 'path'
 import { jwtCheck } from './utils/auth.js'
@@ -28,7 +29,7 @@ const startApp = async () => {
     const initSequelize = sequelize
     const logger = baseLogger.extend('app')
     const morganLogger = baseLogger.extend('morgan')
-    const controllers = apiControllers
+    const controllers = await loadControllers()
     logger("All controllers:", controllers)
 
     app.use(morgan('dev', { stream: { write: msg => { morganLogger(msg); return true } } }))

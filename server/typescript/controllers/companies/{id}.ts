@@ -2,7 +2,7 @@ import { getCompanyById, deleteCompanyById, putCompanyById } from '../../service
 import { NotFoundError, error_formatter } from "../../services/error.js"
 import type { Request, Response } from 'express'
 import { CompanyNorm, normalizeCompany, createCompanyMeta } from './index.js'
-import { Operation } from '../../apiSpecAssembler.js'
+import { Operation } from '../../apiSpecAssemblerAlt.js'
 import { Meta } from '../../app.js'
 
 
