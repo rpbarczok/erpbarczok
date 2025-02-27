@@ -44,7 +44,7 @@ export function changedCompanyReducer(changedCompany: DataWithMeta<Company>, act
                 })
             }
             default: {
-                throw Error('Unknwon action: ' + action.type)
+                throw Error('Unknown action: ' + action.type)
             }
         }
     } else {

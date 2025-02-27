@@ -28,8 +28,8 @@ export const getControllerFiles = async () => {
     for (const apiPath in apiPaths) {
         controllerFiles[apiPath] = {}
         const controllerPath = apiPath.slice(-1) === '/' ?
-            path.join(import.meta.dirname, '..', 'controllers', apiPath, 'index.ts') :
-            path.join(import.meta.dirname, '..', 'controllers', apiPath) + '.ts'
+            path.join(import.meta.dirname, '..', 'controllers', apiPath, 'index.js') :
+            path.join(import.meta.dirname, '..', 'controllers', apiPath) + '.js'
 
         controllerFiles[apiPath] = await import(controllerPath)
     }

@@ -1,8 +1,8 @@
 import '../../style.css'
 import './admin.css'
-import {resourceList} from './resourcelist.jsx'
+import {resourceList} from './resourceList.js'
 import {Button, ButtonGroup} from 'react-bootstrap'
-import { Resource } from './admin.jsx'
+import { Resource } from './admin.js'
 
 interface LeftNavigationInterface {
     setResource: React.Dispatch<React.SetStateAction<Resource>>
