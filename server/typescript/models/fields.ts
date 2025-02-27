@@ -1,17 +1,15 @@
 import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize, NonAttribute } from "sequelize"
-import { Company } from "./companies.js"
 
-export class Companytype extends Model<InferAttributes<Companytype, {omit: 'company'}>, InferCreationAttributes<Companytype, {omit: 'company'}>> {
+export class Field extends Model<InferAttributes<Field>, InferCreationAttributes<Field>> {
     declare id: CreationOptional<number>
     declare name: string
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
-    declare company?: NonAttribute<Company>;
 }
 
-export const initializeCompanytype = (sequelize: Sequelize) => {
+export const initializeField = (sequelize: Sequelize) => {
 
-    Companytype.init({
+    Field.init({
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -20,15 +18,15 @@ export const initializeCompanytype = (sequelize: Sequelize) => {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
-            comment: 'Typ der Firma',
+            comment: 'Branchenname',
         },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
     },
         {
             sequelize,
-            modelName: "companytype",
-            tableName: "companytypes"
+            modelName: "field",
+            tableName: "fields"
         }
     )
 }

@@ -21,14 +21,19 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
             "name": "Company"
         },
         {
-            "name": "Companytype"
+            "name": "CompanyType"
+        },
+        {
+            "name": "Field"
         }
     ],
     "paths": {
         "/companies/": {},
         "/companies/{id}": {},
-        "/companytypes/": {},
-        "/companytypes/{id}": {}
+        "/company-types/": {},
+        "/company-types/{id}": {},
+        "/fields/": {},
+        "/fields/{id}": {}
     },
     "components": {
         "parameters": {
@@ -178,7 +183,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                     }
                 }
             },
-            "companytype": {
+            "companyType": {
                 "type": "object",
                 "required": [
                     "name"
@@ -188,7 +193,21 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                     "name": {
                         "type": "string",
                         "example": "Kunde",
-                        "maxLength": 20
+                        "maxLength": 32
+                    }
+                }
+            },
+            "field": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Lebensmittel",
+                        "maxLength": 32
                     }
                 }
             },
@@ -196,7 +215,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                 "type": "object",
                 "required": [
                     "name",
-                    "companytype"
+                    "companyType"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -213,7 +232,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                         "type": "string",
                         "example": "www.example.org"
                     },
-                    "companytype": {
+                    "companyType": {
                         "type": "string",
                         "example": "Kunde"
                     }
@@ -251,12 +270,17 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                     "name": "Firma A",
                     "abbr": "FRA",
                     "www": "www.example.de",
-                    "companytype": "Kunde"
+                    "companyType": "Kunde"
                 }
             },
-            "companytype": {
+            "companyType": {
                 "value": {
                     "name": "Kunde"
+                }
+            },
+            "field": {
+                "value": {
+                    "name": "Lebensmittel"
                 }
             },
             "error400": {

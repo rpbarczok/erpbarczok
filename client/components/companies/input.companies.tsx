@@ -1,19 +1,19 @@
 import { Row, Col, Form, ButtonGroup, Button, Modal } from "react-bootstrap"
-import { CompanytypesDropdown } from "./companytypesdropdown.companies.jsx"
+import { CompanyTypesDropdown } from "./companyTypesDropdown.companies.jsx"
 import { Company } from "./companies.jsx"
 import { DataWithMeta } from "components/forms.jsx"
-import { Companytype } from "components/admin/companytypes/companytypes.jsx"
+import { CompanyType } from "components/admin/companyTypes/companyTypes.jsx"
 import { useReducer, useState } from "react"
 import { changedCompanyReducer } from "./company.reducer.js"
 import { Notes } from "components/notifiers/notifiers.jsx"
 import { useNotifier } from "components/notifiers/useNotifier.js"
-import { client } from "utils/openapiclientaxios.js"
+import { client } from "utils/openAPIClientAxios.js"
 import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
 import { Note } from "components/notifiers/notifiers.jsx"
 import { useAuth } from "react-oidc-context"
 
 interface InputCompaniesComponent {
-    listCompanytypes: DataWithMeta<Companytype>[]
+    listCompanyTypes: DataWithMeta<CompanyType>[]
     company: DataWithMeta<Company>
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     addEditNote: (note: Note) => void
@@ -25,7 +25,7 @@ interface InputCompaniesComponent {
     removeEditNote?: (note: Note) => void // only for edit Company
 }
 
-export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setIsCompanyChanged, setIsNew, addEditNote, removeEditNote, editNotes, setShow, show }: InputCompaniesComponent) => {
+export const InputCompanies = ({ listCompanyTypes, company, onChangeActive, setIsCompanyChanged, setIsNew, addEditNote, removeEditNote, editNotes, setShow, show }: InputCompaniesComponent) => {
     const [addNotes, addAddNote, removeAddNote] = useNotifier()
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, company)
     const [validated, setValidated] = useState<boolean>(false)
@@ -97,9 +97,9 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
         changedCompanyDispatch({ type: 'wwwChange', newValue: e.target.value })
     }
 
-    const handleChangeCompanytype = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleChangeCompanyType = (e: React.ChangeEvent<HTMLSelectElement>) => {
         e.preventDefault()
-        changedCompanyDispatch({ type: 'companytypeChange', newValue: e.target.value })
+        changedCompanyDispatch({ type: 'companyTypeChange', newValue: e.target.value })
     }
 
     const handleClose: React.MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -135,10 +135,10 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
                     </Form.Group>
                 </Col>
                 <Col xs={12} sm={6}>
-                    <Form.Group controlId="companyCompanytype">
+                    <Form.Group controlId="companyCompanyType">
                         <Form.Label className="standardDesign">Firmenrolle</Form.Label>
-                        <Form.Select className="standardDesign" key="companyCompanytype" required value={changedCompany.data.companytype} onChange={handleChangeCompanytype} disabled={(auth.user?.scope as string).indexOf('user') === -1}>
-                            <CompanytypesDropdown listCompanytypes={listCompanytypes} />
+                        <Form.Select className="standardDesign" key="companyCompanyType" required value={changedCompany.data.companyType} onChange={handleChangeCompanyType} disabled={(auth.user?.scope as string).indexOf('user') === -1}>
+                            <CompanyTypesDropdown listCompanyTypes={listCompanyTypes} />
                         </Form.Select>
                     </Form.Group>
                 </Col>
@@ -179,7 +179,7 @@ export const InputCompanies = ({ listCompanytypes, company, onChangeActive, setI
             const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
                 company.data.abbr === changedCompany.data.abbr &&
                 company.data.www === changedCompany.data.www &&
-                company.data.companytype === changedCompany.data.companytype)
+                company.data.companyType === changedCompany.data.companyType)
 
             const handleUndo: React.MouseEventHandler<HTMLButtonElement> = (e) => {
                 e.preventDefault()

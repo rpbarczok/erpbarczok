@@ -1,10 +1,11 @@
 import {apiSpec} from './server/typescript/openapi.js'
 import path from 'node:path'
 import fs from 'node:fs'
-import {openapiSpecAssembler} from './server/typescript/utils/apiSpecAssembler.js'
+import {openapiSpecAssembler, getControllerFiles} from './server/typescript/utils/apiSpecAssembler.js'
 
 const writeOpenApiSpec = async () => {
-    openapiSpecAssembler()
+    const controllerFiles = await getControllerFiles()
+    await openapiSpecAssembler(controllerFiles)
     
     const target = path.join(import.meta.dirname, 'client/utils/openapi.ts')
     const content = `
@@ -29,4 +30,4 @@ const writeOpenApiSpec = async () => {
     })
 }
 
-await openapiSpecAssembler()
+await writeOpenApiSpec()

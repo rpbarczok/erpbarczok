@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react"
-import { client } from "utils/openapiclientaxios.js"
+import { client } from "utils/openAPIClientAxios.js"
 import { DataWithMeta } from "components/forms.jsx"
-import { Companytype } from "./companytypes.jsx"
+import { CompanyType } from "./companyTypes.js"
 import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
 import { useAuth } from "react-oidc-context"
 
-export function useCompanytypes(): [DataWithMeta<Companytype>[], React.Dispatch<React.SetStateAction<boolean>>] {
-    const [listCompanytypes, setListCompanytypes] = useState<DataWithMeta<Companytype>[]>([])
-    const [isCompanytypeChanged, setIsCompanytypeChanged] = useState<boolean>(true)
+export function useCompanyTypes(): [DataWithMeta<CompanyType>[], React.Dispatch<React.SetStateAction<boolean>>] {
+    const [listCompanyTypes, setListCompanyTypes] = useState<DataWithMeta<CompanyType>[]>([])
+    const [isCompanyTypeChanged, setIsCompanyTypeChanged] = useState<boolean>(true)
     const auth = useAuth()
     const token = auth.user?.access_token
 
 
     useEffect(() => {
-        if (isCompanytypeChanged) {
-            client.getCompanytypes(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
+        if (isCompanyTypeChanged) {
+            client.getCompanyTypes(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
                 .then(result => {
                     const newList = result?.data.map(row => {
-                        const newRow: DataWithMeta<Companytype> = {
+                        const newRow: DataWithMeta<CompanyType> = {
                             meta: {
                                 location: Number(removeBeforeLastDigits(row.meta.location)),
                                 etag: row.meta.etag
@@ -26,11 +26,11 @@ export function useCompanytypes(): [DataWithMeta<Companytype>[], React.Dispatch<
                         }
                         return (newRow)
                     })
-                    setListCompanytypes(newList)
+                    setListCompanyTypes(newList)
                 })
-            setIsCompanytypeChanged(false)
+            setIsCompanyTypeChanged(false)
         }
-    }, [isCompanytypeChanged])
+    }, [isCompanyTypeChanged])
 
-    return [listCompanytypes, setIsCompanytypeChanged]
+    return [listCompanyTypes, setIsCompanyTypeChanged]
 }

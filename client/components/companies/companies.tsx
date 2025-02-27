@@ -6,9 +6,9 @@ import { SearchCompanies } from './search.companies.jsx'
 import { ListCompanies } from './list.companies.jsx'
 import { useState, useEffect } from 'react'
 import { DataWithMeta } from '../forms.jsx'
-import { client } from '../../utils/openapiclientaxios.js'
+import { client } from '../../utils/openAPIClientAxios.js'
 import { removeBeforeLastDigits } from '../../utils/removeBeforeLastDigits.js'
-import { useCompanytypes } from 'components/admin/companytypes/useCompanytypes.js'
+import { useCompanyTypes } from 'components/admin/companyTypes/useCompanyTypes.js'
 import { InputCompanies } from './input.companies.jsx'
 import { Note } from 'components/notifiers/notifiers.jsx'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
@@ -16,17 +16,17 @@ import { useAuth } from 'react-oidc-context'
 
 export interface Company {
     "name": string
-    "companytype": string
+    "companyType": string
     "abbr"?: string
     "www"?: string
 }
 
 export interface ChangedCompanyAction {
-    type: 'nameChange' | 'abbrChange' | 'wwwChange' | 'companytypeChange' | 'companyChange'
+    type: 'nameChange' | 'abbrChange' | 'wwwChange' | 'companyTypeChange' | 'companyChange'
     newValue: string | DataWithMeta<Company>
 }
 
-export const blandCompany: DataWithMeta<Company> = { "meta": { "location": 0, "etag": "" }, "data": { "name": "", "companytype": "default", "abbr": "", "www": "" } }
+export const blandCompany: DataWithMeta<Company> = { "meta": { "location": 0, "etag": "" }, "data": { "name": "", "companyType": "default", "abbr": "", "www": "" } }
 
 export function Companies() {
 
@@ -35,7 +35,7 @@ export function Companies() {
     const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>(blandCompany)
     const [search, setSearch] = useState<string>("")
     const [isNew, setIsNew] = useState<boolean>(false)
-    const [listCompanytypes] = useCompanytypes()
+    const [listCompanyTypes] = useCompanyTypes()
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
     const auth = useAuth()
     const token = auth.user?.access_token
@@ -119,7 +119,7 @@ export function Companies() {
                 <Button className="standardDesign" variant="outline-primary" onClick={handleShow}>Firma hinzufügen</Button>
                 <InputCompanies
                     key={String(newCompanyClick)}
-                    listCompanytypes={listCompanytypes}
+                    listCompanyTypes={listCompanyTypes}
                     company={blandCompany}
                     setIsCompanyChanged={setIsCompanyChanged}
                     addEditNote={addEditNote}
@@ -166,7 +166,7 @@ export function Companies() {
                     ? <p>Keine Firma gefunden</p>
                     : <InputCompanies
                         key={activeCompany.meta.location}
-                        listCompanytypes={listCompanytypes}
+                        listCompanyTypes={listCompanyTypes}
                         company={activeCompany}
                         setIsCompanyChanged={setIsCompanyChanged}
                         editNotes={editNotes} addEditNote={addEditNote} removeEditNote={removeEditNote} />}

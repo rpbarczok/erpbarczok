@@ -1,29 +1,29 @@
 import React, { useState } from 'react'
 import '../../../style.css'
 import '../admin.css'
-import { Companytype } from './companytypes.jsx'
+import { Field } from './fields.jsx'
 import { DataWithMeta } from 'components/forms.jsx'
 import { Button, ButtonGroup, Col, ListGroup, Row } from "react-bootstrap"
 import { Pencil, Trash, Plus } from "react-bootstrap-icons"
-import { InputCompanytypes } from './input.companytypes.jsx'
-import { client } from 'utils/openapiclientaxios.js'
+import { InputFields } from './input.fields.jsx'
+import { client } from 'utils/openAPIClientAxios.js'
 import { Note } from 'components/notifiers/notifiers.js'
 import { useAuth } from 'react-oidc-context'
 
 
-interface ListCompanytypesComponent {
-    fullList: DataWithMeta<Companytype>[]
-    setIsCompanytypeChanged: React.Dispatch<React.SetStateAction<boolean>>
+interface ListFieldsComponent {
+    fullList: DataWithMeta<Field>[]
+    setIsFieldChanged: React.Dispatch<React.SetStateAction<boolean>>
     addMainNote: (note: Note) => void
 }
 
 interface ListItemComponent {
-    companytype: DataWithMeta<Companytype>
-    setIsCompanytypeChanged: React.Dispatch<React.SetStateAction<boolean>>
+    field: DataWithMeta<Field>
+    setIsFieldChanged: React.Dispatch<React.SetStateAction<boolean>>
     addMainNote: (note: Note) => void
 }
 
-const ListItem = ({ companytype, setIsCompanytypeChanged, addMainNote }: ListItemComponent) => {
+const ListItem = ({ field, setIsFieldChanged, addMainNote }: ListItemComponent) => {
     const auth = useAuth()
     const title = 'Neue Firmenrolle anlegen'
     const [show, setShow] = useState(false)
@@ -37,16 +37,16 @@ const ListItem = ({ companytype, setIsCompanytypeChanged, addMainNote }: ListIte
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         const token = auth.user?.access_token
-        const userConfirmed = window.confirm(`Willst du wirklich die Firmenrolle ${companytype.data.name} löschen?`)
+        const userConfirmed = window.confirm(`Willst du wirklich die Firmenrolle ${field.data.name} löschen?`)
         if (userConfirmed) {
-            client.deleteCompanytypeById(companytype.meta.location, null, { headers: { Authorization: `Bearer ${token}` }})
+            client.deleteFieldById(field.meta.location, null, { headers: { Authorization: `Bearer ${token}` }})
                 .then((res) => {
                     const note: Note = {
                         message: 'Die Firmenrolle wurde erfolgreich gelöscht.',
                         variant: 'info',
                     }
                     addMainNote(note)
-                    setIsCompanytypeChanged(true)
+                    setIsFieldChanged(true)
                 })
                 .catch(error => {
                     if (error.status === 409) {
@@ -70,18 +70,18 @@ const ListItem = ({ companytype, setIsCompanytypeChanged, addMainNote }: ListIte
         <ListGroup.Item className="standardDesign lineWithButton">
             <Row>
                 <Col xs={6}>
-                    <span>{companytype.meta.location === 0 ? title : companytype.data.name}</span>
+                    <span>{field.meta.location === 0 ? title : field.data.name}</span>
                 </Col>
                 <Col xs={6}>
                     <ButtonGroup className="function-button standardDesign">
-                        <Button className="standardDesign" variant="outline-dark" onClick={(e) => handleModal(e)}>{companytype.meta.location === 0 ? <Plus /> : <Pencil />}</Button>
-                        {companytype.meta.location === 0 ? '' : <Button className="standardDesign" variant="outline-dark" onClick={e => handleDelete(e)}><Trash /></Button>}
-                        <InputCompanytypes
-                            setIsCompanytypeChanged={setIsCompanytypeChanged}
+                        <Button className="standardDesign" variant="outline-dark" onClick={(e) => handleModal(e)}>{field.meta.location === 0 ? <Plus /> : <Pencil />}</Button>
+                        {field.meta.location === 0 ? '' : <Button className="standardDesign" variant="outline-dark" onClick={e => handleDelete(e)}><Trash /></Button>}
+                        <InputFields
+                            setIsFieldChanged={setIsFieldChanged}
                             show={show}
                             setShow={setShow}
-                            companytype={companytype}
-                            title={`Firmenrolle ${companytype.data.name}`}
+                            field={field}
+                            title={`Firmenrolle ${field.data.name}`}
                             addMainNote={addMainNote} />
                     </ButtonGroup>
                 </Col>
@@ -91,15 +91,15 @@ const ListItem = ({ companytype, setIsCompanytypeChanged, addMainNote }: ListIte
 }
 
 
-export const ListCompanytypes = ({ fullList, setIsCompanytypeChanged, addMainNote }: ListCompanytypesComponent) => {
+export const ListFields = ({ fullList, setIsFieldChanged, addMainNote }: ListFieldsComponent) => {
 
 
-    return fullList.map(companytype => {
+    return fullList.map(field => {
         return (
             <ListItem
-                companytype={companytype}
-                key={String(companytype.meta.location)}
-                setIsCompanytypeChanged={setIsCompanytypeChanged}
+                field={field}
+                key={String(field.meta.location)}
+                setIsFieldChanged={setIsFieldChanged}
                 addMainNote={addMainNote} />
         )
     })

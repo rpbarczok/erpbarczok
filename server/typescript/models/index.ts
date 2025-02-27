@@ -1,8 +1,9 @@
 import { Sequelize } from "sequelize"
 import { initializeCompany, Company } from './companies.js'
-import { initializeCompanytype, Companytype } from "./companytypes.js"
+import { initializeCompanyType, CompanyType } from "./companyTypes.js"
 import { baseLogger } from "../logger.js"
 import { setDefaultValues } from './default-values.js'
+import { Field, initializeField } from "./fields.js"
 
 const logger = baseLogger.extend('models:index')
 const loggerSequelize = logger.extend('sequelize')
@@ -20,13 +21,19 @@ export const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER,
     port: Number(process.env.DB_PORT)
 })
 
-initializeCompanytype(sequelize)
+initializeCompanyType(sequelize)
+initializeField(sequelize)
 initializeCompany(sequelize)
 
-Company.belongsTo(Companytype, {
+
+Company.belongsTo(CompanyType, {
     onDelete: 'NO ACTION'
 })
-Companytype.hasMany(Company)
+CompanyType.hasMany(Company)
+
+Company.belongsToMany(Field, {through: "company_fields", onDelete: "NO ACTION"})
+Field.belongsToMany(Company, {through: "company_fields", onDelete: "CASCADE"})
+
 
 try {
     await sequelize.sync({ alter: true })
@@ -37,13 +44,7 @@ try {
 }
 
 try {
-    const companytypes = await Companytype.findAll()
-    if (companytypes.length === 0) {
-        setDefaultValues()
-        logger("Default values set")
-    } else {
-        logger("Default values not set")
-    }
+    await setDefaultValues()
 } catch (err: any) {
     logger("Failed to set default values")
 }

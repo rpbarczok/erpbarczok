@@ -4,7 +4,7 @@ import { startingApp } from '../app.js'
 import { sequelize } from '../models/index.js'
 import { expect } from 'expect'
 import { App } from 'supertest/types.js'
-import { Companytype } from '../models/companytypes.js'
+import { CompanyType } from '../models/companyTypes.js'
 import { sha256 } from '../hasher.js'
 import jwt from 'jsonwebtoken'
 
@@ -67,17 +67,17 @@ const expiredToken: string = jwt.sign(
     secret
 )
 
-const companyA = { "name": "Firma A", "companytype": "Kunde", "abbr": "FRA", "www": "www.firmaA.com", }
+const companyA = { "name": "Firma A", "companyType": "Kunde", "abbr": "FRA", "www": "www.firmaA.com", }
 const etagA = sha256(JSON.stringify(companyA))
-const companyB = { "name": "Firma B", "companytype": "Lieferant" }
+const companyB = { "name": "Firma B", "companyType": "Lieferant" }
 const etagB = sha256(JSON.stringify(companyB))
-const companyBA = { "name": "Firma C", "companytype": "Lieferant" }
+const companyBA = { "name": "Firma C", "companyType": "Lieferant" }
 const etagBA = sha256(JSON.stringify(companyBA))
-const companyBA2 = { "name": "Firma C", "companytype": "Lieferant", "abbr": "FRC" }
+const companyBA2 = { "name": "Firma C", "companyType": "Lieferant", "abbr": "FRC" }
 const etagBA2 = sha256(JSON.stringify(companyBA2))
-const companyBA3 = { "name": "Firma C", "companytype": "Lieferant", "abbr": "FRC", "www": "www.example.de" }
+const companyBA3 = { "name": "Firma C", "companyType": "Lieferant", "abbr": "FRC", "www": "www.example.de" }
 const etagBA3 = sha256(JSON.stringify(companyBA3))
-const companyBA4 = { "name": "Firma C", "companytype": "Kunde", "abbr": "FRC", "www": "www.example.de" }
+const companyBA4 = { "name": "Firma C", "companyType": "Kunde", "abbr": "FRC", "www": "www.example.de" }
 const etagBA4 = sha256(JSON.stringify(companyBA4))
 
 describe('/companies/ HTTP integration Tests', async function () {
@@ -87,7 +87,7 @@ describe('/companies/ HTTP integration Tests', async function () {
     before(async function () {
         app = await startingApp
         await sequelize.sync({ force: true })
-        await Companytype.bulkCreate([
+        await CompanyType.bulkCreate([
             {
                 name: "Kunde"
             },
@@ -147,7 +147,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body).toEqual([])
         })
 
-        it('Post /company/ with name, companytype and abbr fails as Guest', async () => {
+        it('Post /company/ with name, companyType and abbr fails as Guest', async () => {
             const response = await request(app)
                 .post('/companies/')
                 .send(companyA)
@@ -160,7 +160,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Post /company/ with name, companytype and abbr succeeds as User', async () => {
+        it('Post /company/ with name, companyType and abbr succeeds as User', async () => {
             const response = await request(app)
                 .post('/companies/')
                 .send(companyA)
@@ -198,7 +198,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         it('Post /companies/ with to long abbr fails', async () => {
             const response = await request(app)
                 .post('/companies/')
-                .send({ "name": "Firma D", "abbr": "Firma", "companytype": "Kunde" })
+                .send({ "name": "Firma D", "abbr": "Firma", "companyType": "Kunde" })
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect('Content-Type', /json/)
@@ -211,7 +211,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         it('Post /companies/ with extra attributes fails', async () => {
             const response = await request(app)
                 .post('/companies/')
-                .send({ "name": "Firma D", "abbr": "FRD", "extra": "bla", "companytype": "Kunde" })
+                .send({ "name": "Firma D", "abbr": "FRD", "extra": "bla", "companyType": "Kunde" })
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect('Content-Type', /json/)
@@ -224,7 +224,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         it('Post /companies/ with invalid name type fails (array)', async () => {
             const response = await request(app)
                 .post('/companies/')
-                .send({ "name": {}, "companytype": "Kunde" })
+                .send({ "name": {}, "companyType": "Kunde" })
                 .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -237,7 +237,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         it('Post /companies/ with invalid abbr type fails (array)', async () => {
             const response = await request(app)
                 .post('/companies/')
-                .send({ "name": "Firma E", "abbr": {}, "companytype": "Kunde" })
+                .send({ "name": "Firma E", "abbr": {}, "companyType": "Kunde" })
                 .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -250,7 +250,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         it('Post /companies/ with invalid www type fails (array)', async () => {
             const response = await request(app)
                 .post('/companies/')
-                .send({ "name": "Firma E", "www": {}, "companytype": "Kunde" })
+                .send({ "name": "Firma E", "www": {}, "companyType": "Kunde" })
                 .set('Authorization', `Bearer ${validTokenUser}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -477,7 +477,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.headers['etag']).toEqual(etagBA3)
         })
 
-        it('PUT /companies/{id}: change companytype from existing company succeeds', async () => {
+        it('PUT /companies/{id}: change companyType from existing company succeeds', async () => {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
@@ -489,7 +489,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.headers['etag']).toEqual(etagBA4)
         })
 
-        it('GET /companies/{id} existing company succeeds after companytype changed.', async () => {
+        it('GET /companies/{id} existing company succeeds after companyType changed.', async () => {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
@@ -501,7 +501,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         })
 
 
-        it('PUT /companies/{id}: change companytype back from existing company succeeds', async () => {
+        it('PUT /companies/{id}: change companyType back from existing company succeeds', async () => {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
@@ -599,9 +599,9 @@ describe('/companies/ HTTP integration Tests', async function () {
 
     describe('DELETE /companies/{id}', async function () {
 
-        it('DELETE /companytypes/{id} with existing company fails', async () => {
+        it('DELETE /company-types/{id} with existing company fails', async () => {
             const response = await request(app)
-                .delete('/companytypes/1')
+                .delete('/company-types/1')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .expect(409)

@@ -1,47 +1,47 @@
 import { DataWithMeta, Meta } from '../../app.js'
 import { sha256 } from '../../hasher.js'
-import { Companytype } from '../../models/companytypes.js'
-import { getAllCompanytypes, addCompanytype } from '../../services/companytypes.js'
+import { CompanyType } from '../../models/companyTypes.js'
+import { getAllCompanyTypes, addCompanyType } from '../../services/companyTypes.js'
 import { Request, Response } from 'express'
-import { Operation } from '../../apiSpecAssemblerAlt.js'
+import { Operation } from '../../utils/apiSpecAssembler.js'
 
-export interface CompanytypeNorm {
+export interface CompanyTypeNorm {
     name: string
 }
 
-export function normalizeCompanytype(companytype: Companytype): CompanytypeNorm {
-    const result: CompanytypeNorm = { name: companytype.name }
+export function normalizeCompanyType(companyType: CompanyType): CompanyTypeNorm {
+    const result: CompanyTypeNorm = { name: companyType.name }
     return result
 }
 
-export function createCompanytypeMeta(companytype: Companytype): Meta {
-    const companytypeNorm: CompanytypeNorm = normalizeCompanytype(companytype)
-    return { "location": "/companytypes/" + companytype.id, "etag": sha256(JSON.stringify(companytypeNorm)) }
+export function createCompanyTypeMeta(companyType: CompanyType): Meta {
+    const companyTypeNorm: CompanyTypeNorm = normalizeCompanyType(companyType)
+    return { "location": "/company-types/" + companyType.id, "etag": sha256(JSON.stringify(companyTypeNorm)) }
 }
 
-export function combineCompanytypeWithMeta(companytype: Companytype): DataWithMeta<CompanytypeNorm> {
-    const data: CompanytypeNorm = normalizeCompanytype(companytype)
-    const meta = createCompanytypeMeta(companytype)
+export function combineCompanyTypeWithMeta(companyType: CompanyType): DataWithMeta<CompanyTypeNorm> {
+    const data: CompanyTypeNorm = normalizeCompanyType(companyType)
+    const meta = createCompanyTypeMeta(companyType)
     return { meta: meta, data: data }
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
-    const allCompanytypes = await getAllCompanytypes()
-    const allCompanytypesWithMeta: DataWithMeta<CompanytypeNorm>[] = allCompanytypes.map(row => combineCompanytypeWithMeta(row))
+    const allCompanyTypes = await getAllCompanyTypes()
+    const allCompanyTypesWithMeta: DataWithMeta<CompanyTypeNorm>[] = allCompanyTypes.map(row => combineCompanyTypeWithMeta(row))
     res
         .status(200)
-        .json(allCompanytypesWithMeta)
+        .json(allCompanyTypesWithMeta)
 }
 
 GET.apiSpec = {
     "summary": "Get a list of all company types",
     "description": "GET request on all companies",
-    "operationId": "getCompanytypes",
+    "operationId": "getCompanyTypes",
     "security": [
         { "openId": [] }
     ],
     "tags": [
-        "Companytype"
+        "CompanyType"
     ],
     "responses": {
         "200": {
@@ -62,17 +62,17 @@ GET.apiSpec = {
                                     "$ref": "#/components/schemas/meta"
                                 },
                                 "data": {
-                                    "$ref": "#/components/schemas/companytype"
+                                    "$ref": "#/components/schemas/companyType"
                                 }
                             }
                         }
                     },
                     "examples": {
-                        "example-of-three-companytypes": {
+                        "example-of-three-companyTypes": {
                             "value": [
                                 {
                                     "meta": {
-                                        "location": "/companytypes/1",
+                                        "location": "/companyTypes/1",
                                         "etag": "656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
                                     },
                                     "data": {
@@ -81,7 +81,7 @@ GET.apiSpec = {
                                 },
                                 {
                                     "meta": {
-                                        "location": "/companytypes/2",
+                                        "location": "/companyTypes/2",
                                         "etag": "656da9646b5a65673e5a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
                                     },
                                     "data": {
@@ -90,7 +90,7 @@ GET.apiSpec = {
                                 },
                                 {
                                     "meta": {
-                                        "location": "/companytypes/3",
+                                        "location": "/companyTypes/3",
                                         "etag": "656da9646b5a65673e4a1f504ac3d44262e2da0d939413619ef0fd33850f818a"
                                     },
                                     "data": {
@@ -115,17 +115,17 @@ GET.apiSpec = {
     }
 }
 export const POST: Operation = async (req: Request, res: Response) => {
-    const newCompanytype = await addCompanytype(req.body)
-    const newCompanytypeMeta = createCompanytypeMeta(newCompanytype)
+    const newCompanyType = await addCompanyType(req.body)
+    const newCompanyTypeMeta = createCompanyTypeMeta(newCompanyType)
     res
         .status(201)
-        .set(newCompanytypeMeta)
+        .set(newCompanyTypeMeta)
         .end()
 }
 POST.apiSpec = {
     "summary": "Add new company type",
     "description": "POST request for a new company type",
-    "operationId": "postCompanytype",
+    "operationId": "postCompanyType",
     "security": [
         {
             "openId": [
@@ -134,14 +134,14 @@ POST.apiSpec = {
         }
     ],
     "tags": [
-        "Companytype"
+        "CompanyType"
     ],
     "requestBody": {
         "description": "Add company type",
         "content": {
             "application/json": {
                 "schema": {
-                    "$ref": "#/components/schemas/companytype"
+                    "$ref": "#/components/schemas/companyType"
                 }
             }
         }

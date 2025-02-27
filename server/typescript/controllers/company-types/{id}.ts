@@ -1,41 +1,37 @@
-import { getCompanyById, deleteCompanyById, putCompanyById } from '../../services/companies.js'
-import { NotFoundError, error_formatter } from "../../services/error.js"
+import { getCompanyTypeById, deleteCompanyTypeById, putCompanyTypeById } from '../../services/companyTypes.js'
+import { error_formatter, NotFoundError } from "../../services/error.js"
 import type { Request, Response } from 'express'
-import { CompanyNorm, normalizeCompany, createCompanyMeta } from './index.js'
+import { CompanyTypeNorm, normalizeCompanyType, createCompanyTypeMeta } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { Meta } from '../../app.js'
-
-
+import { Company } from '../../models/companies.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
     try {
-        const company = await getCompanyById(Number(req.params.id))
-        const companyNorm: CompanyNorm = normalizeCompany(company)
-        const metaHeader: Meta = createCompanyMeta(company)
+        const companyType = await getCompanyTypeById(Number(req.params.id))
+        const companyTypeNorm: CompanyTypeNorm = normalizeCompanyType(companyType)
+        const companyTypeNormMeta: Meta = createCompanyTypeMeta(companyType)
         res
             .status(200)
-            .set(metaHeader)
-            .json(companyNorm)
+            .set(companyTypeNormMeta)
+            .json(companyTypeNorm)
     }
     catch (err) {
-        if (err instanceof NotFoundError) {
-            res.status(404).json({ "status": 404, "message": "not found" })
-        } else {
-            throw err
-        }
+        if (err instanceof NotFoundError) res.status(404).json({ "status": 404, "message": "not found" })
+        else throw err
     }
 }
 
 
 GET.apiSpec = {
-    "summary": "Get a certain company",
-    "description": "GET request on a certain company by id {id}",
-    "operationId": "getCompanyById",
+    "summary": "Get a certain companyType",
+    "description": "GET request on a certain companyType by id {id}",
+    "operationId": "getCompanyTypeById",
     "security": [
         { "openId": [] }
     ],
     "tags": [
-        "Company"
+        "CompanyType"
     ],
     "parameters": [
         {
@@ -48,18 +44,19 @@ GET.apiSpec = {
             "content": {
                 "application/json": {
                     "schema": {
-                        "$ref": "#/components/schemas/company"
+                        "$ref": "#/components/schemas/companyType"
+
                     },
                     "examples": {
-                        "company": {
-                            "$ref": "#/components/examples/company"
+                        "companyType": {
+                            "$ref": "#/components/examples/companyType"
                         }
                     }
                 }
             },
             "headers": {
                 "etag": {
-                    "description": "Etag of the requested company",
+                    "description": "Etag of the requested companyType",
                     "schema": {
                         "$ref": "#/components/schemas/etag"
                     }
@@ -77,33 +74,35 @@ GET.apiSpec = {
 
 export const DELETE: Operation = async (req: Request, res: Response) => {
     try {
-        await deleteCompanyById(Number(req.params.id))
-        res
-            .status(204)
-            .end()
+        const { count, rows } = await Company.findAndCountAll({
+            where: {
+                companyTypeId: Number(req.params.id)
+            }
+        })
+        if (count === 0) {
+            await deleteCompanyTypeById(Number(req.params.id))
+            res.status(204).end()
+        } else {
+            res.status(409).json({ status: 409, message: "Conflict" })
+        }
+
     }
     catch (err) {
-        if (err instanceof NotFoundError) {
-            res
-                .status(404)
-                .json({ status: 404, message: "not found" })
-        }
-        else {
-            throw err
-        }
+        if (err instanceof NotFoundError) res.status(404).json({ status: 404, message: "not found" })
+        else throw err
     }
 }
 DELETE.apiSpec = {
-    "summary": "Remove a certain company",
-    "description": "DELETE request on company by id {id}",
-    "operationId": "deleteCompanyById",
+    "summary": "Remove a certain company type",
+    "description": "DELETE request on company type by id {id}",
+    "operationId": "deleteCompanyTypeById",
     "security": [
         { "openId": [
-            "user"
+            "admin"
         ] }
     ],
     "tags": [
-        "Company"
+        "CompanyType"
     ],
     "parameters": [
         {
@@ -128,14 +127,15 @@ DELETE.apiSpec = {
 
 export const PUT: Operation = async (req: Request, res: Response) => {
     try {
-        const oldCompany = await getCompanyById(Number(req.params.id))
-        const oldCompanyWithMeta = createCompanyMeta(oldCompany)
-        if (oldCompanyWithMeta.etag === req.headers['if-match']) {
+        const dbCompanyType = await getCompanyTypeById(Number(req.params.id))
+        const dbCompanyTypeMeta = createCompanyTypeMeta(dbCompanyType)
+        if (dbCompanyTypeMeta.etag === req.headers['if-match']) {
             try {
-                const updatedCompany = await putCompanyById(Number(req.params.id), req.body)
-                const metaHeader = createCompanyMeta(updatedCompany)
-                res.status(204)
-                    .set(metaHeader)
+                const updatedCompanyType = await putCompanyTypeById(Number(req.params.id), req.body)
+                const companyTypeHeader = createCompanyTypeMeta(updatedCompanyType)
+                res
+                    .status(204)
+                    .set(companyTypeHeader)
                     .end()
             }
             catch (err) {
@@ -143,41 +143,41 @@ export const PUT: Operation = async (req: Request, res: Response) => {
                     .status(500)
                     .json(error_formatter(500, err))
             }
-        }
-        else {
+        } else {
             res
                 .status(412)
                 .json({ status: 412, message: "Precondition failed" })
         }
+
     }
     catch (err) {
         if (err instanceof NotFoundError) {
-            res
-                .status(404)
+            res.status(404)
                 .json({ status: 404, message: "not found" })
         } else {
             throw err
         }
     }
 }
+
 PUT.apiSpec = {
-    "summary": "Updates company with id {id}",
-    "description": "Put request on company by id {id}",
-    "operationId": "putCompanyById",
+    "summary": "Updates company type with id {id}",
+    "description": "Put request on company type by id {id}",
+    "operationId": "putCompanyTypeById",
     "security": [
         { "openId": [
-            "user"
+            "admin"
         ] }
     ],
     "tags": [
-        "Company"
+        "CompanyType"
     ],
     "requestBody": {
-        "description": "Add or update company",
+        "description": "Add companyType",
         "content": {
             "application/json": {
                 "schema": {
-                    "$ref": "#/components/schemas/company"
+                    "$ref": "#/components/schemas/companyType"
                 }
             }
         }

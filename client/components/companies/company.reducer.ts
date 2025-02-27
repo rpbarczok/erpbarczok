@@ -34,12 +34,12 @@ export function changedCompanyReducer(changedCompany: DataWithMeta<Company>, act
                         }
                     })
             }
-            case 'companytypeChange': {
+            case 'companyTypeChange': {
                 return ({
                     meta: changedCompany.meta,
                     data: {
                         ...changedCompany.data,
-                        "companytype": action.newValue,
+                        "companyType": action.newValue,
                     }
                 })
             }

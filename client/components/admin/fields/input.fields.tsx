@@ -2,34 +2,34 @@ import '../../../style.css'
 import '../admin.css'
 import { Form, Modal, Button } from "react-bootstrap"
 import React, { ChangeEvent, useState } from "react"
-import { Companytype } from './companytypes.jsx'
+import { Field } from './fields.jsx'
 import { DataWithMeta } from 'components/forms.jsx'
-import { client } from 'utils/openapiclientaxios.js'
+import { client } from 'utils/openAPIClientAxios.js'
 import { Note } from 'components/notifiers/notifiers.jsx'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
 import { useAuth } from 'react-oidc-context'
 
-interface InputCompanytypesInterface {
+interface InputFieldsInterface {
     show: boolean
     setShow: React.Dispatch<React.SetStateAction<boolean>>
-    companytype: DataWithMeta<Companytype>
+    field: DataWithMeta<Field>
     title: string
-    setIsCompanytypeChanged: React.Dispatch<React.SetStateAction<boolean>>
+    setIsFieldChanged: React.Dispatch<React.SetStateAction<boolean>>
     addMainNote: (note: Note) => void
 }
 
-export const InputCompanytypes = ({ companytype, title, show, setShow, setIsCompanytypeChanged, addMainNote }: InputCompanytypesInterface) => {
+export const InputFields = ({ field, title, show, setShow, setIsFieldChanged, addMainNote }: InputFieldsInterface) => {
 
-    const [changedCompanytype, setChangedCompanytype] = useState<DataWithMeta<Companytype>>(companytype)
+    const [changedField, setChangedField] = useState<DataWithMeta<Field>>(field)
     const [notes, addNote, removeNote] = useNotifier()
     const [validated, setValidated] = useState<boolean>(false)
     const auth = useAuth()
-    const isNotChanged: boolean = (companytype.data.name === changedCompanytype.data.name)
+    const isNotChanged: boolean = (field.data.name === changedField.data.name)
 
     const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
-        setChangedCompanytype({
-            meta: companytype.meta,
+        setChangedField({
+            meta: field.meta,
             data: { name: e.target.value }
         })
     }
@@ -38,7 +38,7 @@ export const InputCompanytypes = ({ companytype, title, show, setShow, setIsComp
         setValidated(false)
         setShow(false)
     }
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>, companytype: DataWithMeta<Companytype>) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>, field: DataWithMeta<Field>) => {
         const form = e.currentTarget
         e.preventDefault()
         e.stopPropagation()
@@ -46,38 +46,38 @@ export const InputCompanytypes = ({ companytype, title, show, setShow, setIsComp
         if (form.checkValidity() === false) {
             setValidated(true)
         } else {
-            if (changedCompanytype.meta.location === 0) {
-                client.postCompanytype(null, changedCompanytype.data, { headers: { Authorization: `Bearer ${token}` }})
+            if (changedField.meta.location === 0) {
+                client.postField(null, changedField.data, { headers: { Authorization: `Bearer ${token}` }})
                     .then((res) => {
                         const note: Note = {
-                            message: `Die neue Firmenrolle wurde erfolgreich abgespeichert.`,
+                            message: `Die neue Firmenbranche wurde erfolgreich abgespeichert.`,
                             variant: 'success'
                         }
                         addMainNote(note)
                         setShow(false)
-                        setIsCompanytypeChanged(true)
+                        setIsFieldChanged(true)
                     })
                     .catch(error => {
                         const note: Note = {
-                            message: `Fehler beim Speichern der neuen Firmenrolle: ${error.message}`,
+                            message: `Fehler beim Speichern der neuen Firmenbranche: ${error.message}`,
                             variant: 'danger',
                         }
                         addNote(note)
                     })
             } else {
-                client.putCompanytypeById({ id: changedCompanytype.meta.location, 'if-match': changedCompanytype.meta.etag }, changedCompanytype.data,{ headers: { Authorization: `Bearer ${token}` }})
+                client.putFieldById({ id: changedField.meta.location, 'if-match': changedField.meta.etag }, changedField.data,{ headers: { Authorization: `Bearer ${token}` }})
                     .then((res) => {
                         const note: Note = {
-                            message: `Die Firmenrolle wurde erfolgreich geändert.`,
+                            message: `Die Firmenbranche wurde erfolgreich geändert.`,
                             variant: 'success'
                         }
                         addMainNote(note)
                         setShow(false)
-                        setIsCompanytypeChanged(true)
+                        setIsFieldChanged(true)
                     })
                     .catch(error => {
                         const note: Note = {
-                            message: `Fehler beim Ändern der Firmenrolle: ${error.message}`,
+                            message: `Fehler beim Ändern der Firmenbranche: ${error.message}`,
                             variant: 'danger'
                         }
                         addNote(note)
@@ -88,21 +88,21 @@ export const InputCompanytypes = ({ companytype, title, show, setShow, setIsComp
 
     return (
         <Modal show={show} onHide={() => handleClose()}>
-            <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, changedCompanytype)}>
+            <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, changedField)}>
                 <Modal.Header closeButton>
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Group controlId="formFirmenname">
                         <Form.Label>Firmenname</Form.Label>
-                        <Form.Control required type="text" value={changedCompanytype.data.name} onChange={handleChangeName} />
+                        <Form.Control required type="text" value={changedField.data.name} onChange={handleChangeName} />
                         <Form.Control.Feedback type="invalid">
                             Bitte eine Firmenrolle eintragen.
                         </Form.Control.Feedback>
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    {changedCompanytype.data.name === '' || isNotChanged ? '' : <Button type="submit" variant='primary'>Abspeichern</Button>}
+                    {changedField.data.name === '' || isNotChanged ? '' : <Button type="submit" variant='primary'>Abspeichern</Button>}
                     <Button variant="secondary" onClick={() => handleClose()}>Abbrechen</Button>
                 </Modal.Footer>
             </Form>

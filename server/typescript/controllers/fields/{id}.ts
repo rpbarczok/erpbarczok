@@ -1,20 +1,19 @@
-import { getCompanytypeById, deleteCompanytypeById, putCompanytypeById } from '../../services/companytypes.js'
+import { getFieldById, deleteFieldById, putFieldById } from '../../services/fields.js'
 import { error_formatter, NotFoundError } from "../../services/error.js"
 import type { Request, Response } from 'express'
-import { CompanytypeNorm, normalizeCompanytype, createCompanytypeMeta } from './index.js'
-import { Operation } from '../../apiSpecAssemblerAlt.js'
+import { FieldNorm, normalizeField, createFieldMeta } from './index.js'
+import { Operation } from '../../utils/apiSpecAssembler.js'
 import { Meta } from '../../app.js'
-import { Company } from '../../models/companies.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
     try {
-        const companytype = await getCompanytypeById(Number(req.params.id))
-        const companytypeNorm: CompanytypeNorm = normalizeCompanytype(companytype)
-        const companytypeNormMeta: Meta = createCompanytypeMeta(companytype)
+        const field = await getFieldById(Number(req.params.id))
+        const fieldNorm: FieldNorm = normalizeField(field)
+        const fieldNormMeta: Meta = createFieldMeta(field)
         res
             .status(200)
-            .set(companytypeNormMeta)
-            .json(companytypeNorm)
+            .set(fieldNormMeta)
+            .json(fieldNorm)
     }
     catch (err) {
         if (err instanceof NotFoundError) res.status(404).json({ "status": 404, "message": "not found" })
@@ -24,14 +23,14 @@ export const GET: Operation = async (req: Request, res: Response) => {
 
 
 GET.apiSpec = {
-    "summary": "Get a certain companytype",
-    "description": "GET request on a certain companytype by id {id}",
-    "operationId": "getCompanytypeById",
+    "summary": "Get a certain field",
+    "description": "GET request on a certain field by id {id}",
+    "operationId": "getFieldById",
     "security": [
         { "openId": [] }
     ],
     "tags": [
-        "Companytype"
+        "Field"
     ],
     "parameters": [
         {
@@ -44,19 +43,19 @@ GET.apiSpec = {
             "content": {
                 "application/json": {
                     "schema": {
-                        "$ref": "#/components/schemas/companytype"
+                        "$ref": "#/components/schemas/field"
 
                     },
                     "examples": {
-                        "companytype": {
-                            "$ref": "#/components/examples/companytype"
+                        "field": {
+                            "$ref": "#/components/examples/field"
                         }
                     }
                 }
             },
             "headers": {
                 "etag": {
-                    "description": "Etag of the requested companytype",
+                    "description": "Etag of the requested field",
                     "schema": {
                         "$ref": "#/components/schemas/etag"
                     }
@@ -74,18 +73,8 @@ GET.apiSpec = {
 
 export const DELETE: Operation = async (req: Request, res: Response) => {
     try {
-        const { count, rows } = await Company.findAndCountAll({
-            where: {
-                companytypeId: Number(req.params.id)
-            }
-        })
-        if (count === 0) {
-            await deleteCompanytypeById(Number(req.params.id))
-            res.status(204).end()
-        } else {
-            res.status(409).json({ status: 409, message: "Conflict" })
-        }
-
+        await deleteFieldById(Number(req.params.id))
+        res.status(204).end()
     }
     catch (err) {
         if (err instanceof NotFoundError) res.status(404).json({ status: 404, message: "not found" })
@@ -93,16 +82,18 @@ export const DELETE: Operation = async (req: Request, res: Response) => {
     }
 }
 DELETE.apiSpec = {
-    "summary": "Remove a certain company type",
-    "description": "DELETE request on company type by id {id}",
-    "operationId": "deleteCompanytypeById",
+    "summary": "Remove a certain field",
+    "description": "DELETE request on field by id {id}",
+    "operationId": "deleteFieldById",
     "security": [
-        { "openId": [
-            "admin"
-        ] }
+        {
+            "openId": [
+                "admin"
+            ]
+        }
     ],
     "tags": [
-        "Companytype"
+        "Field"
     ],
     "parameters": [
         {
@@ -127,15 +118,15 @@ DELETE.apiSpec = {
 
 export const PUT: Operation = async (req: Request, res: Response) => {
     try {
-        const dbCompanytype = await getCompanytypeById(Number(req.params.id))
-        const dbCompanytypeMeta = createCompanytypeMeta(dbCompanytype)
-        if (dbCompanytypeMeta.etag === req.headers['if-match']) {
+        const dbField = await getFieldById(Number(req.params.id))
+        const dbFieldMeta = createFieldMeta(dbField)
+        if (dbFieldMeta.etag === req.headers['if-match']) {
             try {
-                const updatedCompanytype = await putCompanytypeById(Number(req.params.id), req.body)
-                const companytypeHeader = createCompanytypeMeta(updatedCompanytype)
+                const updatedField = await putFieldById(Number(req.params.id), req.body)
+                const fieldHeader = createFieldMeta(updatedField)
                 res
                     .status(204)
-                    .set(companytypeHeader)
+                    .set(fieldHeader)
                     .end()
             }
             catch (err) {
@@ -161,23 +152,25 @@ export const PUT: Operation = async (req: Request, res: Response) => {
 }
 
 PUT.apiSpec = {
-    "summary": "Updates company type with id {id}",
-    "description": "Put request on company type by id {id}",
-    "operationId": "putCompanytypeById",
+    "summary": "Updates field with id {id}",
+    "description": "Put request on field by id {id}",
+    "operationId": "putFieldById",
     "security": [
-        { "openId": [
-            "admin"
-        ] }
+        {
+            "openId": [
+                "admin"
+            ]
+        }
     ],
     "tags": [
-        "Companytype"
+        "Field"
     ],
     "requestBody": {
-        "description": "Add companytype",
+        "description": "Add field",
         "content": {
             "application/json": {
                 "schema": {
-                    "$ref": "#/components/schemas/companytype"
+                    "$ref": "#/components/schemas/field"
                 }
             }
         }

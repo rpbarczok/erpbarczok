@@ -16,5 +16,5 @@
     "components/**/*",
     "index.tsx",
     "types/declarations.d.ts"
-, "utils/openapiclientaxios.ts", "utils/serviceworker.ts"  ]
+, "utils/openAPIClientAxios.ts", "utils/serviceworker.ts"  ]
 }

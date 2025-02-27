@@ -21,7 +21,7 @@ interface VerbMap {
 const logger = baseLogger.extend("apiSpecAssembler")
 
 
-const getControllerFiles = async () => {
+export const getControllerFiles = async () => {
     const apiPaths = apiSpecBase.paths
     const controllerFiles: PathMap = {}
     logger('Importing controllers')
@@ -37,8 +37,7 @@ const getControllerFiles = async () => {
     return controllerFiles
 }
 
-export const openapiSpecAssembler = async () => {
-    const controllerFiles = await getControllerFiles()
+export const openapiSpecAssembler = async (controllerFiles: PathMap) => {
     logger('Assembling OpenAPI spec')
     for (const controllerPath in controllerFiles) {
         for (const controllerItem in controllerFiles[controllerPath]) {
@@ -54,8 +53,9 @@ export const openapiSpecAssembler = async () => {
 }
 
 export const loadControllers = async () => {
-    await openapiSpecAssembler()
     const controllerFiles = await getControllerFiles()
+    await openapiSpecAssembler(controllerFiles)
+
 
     const controllers: PathMap = {}
     for (const apiPath in apiSpecBase.paths) {

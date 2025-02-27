@@ -2,24 +2,24 @@ import '../../../style.css'
 import '../admin.css'
 import { ListGroup, Row } from 'react-bootstrap'
 import { DataWithMeta } from '../../forms.jsx'
-import { ListCompanytypes } from './list.comanytypes.jsx'
-import { useCompanytypes } from './useCompanytypes.js'
+import { ListCompanyTypes } from './list.companyTypes.jsx'
+import { useCompanyTypes } from './useCompanyTypes.js'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
 import { Notes } from 'components/notifiers/notifiers.jsx'
 
-export interface Companytype {
+export interface CompanyType {
     "name": string
 }
 
-export const blandCompanytype: DataWithMeta<Companytype> = {
+export const blandCompanyType: DataWithMeta<CompanyType> = {
     meta: { location: 0, etag: '' },
     data: { name: '' }
 }
 
-export const Companytypes = () => {
-    const [listCompanytypes, setIsCompanytypeChanged] = useCompanytypes()
+export const CompanyTypes = () => {
+    const [listCompanyTypes, setIsCompanyTypeChanged] = useCompanyTypes()
 
-    const fullList = listCompanytypes.concat([blandCompanytype])
+    const fullList = listCompanyTypes.concat([blandCompanyType])
     const [mainNotes, addMainNote, removeMainNote] = useNotifier()
 
     return (
@@ -30,9 +30,9 @@ export const Companytypes = () => {
             <Notes notes={mainNotes} removeNote={removeMainNote} />
             <Row>
                 <ListGroup className="standardDesign" key="company-list" >
-                    <ListCompanytypes
+                    <ListCompanyTypes
                         fullList={fullList}
-                        setIsCompanytypeChanged={setIsCompanytypeChanged}
+                        setIsCompanyTypeChanged={setIsCompanyTypeChanged}
                         addMainNote={addMainNote} />
                 </ListGroup >
             </Row>

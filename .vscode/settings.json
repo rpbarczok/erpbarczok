@@ -1,36 +1,10 @@
 {
     "cSpell.words": [
-        "APIV",
-        "Barczok",
-        "blablubber",
-        "buildclient",
-        "buildserver",
-        "buildx",
-        "companytype",
-        "companytypes",
-        "createtypes",
-        "dockerbuild",
-        "dotenvx",
-        "ecmascript",
-        "ecmatest",
-        "erpbarczok",
-        "etag",
-        "expressjwt",
-        "hstore",
-        "jwks",
-        "oidc",
-        "openapicmd",
-        "Pkce",
-        "postgres",
-        "purebuild",
-        "sequelize",
-        "starttestdb",
-        "stoptestdb",
-        "testdb",
-        "tstest"
+        "oidc"
     ],
     "cSpell.language": "en,de-DE",
     "cSpell.customDictionaries": {
+
 
     }
 }

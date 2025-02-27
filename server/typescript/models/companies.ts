@@ -1,15 +1,18 @@
 import { DataTypes, Model, CreationOptional, InferAttributes, InferCreationAttributes, Sequelize, ForeignKey, NonAttribute } from "sequelize"
-import { Companytype } from "./companytypes.js"
+import { CompanyType } from "./companyTypes.js"
+import { Field } from "./fields.js"
+
 
 export class Company extends Model<InferAttributes<Company>, InferCreationAttributes<Company>> {
     declare id: CreationOptional<number>
     declare name: string
     declare abbr: string | null
     declare www: string | null
-    declare companytypeId: ForeignKey<Companytype['id']>
+    declare companyTypeId: ForeignKey<CompanyType['id']>
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
-    declare companytype?: NonAttribute<Companytype>
+    declare companyType?: NonAttribute<CompanyType>
+    declare fields?: NonAttribute<Field[]>
 }
 
 export const initializeCompany = (sequelize: Sequelize) => {

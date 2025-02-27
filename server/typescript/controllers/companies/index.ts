@@ -3,24 +3,24 @@ import { getAllCompanies, addCompany } from '../../services/companies.js'
 import { DataWithMeta, Meta } from '../../app.js'
 import { Company } from '../../models/companies.js'
 import { sha256 } from '../../hasher.js'
-import { Operation } from '../../apiSpecAssemblerAlt.js'
+import { Operation } from '../../utils/apiSpecAssembler.js'
 
 export interface CompanyNorm {
     name: string
     abbr?: string | null
     www?: string | null
-    companytype: string
+    companyType: string
 }
 
 export interface CompanyFK {
     name: string
     abbr?: string | null
     www?: string | null
-    companytypeId: number
+    companyTypeId: number
 }
 
 export function normalizeCompany(company: Company) {
-    const result: CompanyNorm = { name: company.name, companytype: company.companytype!.name}
+    const result: CompanyNorm = { name: company.name, companyType: company.companyType!.name}
     if (company.abbr) {
         result.abbr = company.abbr
     }
@@ -95,7 +95,7 @@ GET.apiSpec = {
                                     "data": {
                                         "name": "Firma A",
                                         "abbr": "FRA",
-                                        "companytype": "Kunde"
+                                        "companyType": "Kunde"
                                     }
                                 },
                                 {
@@ -106,7 +106,7 @@ GET.apiSpec = {
                                     "data": {
                                         "name": "Firma B",
                                         "abbr": "FRB",
-                                        "companytype": "Lieferant"
+                                        "companyType": "Lieferant"
                                     }
                                 },
                                 {
@@ -117,7 +117,7 @@ GET.apiSpec = {
                                     "data": {
                                         "name": "Firma C",
                                         "abbr": "FRC",
-                                        "companytype": "Spediteur"
+                                        "companyType": "Spediteur"
                                     }
                                 }
                             ]

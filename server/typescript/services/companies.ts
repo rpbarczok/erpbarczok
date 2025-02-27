@@ -1,11 +1,11 @@
 import { error_formatter, NotFoundError } from './error.js'
 import { Company } from '../models/companies.js'
-import { Companytype } from '../models/companytypes.js'
+import { CompanyType } from '../models/companyTypes.js'
 import { CompanyNorm, CompanyFK } from '../controllers/companies/index.js'
 
 export const getAllCompanies = () => new Promise<Company[]>(async function (resolve, reject) {
     try {
-        const companies = await Company.findAll({ include: Companytype, order: [['name', 'ASC']] })
+        const companies = await Company.findAll({ include: CompanyType, order: [['name', 'ASC']] })
         resolve(companies)
     }
     catch (err) {
@@ -14,12 +14,12 @@ export const getAllCompanies = () => new Promise<Company[]>(async function (reso
 })
 
 export const addCompany = (company: CompanyNorm) => new Promise<Company>(async function (resolve, reject) {
-    const companytype = await Companytype.findOne({ where: { name: company.companytype } })
-    if (companytype) {
-        const newCompany = { name: company.name, companytypeId: companytype.id, abbr: company.abbr, www: company.www }
+    const companyType = await CompanyType.findOne({ where: { name: company.companyType } })
+    if (companyType) {
+        const newCompany = { name: company.name, companyTypeId: companyType.id, abbr: company.abbr, www: company.www }
         try {
             const addedCompany = await Company.create(newCompany)
-            const addedCompanyInclude = await Company.findByPk(addedCompany.id, {include: Companytype})
+            const addedCompanyInclude = await Company.findByPk(addedCompany.id, {include: CompanyType})
             if (addedCompanyInclude) {
                 resolve(addedCompanyInclude)
             } else {
@@ -35,7 +35,7 @@ export const addCompany = (company: CompanyNorm) => new Promise<Company>(async f
 
 export const getCompanyById = (id: number) => new Promise<Company>(async function (resolve, reject) {
     try {
-        const company = await Company.findByPk(id, { include: Companytype })
+        const company = await Company.findByPk(id, { include: CompanyType })
         if (company === null) {
             reject(new NotFoundError())
         } else {
@@ -62,20 +62,20 @@ export const deleteCompanyById = (id: number) => new Promise<void>(async (resolv
 })
 export const putCompanyById = (id: number, company: CompanyNorm) => new Promise<Company>(async (resolve, reject) => {
     try {
-        if (company.name && company.companytype) {
-            const oldCompany = await Company.findByPk(id, { include: Companytype })
+        if (company.name && company.companyType) {
+            const oldCompany = await Company.findByPk(id, { include: CompanyType })
             if (oldCompany === null) {
                 reject(new NotFoundError())
             } else {
-                const companytype = await Companytype.findOne({ where: { name: company.companytype } })
-                if (companytype) {
-                    const data: CompanyFK = { name: company.name, companytypeId: companytype.id }
+                const companyType = await CompanyType.findOne({ where: { name: company.companyType } })
+                if (companyType) {
+                    const data: CompanyFK = { name: company.name, companyTypeId: companyType.id }
                     company.abbr ? data.abbr = company.abbr : data.abbr = null
                     company.www ? data.www = company.www : data.www = null
                     const updatedRow = await Company.update(data, { returning: true, where: { id: id } })
                     if (updatedRow.length === 2) {
                         const updatedCompany = updatedRow[1]
-                        const updatedCompanyInclude = await Company.findByPk(updatedCompany[0].id, {include: Companytype})
+                        const updatedCompanyInclude = await Company.findByPk(updatedCompany[0].id, {include: CompanyType})
                         if (updatedCompanyInclude) {
                             resolve(updatedCompanyInclude)
                         } else {
