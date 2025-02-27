@@ -16,7 +16,7 @@ export function SearchCompanies({search, setSearch}: SearchCompaniesInterface) {
 
     return (
         <Form >
-            <Form.Label className="standardDesign">Suche (Firmenname, Kürzel)</Form.Label>
+            <Form.Label className="standardDesign d-none d-sm-block">Suche (Firmenname, Kürzel)</Form.Label>
             <Form.Control type="text" className="standardDesign" value={search} onChange={handleSearch} />
         </Form>
     ) 

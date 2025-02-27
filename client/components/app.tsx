@@ -8,7 +8,7 @@ import { Login } from './login/login.jsx'
 import { useAuth } from 'react-oidc-context'
 
 export function App() {
-    const startPage: FormTab = { name: "Admin", id: "adminForm" }
+    const startPage: FormTab = { name: "Stammdaten", id: "stammForm" }
     const [activeForm, setActiveForm] = useState<FormTab>(startPage)
     const [tabs, setTabs] = useState<FormTab[]>([startPage])
     const auth = useAuth()
