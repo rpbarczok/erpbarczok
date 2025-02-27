@@ -1,9 +1,9 @@
 import '../../style.css'
 import './companies.css'
-import { Button, ButtonGroup, Col, Row } from 'react-bootstrap'
+import { Button, ButtonGroup, Col, ListGroup, Row } from 'react-bootstrap'
 import { Heading } from '../headings/heading.jsx'
 import { SearchCompanies } from './search.companies.jsx'
-import { ListCompanies } from './list.companies.jsx'
+import { ListCompanies, ListCompaniesXS } from './list.companies.jsx'
 import { useState, useEffect } from 'react'
 import { DataWithMeta } from '../forms.jsx'
 import { client } from '../../utils/openAPIClientAxios.js'
@@ -114,6 +114,7 @@ export function Companies() {
             }
         }
 
+
         return (
             <ButtonGroup vertical>
                 <Button className="standardDesign" variant="outline-primary" onClick={handleShow}>Firma hinzufügen</Button>
@@ -143,13 +144,24 @@ export function Companies() {
                     <SearchCompanies search={search} setSearch={setSearch} />
                 </Col>
                 <Col xs={12} sm={7} md={5}>
-                    <ListCompanies
-                        search={search}
-                        activeCompany={activeCompany}
-                        onChangeActive={handleChangeActive}
-                        isNew={isNew} setIsNew={setIsNew}
-                        listCompanies={listCompanies}
-                    />
+                    <ListGroup className="scrollBox suchListe standardDesign d-none d-sm-block" id="company-list">
+                        <ListCompanies
+                            search={search}
+                            activeCompany={activeCompany}
+                            onChangeActive={handleChangeActive}
+                            isNew={isNew} setIsNew={setIsNew}
+                            listCompanies={listCompanies}
+                        />
+                    </ListGroup>
+                    <ListGroup className="scrollBoxXS standardDesign d-sm-none" id="company-list">
+                        <ListCompaniesXS
+                            search={search}
+                            activeCompany={activeCompany}
+                            onChangeActive={handleChangeActive}
+                            isNew={isNew} setIsNew={setIsNew}
+                            listCompanies={listCompanies}
+                        />
+                    </ListGroup>
                 </Col>
                 <Col className="d-none d-md-block" md={3}>
                     {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonGeneral /> : ''}
@@ -157,11 +169,11 @@ export function Companies() {
                 <Col>
                 </Col>
             </Row>
-            <Row className="d-md-none">
+                        <Row className="d-none d-sm-block d-md-none">
                 {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonGeneral /> : ''}
             </Row>
-            <hr />
-            <Row>
+            <hr className="d-none d-sm-block" />
+            <Row className="d-none d-sm-block">
                 {activeCompany.meta.location === 0
                     ? <p>Keine Firma gefunden</p>
                     : <InputCompanies

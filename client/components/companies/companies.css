@@ -12,8 +12,16 @@
     border: 1px solid lightgrey;
 }
 
+.scrollBoxXS {
+    font-size: small;
+    overflow-y: scroll;
+    border: 1px solid lightgrey;
+    margin: 1lh 0 0 0;
+}
+
+
 .suchListe {
-    height: 5lh;
+    height: 10lh;
 }
 
 .suchFirmenFlexBox {

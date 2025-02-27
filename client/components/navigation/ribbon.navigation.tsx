@@ -88,20 +88,6 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
         }        
     }
 
-    // return (
-    //     <Navbar key="navbar" expand="xl" className='bg-body-secondary justify-content-start'>
-    //         <Navbar.Toggle />
-    //         <Navbar.Collapse>
-    //             <Groups />
-    //         </Navbar.Collapse>
-    //         <Navbar.Text className="ms-auto ribbonDesign">
-    //             <NavDropdown key="account" title={auth.user?.profile?.email}>
-    //                 <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
-    //             </NavDropdown>
-    //         </Navbar.Text>
-    //     </Navbar>
-    // )
-
     return (
         <Navbar key="navbar" expand="xl" className='bg-body-secondary justify-content-start'>
             <Navbar.Toggle />
