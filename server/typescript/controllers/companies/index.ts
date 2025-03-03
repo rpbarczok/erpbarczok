@@ -4,6 +4,9 @@ import { DataWithMeta, Meta } from '../../app.js'
 import { Company } from '../../models/companies.js'
 import { sha256 } from '../../hasher.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
+import { baseLogger } from '../../logger.js'
+
+const logger = baseLogger.extend('controllers:companies')
 
 export interface CompanyNorm {
     name: string
@@ -42,8 +45,9 @@ export function createCompanyMeta(company: Company): Meta {
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
-    // @ts-ignore
+
     const allCompanies = await getAllCompanies()
+    logger("getAllCompanies: %o.", allCompanies)
     const allCompaniesWithMeta: DataWithMeta<CompanyNorm>[] = allCompanies.map((row) => (combineCompanyWithMeta(row)))
     res
         .status(200)
