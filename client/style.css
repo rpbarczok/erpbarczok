@@ -1,14 +1,6 @@
-.function-button {
-    float: right;
-}
-
  .standardDesign {
     padding: 0px 2px 1px 3px;
 }
- 
- .defaultRow {
-     padding: 1px 0 1px 0;
- }
  
  .standardDesignLabel {
     padding: 0.25em 0 0 1.5em;

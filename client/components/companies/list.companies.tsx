@@ -112,7 +112,7 @@ export function ListCompaniesXS({ search, activeCompany, onChangeActive, isNew, 
     } else {
         return listFiltered.map((element) => {
             return (
-                <ListGroup.Item className="standardDesign lineWithButton" key={element.meta.location} >
+                <ListGroup.Item className="standardDesign" key={element.meta.location} >
                     <Row>
                         <Col>
                             <span onClick={() => onChangeActive(element.meta.location)}>{element.data.name + (element.data.abbr ? " (" + element.data.abbr + ")" : "")}</span>

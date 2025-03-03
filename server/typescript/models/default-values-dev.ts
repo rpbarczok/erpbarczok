@@ -21,6 +21,24 @@ export const setDefaultValuesDev = async () => {
                 abbr: "HFT",
                 www: "www.haselnuesse-schnell-da-org.org",
                 companyTypeId: 3
+            },
+            {
+                name: "Emils Kreuzfahrten",
+                abbr: "EKF",
+                www: "www.piratenleben.org",
+                companyTypeId: 1
+            },
+            {
+                name: "Schienentransport Mammut",
+                abbr: "STM",
+                www: "www.alpenroute.org",
+                companyTypeId: 3
+            },
+            {
+                name: "Pedros Erdnussfarm",
+                abbr: "PEF",
+                www: "www.erdnussbaeume.org",
+                companyTypeId: 2
             }
         ])
     }

@@ -17,12 +17,10 @@ export function Navigation({ tabs, setTabs, activeForm, setActiveForm }: Navigat
 
     return (
         <>
-            <Row>
-                <RibbonNavigation
-                    tabs={tabs} setTabs={setTabs}
-                    setActiveForm={setActiveForm}
-                />
-            </Row>
+            <RibbonNavigation
+                tabs={tabs} setTabs={setTabs}
+                setActiveForm={setActiveForm}
+            />
             <Row>
                 <TabsNavigation
                     tabs={tabs} setTabs={setTabs}

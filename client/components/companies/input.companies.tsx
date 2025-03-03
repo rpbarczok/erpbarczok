@@ -112,29 +112,29 @@ export const InputCompanies = ({ listCompanyTypes, company, onChangeActive, setI
 
     const input = (
         <>
-            <Row className="defaultRow">
-                <Col xs={12} sm={8} lg={7}>
+            <Row>
+                <Col xs={12} sm={8} lg={12} xxl={8}>
                     <Form.Group controlId="companyName">
                         <Form.Label className="standardDesign">Firmenname</Form.Label>
                         <Form.Control required className="standardDesign" type="text" value={changedCompany.data.name} onChange={handleChangeName} disabled={(auth.user?.scope as string).indexOf('user') === -1} />
                         <Form.Control.Feedback type="invalid">Bitte einen Firmennamen eingeben!</Form.Control.Feedback>
                     </Form.Group>
                 </Col>
-                <Col xs={12} sm={4} lg={5}>
+                <Col xs={12} sm={4} lg={12} xxl={4}>
                     <Form.Group controlId="companyAbbr">
                         <Form.Label className="standardDesign">Kürzel (max 3 Zeichen)</Form.Label >
                         <Form.Control maxLength={3} type="text" className="standardDesign" value={changedCompany.data.abbr} onChange={handleChangeAbbr} disabled={(auth.user?.scope as string).indexOf('user') === -1} />
                     </Form.Group>
                 </Col>
             </Row>
-            <Row className="defaultRow">
-                <Col xs={12} sm={6}>
+            <Row>
+                <Col xs={12} sm={6} lg={12} xxl={6}>
                     <Form.Group controlId="companyWWW">
                         <Form.Label className="standardDesign">Internetadresse</Form.Label >
                         <Form.Control type="text" className="standardDesign" value={changedCompany.data.www} onChange={handleChangeWWW} disabled={(auth.user?.scope as string).indexOf('user') === -1} />
                     </Form.Group>
                 </Col>
-                <Col xs={12} sm={6}>
+                <Col xs={12} sm={6} lg={12} xxl={6}>
                     <Form.Group controlId="companyCompanyType">
                         <Form.Label className="standardDesign">Firmenrolle</Form.Label>
                         <Form.Select className="standardDesign" key="companyCompanyType" required value={changedCompany.data.companyType} onChange={handleChangeCompanyType} disabled={(auth.user?.scope as string).indexOf('user') === -1}>
@@ -190,13 +190,13 @@ export const InputCompanies = ({ listCompanyTypes, company, onChangeActive, setI
             return (
                 <>
                     <Row className="d-none d-sm-block">
-                        <ButtonGroup className="function-button standardDesign">
+                        <ButtonGroup className="standardDesign float-end" >
                             <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Abspeichern</Button>
                             <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
                         </ButtonGroup>
                     </Row>
                     <Row className="d-block d-sm-none">
-                        <ButtonGroup className="function-button standardDesign" vertical>
+                        <ButtonGroup className="standardDesign float-end" vertical>
                             <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Abspeichern</Button>
                             <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
                         </ButtonGroup>
@@ -207,27 +207,24 @@ export const InputCompanies = ({ listCompanyTypes, company, onChangeActive, setI
 
         return (
             <>
-                <Row id="edit">
-                    <Col id='company' xl={5} lg={6} xs={12}>
-                        <Row id="edit">
-                            <Col id='company' xl={5} lg={7} xs={12}></Col>
-                            <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
+                <Row>
+                    <Col id='company' sm={12} lg={6} xl={5} >
 
-                                {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonEdit /> : ''}
+                        <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
 
-                                <Row>
-                                    <Col className="standardDesign">
-                                        <Notes notes={editNotes} removeNote={removeEditNote} />
-                                    </Col>
-                                </Row>
-                                {input}
-                            </Form>
-                        </Row>
+                            {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonEdit /> : ''}
+                            <Row>
+                                <Col className="standardDesign">
+                                    <Notes notes={editNotes} removeNote={removeEditNote} />
+                                </Col>
+                            </Row>
+                            {input}
+                        </Form>
                     </Col>
-                    <Col>
+                    <Col sm={12} lg={6} xl={7}>
                         CompanyAddition
                     </Col>
-                </Row >
+                </Row>
             </>
         )
     }

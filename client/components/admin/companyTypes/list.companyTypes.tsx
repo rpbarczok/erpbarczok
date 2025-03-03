@@ -67,13 +67,13 @@ const ListItem = ({ companyType, setIsCompanyTypeChanged, addMainNote }: ListIte
     }
 
     return (
-        <ListGroup.Item className="standardDesign lineWithButton">
+        <ListGroup.Item className="standardDesign">
             <Row>
                 <Col xs={6}>
                     <span>{companyType.meta.location === 0 ? title : companyType.data.name}</span>
                 </Col>
                 <Col xs={6}>
-                    <ButtonGroup className="function-button standardDesign">
+                    <ButtonGroup className="standardDesign float-end">
                         <Button className="standardDesign" variant="outline-dark" onClick={(e) => handleModal(e)}>{companyType.meta.location === 0 ? <Plus /> : <Pencil />}</Button>
                         {companyType.meta.location === 0 ? '' : <Button className="standardDesign" variant="outline-dark" onClick={e => handleDelete(e)}><Trash /></Button>}
                         <InputCompanyTypes

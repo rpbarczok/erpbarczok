@@ -1,37 +1,12 @@
-.heightAddressAnsprechpartner {
-    height: 15em;
-}
-
-.suche {
-    padding: 10px;
+.scrollBoxXS {
+    font-size: small;
+    overflow-y: scroll;
+    border: 1px solid lightgrey;
 }
 
 .scrollBox {
     font-size: small;
     overflow-y: scroll;
     border: 1px solid lightgrey;
-}
-
-.scrollBoxXS {
-    font-size: small;
-    overflow-y: scroll;
-    border: 1px solid lightgrey;
-    margin: 1lh 0 0 0;
-}
-
-
-.suchListe {
     height: 10lh;
-}
-
-.suchFirmenFlexBox {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.heightBranchen {
-    height: 6em;
-    width: 100%
 }

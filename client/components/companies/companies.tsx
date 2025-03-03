@@ -1,6 +1,6 @@
 import '../../style.css'
 import './companies.css'
-import { Button, ButtonGroup, Col, ListGroup, Row } from 'react-bootstrap'
+import { Button, ButtonGroup, Col, ListGroup, Row, Container } from 'react-bootstrap'
 import { Heading } from '../headings/heading.jsx'
 import { SearchCompanies } from './search.companies.jsx'
 import { ListCompanies, ListCompaniesXS } from './list.companies.jsx'
@@ -39,6 +39,8 @@ export function Companies() {
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
     const auth = useAuth()
     const token = auth.user?.access_token
+    const [show, setShow] = useState<boolean>(false)
+    const [newCompanyClick, setNewCompanyClick] = useState<number>(0)
 
     useEffect(() => {
         if (companyIsChanged) {
@@ -80,16 +82,12 @@ export function Companies() {
         }
     }
 
+    const handleShow = () => {
+        setNewCompanyClick(newCompanyClick + 1)
+        setShow(true)
+    }
 
     const ButtonGeneral = () => {
-        const [show, setShow] = useState<boolean>(false)
-        const [newCompanyClick, setNewCompanyClick] = useState<number>(0)
-
-        const handleShow = () => {
-            setNewCompanyClick(newCompanyClick + 1)
-            setShow(true)
-        }
-
         const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
             e.preventDefault()
             const userConfirmed = window.confirm(`Willst du die Firma '${activeCompany.data.name}' wirklich löschen?`)
@@ -136,32 +134,34 @@ export function Companies() {
 
     return (
         <>
-            <Row id="heading">
-                <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
-            </Row>
-            <Row className="suche">
+            <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
+            <Row style={{ padding: '10px' }}>
                 <Col xs={12} sm={5} md={4}>
-                    <SearchCompanies search={search} setSearch={setSearch} />
+                        <SearchCompanies search={search} setSearch={setSearch} />
                 </Col>
                 <Col xs={12} sm={7} md={5}>
-                    <ListGroup className="scrollBox suchListe standardDesign d-none d-sm-block" id="company-list">
-                        <ListCompanies
-                            search={search}
-                            activeCompany={activeCompany}
-                            onChangeActive={handleChangeActive}
-                            isNew={isNew} setIsNew={setIsNew}
-                            listCompanies={listCompanies}
-                        />
-                    </ListGroup>
-                    <ListGroup className="scrollBoxXS standardDesign d-sm-none" id="company-list">
-                        <ListCompaniesXS
-                            search={search}
-                            activeCompany={activeCompany}
-                            onChangeActive={handleChangeActive}
-                            isNew={isNew} setIsNew={setIsNew}
-                            listCompanies={listCompanies}
-                        />
-                    </ListGroup>
+                    <Row>
+                        <ListGroup className="scrollBox standardDesign d-none d-sm-block" id="company-list">
+                            <ListCompanies
+                                search={search}
+                                activeCompany={activeCompany}
+                                onChangeActive={handleChangeActive}
+                                isNew={isNew} setIsNew={setIsNew}
+                                listCompanies={listCompanies}
+                            />
+                        </ListGroup>
+                    </Row>
+                    <Row>
+                        <ListGroup className="scrollBoxXS standardDesign d-sm-none" id="company-list">
+                            <ListCompaniesXS
+                                search={search}
+                                activeCompany={activeCompany}
+                                onChangeActive={handleChangeActive}
+                                isNew={isNew} setIsNew={setIsNew}
+                                listCompanies={listCompanies}
+                            />
+                        </ListGroup>
+                    </Row>
                 </Col>
                 <Col className="d-none d-md-block" md={3}>
                     {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonGeneral /> : ''}
@@ -169,11 +169,11 @@ export function Companies() {
                 <Col>
                 </Col>
             </Row>
-                        <Row className="d-none d-sm-block d-md-none">
+            <Row className="d-none d-sm-block d-md-none">
                 {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonGeneral /> : ''}
             </Row>
             <hr className="d-none d-sm-block" />
-            <Row className="d-none d-sm-block">
+            <Row className="d-none d-sm-flex h-100">
                 {activeCompany.meta.location === 0
                     ? <p>Keine Firma gefunden</p>
                     : <InputCompanies
