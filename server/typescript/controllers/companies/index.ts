@@ -47,7 +47,7 @@ export function createCompanyMeta(company: Company): Meta {
 export const GET: Operation = async (req: Request, res: Response) => {
 
     const allCompanies = await getAllCompanies()
-    logger("getAllCompanies: %o.", allCompanies)
+    logger("getAllCompanies: %j.", allCompanies)
     const allCompaniesWithMeta: DataWithMeta<CompanyNorm>[] = allCompanies.map((row) => (combineCompanyWithMeta(row)))
     res
         .status(200)
