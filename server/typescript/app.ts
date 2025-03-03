@@ -117,7 +117,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
                     const apiPath = apiRoute.openApiRoute.substring(apiRoute.basePath.length)
                     const apiVerb = apiRoute.method
                     const operationHandler = controllers[apiPath][apiVerb]
-                    logger(`apiPath: ${apiPath}, apiVerb: ${apiVerb}, OperationHandler: ${operationHandler}`)
+                    logger(`apiPath: ${apiPath}, apiVerb: ${apiVerb}`)
                     return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
                         try {
                             return await operationHandler(req, res, next)
@@ -168,7 +168,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
     app.set("json spaces", 2)
     app.use((err: any, req: Request, res: Response, next: NextFunction) => {
         const status = err.status || 500
-
+        logger("Error %o.", err)
         if (process.env.NODE_ENV === 'production' && status === 500) {
             res.status(status).json({
                 status,

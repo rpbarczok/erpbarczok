@@ -8,7 +8,6 @@ const logger = baseLogger.extend("services:companyTypes")
 export const getAllCompanyTypes = () => new Promise<CompanyType[]>(async function (resolve, reject) {
     try {
         const companyTypes = await CompanyType.findAll({ order: [['name', 'ASC']] })
-        console.log('getAllCompanyTypes')
         resolve(companyTypes)
     }
     catch (err) {
