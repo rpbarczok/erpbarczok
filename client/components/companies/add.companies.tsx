@@ -62,6 +62,7 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
 
     const handleShow = () => {
         setNewCompanyClick(newCompanyClick - 1)
+        changedCompanyDispatch({ type: "companyChange", newValue: emptyCompany })
         setShow(true)
     }
 

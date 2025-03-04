@@ -86,8 +86,8 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
     }
 
     return (
-        <Col >
-            <Row className="flex-grow-1">
+        <Col>
+            <Row>
                 <Col id='company' sm={12} lg={6} xl={5} >
                     <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
                         {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonEdit /> : ''}

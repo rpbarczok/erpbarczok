@@ -40,6 +40,7 @@ export const XSFormCompanies = ({ search, setSearch, filteredCompanies, activeCo
                 </Col>
             </Row >
             <Row className="flex-grow-1">
+                <Col xs={12}>
                     <XSListCompanies
                         filteredCompanies={filteredCompanies}
                         changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
@@ -47,6 +48,7 @@ export const XSFormCompanies = ({ search, setSearch, filteredCompanies, activeCo
                         companyTypesList={companyTypesList}
                         setIsCompanyChanged={setIsCompanyChanged}
                     />
+                </Col>
             </Row>
         </>
     )

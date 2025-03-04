@@ -1,6 +1,6 @@
 import { DataWithMeta } from "components/forms.jsx"
 import { Company } from "./companies.jsx"
-import { Button, Col, Container, ListGroup } from "react-bootstrap"
+import { Button, Col, Container, ListGroup, Row } from "react-bootstrap"
 import { XSEditCompanies } from "./xs.edit.companies.jsx"
 import { useState } from "react"
 import { ChangedCompanyAction } from "./company.reducer.js"
@@ -35,7 +35,7 @@ export const XSListCompanies = ({ filteredCompanies, changedCompany, changedComp
         } else {
             return filteredCompanies.map((element) => {
                 return (
-                    <ListGroup.Item className="standardDesign" key={element.meta.location} onClick={(e) => handleOpenModal(e, element.meta.location)}>
+                    <ListGroup.Item key={element.meta.location} onClick={(e) => handleOpenModal(e, element.meta.location)}>
                         {element.data.name + (element.data.abbr ? " (" + element.data.abbr + ")" : "")}
                     </ListGroup.Item>
                 )
