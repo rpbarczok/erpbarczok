@@ -29,7 +29,7 @@ export function App() {
                     activeForm={activeForm} setActiveForm={setActiveForm}
                 />
                 <Forms activeForm={activeForm} />
-                <Row className="sticky-bottom bg-body-secondary" >
+                <Row className="bg-body-secondary" >
                     <hr/>
                     <Col  >
                         <div className="float-end">made by rpbarczok</div>

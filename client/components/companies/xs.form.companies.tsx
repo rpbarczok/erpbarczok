@@ -39,7 +39,7 @@ export const XSFormCompanies = ({ search, setSearch, filteredCompanies, activeCo
                     <XSSearchCompanies search={search} setSearch={setSearch} />
                 </Col>
             </Row >
-            <Row className="flex-grow-1">
+            <Row className="flex-grow-1 scrollBoxXS" style={{ marginTop: "10px" }}>
                 <Col xs={12}>
                     <XSListCompanies
                         filteredCompanies={filteredCompanies}
