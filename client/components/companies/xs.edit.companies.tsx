@@ -55,7 +55,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                 .catch(function (error) {
                     const note: Note = {
                         variant: 'danger',
-                        message: `Fehler beim Abspeichern der Firmendaten: ${error.message}`,
+                        message: `Fehler beim Speichern der Firmendaten: ${error.message}`,
                     }
                     addErrorNote(note)
                 })
@@ -90,7 +90,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                 <Modal.Footer>
                     <ButtonGroup>
                         <Button variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Undo</Button>
-                        <Button type="submit" variant='outline-primary' disabled={isNotChanged}>Abspeichern</Button>
+                        <Button type="submit" variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
                         <DeleteCompanies
                             company={changedCompany}
                             setIsCompanyChanged={setIsCompanyChanged}

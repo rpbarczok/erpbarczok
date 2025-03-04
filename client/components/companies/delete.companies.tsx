@@ -43,5 +43,5 @@ export const DeleteCompanies = ({company, setIsCompanyChanged, addNote, setShow 
 
         }
     }
-    return <Button className="standardDesign" variant="outline-danger" onClick={handleDelete}>Firma löschen</Button>
+    return <Button className="standardDesign" variant="outline-danger" onClick={handleDelete}>Löschen</Button>
 }

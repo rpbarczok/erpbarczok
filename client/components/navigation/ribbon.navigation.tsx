@@ -90,7 +90,7 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
     }
 
     return (
-        <>
+        <div className="sticky-top">
             <Row>
                 <Navbar key="navbar-lg" className='bg-body-secondary d-none d-xl-block'>
                     <Nav>
@@ -119,6 +119,6 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
                     </NavDropdown>
                 </Col>
             </Row>
-        </>
+        </div>
     )
 } 

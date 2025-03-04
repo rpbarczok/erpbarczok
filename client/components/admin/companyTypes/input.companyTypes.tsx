@@ -102,7 +102,7 @@ export const InputCompanyTypes = ({ companyType, title, show, setShow, setIsComp
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    {changedCompanyType.data.name === '' || isNotChanged ? '' : <Button type="submit" variant='primary'>Abspeichern</Button>}
+                    {changedCompanyType.data.name === '' || isNotChanged ? '' : <Button type="submit" variant='primary'>Speichern</Button>}
                     <Button variant="secondary" onClick={() => handleClose()}>Abbrechen</Button>
                 </Modal.Footer>
             </Form>

@@ -102,7 +102,7 @@ export const InputFields = ({ field, title, show, setShow, setIsFieldChanged, ad
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    {changedField.data.name === '' || isNotChanged ? '' : <Button type="submit" variant='primary'>Abspeichern</Button>}
+                    {changedField.data.name === '' || isNotChanged ? '' : <Button type="submit" variant='primary'>Speichern</Button>}
                     <Button variant="secondary" onClick={() => handleClose()}>Abbrechen</Button>
                 </Modal.Footer>
             </Form>

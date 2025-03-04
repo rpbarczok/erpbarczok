@@ -48,7 +48,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
                 .catch(function (error) {
                     const note: Note = {
                         variant: 'danger',
-                        message: `Fehler beim Abspeichern der Firmendaten: ${error.message}`,
+                        message: `Fehler beim Speichern der Firmendaten: ${error.message}`,
                     }
                     addNote(note)
                 })
@@ -71,13 +71,13 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
             <>
                 <Row className="d-none d-sm-block">
                     <ButtonGroup className="standardDesign float-end" >
-                        <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Abspeichern</Button>
+                        <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Speichern</Button>
                         <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
                     </ButtonGroup>
                 </Row>
                 <Row className="d-block d-sm-none">
                     <ButtonGroup className="standardDesign float-end" vertical>
-                        <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Abspeichern</Button>
+                        <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Speichern</Button>
                         <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
                     </ButtonGroup>
                 </Row>

@@ -8,7 +8,7 @@ import { Note, Notes } from "components/notifiers/notifiers.jsx"
 import { useNotifier } from "components/notifiers/useNotifier.js"
 import { DataWithMeta } from "components/forms.jsx"
 import { CompanyType } from "components/admin/companyTypes/companyTypes.jsx"
-import { Button, Form, Modal } from "react-bootstrap"
+import { Button, ButtonGroup, Form, Modal } from "react-bootstrap"
 import { InputCompanies } from "./input.companies.jsx"
 
 interface AddCompanyComponent {
@@ -76,7 +76,7 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
 
     return (
         <>
-            <Button className="standardDesign" variant="outline-primary" onClick={handleShow}>Firma hinzufügen</Button>
+            <Button className="standardDesign" variant="outline-primary" onClick={handleShow}>Hinzufügen</Button>
             <Modal
                 key={newCompanyClick}
                 show={show}
@@ -91,14 +91,16 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
                         <Notes notes={addNotes} removeNote={removeAddNote} />
                         <Modal.Body>
                             <InputCompanies
-                            companyTypesList={companyTypesList}
-                            changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
+                                companyTypesList={companyTypesList}
+                                changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                             />
                         </Modal.Body>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button type="submit" variant='primary'>Abspeichern</Button>
-                        <Button variant="secondary" onClick={(e) => handleClose(e)}>Abbrechen</Button>
+                        <ButtonGroup className="w-100">
+                            <Button type="submit" variant='outline-primary'>Speichern</Button>
+                            <Button variant="outline-secondary" onClick={(e) => handleClose(e)}>Abbrechen</Button>
+                        </ButtonGroup>
                     </Modal.Footer>
                 </Form>
             </Modal>
