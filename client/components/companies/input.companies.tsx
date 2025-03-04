@@ -1,86 +1,19 @@
-import { Row, Col, Form, ButtonGroup, Button, Modal } from "react-bootstrap"
-import { CompanyTypesDropdown } from "./companyTypesDropdown.companies.jsx"
-import { Company } from "./companies.jsx"
+import { Col, Form, Row } from "react-bootstrap"
+import { useAuth } from "react-oidc-context"
+import { ChangedCompanyAction } from "./company.reducer.js"
+import { Company } from "./companies.js"
 import { DataWithMeta } from "components/forms.jsx"
 import { CompanyType } from "components/admin/companyTypes/companyTypes.jsx"
-import { useReducer, useState } from "react"
-import { changedCompanyReducer } from "./company.reducer.js"
-import { Notes } from "components/notifiers/notifiers.jsx"
-import { useNotifier } from "components/notifiers/useNotifier.js"
-import { client } from "utils/openAPIClientAxios.js"
-import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
-import { Note } from "components/notifiers/notifiers.jsx"
-import { useAuth } from "react-oidc-context"
+import { CompanyTypesDropdown } from "./companyTypesDropdown.companies.jsx"
 
 interface InputCompaniesComponent {
-    listCompanyTypes: DataWithMeta<CompanyType>[]
-    company: DataWithMeta<Company>
-    setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
-    addEditNote: (note: Note) => void
-    setIsNew?: React.Dispatch<React.SetStateAction<boolean>> // only for add Company
-    onChangeActive?: (active: number) => void // only for add Company
-    setShow?: React.Dispatch<React.SetStateAction<boolean>> // only for add Company
-    show?: boolean // only for add Company
-    editNotes?: Note[] // only for edit Company
-    removeEditNote?: (note: Note) => void // only for edit Company
+    companyTypesList: DataWithMeta<CompanyType>[]
+    changedCompany: DataWithMeta<Company>
+    changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const InputCompanies = ({ listCompanyTypes, company, onChangeActive, setIsCompanyChanged, setIsNew, addEditNote, removeEditNote, editNotes, setShow, show }: InputCompaniesComponent) => {
-    const [addNotes, addAddNote, removeAddNote] = useNotifier()
-    const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, company)
-    const [validated, setValidated] = useState<boolean>(false)
+export const InputCompanies = ({companyTypesList, changedCompanyDispatch, changedCompany}:InputCompaniesComponent) => {
     const auth = useAuth()
-    const token = auth.user?.access_token
-
-    const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e: React.FormEvent<HTMLFormElement>) => {
-        const form = e.currentTarget
-        e.preventDefault()
-        e.stopPropagation()
-        if (form.checkValidity() === false) {
-            setValidated(true)
-        } else {
-            if (onChangeActive && setIsNew && setShow) {
-                client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
-                    .then((res) => {
-                        onChangeActive(Number(removeBeforeLastDigits(res.headers.location)))
-                        const note: Note = {
-                            message: `Neue Firma erfolgreich erstellt.`,
-                            variant: 'success',
-                        }
-                        addEditNote(note)
-                        setIsCompanyChanged(true)
-                        setIsNew(true)
-                        setShow(false)
-                    })
-                    .catch((error) => {
-                        const note: Note = {
-                            variant: 'danger',
-                            message: `Fehler bei Erstellung der neuen Firma: ${error.message}`,
-                        }
-                        addAddNote(note)
-                    })
-            } else {
-                client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
-                    changedCompany.data,
-                    { headers: { Authorization: `Bearer ${token}` } })
-                    .then((res) => {
-                        const note: Note = {
-                            variant: 'success',
-                            message: `Firma erfolgreich überarbeitet.`,
-                        }
-                        addEditNote(note)
-                        setIsCompanyChanged(true)
-                    })
-                    .catch(function (error) {
-                        const note: Note = {
-                            variant: 'danger',
-                            message: `Fehler beim Abspeichern der Firmendaten: ${error.message}`,
-                        }
-                        addEditNote(note)
-                    })
-            }
-        }
-    }
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
@@ -102,15 +35,7 @@ export const InputCompanies = ({ listCompanyTypes, company, onChangeActive, setI
         changedCompanyDispatch({ type: 'companyTypeChange', newValue: e.target.value })
     }
 
-    const handleClose: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-        e.preventDefault()
-        if (setShow) {
-            setValidated(false)
-            setShow(false)
-        }
-    }
-
-    const input = (
+    return (
         <>
             <Row>
                 <Col xs={12} sm={8} lg={12} xxl={8}>
@@ -138,94 +63,11 @@ export const InputCompanies = ({ listCompanyTypes, company, onChangeActive, setI
                     <Form.Group controlId="companyCompanyType">
                         <Form.Label className="standardDesign">Firmenrolle</Form.Label>
                         <Form.Select className="standardDesign" key="companyCompanyType" required value={changedCompany.data.companyType} onChange={handleChangeCompanyType} disabled={(auth.user?.scope as string).indexOf('user') === -1}>
-                            <CompanyTypesDropdown listCompanyTypes={listCompanyTypes} />
+                            <CompanyTypesDropdown companyTypesList={companyTypesList} />
                         </Form.Select>
                     </Form.Group>
                 </Col>
             </Row>
         </>
     )
-
-    if (company.meta.location === 0 && setShow) {
-        return (
-            <>
-                <Modal
-                    show={show}
-                    onHide={() => setShow(false)}
-                    backdrop="static"
-                    size='lg'>
-                    <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Neue Firma hinzufügen</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Notes notes={addNotes} removeNote={removeAddNote} />
-                            <Modal.Body>
-                                {input}
-                            </Modal.Body>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button type="submit" variant='primary'>Abspeichern</Button>
-                            <Button variant="secondary" onClick={(e) => handleClose(e)}>Abbrechen</Button>
-                        </Modal.Footer>
-                    </Form>
-                </Modal>
-            </>
-        )
-    } else if (editNotes && removeEditNote) {
-
-        const ButtonEdit = () => {
-
-            const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
-                company.data.abbr === changedCompany.data.abbr &&
-                company.data.www === changedCompany.data.www &&
-                company.data.companyType === changedCompany.data.companyType)
-
-            const handleUndo: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-                e.preventDefault()
-                setValidated(false)
-                changedCompanyDispatch({ type: 'companyChange', newValue: company })
-            }
-
-            return (
-                <>
-                    <Row className="d-none d-sm-block">
-                        <ButtonGroup className="standardDesign float-end" >
-                            <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Abspeichern</Button>
-                            <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
-                        </ButtonGroup>
-                    </Row>
-                    <Row className="d-block d-sm-none">
-                        <ButtonGroup className="standardDesign float-end" vertical>
-                            <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Abspeichern</Button>
-                            <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
-                        </ButtonGroup>
-                    </Row>
-                </>
-            )
-        }
-
-        return (
-            <>
-                <Row>
-                    <Col id='company' sm={12} lg={6} xl={5} >
-
-                        <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
-
-                            {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonEdit /> : ''}
-                            <Row>
-                                <Col className="standardDesign">
-                                    <Notes notes={editNotes} removeNote={removeEditNote} />
-                                </Col>
-                            </Row>
-                            {input}
-                        </Form>
-                    </Col>
-                    <Col sm={12} lg={6} xl={7}>
-                        CompanyAddition
-                    </Col>
-                </Row>
-            </>
-        )
-    }
 }
