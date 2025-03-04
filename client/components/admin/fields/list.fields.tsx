@@ -73,7 +73,7 @@ const ListItem = ({ field, setIsFieldChanged, addMainNote }: ListItemComponent) 
                     <span>{field.meta.location === 0 ? title : field.data.name}</span>
                 </Col>
                 <Col xs={6}>
-                    <ButtonGroup className="function-button standardDesign">
+                    <ButtonGroup className="standard float-end">
                         <Button className="standardDesign" variant="outline-dark" onClick={(e) => handleModal(e)}>{field.meta.location === 0 ? <Plus /> : <Pencil />}</Button>
                         {field.meta.location === 0 ? '' : <Button className="standardDesign" variant="outline-dark" onClick={e => handleDelete(e)}><Trash /></Button>}
                         <InputFields

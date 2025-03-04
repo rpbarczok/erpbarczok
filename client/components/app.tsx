@@ -1,6 +1,6 @@
 import '../style.css'
 import { useState } from "react"
-import { Container, Row } from 'react-bootstrap'
+import { Container, Row, Col } from 'react-bootstrap'
 import { Navigation } from './navigation/navigation.jsx'
 import { FormTab } from './navigation/ribbon.js'
 import { Forms } from './forms.jsx'
@@ -12,7 +12,7 @@ export function App() {
     const [activeForm, setActiveForm] = useState<FormTab>(startPage)
     const [tabs, setTabs] = useState<FormTab[]>([startPage])
     const auth = useAuth()
-    
+
     if (auth.isLoading) {
         return <div>Loading...</div>
     }
@@ -22,26 +22,25 @@ export function App() {
     }
 
     if (auth.isAuthenticated) {
-    return (
-        <Container fluid>
-            <Row>
+        return (
+            <Container fluid className="d-flex flex-column vh-100">
                 <Navigation
                     tabs={tabs} setTabs={setTabs}
                     activeForm={activeForm} setActiveForm={setActiveForm}
                 />
-            </Row>
-            <Row>
                 <Forms activeForm={activeForm} />
-            </Row>
-            <Row>
-                Footer
-            </Row>
-        </Container>
+                <Row>
+                    <hr/>
+                    <Col  >
+                        <div className="float-end">made by rpbarczok</div>
+                    </Col>
+                </Row>
+            </Container>
 
-    )
-}
+        )
+    }
 
     return (
-        <Login/>
+        <Login />
     )
 }

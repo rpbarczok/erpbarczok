@@ -1,9 +1,10 @@
 import '../../style.css'
 import './navigation.css'
 import { groupForm, Form, FormTab } from './ribbon.js'
-import { Navbar, Nav, NavDropdown, Offcanvas } from 'react-bootstrap'
-import React from 'react'
+import { Navbar, Nav, NavDropdown, Row, Col, Dropdown } from 'react-bootstrap'
+import React, { useState } from 'react'
 import { useAuth } from 'react-oidc-context'
+import { List } from 'react-bootstrap-icons'
 
 interface RibbonNavigationInterface {
     tabs: FormTab[]
@@ -85,23 +86,39 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
         } catch (error) {
             await auth.removeUser()
             await auth.signoutRedirect()
-        }        
+        }
     }
 
     return (
-        <Navbar key="navbar" expand="xl" className='bg-body-secondary justify-content-start'>
-            <Navbar.Toggle />
-            <Navbar.Offcanvas id={`offcanvasNavbar-expand-xl`} placement="start">
-                <Offcanvas.Header closeButton />
-                    <Offcanvas.Body>
+        <>
+            <Row>
+                <Navbar key="navbar-lg" className='bg-body-secondary d-none d-xl-block'>
+                    <Nav>
                         <Groups />
-                    </Offcanvas.Body>
-            </Navbar.Offcanvas>
-            <Navbar.Text className="ms-auto ribbonDesign">
-                <NavDropdown key="account" title={auth.user?.profile?.email}>
-                    <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
-                </NavDropdown>
-            </Navbar.Text>
-        </Navbar>
+                        <NavDropdown className="ms-auto" key="account" title={auth.user?.profile?.email}>
+                            <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
+                        </NavDropdown>
+                    </Nav>
+                </Navbar>
+            </Row>
+            <Row className='bg-body-secondary d-xl-none align-items-center' style={{ padding: '8px 0 8px 0' }}>
+                <Col>
+                    <Dropdown>
+                        <Dropdown.Toggle bsPrefix='dropdown' variant="outline-secondary">
+                            <List />
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            <Groups />
+                        </Dropdown.Menu>
+                    </Dropdown>
+
+                </Col>
+                <Col className="ms-auto">
+                    <NavDropdown className="float-end"  key="account" title={auth.user?.profile?.email}>
+                        <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
+                    </NavDropdown>
+                </Col>
+            </Row>
+        </>
     )
 } 

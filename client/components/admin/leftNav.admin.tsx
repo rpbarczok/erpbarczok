@@ -1,28 +1,31 @@
 import '../../style.css'
 import './admin.css'
-import {resourceList} from './resourceList.js'
-import {Button, ButtonGroup} from 'react-bootstrap'
+import { resourceList } from './resourceList.js'
+import { Button, ButtonGroup } from 'react-bootstrap'
 import { Resource } from './admin.js'
 
 interface LeftNavigationInterface {
-    setResource: React.Dispatch<React.SetStateAction<Resource>>
+    setActiveResource: React.Dispatch<React.SetStateAction<Resource>>
+    activeResource: Resource
 }
 
-export const LeftNavigation = ({setResource}: LeftNavigationInterface) => {
-    
+export const LeftNavigation = ({ setActiveResource, activeResource }: LeftNavigationInterface) => {
+
     const resourceHandler = (e: React.MouseEvent<HTMLButtonElement>, resource: Resource) => {
         e.preventDefault()
-        setResource(resource)
+        setActiveResource(resource)
     }
 
     const ButtonList = resourceList.map(resource => {
         return (
-            <Button id={resource.name} key={resource.name} onClick={(e) => resourceHandler (e, resource) }>
+            <Button id={resource.name} key={resource.name} variant="outline-primary" onClick={(e) => resourceHandler(e, resource)} active={resource.name === activeResource.name}>
                 {resource.name}
             </Button>
         )
     })
 
-    const result = <ButtonGroup vertical>{ButtonList}</ButtonGroup>
-    return result
+    return <>
+        <ButtonGroup vertical className="d-none d-md-block">{ButtonList}</ButtonGroup>
+        <ButtonGroup className="d-md-none">{ButtonList}</ButtonGroup>
+    </>
 }

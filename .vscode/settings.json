@@ -1,7 +1,9 @@
 {
     "cSpell.words": [
         "APIV",
-        "oidc"
+        "blablubber",
+        "oidc",
+        "postgres"
     ],
     "cSpell.language": "en,de-DE",
     "cSpell.customDictionaries": {

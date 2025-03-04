@@ -21,6 +21,6 @@ export const Forms = ({ activeForm }: { activeForm: FormTab }) => {
         case 'adminForm':
             return <Admin />
         default:
-            return <h1> {activeForm.name}: Work in Progress</h1>
+            return <h1 className="flex-grow-1"> {activeForm.name}: Work in Progress</h1>
     }
 }
