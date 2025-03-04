@@ -74,7 +74,7 @@ export const FormCompanies = ({ companiesList,companyTypesList, setIsCompanyChan
 
     return (
         <>
-            <div className="d-none d-sm-block">
+            <div className="d-none d-sm-block flex-grow-1">
                 <SMFormCompanies
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}
@@ -86,7 +86,7 @@ export const FormCompanies = ({ companiesList,companyTypesList, setIsCompanyChan
                     changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 />
             </div>
-            <div className="d-sm-none">
+            <div className="d-sm-none flex-grow-1">
                 <XSFormCompanies
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}

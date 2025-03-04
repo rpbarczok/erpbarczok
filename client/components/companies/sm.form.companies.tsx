@@ -75,10 +75,11 @@ export const SMFormCompanies = ({ search,
                 </Col>
 
             </Row >
+            <hr />
             <Row className="d-none d-sm-block d-md-none">
                 {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
             </Row>
-            <Row>
+            <Row >
                 <SMEditCompanies
                     key={activeCompany.meta.location}
                     company={activeCompany}

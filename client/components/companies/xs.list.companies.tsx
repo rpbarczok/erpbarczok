@@ -1,6 +1,6 @@
 import { DataWithMeta } from "components/forms.jsx"
 import { Company } from "./companies.jsx"
-import { Button, Col, ListGroup } from "react-bootstrap"
+import { Button, Col, Container, ListGroup } from "react-bootstrap"
 import { XSEditCompanies } from "./xs.edit.companies.jsx"
 import { useState } from "react"
 import { ChangedCompanyAction } from "./company.reducer.js"
@@ -19,7 +19,7 @@ interface XSListCompaniesComponent {
 
 export const XSListCompanies = ({ filteredCompanies, changedCompany, changedCompanyDispatch, activeCompany, companyTypesList, setIsCompanyChanged, handleChangeActive }: XSListCompaniesComponent) => {
     const [show, setShow] = useState(false)
-    const [editNotes, addEditNote, removeEditNote ] = useNotifier()
+    const [editNotes, addEditNote, removeEditNote] = useNotifier()
 
     const handleOpenModal = (e: React.MouseEvent<Element, MouseEvent>, location: number) => {
         e.preventDefault
@@ -46,9 +46,10 @@ export const XSListCompanies = ({ filteredCompanies, changedCompany, changedComp
 
     return (
         <>
-            <ListGroup className="scrollBox standardDesign d-sm-none" id="company-list">
+            <ListGroup className="scrollBoxXS d-sm-none flex-grow-1" id="company-list">
                 <List />
-            </ListGroup>
+            </ListGroup >
+
             <XSEditCompanies
                 show={show} setShow={setShow}
                 companyTypesList={companyTypesList}

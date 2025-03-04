@@ -1,5 +1,5 @@
 import { useReducer, useState } from "react"
-import { Button, ButtonGroup, Col, Form, Row } from "react-bootstrap"
+import { Button, ButtonGroup, Col, Container, Form, Row } from "react-bootstrap"
 import { useAuth } from "react-oidc-context"
 import { ChangedCompanyAction, changedCompanyReducer } from "./company.reducer.js"
 import { DataWithMeta } from "components/forms.jsx"
@@ -20,7 +20,7 @@ interface SMEditCompanies {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged, notes, addNote, removeNote, changedCompany,changedCompanyDispatch }: SMEditCompanies) => {
+export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged, notes, addNote, removeNote, changedCompany, changedCompanyDispatch }: SMEditCompanies) => {
     const [validated, setValidated] = useState<boolean>(false)
 
 
@@ -86,24 +86,25 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
     }
 
     return (
-        <>
-            <Col id='company' sm={12} lg={6} xl={5} >
-
-                <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
-                    {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonEdit /> : ''}
-                    <Row>
-                        <Col className="standardDesign">
-                            <Notes notes={notes} removeNote={removeNote} />
-                        </Col>
-                    </Row>
-                    <InputCompanies
-                        companyTypesList={companyTypesList}
-                        changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch} />
-                </Form>
-            </Col>
-            <Col sm={12} lg={6} xl={7}>
-                CompanyAddition
-            </Col>
-        </>
+        <Col >
+            <Row className="flex-grow-1">
+                <Col id='company' sm={12} lg={6} xl={5} >
+                    <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
+                        {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonEdit /> : ''}
+                        <Row>
+                            <Col className="standardDesign">
+                                <Notes notes={notes} removeNote={removeNote} />
+                            </Col>
+                        </Row>
+                        <InputCompanies
+                            companyTypesList={companyTypesList}
+                            changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch} />
+                    </Form>
+                </Col>
+                <Col sm={12} lg={6} xl={7}>
+                    CompanyAddition
+                </Col>
+            </Row>
+        </Col>
     )
 }

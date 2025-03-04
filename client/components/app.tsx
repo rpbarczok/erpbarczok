@@ -23,13 +23,14 @@ export function App() {
 
     if (auth.isAuthenticated) {
         return (
-            <Container fluid>
+            <Container fluid className="d-flex flex-column vh-100">
                 <Navigation
                     tabs={tabs} setTabs={setTabs}
                     activeForm={activeForm} setActiveForm={setActiveForm}
                 />
                 <Forms activeForm={activeForm} />
-                <Row className="fixed-bottom">
+                <Row>
+                    <hr/>
                     <Col  >
                         <div className="float-end">made by rpbarczok</div>
                     </Col>
