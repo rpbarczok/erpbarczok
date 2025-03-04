@@ -1,7 +1,7 @@
 import { useReducer, useState } from "react"
 import { Button, ButtonGroup, Col, Form, Row } from "react-bootstrap"
 import { useAuth } from "react-oidc-context"
-import { changedCompanyReducer } from "./company.reducer.js"
+import { ChangedCompanyAction, changedCompanyReducer } from "./company.reducer.js"
 import { DataWithMeta } from "components/forms.jsx"
 import { Company } from "./companies.jsx"
 import { CompanyType } from "components/admin/companyTypes/companyTypes.jsx"
@@ -16,11 +16,12 @@ interface SMEditCompanies {
     notes: Note[]
     addNote: (note: Note) => void
     removeNote: (note: Note) => void
+    changedCompany: DataWithMeta<Company>
+    changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged, notes, addNote, removeNote }: SMEditCompanies) => {
+export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged, notes, addNote, removeNote, changedCompany,changedCompanyDispatch }: SMEditCompanies) => {
     const [validated, setValidated] = useState<boolean>(false)
-    const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, company)
 
 
     const auth = useAuth()

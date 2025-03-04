@@ -10,9 +10,10 @@ interface DeleteCompanyComponent {
     company: DataWithMeta<Company>
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     addNote: (note: Note) => void
+    setShow?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const DeleteCompanies = ({company, setIsCompanyChanged, addNote }: DeleteCompanyComponent) => {
+export const DeleteCompanies = ({company, setIsCompanyChanged, addNote, setShow }: DeleteCompanyComponent) => {
     const auth = useAuth()
     const token = auth.user?.access_token
 
@@ -26,6 +27,9 @@ export const DeleteCompanies = ({company, setIsCompanyChanged, addNote }: Delete
                     const note: Note = {
                         variant: 'warning',
                         message: `Firma wurde gelöscht.`,
+                    }
+                    if (setShow) {
+                        setShow(false)
                     }
                     addNote(note)
                 })

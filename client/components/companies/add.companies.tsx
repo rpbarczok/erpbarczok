@@ -8,7 +8,7 @@ import { Note, Notes } from "components/notifiers/notifiers.jsx"
 import { useNotifier } from "components/notifiers/useNotifier.js"
 import { DataWithMeta } from "components/forms.jsx"
 import { CompanyType } from "components/admin/companyTypes/companyTypes.jsx"
-import { Button, Col, Form, Modal } from "react-bootstrap"
+import { Button, Form, Modal } from "react-bootstrap"
 import { InputCompanies } from "./input.companies.jsx"
 
 interface AddCompanyComponent {

@@ -1,7 +1,7 @@
 import '../../style.css'
 import './companies.css'
-import React from "react"
-import { Row, Col, ButtonGroup } from "react-bootstrap"
+import React, { useState } from "react"
+import { Row, Col, ButtonGroup, Button } from "react-bootstrap"
 import { useAuth } from "react-oidc-context"
 import { SMSearchCompanies } from './sm.search.companies.jsx'
 import { DataWithMeta } from 'components/forms.jsx'
@@ -12,6 +12,7 @@ import { CompanyType } from 'components/admin/companyTypes/companyTypes.js'
 import { DeleteCompanies } from './delete.companies.jsx'
 import { AddCompany } from './add.companies.jsx'
 import { SMEditCompanies } from './sm.edit.companies.jsx'
+import { ChangedCompanyAction } from './company.reducer.js'
 
 interface CompaniesFormSMComponent {
     search: string
@@ -22,9 +23,20 @@ interface CompaniesFormSMComponent {
     companyTypesList: DataWithMeta<CompanyType>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
+    changedCompany: DataWithMeta<Company>
+    changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const SMFormCompanies = ({ search, setSearch, filteredCompanies, activeCompany, handleChangeActive, companyTypesList, setIsCompanyChanged, setIsNew }: CompaniesFormSMComponent) => {
+export const SMFormCompanies = ({ search,
+    setSearch,
+    filteredCompanies,
+    activeCompany,
+    handleChangeActive,
+    companyTypesList,
+    setIsCompanyChanged,
+    setIsNew,
+    changedCompany,
+    changedCompanyDispatch }: CompaniesFormSMComponent) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
     const auth = useAuth()
@@ -68,11 +80,12 @@ export const SMFormCompanies = ({ search, setSearch, filteredCompanies, activeCo
             </Row>
             <Row>
                 <SMEditCompanies
-                key={activeCompany.meta.location}
-                company={activeCompany}
-                companyTypesList={companyTypesList} 
-                setIsCompanyChanged={setIsCompanyChanged} 
-                notes={editNotes} addNote={addEditNote} removeNote={removeEditNote}
+                    key={activeCompany.meta.location}
+                    company={activeCompany}
+                    companyTypesList={companyTypesList}
+                    setIsCompanyChanged={setIsCompanyChanged}
+                    notes={editNotes} addNote={addEditNote} removeNote={removeEditNote}
+                    changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 />
             </Row>
         </>

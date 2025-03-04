@@ -2,11 +2,12 @@ import { SMFormCompanies } from './sm.form.companies.jsx'
 import { XSFormCompanies } from './xs.form.companies.jsx'
 import { DataWithMeta } from 'components/forms.jsx'
 import { Company, emptyCompany } from './companies.jsx'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { client } from 'utils/openAPIClientAxios.js'
 import { useAuth } from 'react-oidc-context'
 import { removeBeforeLastDigits } from 'utils/removeBeforeLastDigits.js'
 import { CompanyType } from 'components/admin/companyTypes/companyTypes.jsx'
+import { changedCompanyReducer } from './company.reducer.js'
 
 interface FormCompaniesComponent {
     companiesList: DataWithMeta<Company>[]
@@ -19,6 +20,7 @@ export const FormCompanies = ({ companiesList,companyTypesList, setIsCompanyChan
     const [listFiltered, setListFiltered] = useState(companiesList)
     const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>(emptyCompany)
     const [isNew, setIsNew] = useState<boolean>(false) // Flag: triggers an clearance of the search input
+    const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
 
     const auth = useAuth()
     const token = auth.user?.access_token
@@ -61,6 +63,7 @@ export const FormCompanies = ({ companiesList,companyTypesList, setIsCompanyChan
                     if (result.data) {
                         const company = { "meta": { 'location': Number(removeBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
                         setActiveCompany(company)
+                        changedCompanyDispatch({ type: 'companyChange', newValue: company })
                     }
                 })
                 .catch(error => {
@@ -80,12 +83,19 @@ export const FormCompanies = ({ companiesList,companyTypesList, setIsCompanyChan
                     companyTypesList={companyTypesList}
                     setIsCompanyChanged={setIsCompanyChanged}
                     setIsNew={setIsNew}
+                    changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 />
             </div>
             <div className="d-sm-none">
                 <XSFormCompanies
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}
+                    activeCompany={activeCompany}
+                    handleChangeActive={handleChangeActive}
+                    companyTypesList={companyTypesList}
+                    setIsCompanyChanged={setIsCompanyChanged}
+                    setIsNew={setIsNew}
+                    changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 />
             </div>
         </>
