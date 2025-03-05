@@ -11,9 +11,10 @@ interface DeleteCompanyComponent {
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     addNote: (note: Note) => void
     setShow?: React.Dispatch<React.SetStateAction<boolean>>
+    size: "sm" | "lg"
 }
 
-export const DeleteCompanies = ({company, setIsCompanyChanged, addNote, setShow }: DeleteCompanyComponent) => {
+export const DeleteCompanies = ({company, setIsCompanyChanged, addNote, setShow, size }: DeleteCompanyComponent) => {
     const auth = useAuth()
     const token = auth.user?.access_token
 
@@ -43,5 +44,5 @@ export const DeleteCompanies = ({company, setIsCompanyChanged, addNote, setShow 
 
         }
     }
-    return <Button className="standardDesign" variant="outline-danger" onClick={handleDelete}>Löschen</Button>
+    return <Button size={size} className="standardDesign" variant="outline-danger" onClick={handleDelete}>Löschen</Button>
 }

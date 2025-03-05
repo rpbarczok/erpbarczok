@@ -53,6 +53,7 @@ export const SMFormCompanies = ({ search,
             company={activeCompany}
             setIsCompanyChanged={setIsCompanyChanged}
             addNote={addEditNote}
+            size='lg'
         />
     </>
 

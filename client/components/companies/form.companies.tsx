@@ -86,7 +86,7 @@ export const FormCompanies = ({ companiesList,companyTypesList, setIsCompanyChan
                     changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 />
             </div>
-            <div className="d-sm-none d-flex flex-column" style={{overflowY: "hidden"}}>
+            <div className="d-sm-none flex-grow-1 d-flex flex-column" style={{overflowY: "hidden"}}>
                 <XSFormCompanies
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}

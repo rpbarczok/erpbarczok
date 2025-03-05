@@ -35,12 +35,10 @@ export const XSFormCompanies = ({ search, setSearch, filteredCompanies, activeCo
                     setIsCompanyChanged={setIsCompanyChanged} />
             </Row>
             <Row >
-                <Col xs={12}>
+                <Col>
                     <XSSearchCompanies search={search} setSearch={setSearch} />
                 </Col>
             </Row >
-            <Row className="flex-grow-1 scrollBoxXS" style={{ marginTop: "10px" }}>
-                <Col xs={12}>
                     <XSListCompanies
                         filteredCompanies={filteredCompanies}
                         changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
@@ -48,8 +46,6 @@ export const XSFormCompanies = ({ search, setSearch, filteredCompanies, activeCo
                         companyTypesList={companyTypesList}
                         setIsCompanyChanged={setIsCompanyChanged}
                     />
-                </Col>
-            </Row>
         </>
     )
 }

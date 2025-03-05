@@ -10,7 +10,3 @@
     border: 1px solid lightgrey;
     height: 9lh;
 }
-
-.scrollBoxWOBorder {
-    overflow-y: scroll;
-}

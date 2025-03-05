@@ -46,7 +46,7 @@ export const XSListCompanies = ({ filteredCompanies, changedCompany, changedComp
 
     return (
         <>
-            <ListGroup className="scrollBoxXS d-sm-none flex-grow-1" id="company-list">
+            <ListGroup id="company-list" className="scrollBoxXS" style={{ marginTop: "10px" }}>
                 <List />
             </ListGroup >
 

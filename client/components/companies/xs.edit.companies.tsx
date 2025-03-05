@@ -88,15 +88,17 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                         />
                 </Modal.Body>
                 <Modal.Footer>
-                    <ButtonGroup>
-                        <Button variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Undo</Button>
-                        <Button type="submit" variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
+                    <ButtonGroup className="w-100">
+                        <Button size="sm" variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Undo</Button>
+                        <Button size="sm" type="submit" variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
                         <DeleteCompanies
                             company={changedCompany}
                             setIsCompanyChanged={setIsCompanyChanged}
                             addNote={addEditNote}
-                            setShow={setShow} />
-                        <Button variant="outline-secondary" onClick={() => setShow(false)}>Abbrechen</Button>
+                            setShow={setShow} 
+                            size='sm'
+                            />
+                        <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Abbrechen</Button>
                     </ButtonGroup>
                 </Modal.Footer>
             </Form>
