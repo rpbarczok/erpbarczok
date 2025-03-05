@@ -53,7 +53,6 @@ export const SMFormCompanies = ({ search,
             company={activeCompany}
             setIsCompanyChanged={setIsCompanyChanged}
             addNote={addEditNote}
-            size='lg'
         />
     </>
 
@@ -80,7 +79,7 @@ export const SMFormCompanies = ({ search,
             <Row className="d-none d-sm-block d-md-none">
                 {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
             </Row>
-            <Row>
+            <Row  style={{ overflowY: "scroll" }}>
                 <SMEditCompanies
                     key={activeCompany.meta.location}
                     company={activeCompany}

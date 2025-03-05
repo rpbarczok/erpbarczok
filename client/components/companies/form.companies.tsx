@@ -74,7 +74,7 @@ export const FormCompanies = ({ companiesList,companyTypesList, setIsCompanyChan
 
     return (
         <>
-            <div className="d-none d-sm-block flex-grow-1">
+            <div className="d-none d-sm-flex flex-grow-1 flex-column" style={{overflowY: "hidden"}}>
                 <SMFormCompanies
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}
