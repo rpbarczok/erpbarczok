@@ -51,7 +51,6 @@ export const Companies = () => {
 
     return (
         <>
-            <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
             <FormCompanies
                 companiesList={companiesList}
                 companyTypesList={companyTypesList}

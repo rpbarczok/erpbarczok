@@ -27,63 +27,6 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
         setActiveForm(form)
     }
 
-    function GroupsDropdown() {
-
-        function Forms({ forms }: { forms: Form[] }) {
-            const formsList = forms.map(f => {
-                return (
-                    <Dropdown.Item key={f.id} onClick={() => handleClick(f)} >
-                        {f.name}
-                    </Dropdown.Item>
-                )
-            }
-            )
-            return (
-                <>
-                    {formsList}
-                </>
-            )
-        }
-
-        const groupFormAuth = groupForm.map(g => {
-            const userScope: string[] = auth.user?.scopes ? auth.user?.scopes.concat(['public']) : ['public']
-            const groupFormsAuth = g.forms.filter(f => {
-                const formScopes = new Set(f.scopes.split(" "))
-                return userScope.some(scope => formScopes.has(scope))
-            })
-            return { ...g, forms: groupFormsAuth }
-        })
-
-
-        const groupList = groupFormAuth.map(g => {
-            if (g.forms.length !== 0) {
-                if (g.forms.length === 1) {
-                    return (
-                        <Dropdown.Item className="ribbonDesign" key={g.id} onClick={() => handleClick(g.forms[0])}>
-                            {g.forms[0].name}
-                        </Dropdown.Item>
-                    )
-                } else {
-                    return (
-                        <Dropdown.Item key={g.id} className="ribbonDesign" title={g.name}>
-                            {/* <Dropdown.Toggle className="ribbonDesign"> */}
-                                {g.name}
-                            {/* </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                <Forms forms={g.forms} />
-                            </Dropdown.Menu> */}
-                        </Dropdown.Item>
-                    )
-                }
-            }
-        })
-        return (
-            <>
-                {groupList}
-            </>
-        )
-    }
-
     function Groups() {
 
         function Forms({ forms }: { forms: Form[] }) {
@@ -165,13 +108,13 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
                             <List />
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
-                            <GroupsDropdown />
+                            <Groups />
                         </Dropdown.Menu>
                     </Dropdown>
 
                 </Col>
                 <Col className="ms-auto">
-                    <NavDropdown className="float-end" key="account" title={auth.user?.profile?.email}>
+                    <NavDropdown className="float-end"  key="account" title={auth.user?.profile?.email}>
                         <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
                     </NavDropdown>
                 </Col>

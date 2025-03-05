@@ -13,6 +13,7 @@ import { DeleteCompanies } from './delete.companies.jsx'
 import { AddCompany } from './add.companies.jsx'
 import { SMEditCompanies } from './sm.edit.companies.jsx'
 import { ChangedCompanyAction } from './company.reducer.js'
+import { Heading } from 'components/headings/heading.jsx'
 
 interface CompaniesFormSMComponent {
     search: string
@@ -58,6 +59,7 @@ export const SMFormCompanies = ({ search,
 
     return (
         <div style={{ overflowY: "scroll" }}>
+            <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
             <Row >
                 <Col sm={5} md={4}>
                     <SMSearchCompanies search={search} setSearch={setSearch} />

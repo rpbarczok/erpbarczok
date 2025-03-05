@@ -8,14 +8,15 @@ import { useAuth } from 'react-oidc-context'
 import { removeBeforeLastDigits } from 'utils/removeBeforeLastDigits.js'
 import { CompanyType } from 'components/admin/companyTypes/companyTypes.jsx'
 import { changedCompanyReducer } from './company.reducer.js'
+import { Heading } from 'components/headings/heading.jsx'
 
 interface FormCompaniesComponent {
     companiesList: DataWithMeta<Company>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
-    companyTypesList:  DataWithMeta<CompanyType>[]
+    companyTypesList: DataWithMeta<CompanyType>[]
 }
 
-export const FormCompanies = ({ companiesList,companyTypesList, setIsCompanyChanged}: FormCompaniesComponent) => {
+export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyChanged }: FormCompaniesComponent) => {
     const [search, setSearch] = useState<string>("") // Content of the search input field
     const [listFiltered, setListFiltered] = useState(companiesList)
     const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>(emptyCompany)
@@ -74,7 +75,7 @@ export const FormCompanies = ({ companiesList,companyTypesList, setIsCompanyChan
 
     return (
         <>
-            <div className="d-none d-sm-flex flex-grow-1 flex-column" style={{overflowY: "hidden"}}>
+            <div className="d-none d-sm-flex flex-grow-1 flex-column" style={{ overflowY: "hidden" }}>
                 <SMFormCompanies
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}
@@ -86,7 +87,8 @@ export const FormCompanies = ({ companiesList,companyTypesList, setIsCompanyChan
                     changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 />
             </div>
-            <div className="d-sm-none flex-grow-1 d-flex flex-column" style={{overflowY: "hidden"}}>
+            <div className="d-sm-none flex-grow-1 d-flex flex-column" style={{ overflowY: "hidden" }}>
+                <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
                 <XSFormCompanies
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}
