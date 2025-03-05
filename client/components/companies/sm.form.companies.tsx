@@ -57,7 +57,7 @@ export const SMFormCompanies = ({ search,
     </>
 
     return (
-        <>
+        <div style={{ overflowY: "scroll" }}>
             <Row >
                 <Col sm={5} md={4}>
                     <SMSearchCompanies search={search} setSearch={setSearch} />
@@ -79,7 +79,7 @@ export const SMFormCompanies = ({ search,
             <Row className="d-none d-sm-block d-md-none">
                 {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
             </Row>
-            <Row  style={{ overflowY: "scroll" }}>
+            <Row>
                 <SMEditCompanies
                     key={activeCompany.meta.location}
                     company={activeCompany}
@@ -89,6 +89,6 @@ export const SMFormCompanies = ({ search,
                     changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 />
             </Row>
-        </>
+        </div>
     )
 }
