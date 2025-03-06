@@ -6,6 +6,7 @@ import { ListCompanyTypes } from './list.companyTypes.jsx'
 import { useCompanyTypes } from './useCompanyTypes.js'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
 import { Notes } from 'components/notifiers/notifiers.jsx'
+import { Resource } from '../admin.jsx'
 
 export interface CompanyType {
     "name": string
@@ -16,7 +17,11 @@ export const blandCompanyType: DataWithMeta<CompanyType> = {
     data: { name: '' }
 }
 
-export const CompanyTypes = () => {
+interface CompanyTypesComponent {
+    resource: Resource
+}
+
+export const CompanyTypes = ({resource}: CompanyTypesComponent) => {
     const [listCompanyTypes, setIsCompanyTypeChanged] = useCompanyTypes()
 
     const fullList = listCompanyTypes.concat([blandCompanyType])
@@ -25,7 +30,7 @@ export const CompanyTypes = () => {
     return (
         <>
             <Row>
-                <h1>Firmenrolle</h1>
+                <h1>{resource.name}</h1>
             </Row>
             <Notes notes={mainNotes} removeNote={removeMainNote} />
             <Row>
@@ -33,7 +38,9 @@ export const CompanyTypes = () => {
                     <ListCompanyTypes
                         fullList={fullList}
                         setIsCompanyTypeChanged={setIsCompanyTypeChanged}
-                        addMainNote={addMainNote} />
+                        addMainNote={addMainNote}
+                        resource={resource} 
+                        />
                 </ListGroup >
             </Row>
         </>

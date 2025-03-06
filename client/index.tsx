@@ -43,7 +43,7 @@ const windowAuth = window as WindowAuth
           <p>Audience: {windowAuth.audience}</p>
         </div>
         <div>
-          <Button type="button" onClick={window.location.reload}>Wiederholen</Button>
+          <Button type="button" onClick={() => window.location.reload()}>Wiederholen</Button>
         </div>
       </StrictMode>
     )

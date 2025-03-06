@@ -13,21 +13,21 @@ export interface Resource {
 }
 
 export function Admin() {
-    const [activeResource, setActiveResource] = useState<Resource>({ name: "Firmenrolle", path: "company-types" })
+    const [activeResource, setActiveResource] = useState<Resource>({ name: "Beziehung", path: "company-types" })
 
     const ActiveResource = () => {
         switch (activeResource.path) {
             case "company-types":
-                return <CompanyTypes />
+                return <CompanyTypes resource={activeResource}/>
             case "fields":
-                return <Fields />
+                return <Fields resource={activeResource}/>
         }
     }
 
     return (
         <>
             <Heading title="Administratoren-Bereich" cssClass='adminForm' />
-            <Row>
+            <Row className="flex-grow-1 d-flex">
                 <Col xs={12} md={3} lg={2}>
                     <LeftNavigation
                         activeResource={activeResource} setActiveResource={setActiveResource}
