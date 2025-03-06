@@ -7,13 +7,14 @@ import { SMSearchCompanies } from './sm.search.companies.jsx'
 import { DataWithMeta } from 'components/forms.jsx'
 import { Company } from './companies.jsx'
 import { SMListCompanies } from './sm.list.companies.jsx'
-import { useNotifier } from 'components/notifiers/useNotifier.js'
 import { CompanyType } from 'components/admin/companyTypes/companyTypes.js'
 import { DeleteCompanies } from './delete.companies.jsx'
 import { AddCompany } from './add.companies.jsx'
 import { SMEditCompanies } from './sm.edit.companies.jsx'
 import { ChangedCompanyAction } from './company.reducer.js'
 import { Heading } from 'components/headings/heading.jsx'
+import { Note, Notes } from 'components/notifiers/notifiers.jsx'
+import { useNotifier } from 'components/notifiers/useNotifier.js'
 
 interface CompaniesFormSMComponent {
     search: string
@@ -75,19 +76,19 @@ export const SMFormCompanies = ({ search,
                         {buttonGroupAddDelete}
                     </ButtonGroup >
                 </Col>
-
             </Row >
             <hr />
             <Row className="d-none d-sm-block d-md-none">
                 {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
             </Row>
+            <Notes notes={editNotes} removeNote={removeEditNote} ></Notes>
             <Row>
                 <SMEditCompanies
                     key={activeCompany.meta.location}
                     company={activeCompany}
                     companyTypesList={companyTypesList}
                     setIsCompanyChanged={setIsCompanyChanged}
-                    notes={editNotes} addNote={addEditNote} removeNote={removeEditNote}
+                    addEditNote={addEditNote}
                     changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 />
             </Row>

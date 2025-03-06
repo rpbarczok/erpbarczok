@@ -1,5 +1,5 @@
-name: GitHub Actions
-run-name: Create Docker Image for Dev Branch
+name: GitHub Actions DevBranch Container Build
+run-name: Create Docker Image for Dev Branch when Pushed
 on: 
   push: 
     branches: 
