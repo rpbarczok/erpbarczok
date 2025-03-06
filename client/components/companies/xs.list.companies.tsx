@@ -46,10 +46,11 @@ export const XSListCompanies = ({ filteredCompanies, changedCompany, changedComp
 
     return (
         <>
-            <ListGroup id="company-list" className="scrollBoxXS" style={{ marginTop: "10px" }}>
-                <List />
-            </ListGroup >
-
+            <div className="flex-grow-1 d-flex flex-column" style={{overflowY: "hidden", marginTop: "10px"}}>
+                <ListGroup id="company-list"  style={{overflowY: "scroll"}}>
+                    <List />
+                </ListGroup >
+            </div>
             <XSEditCompanies
                 show={show} setShow={setShow}
                 companyTypesList={companyTypesList}

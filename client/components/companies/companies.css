@@ -1,13 +1,12 @@
 .scrollBoxXS {
     font-size: small;
     overflow-y: scroll;
-    border: 1px solid lightgrey;
+
 }
 
 .scrollBox {
     font-size: small;
     overflow-y: scroll;
-    border: 1px solid lightgrey;
     height: 9lh;
 }
 

@@ -58,7 +58,7 @@ export const SMFormCompanies = ({ search,
     </>
 
     return (
-        <div style={{ overflowY: "scroll" }}>
+        <div className="flex-grow-1" >
             <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
             <Row >
                 <Col sm={5} md={4}>

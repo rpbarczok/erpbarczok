@@ -9,6 +9,7 @@ import { removeBeforeLastDigits } from 'utils/removeBeforeLastDigits.js'
 import { CompanyType } from 'components/admin/companyTypes/companyTypes.jsx'
 import { changedCompanyReducer } from './company.reducer.js'
 import { Heading } from 'components/headings/heading.jsx'
+import { Col, Row } from 'react-bootstrap'
 
 interface FormCompaniesComponent {
     companiesList: DataWithMeta<Company>[]
@@ -75,7 +76,7 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
 
     return (
         <>
-            <div className="d-none d-sm-flex flex-grow-1 flex-column" style={{ overflowY: "hidden" }}>
+            <Row className="d-none d-sm-flex flex-grow-1 flex-column" style={{ overflowY: "scroll" }}>
                 <SMFormCompanies
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}
@@ -86,20 +87,19 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
                     setIsNew={setIsNew}
                     changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 />
-            </div>
-            <div className="d-sm-none flex-grow-1 d-flex flex-column" style={{ overflowY: "hidden" }}>
-                <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
-                <XSFormCompanies
-                    search={search} setSearch={setSearch}
-                    filteredCompanies={listFiltered}
-                    activeCompany={activeCompany}
-                    handleChangeActive={handleChangeActive}
-                    companyTypesList={companyTypesList}
-                    setIsCompanyChanged={setIsCompanyChanged}
-                    setIsNew={setIsNew}
-                    changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-                />
-            </div>
+            </Row>
+            <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
+            <XSFormCompanies
+                search={search} setSearch={setSearch}
+                filteredCompanies={listFiltered}
+                activeCompany={activeCompany}
+                handleChangeActive={handleChangeActive}
+                companyTypesList={companyTypesList}
+                setIsCompanyChanged={setIsCompanyChanged}
+                setIsNew={setIsNew}
+                changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
+            />
+
         </>
     )
 }

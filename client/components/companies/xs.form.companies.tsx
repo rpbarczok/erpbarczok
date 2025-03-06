@@ -8,6 +8,7 @@ import { AddCompany } from "./add.companies.jsx"
 import { useNotifier } from "components/notifiers/useNotifier.js"
 import { CompanyType } from "components/admin/companyTypes/companyTypes.js"
 import { ChangedCompanyAction } from "./company.reducer.js"
+import { Heading } from "components/headings/heading.jsx"
 
 interface XSFormCompaniesComponent {
     search: string
@@ -22,7 +23,7 @@ interface XSFormCompaniesComponent {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const XSFormCompanies = ({ search, setSearch, filteredCompanies, activeCompany, handleChangeActive, companyTypesList, setIsCompanyChanged, setIsNew, changedCompany,changedCompanyDispatch }: XSFormCompaniesComponent) => {
+export const XSFormCompanies = ({ search, setSearch, filteredCompanies, activeCompany, handleChangeActive, companyTypesList, setIsCompanyChanged, setIsNew, changedCompany, changedCompanyDispatch }: XSFormCompaniesComponent) => {
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
     return (
         <>
@@ -34,18 +35,14 @@ export const XSFormCompanies = ({ search, setSearch, filteredCompanies, activeCo
                     companyTypesList={companyTypesList}
                     setIsCompanyChanged={setIsCompanyChanged} />
             </Row>
-            <Row >
-                <Col>
-                    <XSSearchCompanies search={search} setSearch={setSearch} />
-                </Col>
-            </Row >
-                    <XSListCompanies
-                        filteredCompanies={filteredCompanies}
-                        changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-                        handleChangeActive={handleChangeActive} activeCompany={activeCompany}
-                        companyTypesList={companyTypesList}
-                        setIsCompanyChanged={setIsCompanyChanged}
-                    />
+            <XSSearchCompanies search={search} setSearch={setSearch} />
+            <XSListCompanies
+                filteredCompanies={filteredCompanies}
+                changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
+                handleChangeActive={handleChangeActive} activeCompany={activeCompany}
+                companyTypesList={companyTypesList}
+                setIsCompanyChanged={setIsCompanyChanged}
+            />
         </>
     )
 }
