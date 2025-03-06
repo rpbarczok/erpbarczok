@@ -9,23 +9,26 @@ import { InputCompanyTypes } from './input.companyTypes.jsx'
 import { client } from 'utils/openAPIClientAxios.js'
 import { Note } from 'components/notifiers/notifiers.js'
 import { useAuth } from 'react-oidc-context'
+import { Resource } from '../admin.js'
 
 
 interface ListCompanyTypesComponent {
     fullList: DataWithMeta<CompanyType>[]
     setIsCompanyTypeChanged: React.Dispatch<React.SetStateAction<boolean>>
     addMainNote: (note: Note) => void
+    resource: Resource
 }
 
 interface ListItemComponent {
     companyType: DataWithMeta<CompanyType>
     setIsCompanyTypeChanged: React.Dispatch<React.SetStateAction<boolean>>
     addMainNote: (note: Note) => void
+    resource: Resource
 }
 
-const ListItem = ({ companyType, setIsCompanyTypeChanged, addMainNote }: ListItemComponent) => {
+const ListItem = ({ companyType, setIsCompanyTypeChanged, addMainNote, resource }: ListItemComponent) => {
     const auth = useAuth()
-    const title = 'Neue Firmenrolle anlegen'
+    const title = `Neue ${resource.name} anlegen`
     const [show, setShow] = useState(false)
 
 
@@ -81,7 +84,7 @@ const ListItem = ({ companyType, setIsCompanyTypeChanged, addMainNote }: ListIte
                             show={show}
                             setShow={setShow}
                             companyType={companyType}
-                            title={`Firmenrolle ${companyType.data.name}`}
+                            title={`${resource.name} ${companyType.data.name}`}
                             addMainNote={addMainNote} />
                     </ButtonGroup>
                 </Col>
@@ -91,16 +94,15 @@ const ListItem = ({ companyType, setIsCompanyTypeChanged, addMainNote }: ListIte
 }
 
 
-export const ListCompanyTypes = ({ fullList, setIsCompanyTypeChanged, addMainNote }: ListCompanyTypesComponent) => {
-
-
+export const ListCompanyTypes = ({ resource, fullList, setIsCompanyTypeChanged, addMainNote }: ListCompanyTypesComponent) => {
     return fullList.map(companyType => {
         return (
             <ListItem
                 companyType={companyType}
                 key={String(companyType.meta.location)}
                 setIsCompanyTypeChanged={setIsCompanyTypeChanged}
-                addMainNote={addMainNote} />
+                addMainNote={addMainNote} 
+                resource={resource}/>
         )
     })
 }

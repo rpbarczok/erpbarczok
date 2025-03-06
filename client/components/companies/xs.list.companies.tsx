@@ -5,7 +5,7 @@ import { XSEditCompanies } from "./xs.edit.companies.jsx"
 import { useState } from "react"
 import { ChangedCompanyAction } from "./company.reducer.js"
 import { CompanyType } from "components/admin/companyTypes/companyTypes.jsx"
-import { useNotifier } from "components/notifiers/useNotifier.js"
+import { Note } from "components/notifiers/notifiers.js"
 
 interface XSListCompaniesComponent {
     filteredCompanies: DataWithMeta<Company>[]
@@ -15,11 +15,11 @@ interface XSListCompaniesComponent {
     handleChangeActive: (active: number) => void
     companyTypesList: DataWithMeta<CompanyType>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
+    addEditNote: (note: Note) => void
 }
 
-export const XSListCompanies = ({ filteredCompanies, changedCompany, changedCompanyDispatch, activeCompany, companyTypesList, setIsCompanyChanged, handleChangeActive }: XSListCompaniesComponent) => {
+export const XSListCompanies = ({ filteredCompanies, changedCompany, changedCompanyDispatch, activeCompany, companyTypesList, setIsCompanyChanged, handleChangeActive, addEditNote }: XSListCompaniesComponent) => {
     const [show, setShow] = useState(false)
-    const [editNotes, addEditNote, removeEditNote] = useNotifier()
 
     const handleOpenModal = (e: React.MouseEvent<Element, MouseEvent>, location: number) => {
         e.preventDefault

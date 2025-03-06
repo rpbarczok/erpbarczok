@@ -6,6 +6,7 @@ import { ListFields } from './list.fields.jsx'
 import { useFields } from './useFields.js'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
 import { Notes } from 'components/notifiers/notifiers.jsx'
+import { Resource } from '../admin.js'
 
 export interface Field {
     "name": string
@@ -16,7 +17,10 @@ export const blandField: DataWithMeta<Field> = {
     data: { name: '' }
 }
 
-export const Fields = () => {
+interface FieldsComponent {
+    resource: Resource
+}
+export const Fields = ({resource}: FieldsComponent) => {
     const [listFields, setIsFieldChanged] = useFields()
 
     const fullList = listFields.concat([blandField])
@@ -25,7 +29,7 @@ export const Fields = () => {
     return (
         <>
             <Row>
-                <h1>Firmenbranche</h1>
+                <h1>{resource.name}</h1>
             </Row>
             <Notes notes={mainNotes} removeNote={removeMainNote} />
             <Row>

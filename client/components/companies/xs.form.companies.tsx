@@ -5,10 +5,11 @@ import { DataWithMeta } from "components/forms.jsx"
 import { Company } from "./companies.jsx"
 import { XSListCompanies } from "./xs.list.companies.jsx"
 import { AddCompany } from "./add.companies.jsx"
-import { useNotifier } from "components/notifiers/useNotifier.js"
 import { CompanyType } from "components/admin/companyTypes/companyTypes.js"
 import { ChangedCompanyAction } from "./company.reducer.js"
 import { Heading } from "components/headings/heading.jsx"
+import { Note, Notes } from "components/notifiers/notifiers.jsx"
+import { useNotifier } from "components/notifiers/useNotifier.js"
 
 interface XSFormCompaniesComponent {
     search: string
@@ -23,29 +24,43 @@ interface XSFormCompaniesComponent {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const XSFormCompanies = ({ search, setSearch, filteredCompanies, activeCompany, handleChangeActive, companyTypesList, setIsCompanyChanged, setIsNew, changedCompany, changedCompanyDispatch }: XSFormCompaniesComponent) => {
+export const XSFormCompanies = ({
+    search,
+    setSearch,
+    filteredCompanies,
+    activeCompany,
+    handleChangeActive,
+    companyTypesList,
+    setIsCompanyChanged,
+    setIsNew,
+    changedCompany,
+    changedCompanyDispatch }: XSFormCompaniesComponent) => {
+
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
+
     return (
-        <Row className="d-sm-none flex-grow-1 d-flex flex-column" style={{ overflowY: "hidden" }}>
-            <Col className="flex-grow-1 d-flex flex-column" style={{ overflowY: "hidden" }}>
-                <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
-                <Row style={{ margin: "10px 3px 0 3px" }}>
-                    <AddCompany
-                        handleChangeActive={handleChangeActive}
-                        addEditNote={addEditNote}
-                        setIsNew={setIsNew}
-                        companyTypesList={companyTypesList}
-                        setIsCompanyChanged={setIsCompanyChanged} />
-                </Row>
-                <XSSearchCompanies search={search} setSearch={setSearch} />
-                <XSListCompanies
-                    filteredCompanies={filteredCompanies}
-                    changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-                    handleChangeActive={handleChangeActive} activeCompany={activeCompany}
+
+        <Col className="flex-grow-1 d-flex flex-column" style={{ overflowY: "hidden" }}>
+            <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
+            <Row style={{ margin: "10px 3px 0 3px" }}>
+                <AddCompany
+                    handleChangeActive={handleChangeActive}
+                    addEditNote={addEditNote}
+                    setIsNew={setIsNew}
                     companyTypesList={companyTypesList}
                     setIsCompanyChanged={setIsCompanyChanged}
                 />
-            </Col>
-        </Row>
+            </Row>
+            <Notes notes={editNotes} removeNote={removeEditNote}/>
+            <XSSearchCompanies search={search} setSearch={setSearch} />
+            <XSListCompanies
+                filteredCompanies={filteredCompanies}
+                changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
+                handleChangeActive={handleChangeActive} activeCompany={activeCompany}
+                companyTypesList={companyTypesList}
+                setIsCompanyChanged={setIsCompanyChanged}
+                addEditNote={addEditNote}
+            />
+        </Col>
     )
 }

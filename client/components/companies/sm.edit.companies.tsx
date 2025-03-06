@@ -13,14 +13,12 @@ interface SMEditCompanies {
     company: DataWithMeta<Company>
     companyTypesList: DataWithMeta<CompanyType>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
-    notes: Note[]
-    addNote: (note: Note) => void
-    removeNote: (note: Note) => void
+    addEditNote: (note: Note) => void
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged, notes, addNote, removeNote, changedCompany, changedCompanyDispatch }: SMEditCompanies) => {
+export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged, addEditNote, changedCompany, changedCompanyDispatch }: SMEditCompanies) => {
     const [validated, setValidated] = useState<boolean>(false)
 
 
@@ -42,7 +40,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
                         variant: 'success',
                         message: `Firma erfolgreich überarbeitet.`,
                     }
-                    addNote(note)
+                    addEditNote(note)
                     setIsCompanyChanged(true)
                 })
                 .catch(function (error) {
@@ -50,7 +48,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
                         variant: 'danger',
                         message: `Fehler beim Speichern der Firmendaten: ${error.message}`,
                     }
-                    addNote(note)
+                    addEditNote(note)
                 })
         }
     }
@@ -91,11 +89,6 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
                 <Col id='company' sm={12} lg={6} xl={5} >
                     <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
                         {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonEdit /> : ''}
-                        <Row>
-                            <Col className="standardDesign">
-                                <Notes notes={notes} removeNote={removeNote} />
-                            </Col>
-                        </Row>
                         <InputCompanies
                             companyTypesList={companyTypesList}
                             changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch} />

@@ -1,7 +1,7 @@
 import '../../style.css'
 import './admin.css'
 import { resourceList } from './resourceList.js'
-import { Button, ButtonGroup } from 'react-bootstrap'
+import { Button, ButtonGroup, ListGroup } from 'react-bootstrap'
 import { Resource } from './admin.js'
 
 interface LeftNavigationInterface {
@@ -11,21 +11,20 @@ interface LeftNavigationInterface {
 
 export const LeftNavigation = ({ setActiveResource, activeResource }: LeftNavigationInterface) => {
 
-    const resourceHandler = (e: React.MouseEvent<HTMLButtonElement>, resource: Resource) => {
-        e.preventDefault()
+    const resourceHandler = (resource: Resource) => {
         setActiveResource(resource)
     }
 
     const ButtonList = resourceList.map(resource => {
         return (
-            <Button id={resource.name} key={resource.name} variant="outline-primary" onClick={(e) => resourceHandler(e, resource)} active={resource.name === activeResource.name}>
+            <Button className="link" id={resource.name} variant="outline-secondary" key={resource.name} onClick={() => resourceHandler(resource)} active={resource.name === activeResource.name}>
                 {resource.name}
             </Button>
         )
     })
 
     return <>
-        <ButtonGroup vertical className="d-none d-md-block">{ButtonList}</ButtonGroup>
+        <ButtonGroup vertical className="d-none d-md-block" >{ButtonList}</ButtonGroup>
         <ButtonGroup className="d-md-none">{ButtonList}</ButtonGroup>
     </>
 }

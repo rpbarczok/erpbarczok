@@ -10,6 +10,7 @@ import { CompanyType } from 'components/admin/companyTypes/companyTypes.jsx'
 import { changedCompanyReducer } from './company.reducer.js'
 import { Heading } from 'components/headings/heading.jsx'
 import { Col, Row } from 'react-bootstrap'
+import { useNotifier } from 'components/notifiers/useNotifier.js'
 
 interface FormCompaniesComponent {
     companiesList: DataWithMeta<Company>[]
@@ -88,17 +89,18 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
                     changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 />
             </Row>
-            <XSFormCompanies
-                search={search} setSearch={setSearch}
-                filteredCompanies={listFiltered}
-                activeCompany={activeCompany}
-                handleChangeActive={handleChangeActive}
-                companyTypesList={companyTypesList}
-                setIsCompanyChanged={setIsCompanyChanged}
-                setIsNew={setIsNew}
-                changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-            />
-
+            <Row className="d-sm-none flex-grow-1 d-flex flex-column" style={{ overflowY: "hidden" }}>
+                <XSFormCompanies
+                    search={search} setSearch={setSearch}
+                    filteredCompanies={listFiltered}
+                    activeCompany={activeCompany}
+                    handleChangeActive={handleChangeActive}
+                    companyTypesList={companyTypesList}
+                    setIsCompanyChanged={setIsCompanyChanged}
+                    setIsNew={setIsNew}
+                    changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
+                />
+            </Row >
         </>
     )
 }
