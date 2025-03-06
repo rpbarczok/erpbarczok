@@ -1,0 +1,29 @@
+name: GitHub Actions Main Branch Container Build
+run-name: Create Docker Image for Main Branch when Merged from Dev Branch
+on:
+    push:
+        branches:
+            - main
+jobs:
+    build_and_save_image:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            attestations: write
+            id-token: write
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        steps:
+            - name: Check out repository code
+              uses: actions/checkout@v4
+            - name: Install node dependencies
+              run: npm install
+            - name: build and test app
+              run: npm run build
+            - name: Log in to registry
+              run: echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+              # builder for multiplatform from https://www.docker.com/blog/how-to-rapidly-build-multi-architecture-images-with-buildx/
+            - name: Create Docker Image and Push Docker Image
+              run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build  --platform linux/amd64,linux/arm64 --push -t ghcr.io/rpbarczok/erpbarczok:latest --network host .
+    
