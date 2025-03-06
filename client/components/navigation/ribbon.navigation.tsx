@@ -72,12 +72,70 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
                 }
             }
         })
+
         return (
             <>
                 {groupList}
             </>
         )
     }
+
+    function GroupsNavXS() {
+
+        function Forms({ forms }: { forms: Form[] }) {
+            const formsList = forms.map(f => {
+                return (
+                    <NavDropdown.Item key={f.id} onClick={() => handleClick(f)} >
+                        {f.name}
+                    </NavDropdown.Item>
+                )
+            }
+            )
+            return (
+                <>
+                    {formsList}
+                </>
+            )
+        }
+
+        const groupFormAuth = groupForm.map(g => {
+            const userScope: string[] = auth.user?.scopes ? auth.user?.scopes.concat(['public']) : ['public']
+            const groupFormsAuth = g.forms.filter(f => {
+                const formScopes = new Set(f.scopes.split(" "))
+                return userScope.some(scope => formScopes.has(scope))
+            })
+            return { ...g, forms: groupFormsAuth }
+        })
+
+
+        const groupList = groupFormAuth.map(g => {
+            if (g.forms.length !== 0) {
+                if (g.forms.length === 1) {
+                    return (
+                        <NavDropdown.Item>
+                            <Nav.Link className="dropdown-item nav-item dropdown" key={g.id} onClick={() => handleClick(g.forms[0])}>
+                                {g.forms[0].name}
+                            </Nav.Link>
+                        </NavDropdown.Item>
+                    )
+                } else {
+                    return (
+                        <NavDropdown className="dropdown-item" key={g.id} title={g.name}>
+                            <Forms forms={g.forms} />
+                        </NavDropdown>
+                    )
+                }
+            }
+        })
+
+        return (
+            <>
+                {groupList}
+            </>
+        )
+    }
+
+
 
     const logOutHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         try {
@@ -108,13 +166,13 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
                             <List />
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
-                            <Groups />
+                            <GroupsNavXS />
                         </Dropdown.Menu>
                     </Dropdown>
 
                 </Col>
                 <Col className="ms-auto">
-                    <NavDropdown className="float-end"  key="account" title={auth.user?.profile?.email}>
+                    <NavDropdown className="float-end" key="account" title={auth.user?.profile?.email}>
                         <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
                     </NavDropdown>
                 </Col>
