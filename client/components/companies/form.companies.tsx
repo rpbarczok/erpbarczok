@@ -88,7 +88,6 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
                     changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 />
             </Row>
-            <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
             <XSFormCompanies
                 search={search} setSearch={setSearch}
                 filteredCompanies={listFiltered}
