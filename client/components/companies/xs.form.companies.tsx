@@ -26,23 +26,26 @@ interface XSFormCompaniesComponent {
 export const XSFormCompanies = ({ search, setSearch, filteredCompanies, activeCompany, handleChangeActive, companyTypesList, setIsCompanyChanged, setIsNew, changedCompany, changedCompanyDispatch }: XSFormCompaniesComponent) => {
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
     return (
-        <>
-            <Row style={{ margin: "10px 3px 0 3px" }}>
-                <AddCompany
-                    handleChangeActive={handleChangeActive}
-                    addEditNote={addEditNote}
-                    setIsNew={setIsNew}
+        <Row className="d-sm-none flex-grow-1 d-flex flex-column" style={{ overflowY: "hidden" }}>
+            <Col className="flex-grow-1 d-flex flex-column" style={{ overflowY: "hidden" }}>
+                <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
+                <Row style={{ margin: "10px 3px 0 3px" }}>
+                    <AddCompany
+                        handleChangeActive={handleChangeActive}
+                        addEditNote={addEditNote}
+                        setIsNew={setIsNew}
+                        companyTypesList={companyTypesList}
+                        setIsCompanyChanged={setIsCompanyChanged} />
+                </Row>
+                <XSSearchCompanies search={search} setSearch={setSearch} />
+                <XSListCompanies
+                    filteredCompanies={filteredCompanies}
+                    changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
+                    handleChangeActive={handleChangeActive} activeCompany={activeCompany}
                     companyTypesList={companyTypesList}
-                    setIsCompanyChanged={setIsCompanyChanged} />
-            </Row>
-            <XSSearchCompanies search={search} setSearch={setSearch} />
-            <XSListCompanies
-                filteredCompanies={filteredCompanies}
-                changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-                handleChangeActive={handleChangeActive} activeCompany={activeCompany}
-                companyTypesList={companyTypesList}
-                setIsCompanyChanged={setIsCompanyChanged}
-            />
-        </>
+                    setIsCompanyChanged={setIsCompanyChanged}
+                />
+            </Col>
+        </Row>
     )
 }
