@@ -1,8 +1,8 @@
-name: GitHub Actions Demo
-run-name: Create Docker Image for Project
+name: GitHub Actions
+run-name: Create Docker Image
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  build_and_save_image:
     runs-on: ubuntu-latest
     permissions:
         contents: read
