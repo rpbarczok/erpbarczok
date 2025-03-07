@@ -19,7 +19,7 @@ export function XSSearchCompanies({ search, setSearch }: XSSearchCompaniesInterf
         <>
             <InputGroup style={{ padding: '10px 0 0 0' }} >
                 <InputGroup.Text><Search /></InputGroup.Text>
-                <Form.Control type="text" className="standardDesign" value={search} onChange={handleSearch} placeholder='Suche (Firmenname, Kürzel)' />
+                <Form.Control type="text" className="standardDesign" value={search} onChange={handleSearch} placeholder='Suche (Firma, Kürzel)' />
             </InputGroup>
         </>
     )

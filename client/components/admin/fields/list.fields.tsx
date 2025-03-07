@@ -25,7 +25,7 @@ interface ListItemComponent {
 
 const ListItem = ({ field, setIsFieldChanged, addMainNote }: ListItemComponent) => {
     const auth = useAuth()
-    const title = 'Neue Firmenrolle anlegen'
+    const title = 'Neue Branche anlegen'
     const [show, setShow] = useState(false)
 
 
@@ -37,12 +37,12 @@ const ListItem = ({ field, setIsFieldChanged, addMainNote }: ListItemComponent) 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         const token = auth.user?.access_token
-        const userConfirmed = window.confirm(`Willst du wirklich die Firmenrolle ${field.data.name} löschen?`)
+        const userConfirmed = window.confirm(`Willst du wirklich die Branche ${field.data.name} löschen?`)
         if (userConfirmed) {
             client.deleteFieldById(field.meta.location, null, { headers: { Authorization: `Bearer ${token}` }})
                 .then((res) => {
                     const note: Note = {
-                        message: 'Die Firmenrolle wurde erfolgreich gelöscht.',
+                        message: 'Die Branche wurde erfolgreich gelöscht.',
                         variant: 'info',
                     }
                     addMainNote(note)
@@ -51,13 +51,13 @@ const ListItem = ({ field, setIsFieldChanged, addMainNote }: ListItemComponent) 
                 .catch(error => {
                     if (error.status === 409) {
                         const note: Note = {
-                            message: `Die Firmenrolle konnte nicht gelöscht werden, weil sie noch referenziert wird.`,
+                            message: `Die Branche konnte nicht gelöscht werden, weil sie noch referenziert wird.`,
                             variant: 'danger',
                         }
                         addMainNote(note)
                     } else {
                         const note: Note = {
-                            message: `Fehler beim Löschen der Firmenrolle: ${error.message}`,
+                            message: `Fehler beim Löschen der Branche: ${error.message}`,
                             variant: 'danger'
                         }
                         addMainNote(note)
@@ -81,7 +81,7 @@ const ListItem = ({ field, setIsFieldChanged, addMainNote }: ListItemComponent) 
                             show={show}
                             setShow={setShow}
                             field={field}
-                            title={`Firmenrolle ${field.data.name}`}
+                            title={`Branche ${field.data.name}`}
                             addMainNote={addMainNote} />
                     </ButtonGroup>
                 </Col>

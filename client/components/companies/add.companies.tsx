@@ -42,7 +42,7 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
                 .then((res) => {
                     handleChangeActive(Number(removeBeforeLastDigits(res.headers.location)))
                     const note: Note = {
-                        message: `Neue Firma erfolgreich erstellt.`,
+                        message: `Neues Unternehmen erfolgreich erstellt.`,
                         variant: 'success',
                     }
                     addEditNote(note)
@@ -53,7 +53,7 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
                 .catch((error) => {
                     const note: Note = {
                         variant: 'danger',
-                        message: `Fehler bei Erstellung der neuen Firma: ${error.message}`,
+                        message: `Fehler bei Erstellung des neuen Unternehmens: ${error.message}`,
                     }
                     addAddNote(note)
                 })
@@ -85,7 +85,7 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
                 size='lg'>
                 <Form noValidate validated={validated} onSubmit={(e) => handleSubmitAdd(e)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Neue Firma hinzufügen</Modal.Title>
+                        <Modal.Title>Neues Unternehmen hinzufügen</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Notes notes={addNotes} removeNote={removeAddNote} />

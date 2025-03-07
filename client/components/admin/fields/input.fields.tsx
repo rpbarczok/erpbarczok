@@ -93,11 +93,11 @@ export const InputFields = ({ field, title, show, setShow, setIsFieldChanged, ad
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form.Group controlId="formFirmenname">
-                        <Form.Label>Firmenname</Form.Label>
+                    <Form.Group controlId="formFirma">
+                        <Form.Label>Branche</Form.Label>
                         <Form.Control required type="text" value={changedField.data.name} onChange={handleChangeName} />
                         <Form.Control.Feedback type="invalid">
-                            Bitte eine Firmenrolle eintragen.
+                            Bitte eine Branche eintragen.
                         </Form.Control.Feedback>
                     </Form.Group>
                 </Modal.Body>

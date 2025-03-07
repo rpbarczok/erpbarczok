@@ -17,7 +17,7 @@ export function SMSearchCompanies({ search, setSearch }: SearchCompaniesInterfac
     return (
         <>
             <Form className="d-none d-sm-block"  style={{padding:'10px 0 0 0'}}>
-                <Form.Label className="standardDesign">Suche (Firmenname, Kürzel)</Form.Label>
+                <Form.Label className="standardDesign">Suche (Firma, Kürzel)</Form.Label>
                 <Form.Control type="text" className="standardDesign" value={search} onChange={handleSearch} />
             </Form>
         </>

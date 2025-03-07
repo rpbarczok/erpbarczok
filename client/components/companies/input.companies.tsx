@@ -40,9 +40,9 @@ export const InputCompanies = ({companyTypesList, changedCompanyDispatch, change
             <Row>
                 <Col xs={12} sm={8} lg={12} xxl={8}>
                     <Form.Group controlId="companyName">
-                        <Form.Label className="standardDesign">Firmenname</Form.Label>
+                        <Form.Label className="standardDesign">Firma</Form.Label>
                         <Form.Control required className="standardDesign" type="text" value={changedCompany.data.name} onChange={handleChangeName} disabled={(auth.user?.scope as string).indexOf('user') === -1} />
-                        <Form.Control.Feedback type="invalid">Bitte einen Firmennamen eingeben!</Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">Bitte eine Firma eingeben!</Form.Control.Feedback>
                     </Form.Group>
                 </Col>
                 <Col xs={12} sm={4} lg={12} xxl={4}>
@@ -61,7 +61,7 @@ export const InputCompanies = ({companyTypesList, changedCompanyDispatch, change
                 </Col>
                 <Col xs={12} sm={6} lg={12} xxl={6}>
                     <Form.Group controlId="companyCompanyType">
-                        <Form.Label className="standardDesign">Firmenrolle</Form.Label>
+                        <Form.Label className="standardDesign">Art der Beziehung zum Unternehmen</Form.Label>
                         <Form.Select className="standardDesign" key="companyCompanyType" required value={changedCompany.data.companyType} onChange={handleChangeCompanyType} disabled={(auth.user?.scope as string).indexOf('user') === -1}>
                             <CompanyTypesDropdown companyTypesList={companyTypesList} />
                         </Form.Select>

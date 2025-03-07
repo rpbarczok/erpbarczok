@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 
 <head>
   <meta charset="UTF-8">
@@ -9,6 +9,12 @@
   <link rel="apple-touch-icon" href="/panda192.png">
   <link rel="manifest" href="./manifest.json">
   <script defer src="./config.js"></script>
+  <script>
+    window.onload = function() {
+      const theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      document.getElementsByTagName('html')[0].setAttribute('data-bs-theme', theme)
+    }
+  </script>
 </head>
 </head>
 

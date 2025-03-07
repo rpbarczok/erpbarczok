@@ -40,12 +40,12 @@ const ListItem = ({ companyType, setIsCompanyTypeChanged, addMainNote, resource 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         const token = auth.user?.access_token
-        const userConfirmed = window.confirm(`Willst du wirklich die Firmenrolle ${companyType.data.name} löschen?`)
+        const userConfirmed = window.confirm(`Willst du wirklich die Beziehungsart ${companyType.data.name} löschen?`)
         if (userConfirmed) {
             client.deleteCompanyTypeById(companyType.meta.location, null, { headers: { Authorization: `Bearer ${token}` }})
                 .then((res) => {
                     const note: Note = {
-                        message: 'Die Firmenrolle wurde erfolgreich gelöscht.',
+                        message: 'Die Beziehungsart wurde erfolgreich gelöscht.',
                         variant: 'info',
                     }
                     addMainNote(note)
@@ -54,13 +54,13 @@ const ListItem = ({ companyType, setIsCompanyTypeChanged, addMainNote, resource 
                 .catch(error => {
                     if (error.status === 409) {
                         const note: Note = {
-                            message: `Die Firmenrolle konnte nicht gelöscht werden, weil sie noch referenziert wird.`,
+                            message: `Die Beziehungsart konnte nicht gelöscht werden, weil sie noch referenziert wird.`,
                             variant: 'danger',
                         }
                         addMainNote(note)
                     } else {
                         const note: Note = {
-                            message: `Fehler beim Löschen der Firmenrolle: ${error.message}`,
+                            message: `Fehler beim Löschen der Beziehungsart: ${error.message}`,
                             variant: 'danger'
                         }
                         addMainNote(note)

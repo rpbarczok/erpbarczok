@@ -38,7 +38,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
                 .then((res) => {
                     const note: Note = {
                         variant: 'success',
-                        message: `Firma erfolgreich überarbeitet.`,
+                        message: `Unternehmen erfolgreich überarbeitet.`,
                     }
                     addEditNote(note)
                     setIsCompanyChanged(true)
@@ -46,7 +46,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
                 .catch(function (error) {
                     const note: Note = {
                         variant: 'danger',
-                        message: `Fehler beim Speichern der Firmendaten: ${error.message}`,
+                        message: `Fehler beim Speichern der Unternehmensdaten: ${error.message}`,
                     }
                     addEditNote(note)
                 })

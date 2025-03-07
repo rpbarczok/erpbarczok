@@ -46,7 +46,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                 .then((res) => {
                     const note: Note = {
                         variant: 'success',
-                        message: `Firma erfolgreich überarbeitet.`,
+                        message: `Unternehmen erfolgreich überarbeitet.`,
                     }
                     addEditNote(note)
                     setIsCompanyChanged(true)
@@ -55,7 +55,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                 .catch(function (error) {
                     const note: Note = {
                         variant: 'danger',
-                        message: `Fehler beim Speichern der Firmendaten: ${error.message}`,
+                        message: `Fehler beim Speichern der Unternehmensdaten: ${error.message}`,
                     }
                     addErrorNote(note)
                 })
@@ -68,6 +68,26 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
         changedCompanyDispatch({ type: 'companyChange', newValue: activeCompany })
     }
 
+    const UserButtons = () => {
+        if ((auth.user?.scope as string).indexOf('user') === -1) {
+            return <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Schließen</Button>
+        } else {
+            return (<ButtonGroup className="w-100">
+                <Button size="sm" variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Undo</Button>
+                <Button size="sm" type="submit" variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
+                <DeleteCompanies
+                    company={changedCompany}
+                    setIsCompanyChanged={setIsCompanyChanged}
+                    addNote={addEditNote}
+                    setShow={setShow} 
+                    size='sm'
+                    />
+                <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Abbrechen</Button>
+            </ButtonGroup>)
+        }
+
+    }
+
     return (
         <Modal
             key={changedCompany.meta.location}
@@ -77,7 +97,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
             size='lg'>
             <Form noValidate validated={validated} onSubmit={handleSubmitEdit}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Firma bearbeiten</Modal.Title>
+                    <Modal.Title>Unternehmen bearbeiten</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Notes notes={errorNotes} removeNote={removeErrorNote} />
@@ -88,18 +108,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                         />
                 </Modal.Body>
                 <Modal.Footer>
-                    <ButtonGroup className="w-100">
-                        <Button size="sm" variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Undo</Button>
-                        <Button size="sm" type="submit" variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
-                        <DeleteCompanies
-                            company={changedCompany}
-                            setIsCompanyChanged={setIsCompanyChanged}
-                            addNote={addEditNote}
-                            setShow={setShow} 
-                            size='sm'
-                            />
-                        <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Abbrechen</Button>
-                    </ButtonGroup>
+                    <UserButtons/>
                 </Modal.Footer>
             </Form>
         </Modal >

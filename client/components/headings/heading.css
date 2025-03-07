@@ -1,8 +1,16 @@
-.stammForm {
+.stammForm-dark {
+    background-color: rgb(19, 132, 177);
+}
+
+.stammForm-light {
     background-color: lightcyan;
 }
 
-.adminForm {
+.adminForm-dark {
+    background-color: brown;
+}
+
+.adminForm-light {
     background-color: lightcoral;
 }
 

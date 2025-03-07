@@ -1,5 +1,5 @@
 import '../style.css'
-import { useState } from "react"
+import { useState, createContext, useContext } from "react"
 import { Container, Row, Col } from 'react-bootstrap'
 import { Navigation } from './navigation/navigation.jsx'
 import { FormTab } from './navigation/ribbon.js'
@@ -23,20 +23,20 @@ export function App() {
 
     if (auth.isAuthenticated) {
         return (
-            <Container fluid className="d-flex flex-column vh-100">
-                <Navigation
-                    tabs={tabs} setTabs={setTabs}
-                    activeForm={activeForm} setActiveForm={setActiveForm}
-                />
-                <Forms activeForm={activeForm} />
-                <Row className="bg-body-secondary" >
-                    <hr/>
-                    <Col  >
-                        <div className="float-end">made by rpbarczok</div>
-                    </Col>
-                </Row>
-            </Container>
 
+                <Container fluid className="d-flex flex-column vh-100">
+                    <Navigation
+                        tabs={tabs} setTabs={setTabs}
+                        activeForm={activeForm} setActiveForm={setActiveForm}
+                    />
+                    <Forms activeForm={activeForm} />
+                    <Row className="bg-body-secondary" >
+                        <hr />
+                        <Col  >
+                            <div className="float-end">made by rpbarczok</div>
+                        </Col>
+                    </Row>
+                </Container>
         )
     }
 

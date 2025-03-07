@@ -50,7 +50,7 @@ export const InputCompanyTypes = ({ companyType, title, show, setShow, setIsComp
                 client.postCompanyType(null, changedCompanyType.data, { headers: { Authorization: `Bearer ${token}` }})
                     .then((res) => {
                         const note: Note = {
-                            message: `Die neue Firmenrolle wurde erfolgreich abgespeichert.`,
+                            message: `Eine neue Beziehungsart wurde erfolgreich abgespeichert.`,
                             variant: 'success'
                         }
                         addMainNote(note)
@@ -59,7 +59,7 @@ export const InputCompanyTypes = ({ companyType, title, show, setShow, setIsComp
                     })
                     .catch(error => {
                         const note: Note = {
-                            message: `Fehler beim Speichern der neuen Firmenrolle: ${error.message}`,
+                            message: `Fehler beim Speichern der neuen Beziehungsart: ${error.message}`,
                             variant: 'danger',
                         }
                         addNote(note)
@@ -68,7 +68,7 @@ export const InputCompanyTypes = ({ companyType, title, show, setShow, setIsComp
                 client.putCompanyTypeById({ id: changedCompanyType.meta.location, 'if-match': changedCompanyType.meta.etag }, changedCompanyType.data,{ headers: { Authorization: `Bearer ${token}` }})
                     .then((res) => {
                         const note: Note = {
-                            message: `Die Firmenrolle wurde erfolgreich geändert.`,
+                            message: `Die Beziehungsart wurde erfolgreich geändert.`,
                             variant: 'success'
                         }
                         addMainNote(note)
@@ -77,7 +77,7 @@ export const InputCompanyTypes = ({ companyType, title, show, setShow, setIsComp
                     })
                     .catch(error => {
                         const note: Note = {
-                            message: `Fehler beim Ändern der Firmenrolle: ${error.message}`,
+                            message: `Fehler beim Ändern der Beziehung: ${error.message}`,
                             variant: 'danger'
                         }
                         addNote(note)
@@ -93,11 +93,11 @@ export const InputCompanyTypes = ({ companyType, title, show, setShow, setIsComp
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form.Group controlId="formFirmenname">
-                        <Form.Label>Firmenname</Form.Label>
+                    <Form.Group controlId="formFirma">
+                        <Form.Label>Firma</Form.Label>
                         <Form.Control required type="text" value={changedCompanyType.data.name} onChange={handleChangeName} />
                         <Form.Control.Feedback type="invalid">
-                            Bitte eine Firmenrolle eintragen.
+                            Bitte eine Art der Beziehung zu einem Unternehmen eintragen.
                         </Form.Control.Feedback>
                     </Form.Group>
                 </Modal.Body>

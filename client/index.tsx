@@ -3,7 +3,7 @@ import { App } from './components/app.jsx'
 import './style.css'
 import { serviceWorkerRegistry } from './utils/serviceworker.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { StrictMode } from "react"
+import { createContext, StrictMode, useContext } from "react"
 import { AuthProvider, AuthProviderProps } from "react-oidc-context"
 import { User, WebStorageStateStore } from "oidc-client-ts"
 import { Button } from "react-bootstrap"
@@ -28,45 +28,50 @@ export interface WindowAuth extends Window {
 
 const windowAuth = window as WindowAuth
 
-  if (!windowAuth.idp_server
-    || !windowAuth.client_id
-    || !windowAuth.redirect_uri
-    || !windowAuth.audience) {
+if (!windowAuth.idp_server
+  || !windowAuth.client_id
+  || !windowAuth.redirect_uri
+  || !windowAuth.audience) {
 
-    root.render(
-      <StrictMode>
-        <div>
-          <h1>Konfiguration der Authentifizierungsparameter unvollständig</h1>
-          <p>IDP-Server: {windowAuth.idp_server}</p>
-          <p>Client-ID: {windowAuth.client_id}</p>
-          <p>Redirect URI: {windowAuth.redirect_uri}</p>
-          <p>Audience: {windowAuth.audience}</p>
-        </div>
-        <div>
-          <Button type="button" onClick={() => window.location.reload()}>Wiederholen</Button>
-        </div>
-      </StrictMode>
-    )
-  } else {
-    const oidcConfig: AuthProviderProps = {
-      authority: windowAuth.idp_server,
-      client_id: windowAuth.client_id,
-      redirect_uri: windowAuth.redirect_uri,
-      userStore: new WebStorageStateStore({ store: window.localStorage }),
-      onSigninCallback: onSigninCallback,
-      scope: windowAuth.scope,
-      extraQueryParams: {
-        audience: windowAuth.audience
-      }
+  root.render(
+    <StrictMode>
+      <div>
+        <h1>Konfiguration der Authentifizierungsparameter unvollständig</h1>
+        <p>IDP-Server: {windowAuth.idp_server}</p>
+        <p>Client-ID: {windowAuth.client_id}</p>
+        <p>Redirect URI: {windowAuth.redirect_uri}</p>
+        <p>Audience: {windowAuth.audience}</p>
+      </div>
+      <div>
+        <Button type="button" onClick={() => window.location.reload()}>Wiederholen</Button>
+      </div>
+    </StrictMode>
+  )
+} else {
+  const oidcConfig: AuthProviderProps = {
+    authority: windowAuth.idp_server,
+    client_id: windowAuth.client_id,
+    redirect_uri: windowAuth.redirect_uri,
+    userStore: new WebStorageStateStore({ store: window.localStorage }),
+    onSigninCallback: onSigninCallback,
+    scope: windowAuth.scope,
+    extraQueryParams: {
+      audience: windowAuth.audience
     }
+  }
 
-    root.render(
-      <StrictMode>
-        <AuthProvider {...oidcConfig}>
+  const theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  const ThemeContext = createContext('light')
+
+  root.render(
+    <StrictMode>
+      <AuthProvider {...oidcConfig}>
+        <ThemeContext.Provider value={theme}>
           <App />
-        </AuthProvider >
-      </StrictMode>
-    )
+        </ThemeContext.Provider>
+      </AuthProvider >
+    </StrictMode>
+  )
 
-    if (process.env.NODE_ENV === "production") serviceWorkerRegistry()
+  if (process.env.NODE_ENV === "production") serviceWorkerRegistry()
 }
