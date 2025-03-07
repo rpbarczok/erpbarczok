@@ -27,7 +27,7 @@ jobs:
           # builder for multiplatform from https://www.docker.com/blog/how-to-rapidly-build-multi-architecture-images-with-buildx/
         - name: Create Docker Image and Push Docker Image dev-main
           if: github.ref_name != 'main'
-          run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build  --platform linux/amd64,linux/arm64 --push -t ghcr.io/rpbarczok/erpbarczok:"$GITHUB_REF_NAME" --network host .
+          run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build  --platform linux/amd64,linux/arm64 --push -t ghcr.io/rpbarczok/erpbarczok:"$GITHUB_REF_NAME"
         - name: Create Docker Image and Push Docker Image latest
           if: github.ref_name == 'main'
-          run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build  --platform linux/amd64,linux/arm64 --push -t ghcr.io/rpbarczok/erpbarczok:"$GITHUB_REF_NAME" -t ghcr.io/rpbarczok/erpbarczok:latest --network host .
+          run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build  --platform linux/amd64,linux/arm64 --push -t ghcr.io/rpbarczok/erpbarczok:"$GITHUB_REF_NAME" -t ghcr.io/rpbarczok/erpbarczok:latest
