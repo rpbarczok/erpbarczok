@@ -4,6 +4,7 @@ on:
   push: 
     branches: 
       - dev-main
+      - main
 jobs:
   build_and_save_image:
     runs-on: ubuntu-latest
@@ -14,6 +15,7 @@ jobs:
         id-token: write
     env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_REF_NAME: github.ref.name
     steps:
         - name: Check out repository code
           uses: actions/checkout@v4
@@ -24,5 +26,9 @@ jobs:
         - name: Log in to registry
           run: echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
           # builder for multiplatform from https://www.docker.com/blog/how-to-rapidly-build-multi-architecture-images-with-buildx/
-        - name: Create Docker Image and Push Docker Image
-          run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build  --platform linux/amd64,linux/arm64 --push -t ghcr.io/rpbarczok/erpbarczok:dev --network host .
+        - name: Create Docker Image and Push Docker Image dev-main
+          if: github.ref_name == 'dev-main'
+          run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build  --platform linux/amd64,linux/arm64 --push -t ghcr.io/rpbarczok/erpbarczok:$GITHUB_REF_NAME --network host .
+        - name: Create Docker Image and Push Docker Imager latest
+          if: github.ref_name == 'main'
+          run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build  --platform linux/amd64,linux/arm64 --push -t ghcr.io/rpbarczok/erpbarczok:latest --network host .
