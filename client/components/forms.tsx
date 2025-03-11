@@ -1,6 +1,6 @@
 import { Companies } from "./companies/companies.jsx"
-import { Admin } from "./admin/admin.jsx"
-import { FormTab } from "./navigation/ribbon.js"
+import { Resources } from "./resources/resources.jsx"
+import { FormTab } from "./navigation/ribbon.jsx"
 import '../style.css'
 
 interface Meta {
@@ -18,8 +18,8 @@ export const Forms = ({ activeForm }: { activeForm: FormTab }) => {
     switch (activeForm.id) {
         case 'stammForm':
             return <Companies />
-        case 'adminForm':
-            return <Admin />
+        case 'resForm':
+            return <Resources />
         default:
             return <h1 className="flex-grow-1"> {activeForm.name}: Work in Progress</h1>
     }

@@ -6,7 +6,7 @@ import { client } from "utils/openAPIClientAxios.js"
 import { DataWithMeta } from "components/forms.jsx"
 import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
 import { FormCompanies } from './form.companies.jsx'
-import { useCompanyTypes } from './../../components/admin/companyTypes/useCompanyTypes.js'
+import { useCompanyTypes } from '../resources/companyTypes/useCompanyTypes.js'
 import { Heading } from './../../components/headings/heading.jsx'
 
 export interface Company {

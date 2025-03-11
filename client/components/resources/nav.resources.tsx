@@ -1,18 +1,20 @@
 import '../../style.css'
-import './admin.css'
+import './resources.css'
 import { resourceList } from './resourceList.js'
-import { Button, ButtonGroup, ListGroup } from 'react-bootstrap'
-import { Resource } from './admin.js'
+import { Button, ButtonGroup } from 'react-bootstrap'
+import { Resource } from './resourceList.js'
 
 interface LeftNavigationInterface {
     setActiveResource: React.Dispatch<React.SetStateAction<Resource>>
     activeResource: Resource
+    setIsResourceChanged:React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const LeftNavigation = ({ setActiveResource, activeResource }: LeftNavigationInterface) => {
+export const ResourceNavigation = ({ setActiveResource, activeResource, setIsResourceChanged }: LeftNavigationInterface) => {
 
     const resourceHandler = (resource: Resource) => {
         setActiveResource(resource)
+        setIsResourceChanged(true)
     }
 
     const ButtonList = resourceList.map(resource => {
