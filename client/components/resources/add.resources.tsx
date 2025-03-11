@@ -1,6 +1,6 @@
 import { Button, ButtonGroup, Form, Modal } from "react-bootstrap"
 import { Resource } from "./resourceList.js"
-import { useState } from "react"
+import React, { SetStateAction, useState } from "react"
 import { useAuth } from "react-oidc-context"
 import { client } from "utils/openAPIClientAxios.js"
 import { Field, InputFields } from "./fields/fields.jsx"
@@ -13,6 +13,29 @@ interface AddResourceComponent {
     resource: Resource
     addMainNote: (note: Note) => void
     setIsItemChanged: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+interface ActiveResourceComponent {
+    resource: Resource
+    newItem: DataWithMeta<Field | CompanyType>
+    setNewItem: React.Dispatch<SetStateAction<DataWithMeta<Field | CompanyType>>>
+}
+
+export const ActiveResource = ({resource, newItem, setNewItem}: ActiveResourceComponent) => {
+    switch (resource.name) {
+        case 'Beziehung':
+            return <InputCompanyTypes
+                companyType={newItem}
+                setCompanyType={setNewItem}
+            />
+        case 'Branche':
+            return <InputFields
+                field={newItem}
+                setField={setNewItem} />
+        default:
+            <p>No Content</p>
+    }
+
 }
 
 export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddResourceComponent) => {
@@ -35,7 +58,6 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>, item: DataWithMeta<CompanyType | Field>) => {
         const form = e.currentTarget
         e.preventDefault()
-        e.stopPropagation()
         const token = auth.user?.access_token
         if (form.checkValidity() === false) {
             setValidated(true)
@@ -59,34 +81,19 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
         }
     }
 
-    const ActiveResource = () => {
-        switch (resource.name) {
-            case 'Beziehung':
-                return <InputCompanyTypes
-                    companyType={newItem}
-                    setCompanyType={setNewItem}
-                />
-            case 'Branche':
-                return <InputFields
-                    field={newItem}
-                    setField={setNewItem} />
-            default:
-                <p>No Content</p>
-        }
-
-    }
-
-    return (
-        <>
+    return (<>
             <Button variant="outline-primary" onClick={handleModal}>{resource.name} hinzufügen</Button>
             <Modal show={show} onHide={() => handleClose()}>
                 <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, newItem)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{resource.name} {newItem.data.name}</Modal.Title>
+                        <Modal.Title>{resource.name} hinzufügen</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Notes notes={notes} removeNote={removeNote} />
-                        <ActiveResource />
+                        <ActiveResource 
+                        resource={resource}
+                        newItem={newItem} setNewItem={setNewItem}
+                        />
                     </Modal.Body>
                     <Modal.Footer>
                         <ButtonGroup className="w-100">
@@ -100,3 +107,4 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
         </>
     )
 }
+

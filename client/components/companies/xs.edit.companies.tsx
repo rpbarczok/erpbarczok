@@ -27,6 +27,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
     const [validated, setValidated] = useState(false)
     const [errorNotes, addErrorNote, removeErrorNote] = useNotifier()
     const auth = useAuth()
+    
     const token = auth.user?.access_token
     const isNotChanged: boolean = (activeCompany.data.name === changedCompany.data.name &&
         activeCompany.data.abbr === changedCompany.data.abbr &&

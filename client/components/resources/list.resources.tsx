@@ -4,7 +4,7 @@ import { Field, InputFields } from "./fields/fields.jsx"
 import { Note, Notes } from "components/notifiers/notifiers.jsx"
 import { Resource } from "./resourceList.js"
 import { useAuth } from "react-oidc-context"
-import { useState } from "react"
+import React, { useState } from "react"
 import { Button, ButtonGroup, Form, ListGroup, Modal } from "react-bootstrap"
 import { client } from "utils/openAPIClientAxios.js"
 import { useNotifier } from "components/notifiers/useNotifier.js"
@@ -15,6 +15,29 @@ interface ListItemComponent {
     setIsItemChanged: React.Dispatch<React.SetStateAction<boolean>>
     addMainNote: (note: Note) => void
     resource: Resource
+}
+
+interface ActiveResourceComponent {
+    resource: Resource
+    changedItem: DataWithMeta<Field | CompanyType>
+    setChangedItem: React.Dispatch<React.SetStateAction<DataWithMeta<Field | CompanyType>>>
+}
+
+const ActiveResource = ({resource, changedItem, setChangedItem}: ActiveResourceComponent) => {
+    switch (resource.name) {
+        case 'Beziehung':
+            return <InputCompanyTypes
+                companyType={changedItem}
+                setCompanyType={setChangedItem}
+            />
+        case 'Branche':
+            return <InputFields
+                field={changedItem}
+                setField={setChangedItem} />
+        default:
+            <p>No Content</p>
+    }
+
 }
 
 export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: ListItemComponent) => {
@@ -97,23 +120,6 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
         setChangedItem(item)
     }
 
-    const ActiveResource = () => {
-        switch (resource.name) {
-            case 'Beziehung':
-                return <InputCompanyTypes
-                    companyType={changedItem}
-                    setCompanyType={setChangedItem}
-                />
-            case 'Branche':
-                return <InputFields
-                    field={changedItem}
-                    setField={setChangedItem} />
-            default:
-                <p>No Content</p>
-        }
-
-    }
-
     return (
         <>
             <ListGroup.Item className="standardDesign" onClick={handleModal}>
@@ -126,7 +132,9 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
                     </Modal.Header>
                     <Modal.Body>
                         <Notes notes={notes} removeNote={removeNote} />
-                        <ActiveResource />
+                        <ActiveResource 
+                        resource={resource}
+                        changedItem={changedItem} setChangedItem={setChangedItem}/>
                     </Modal.Body>
                     <Modal.Footer>
                         <ButtonGroup className="w-100">
