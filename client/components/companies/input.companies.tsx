@@ -55,7 +55,7 @@ export const InputCompanies = ({companyTypesList, changedCompanyDispatch, change
             <Row>
                 <Col xs={12} sm={6} lg={12} xxl={6}>
                     <Form.Group controlId="companyWWW">
-                        <Form.Label className="standardDesign">Internetadresse</Form.Label >
+                        <Form.Label className="standardDesign">Homepage</Form.Label >
                         <Form.Control type="text" className="standardDesign" value={changedCompany.data.www} onChange={handleChangeWWW} disabled={(auth.user?.scope as string).indexOf('user') === -1} />
                     </Form.Group>
                 </Col>
