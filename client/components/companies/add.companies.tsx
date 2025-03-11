@@ -7,7 +7,7 @@ import { useAuth } from "react-oidc-context"
 import { Note, Notes } from "components/notifiers/notifiers.jsx"
 import { useNotifier } from "components/notifiers/useNotifier.js"
 import { DataWithMeta } from "components/forms.jsx"
-import { CompanyType } from "components/admin/companyTypes/companyTypes.jsx"
+import { CompanyType } from "components/resources/companyTypes/companyTypes.js"
 import { Button, ButtonGroup, Form, Modal } from "react-bootstrap"
 import { InputCompanies } from "./input.companies.jsx"
 

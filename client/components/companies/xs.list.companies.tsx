@@ -4,7 +4,7 @@ import { Button, Col, Container, ListGroup, Row } from "react-bootstrap"
 import { XSEditCompanies } from "./xs.edit.companies.jsx"
 import { useState } from "react"
 import { ChangedCompanyAction } from "./company.reducer.js"
-import { CompanyType } from "components/admin/companyTypes/companyTypes.jsx"
+import { CompanyType } from "components/resources/companyTypes/companyTypes.js"
 import { Note } from "components/notifiers/notifiers.js"
 
 interface XSListCompaniesComponent {

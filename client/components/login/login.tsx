@@ -15,7 +15,7 @@ export const Login = () => {
     return (
         <div>
             <Row className="text-center">
-                <h1 >Panda 2</h1>
+                <h1 >ERPBarczok</h1>
                 <h3 >Bitte loggen Sie sich ein!</h3>
             </Row>
             <Row>

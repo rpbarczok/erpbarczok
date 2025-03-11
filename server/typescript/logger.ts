@@ -1,3 +1,3 @@
 import logger from 'debug'
 
-export const baseLogger = logger("panda2")
+export const baseLogger = logger("ERPBarczok")

@@ -32,8 +32,11 @@ export function App() {
                     <Forms activeForm={activeForm} />
                     <Row className="bg-body-secondary" >
                         <hr />
+                        <Col>
+                        <a href="https://www.flaticon.com/de/kostenlose-icons/panda" title="panda Icons">Panda Icons erstellt von Freepik - Flaticon</a>
+                        </Col>
                         <Col  >
-                            <div className="float-end">made by rpbarczok</div>
+                            <div className="float-end">© and made by rpbarczok</div>
                         </Col>
                     </Row>
                 </Container>

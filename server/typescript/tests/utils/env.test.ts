@@ -1,5 +1,5 @@
 process.env.NODE_ENV="test"
-process.env.DEBUG="panda2:app"
+process.env.DEBUG="ERPBarczok:app"
 process.env.DB_NAME="postgres"
 process.env.DB_USER="postgres"
 process.env.DB_PASSWORD="blablubber"

@@ -3,7 +3,7 @@ import { useAuth } from "react-oidc-context"
 import { ChangedCompanyAction } from "./company.reducer.js"
 import { Company } from "./companies.js"
 import { DataWithMeta } from "components/forms.jsx"
-import { CompanyType } from "components/admin/companyTypes/companyTypes.jsx"
+import { CompanyType } from "components/resources/companyTypes/companyTypes.js"
 import { CompanyTypesDropdown } from "./companyTypesDropdown.companies.jsx"
 
 interface InputCompaniesComponent {

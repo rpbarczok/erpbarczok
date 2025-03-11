@@ -1,7 +1,7 @@
 {
-  "name": "panda2",
+  "name": "erpbarczok",
   "version": "1.0.0",
-  "description": "Panda2 with Client and Server in one Repo",
+  "description": "An ERP System with Client and Server in one Repo",
   "private": "true",
   "type": "module",
   "scripts": {

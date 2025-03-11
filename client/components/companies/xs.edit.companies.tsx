@@ -4,7 +4,7 @@ import { Company } from "./companies.jsx"
 import React, { useState } from "react"
 import { Note, Notes } from "components/notifiers/notifiers.jsx"
 import { useNotifier } from "components/notifiers/useNotifier.js"
-import { CompanyType } from "components/admin/companyTypes/companyTypes.jsx"
+import { CompanyType } from "components/resources/companyTypes/companyTypes.js"
 import { DeleteCompanies } from "./delete.companies.jsx"
 import { client } from "utils/openAPIClientAxios.js"
 import { useAuth } from "react-oidc-context"
@@ -27,6 +27,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
     const [validated, setValidated] = useState(false)
     const [errorNotes, addErrorNote, removeErrorNote] = useNotifier()
     const auth = useAuth()
+    
     const token = auth.user?.access_token
     const isNotChanged: boolean = (activeCompany.data.name === changedCompany.data.name &&
         activeCompany.data.abbr === changedCompany.data.abbr &&
