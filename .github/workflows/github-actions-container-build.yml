@@ -3,7 +3,7 @@ run-name: Create Docker Image for Dev Branch when Pushed
 on: 
   push: 
     branches: 
-      - dev-main
+      - dev
       - main
 jobs:
   build_and_save_image:
