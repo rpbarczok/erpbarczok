@@ -2,8 +2,7 @@
   "compilerOptions": {
     "outDir": "server/ecmascript",
     "module": "NodeNext",
-    "strict": true,
-    "allowSyntheticDefaultImports": true
+    "strict": true
     //"removeComments": true
   },
   "include": [
