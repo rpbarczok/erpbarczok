@@ -20,14 +20,14 @@ export const DeleteCompanies = ({ company, setIsCompanyChanged, addNote, setShow
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        const userConfirmed = window.confirm(`Willst du die Firma '${company.data.name}' wirklich löschen?`)
+        const userConfirmed = window.confirm(`Willst du das Unternehmen '${company.data.name}' wirklich löschen?`)
         if (userConfirmed) {
             client.deleteCompanyById(company.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
                 .then((res) => {
                     setIsCompanyChanged(true)
                     const note: Note = {
                         variant: 'warning',
-                        message: `Firma wurde gelöscht.`,
+                        message: `Unternehmen wurde gelöscht.`,
                     }
                     if (setShow) {
                         setShow(false)
@@ -37,7 +37,7 @@ export const DeleteCompanies = ({ company, setIsCompanyChanged, addNote, setShow
                 .catch(error => {
                     const note: Note = {
                         variant: 'danger',
-                        message: `Löschen der Firma hat nicht geklappt: ${error.message}`,
+                        message: `Löschen der Unternehmen hat nicht geklappt: ${error.message}`,
                     }
                     addNote(note)
                 })

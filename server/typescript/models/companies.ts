@@ -33,7 +33,7 @@ export const initializeCompany = (sequelize: Sequelize) => {
         },
         www: {
             type: DataTypes.STRING,
-            comment: "Internetadresse der Firma"
+            comment: "Internetadresse Unternehmens"
         },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE

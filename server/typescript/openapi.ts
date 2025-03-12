@@ -7,8 +7,8 @@ const openIdConnectUrl = `${process.env.IDP_SERVER}.well-known/openid-configurat
 export const apiSpec: OpenAPIV3.DocumentV3 = {
     "openapi": "3.0.3",
     "info": {
-        "title": "Panda 2.0",
-        "description": "The Description of the API of Panda 2.0",
+        "title": "ERPBarczok",
+        "description": "The Description of the API of the ERPBarczok App",
         "version": "0.0.1"
     },
     "servers": [

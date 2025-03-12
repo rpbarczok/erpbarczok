@@ -16,7 +16,7 @@ const writeOpenApiSpec = async () => {
         if (err) {
             console.log(err)
         } else {
-            console.log('OpenapiSpec-File for client successfully created')
+            console.log('OpenapiSpec Typescript for client successfully created')            
         }
     })
 
@@ -25,7 +25,7 @@ const writeOpenApiSpec = async () => {
         if (err) {
             console.log(err)
         } else {
-            console.log('OpenapiSpec-Json-File for client successfully created')
+            console.log('OpenapiSpec Json File for client successfully created')
         }
     })
 }

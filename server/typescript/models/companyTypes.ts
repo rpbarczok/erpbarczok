@@ -19,7 +19,7 @@ export const initializeCompanyType = (sequelize: Sequelize) => {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
-            comment: 'Typ der Firma',
+            comment: 'Typ des Unternehmens',
         },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE

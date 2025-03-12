@@ -1,22 +1,22 @@
 {
-  "name": "panda2",
+  "name": "erpbarczok",
   "version": "1.0.0",
-  "description": "Panda2 with Client and Server in one Repo",
+  "description": "An ERP System with Client and Server in one Repo",
   "private": "true",
   "type": "module",
   "scripts": {
     "server": "dotenvx run -f .env -- tsx server/typescript/start.ts",
     "client": "webpack serve --config webpack.dev.js",
-    "stop_dev_db": "docker kill devdb",
+    "stop_dev_db": "docker kill devdb; sleep 2",
     "start_dev_db": "npm run stop_dev_db ; docker run --name devdb -e POSTGRES_PASSWORD='blablubber' -p 8082:5432 -d --rm postgres:17.2-alpine3.20",
-    "start": "npm run start_dev_db && concurrently \"npm run server\" \"npm run client\"",
+    "start": "npm run create_types && npm run start_dev_db && concurrently \"npm run server\" \"npm run client\"",
 
     
     "create_openapi_spec": "tsx create-openapi-spec.ts",
     "create_types": "npm run create_openapi_spec && mkdir -p client/types && npx openapicmd typegen client/utils/openapi.json > client/types/openapi.d.ts",
     
     "build_client": "npm run create_types && webpack --config webpack.prod.js",
-    "build_server": "rm -fR server/ecmascript && tsc",
+    "build_server": "rm -fR server/ecmascript && npx tsc",
     
     "start_test_db": "npm run stop_test_db ; docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",
     "stop_test_db": "docker kill testdb",

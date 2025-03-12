@@ -4,7 +4,7 @@ import { useAuth } from "react-oidc-context"
 import { ChangedCompanyAction, changedCompanyReducer } from "./company.reducer.js"
 import { DataWithMeta } from "components/forms.jsx"
 import { Company } from "./companies.jsx"
-import { CompanyType } from "components/admin/companyTypes/companyTypes.jsx"
+import { CompanyType } from "components/resources/companyTypes/companyTypes.js"
 import { client } from "utils/openAPIClientAxios.js"
 import { Note, Notes } from "components/notifiers/notifiers.jsx"
 import { InputCompanies } from "./input.companies.jsx"
@@ -38,7 +38,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
                 .then((res) => {
                     const note: Note = {
                         variant: 'success',
-                        message: `Firma erfolgreich überarbeitet.`,
+                        message: `Unternehmen erfolgreich überarbeitet.`,
                     }
                     addEditNote(note)
                     setIsCompanyChanged(true)
@@ -46,7 +46,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
                 .catch(function (error) {
                     const note: Note = {
                         variant: 'danger',
-                        message: `Fehler beim Speichern der Firmendaten: ${error.message}`,
+                        message: `Fehler beim Speichern der Unternehmensdaten: ${error.message}`,
                     }
                     addEditNote(note)
                 })

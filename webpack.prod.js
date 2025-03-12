@@ -25,7 +25,10 @@ const config = merge(common, {
         // https://webpack.js.org/guides/progressive-web-application/
         new WorkboxPlugin.GenerateSW({
             clientsClaim: true,
-            skipWaiting: true
+            skipWaiting: true,
+            additionalManifestEntries: [
+                '/config.js'
+            ]
         })
     ]
 })
