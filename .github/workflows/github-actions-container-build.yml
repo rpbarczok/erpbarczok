@@ -1,5 +1,5 @@
-name: GitHub Actions DevBranch Container Build
-run-name: Create Docker Image for Dev Branch when Pushed
+name: GitHub Actions ERPBarczok Container Build
+run-name: Create Docker Image when Branch Dev is Pushed or Merged into Mein
 on: 
   push: 
     branches: 
@@ -30,4 +30,4 @@ jobs:
           run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build  --platform linux/amd64,linux/arm64 --push -t ghcr.io/rpbarczok/erpbarczok:"$GITHUB_REF_NAME" .
         - name: Create Docker Image and Push Docker Image latest
           if: github.ref_name == 'main'
-          run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build  --platform linux/amd64,linux/arm64 --push -t ghcr.io/rpbarczok/erpbarczok:"$GITHUB_REF_NAME" -t ghcr.io/rpbarczok/erpbarczok:latest .
+          run: docker buildx create --name mybuilder --use --bootstrap && docker buildx build  --platform linux/amd64,linux/arm64 --push -t ghcr.io/rpbarczok/erpbarczok:"$GITHUB_REF_NAME"-"$GITHUB_SHA" -t ghcr.io/rpbarczok/erpbarczok:latest .
