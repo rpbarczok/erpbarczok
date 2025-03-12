@@ -3,7 +3,7 @@ import { App } from './components/app.jsx'
 import './style.css'
 import { serviceWorkerRegistry } from './utils/serviceworker.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { createContext, StrictMode, useContext } from "react"
+import {  StrictMode } from "react"
 import { AuthProvider, AuthProviderProps } from "react-oidc-context"
 import { User, WebStorageStateStore } from "oidc-client-ts"
 import { Button } from "react-bootstrap"
@@ -60,15 +60,11 @@ if (!windowAuth.idp_server
     }
   }
 
-  const theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  const ThemeContext = createContext('light')
 
   root.render(
     <StrictMode>
       <AuthProvider {...oidcConfig}>
-        <ThemeContext.Provider value={theme}>
           <App />
-        </ThemeContext.Provider>
       </AuthProvider >
     </StrictMode>
   )
