@@ -1,18 +1,21 @@
 import '../../style.css'
 import './navigation.css'
-import { groupForm, Form, FormTab } from './ribbon.js'
-import { Navbar, Nav, NavDropdown, Row, Col, Dropdown } from 'react-bootstrap'
+import { groupForm, FormTab, Form as FormClass } from './ribbon.js'
+import { Navbar, Nav, NavDropdown, Row, Col, Dropdown, FormCheck, Form } from 'react-bootstrap'
 import React, { useState } from 'react'
 import { useAuth } from 'react-oidc-context'
 import { List } from 'react-bootstrap-icons'
+import { toggleTheme } from '../../utils/toggleTheme.js'
 
 interface RibbonNavigationInterface {
     tabs: FormTab[]
     setTabs: React.Dispatch<React.SetStateAction<FormTab[]>>
     setActiveForm: React.Dispatch<React.SetStateAction<FormTab>>
+    theme: 'light' | 'dark'
+    setTheme: React.Dispatch<React.SetStateAction<'light' | 'dark'>>
 }
 
-export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigationInterface) {
+export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme }: RibbonNavigationInterface) {
 
     const auth = useAuth()
 
@@ -29,7 +32,7 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
 
     function Groups() {
 
-        function Forms({ forms }: { forms: Form[] }) {
+        function Forms({ forms }: { forms: FormClass[] }) {
             const formsList = forms.map(f => {
                 return (
                     <NavDropdown.Item key={f.id} onClick={() => handleClick(f)} >
@@ -82,7 +85,7 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
 
     function GroupsNavXS() {
 
-        function Forms({ forms }: { forms: Form[] }) {
+        function Forms({ forms }: { forms: FormClass[] }) {
             const formsList = forms.map(f => {
                 return (
                     <NavDropdown.Item key={f.id} onClick={() => handleClick(f)} >
@@ -123,6 +126,7 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
                         <NavDropdown className="dropdown-item" key={g.id} title={g.name}>
                             <Forms forms={g.forms} />
                         </NavDropdown>
+
                     )
                 }
             }
@@ -153,9 +157,18 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
                 <Navbar key="navbar-lg" className='bg-body-secondary d-none d-xl-block'>
                     <Nav>
                         <Groups />
-                        <NavDropdown className="ms-auto" key="account" title={auth.user?.profile?.email}>
+                        <NavDropdown key="account" title={auth.user?.profile?.email}>
                             <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
                         </NavDropdown>
+                        <FormCheck
+                            className="ms-auto"
+                            style={{ paddingTop: "9px", paddingRight: "5px" }}
+                            type="switch"
+                            id="toggleTheme"
+                            onChange={(e) => toggleTheme(e, theme, setTheme)}
+                            label="Toggle Theme" 
+                            />
+
                     </Nav>
                 </Navbar>
             </Row>
@@ -175,8 +188,9 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm }: RibbonNavigat
                     <NavDropdown className="float-end" key="account" title={auth.user?.profile?.email}>
                         <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
                     </NavDropdown>
+                    <FormCheck type="switch" id="toggleTheme" onChange={(e) => toggleTheme(e, theme, setTheme)} label="Toggle Theme" />
                 </Col>
             </Row>
-        </div>
+        </div >
     )
 } 

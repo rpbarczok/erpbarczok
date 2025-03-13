@@ -11,15 +11,18 @@ interface NavigationInterface {
     setTabs: React.Dispatch<React.SetStateAction<FormTab[]>>
     activeForm: FormTab
     setActiveForm: React.Dispatch<React.SetStateAction<FormTab>>
+    theme: 'light' | 'dark'
+    setTheme: React.Dispatch<React.SetStateAction<'light' | 'dark'>>
 }
 
-export function Navigation({ tabs, setTabs, activeForm, setActiveForm }: NavigationInterface) {
+export function Navigation({ tabs, setTabs, activeForm, setActiveForm, theme, setTheme }: NavigationInterface) {
 
     return (
         <>
             <RibbonNavigation
                 tabs={tabs} setTabs={setTabs}
                 setActiveForm={setActiveForm}
+                theme={theme} setTheme={setTheme}
             />
             <Row>
                 <TabsNavigation
