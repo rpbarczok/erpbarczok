@@ -18,8 +18,7 @@ export const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER,
     host: process.env.DB_HOST,
     dialect: 'postgres',
     logging: sequelizeLogger,
-    port: Number(process.env.DB_PORT),
-    ssl: true
+    port: Number(process.env.DB_PORT)
 })
 
 initializeCompanyType(sequelize)
