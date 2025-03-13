@@ -1,5 +1,5 @@
 name: GitHub Actions ERPBarczok Container Build
-run-name: Create Docker Image when Branch Dev is Pushed or Merged into Mein
+run-name: Create Docker Image when Branch Dev is Pushed or Merged into Main
 on: 
   push: 
     branches: 
