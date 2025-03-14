@@ -19,6 +19,6 @@ const secret_test = process.env.TEST_SECRET || 'secret'
 export const  jwtCheck = expressjwt({ 
         secret: process.env.NODE_ENV==='test' ? secret_test : secret_prod, 
         audience: process.env.AUDIENCE, 
-        issuer: process.env.IDP_SERVER,
+        issuer: process.env.IDP_ISSUER || process.env.IDP_SERVER,
         algorithms: algorithms as Algorithm[],  
         credentialsRequired: true })

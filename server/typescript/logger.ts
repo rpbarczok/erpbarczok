@@ -1,3 +1,3 @@
 import logger from 'debug'
 
-export const baseLogger = logger("ERPBarczok")
+export const baseLogger = logger("erpbarczok")
