@@ -49,7 +49,8 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
         }
 
         const groupFormAuth = groupForm.map(g => {
-            const userScope: string[] = auth.user?.scopes ? auth.user?.scopes.concat(['public']) : ['public']
+            const userScopePrep: string[] = auth.user?.scopes ? auth.user?.scopes.concat(['public']) : ['public']
+            const userScope = userScopePrep.map(string => string.replace('api://erpbarczok/',''))
             const groupFormsAuth = g.forms.filter(f => {
                 const formScopes = new Set(f.scopes.split(" "))
                 return userScope.some(scope => formScopes.has(scope))
