@@ -59,6 +59,32 @@ export const SMFormCompanies = ({ search,
         />
     </>
 
+    const Edit = () => {
+        if (filteredCompanies.length === 0) {
+            return (
+                <p>Kein Unternehmen gefunden!</p>
+            )
+        } else {
+            return (
+                <>
+                    <Row className="d-none d-sm-block d-md-none">
+                        {hasScope('user') ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
+                    </Row>
+                    <Notes notes={editNotes} removeNote={removeEditNote} ></Notes>
+                    <Row>
+                        <SMEditCompanies
+                            key={activeCompany.meta.location}
+                            company={activeCompany}
+                            companyTypesList={companyTypesList}
+                            setIsCompanyChanged={setIsCompanyChanged}
+                            addEditNote={addEditNote}
+                            changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
+                        />
+                    </Row>
+                </>
+            )
+        }
+    }
     return (
         <div className="flex-grow-1" >
             <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
@@ -79,20 +105,7 @@ export const SMFormCompanies = ({ search,
                 </Col>
             </Row >
             <hr />
-            <Row className="d-none d-sm-block d-md-none">
-                {hasScope('user') ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
-            </Row>
-            <Notes notes={editNotes} removeNote={removeEditNote} ></Notes>
-            <Row>
-                <SMEditCompanies
-                    key={activeCompany.meta.location}
-                    company={activeCompany}
-                    companyTypesList={companyTypesList}
-                    setIsCompanyChanged={setIsCompanyChanged}
-                    addEditNote={addEditNote}
-                    changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-                />
-            </Row>
+            <Edit/>
         </div>
     )
 }
