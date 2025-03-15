@@ -14,7 +14,7 @@ export const SMListCompanies = ({ filteredCompanies, activeCompany, handleChange
     const List = () => {
         if (filteredCompanies.length === 0) {
             return (
-                <p>Keine Firmen gefunden!</p>
+                <p>Keine Unternehmen gefunden!</p>
             )
         } else {
             return filteredCompanies.map((element) => {

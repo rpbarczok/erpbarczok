@@ -15,6 +15,7 @@ import { ChangedCompanyAction } from './company.reducer.js'
 import { Heading } from 'components/headings/heading.jsx'
 import { Note, Notes } from 'components/notifiers/notifiers.jsx'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
+import { hasScope } from 'utils/auth.js'
 
 interface CompaniesFormSMComponent {
     search: string
@@ -79,7 +80,7 @@ export const SMFormCompanies = ({ search,
             </Row >
             <hr />
             <Row className="d-none d-sm-block d-md-none">
-                {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
+                {hasScope('user') ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
             </Row>
             <Notes notes={editNotes} removeNote={removeEditNote} ></Notes>
             <Row>

@@ -10,6 +10,7 @@ import { client } from "utils/openAPIClientAxios.js"
 import { useAuth } from "react-oidc-context"
 import { ChangedCompanyAction } from "./company.reducer.js"
 import { InputCompanies } from "./input.companies.jsx"
+import { hasScope } from "utils/auth.js"
 
 interface XSEditCompaniesComponent {
     show: boolean
@@ -70,7 +71,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
     }
 
     const UserButtons = () => {
-        if ((auth.user?.scope as string).indexOf('user') === -1) {
+        if (hasScope('user')) {
             return <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Schließen</Button>
         } else {
             return (<ButtonGroup className="w-100">
