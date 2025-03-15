@@ -4,8 +4,8 @@ import { groupForm, FormTab, Form as FormClass } from './ribbon.js'
 import { Navbar, Nav, NavDropdown, Row, Col, Dropdown, FormCheck, Form } from 'react-bootstrap'
 import React, { useState } from 'react'
 import { useAuth } from 'react-oidc-context'
-import { List } from 'react-bootstrap-icons'
-import { toggleTheme } from '../../utils/toggleTheme.js'
+import { List, MoonStars, Sun } from 'react-bootstrap-icons'
+import { toggleTheme } from './toggleTheme.js'
 
 interface RibbonNavigationInterface {
     tabs: FormTab[]
@@ -140,8 +140,6 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
         )
     }
 
-
-
     const logOutHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         try {
             await auth.revokeTokens()
@@ -158,17 +156,18 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
                 <Navbar key="navbar-lg" className='bg-body-secondary d-none d-xl-block'>
                     <Nav>
                         <Groups />
-                        <NavDropdown key="account" title={auth.user?.profile?.email}>
+                        <NavDropdown className="ms-auto" key="account" title={auth.user?.profile?.email}>
                             <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
-                        </NavDropdown>
-                        <FormCheck
+                            <NavDropdown.Divider/>
+                            <FormCheck
                             className="ms-auto"
-                            style={{ paddingTop: "9px", paddingRight: "5px" }}
+                            reverse
                             type="switch"
                             id="toggleTheme"
                             onChange={(e) => toggleTheme(e, theme, setTheme)}
-                            label="Toggle Theme" 
+                            label="Toggle Theme"
                             />
+                        </NavDropdown>
 
                     </Nav>
                 </Navbar>
@@ -188,8 +187,9 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
                 <Col className="ms-auto">
                     <NavDropdown className="float-end" key="account" title={auth.user?.profile?.email}>
                         <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
+                        <Dropdown.Divider />
+                        <FormCheck reverse type="switch" id="toggleTheme" onChange={(e) => toggleTheme(e, theme, setTheme)} label="Toggle Theme" />
                     </NavDropdown>
-                    <FormCheck type="switch" id="toggleTheme" onChange={(e) => toggleTheme(e, theme, setTheme)} label="Toggle Theme" />
                 </Col>
             </Row>
         </div >

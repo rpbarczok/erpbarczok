@@ -30,7 +30,7 @@ export const XSListCompanies = ({ filteredCompanies, changedCompany, changedComp
     const List = () => {
         if (filteredCompanies.length === 0) {
             return (
-                <p>Keine Firmen gefunden!</p>
+                <p>Keine Unternehmen gefunden!</p>
             )
         } else {
             return filteredCompanies.map((element) => {
