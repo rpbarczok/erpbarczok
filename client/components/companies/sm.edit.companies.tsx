@@ -8,6 +8,7 @@ import { CompanyType } from "components/resources/companyTypes/companyTypes.js"
 import { client } from "utils/openAPIClientAxios.js"
 import { Note, Notes } from "components/notifiers/notifiers.jsx"
 import { InputCompanies } from "./input.companies.jsx"
+import { hasScope } from "utils/auth.js"
 
 interface SMEditCompanies {
     company: DataWithMeta<Company>
@@ -88,7 +89,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
             <Row>
                 <Col id='company' sm={12} lg={6} xl={5} >
                     <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
-                        {(auth.user?.scope as string).indexOf('user') !== -1 ? <ButtonEdit /> : ''}
+                        {hasScope('user') ? <ButtonEdit /> : ''}
                         <InputCompanies
                             companyTypesList={companyTypesList}
                             changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch} />
