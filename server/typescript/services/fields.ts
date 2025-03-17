@@ -8,7 +8,6 @@ const logger = baseLogger.extend("services:fields")
 export const getAllFields = () => new Promise<Field[]>(async function (resolve, reject) {
     try {
         const fields = await Field.findAll({ order: [['name', 'ASC']] })
-        console.log('getAllFields')
         resolve(fields)
     }
     catch (err) {
