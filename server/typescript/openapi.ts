@@ -2,7 +2,10 @@
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { Http2ServerRequest } from 'node:http2'
 
-const openIdConnectUrl = `${process.env.IDP_SERVER}.well-known/openid-configuration`
+
+const openIdConnectUrl = (process.env.IDP_SERVER?.slice(-1) === '/') ? `${process.env.IDP_SERVER}.well-known/openid-configuration` : `${process.env.IDP_SERVER}/.well-known/openid-configuration`
+
+
 
 export const apiSpec: OpenAPIV3.DocumentV3 = {
     "openapi": "3.0.3",
@@ -73,6 +76,12 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                         "schema": {
                             "$ref": "#/components/schemas/etag"
                         }
+                    },
+                    "permissions": {
+                        "description": "Permission of the User",
+                        "schema": {
+                            "$ref": "#/components/schemas/permissions"
+                        }
                     }
                 }
             },
@@ -90,11 +99,25 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                         "schema": {
                             "$ref": "#/components/schemas/etag"
                         }
+                    },
+                    "permissions": {
+                        "description": "Permission of the User",
+                        "schema": {
+                            "$ref": "#/components/schemas/permissions"
+                        }
                     }
                 }
             },
             "204_success": {
-                "description": "Successful operation"
+                "description": "Successful operation",
+                "headers": {
+                    "permissions": {
+                        "description": "Permission of the User",
+                        "schema": {
+                            "$ref": "#/components/schemas/permissions"
+                        }
+                    }
+                }
             },
             "400_validation_error": {
                 "description": "Bad request",
@@ -166,6 +189,10 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
             "etag": {
                 "type": "string",
                 "example": "656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
+            },
+            "permissions": {
+                "type": "string",
+                "example": "user admin"
             },
             "meta": {
                 "type": "object",

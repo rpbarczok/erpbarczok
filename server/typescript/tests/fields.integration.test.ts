@@ -147,7 +147,6 @@ describe('/fields/ HTTP integration Tests', async function () {
         })
 
         it('post /fields with name should fail with 401 because of missing authZ ', async () => {
-            console.log(validTokenUser)
             const response = await request(app)
                 .post('/fields/')
                 .send(fieldA)
@@ -161,7 +160,6 @@ describe('/fields/ HTTP integration Tests', async function () {
         })
 
         it('post /fields with name should fail with 401 because of missing authZ ', async () => {
-            console.log(validTokenUser)
             const response = await request(app)
                 .post('/fields/')
                 .send(fieldA)

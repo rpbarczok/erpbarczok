@@ -30,6 +30,8 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
 
     const token = auth.user?.access_token
 
+    console.log(auth.user)
+    
     const handleSubmitAdd: React.FormEventHandler<HTMLFormElement> = (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget
         e.preventDefault()

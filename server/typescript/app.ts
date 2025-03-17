@@ -23,6 +23,10 @@ export interface DataWithMeta<T> {
     data: T
 }
 
+interface PermissionRequest extends JWTRequest {
+    userPermission?: string[]
+}
+
 const startApp = async () => {
     const app = express()
     const initSequelize = sequelize
@@ -38,7 +42,7 @@ const startApp = async () => {
 
     // handle CORS
 
-    const corsOptions: CorsOptions = { "origin": false, exposedHeaders: ["location", "if-match", "etag", 'Authorization'] }
+    const corsOptions: CorsOptions = { "origin": false, exposedHeaders: ["location", "etag", 'Permissions'] }
     if (process.env.NODE_ENV != 'production') {
         corsOptions.origin = [
             "http://localhost:3000"
@@ -106,6 +110,15 @@ window.scope = '${jsesc(process.env.SCOPE)}';
 
     app.use(jwtCheck)
 
+    app.use((req: PermissionRequest, res, next) => {
+        const name = process.env.SCOPE_CLAIM || 'scope'
+        const userScope: string | string[] = req.auth ? req.auth[name] : []
+        req.userPermission = typeof userScope === 'string' ? userScope.split(" ") : userScope
+
+        res.set('permissions', req.userPermission.join(' '))
+        next()
+    })
+
     // validate API calls
     app.use(
         OpenApiValidator.middleware({
@@ -130,31 +143,29 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             },
             validateSecurity: {
                 handlers: {
-                    openId: (req: JWTRequest, requiredScopesArray, schema) => {
-                        const name = process.env.SCOPE_CLAIM || 'scope'
-                        const userScope: string | string[] | unknown = req.auth ? req.auth[name] : []
-                        const userScopeArray: string[] | unknown = typeof userScope === 'string' ? userScope.split(" ") : userScope
+                    openId: (req: PermissionRequest, requiredScopesArray, schema) => {
 
                         if (requiredScopesArray.length === 0) {
                             console.log("No scope required. Authorized.")
                             return true
                         }
 
-                        if (!Array.isArray(userScopeArray)) {
+                        if (!Array.isArray(req.userPermission)) {
                             console.log("Scope has the wrong type. Authorization rejected.")
                             return false
                         }
 
-                        if (userScopeArray.length === 0) {
+                        if (req.userPermission.length === 0) {
                             console.log("No scopes provided, but scopes required: ", requiredScopesArray)
                             return false
                         }
 
-                        if (userScopeArray.some((e) => requiredScopesArray.includes(e))) {
+                        if (req.userPermission.some((e) => requiredScopesArray.includes(e))) {
+                            console.log("Permission granted.")
                             return true
                         }
 
-                        console.log("User has not the required scopes: User scopes: " + userScopeArray + ", Required Scopes: " + requiredScopesArray)
+                        console.log("User has not the required scopes: User scopes: " + req.userPermission + ", Required Scopes: " + requiredScopesArray)
                         return false
                     }
                 }
@@ -162,7 +173,6 @@ window.scope = '${jsesc(process.env.SCOPE)}';
         }
         )
     )
-
 
     // add API error handler
     app.set("json spaces", 2)

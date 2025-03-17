@@ -147,7 +147,6 @@ describe('/company-types/ HTTP integration Tests', async function () {
         })
 
         it('post /company-types with name should fail with 401 because of missing authZ ', async () => {
-            console.log(validTokenUser)
             const response = await request(app)
                 .post('/company-types/')
                 .send(companyTypeA)
@@ -161,7 +160,6 @@ describe('/company-types/ HTTP integration Tests', async function () {
         })
 
         it('post /company-types with name should fail with 401 because of missing authZ ', async () => {
-            console.log(validTokenUser)
             const response = await request(app)
                 .post('/company-types/')
                 .send(companyTypeA)
