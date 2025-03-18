@@ -4,12 +4,15 @@ import { DataWithMeta } from "components/forms.jsx"
 import { CompanyType } from "./companyTypes.js"
 import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
 import { useAuth } from "react-oidc-context"
+import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
+import { useContextThrowUndefined } from "utils/contextUndefined.js"
 
 export function useCompanyTypes(): [DataWithMeta<CompanyType>[], React.Dispatch<React.SetStateAction<boolean>>] {
     const [listCompanyTypes, setListCompanyTypes] = useState<DataWithMeta<CompanyType>[]>([])
     const [isCompanyTypeChanged, setIsCompanyTypeChanged] = useState<boolean>(true)
     const auth = useAuth()
     const token = auth.user?.access_token
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
 
 
     useEffect(() => {
@@ -27,6 +30,7 @@ export function useCompanyTypes(): [DataWithMeta<CompanyType>[], React.Dispatch<
                         return (newRow)
                     })
                     setListCompanyTypes(newList)
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                 })
             setIsCompanyTypeChanged(false)
         }

@@ -5,14 +5,15 @@ import { RibbonNavigation } from './ribbon.navigation.jsx'
 import { TabsNavigation } from './tabs.navigation.jsx'
 import React from 'react'
 import { FormTab } from './ribbon.js'
+import { Theme } from './toggleTheme.js'
 
 interface NavigationInterface {
     tabs: FormTab[]
     setTabs: React.Dispatch<React.SetStateAction<FormTab[]>>
     activeForm: FormTab
     setActiveForm: React.Dispatch<React.SetStateAction<FormTab>>
-    theme: 'light' | 'dark'
-    setTheme: React.Dispatch<React.SetStateAction<'light' | 'dark'>>
+    theme: Theme
+    setTheme: React.Dispatch<React.SetStateAction<Theme>>
 }
 
 export function Navigation({ tabs, setTabs, activeForm, setActiveForm, theme, setTheme }: NavigationInterface) {

@@ -11,6 +11,8 @@ import { changedCompanyReducer } from './company.reducer.js'
 import { Heading } from 'components/headings/heading.jsx'
 import { Col, Row } from 'react-bootstrap'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
+import { useContextThrowUndefined } from 'utils/contextUndefined.js'
+import { PermissionContext, updateUserPermissions } from 'utils/permissionContext.js'
 
 interface FormCompaniesComponent {
     companiesList: DataWithMeta<Company>[]
@@ -24,7 +26,8 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
     const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>(emptyCompany)
     const [isNew, setIsNew] = useState<boolean>(false) // Flag: triggers an clearance of the search input
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
-
+    const {permissions, setPermissions} = useContextThrowUndefined(PermissionContext)
+    
     const auth = useAuth()
     const token = auth.user?.access_token
 
@@ -68,6 +71,7 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
                         setActiveCompany(company)
                         changedCompanyDispatch({ type: 'companyChange', newValue: company })
                     }
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                 })
                 .catch(error => {
                     throw error

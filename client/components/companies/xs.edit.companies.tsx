@@ -10,7 +10,9 @@ import { client } from "utils/openAPIClientAxios.js"
 import { useAuth } from "react-oidc-context"
 import { ChangedCompanyAction } from "./company.reducer.js"
 import { InputCompanies } from "./input.companies.jsx"
-import { hasScope } from "utils/auth.js"
+import { hasPermission } from "utils/hasPermission.js"
+import { useContextThrowUndefined } from "utils/contextUndefined.js"
+import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
 
 interface XSEditCompaniesComponent {
     show: boolean
@@ -28,7 +30,8 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
     const [validated, setValidated] = useState(false)
     const [errorNotes, addErrorNote, removeErrorNote] = useNotifier()
     const auth = useAuth()
-    
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+
     const token = auth.user?.access_token
     const isNotChanged: boolean = (activeCompany.data.name === changedCompany.data.name &&
         activeCompany.data.abbr === changedCompany.data.abbr &&
@@ -45,7 +48,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
             client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
                 changedCompany.data,
                 { headers: { Authorization: `Bearer ${token}` } })
-                .then((res) => {
+                .then(result => {
                     const note: Note = {
                         variant: 'success',
                         message: `Unternehmen erfolgreich überarbeitet.`,
@@ -53,6 +56,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                     addEditNote(note)
                     setIsCompanyChanged(true)
                     setShow(false)
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                 })
                 .catch(function (error) {
                     const note: Note = {
@@ -71,7 +75,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
     }
 
     const UserButtons = () => {
-        if (hasScope('user')) {
+        if (hasPermission(['user', 'admin'], permissions)) {
             return <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Schließen</Button>
         } else {
             return (<ButtonGroup className="w-100">
@@ -81,9 +85,9 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                     company={changedCompany}
                     setIsCompanyChanged={setIsCompanyChanged}
                     addNote={addEditNote}
-                    setShow={setShow} 
+                    setShow={setShow}
                     size='sm'
-                    />
+                />
                 <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Abbrechen</Button>
             </ButtonGroup>)
         }
@@ -103,14 +107,14 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                 </Modal.Header>
                 <Modal.Body>
                     <Notes notes={errorNotes} removeNote={removeErrorNote} />
-                        <InputCompanies
+                    <InputCompanies
                         companyTypesList={companyTypesList}
                         changedCompany={changedCompany}
                         changedCompanyDispatch={changedCompanyDispatch}
-                        />
+                    />
                 </Modal.Body>
                 <Modal.Footer>
-                    <UserButtons/>
+                    <UserButtons />
                 </Modal.Footer>
             </Form>
         </Modal >

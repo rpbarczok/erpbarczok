@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react"
+import { useContext, useReducer, useState } from "react"
 import { client } from "utils/openAPIClientAxios.js"
 import { changedCompanyReducer } from "./company.reducer.js"
 import { emptyCompany } from "./companies.jsx"
@@ -10,6 +10,8 @@ import { DataWithMeta } from "components/forms.jsx"
 import { CompanyType } from "components/resources/companyTypes/companyTypes.js"
 import { Button, ButtonGroup, Form, Modal } from "react-bootstrap"
 import { InputCompanies } from "./input.companies.jsx"
+import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
+import { useContextThrowUndefined } from 'utils/contextUndefined.js'
 
 interface AddCompanyComponent {
     handleChangeActive: (active: number) => void
@@ -27,11 +29,9 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
     const [show, setShow] = useState(false)
 
     const auth = useAuth()
-
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const token = auth.user?.access_token
 
-    console.log(auth.user)
-    
     const handleSubmitAdd: React.FormEventHandler<HTMLFormElement> = (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget
         e.preventDefault()
@@ -41,16 +41,19 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
         } else {
 
             client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
-                .then((res) => {
-                    handleChangeActive(Number(removeBeforeLastDigits(res.headers.location)))
+                .then(result => {
+                    handleChangeActive(Number(removeBeforeLastDigits(result.headers.location)))
                     const note: Note = {
                         message: `Neues Unternehmen erfolgreich erstellt.`,
                         variant: 'success',
                     }
                     addEditNote(note)
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+
                     setIsCompanyChanged(true)
                     setIsNew(true)
                     setShow(false)
+
                 })
                 .catch((error) => {
                     const note: Note = {

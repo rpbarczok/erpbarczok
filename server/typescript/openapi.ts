@@ -1,10 +1,8 @@
 
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
-import { Http2ServerRequest } from 'node:http2'
 
 
 const openIdConnectUrl = (process.env.IDP_SERVER?.slice(-1) === '/') ? `${process.env.IDP_SERVER}.well-known/openid-configuration` : `${process.env.IDP_SERVER}/.well-known/openid-configuration`
-
 
 
 export const apiSpec: OpenAPIV3.DocumentV3 = {

@@ -7,7 +7,8 @@ import { DataWithMeta } from "components/forms.jsx"
 import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
 import { FormCompanies } from './form.companies.jsx'
 import { useCompanyTypes } from '../resources/companyTypes/useCompanyTypes.js'
-import { Heading } from './../../components/headings/heading.jsx'
+import { useContextThrowUndefined } from 'utils/contextUndefined.js'
+import { PermissionContext, updateUserPermissions } from 'utils/permissionContext.js'
 
 export interface Company {
     "name": string
@@ -24,6 +25,7 @@ export const Companies = () => {
     const [companiesList, setCompaniesList] = useState<DataWithMeta<Company>[]>([]) // List of all Companies
     const [companyTypesList, setIsCompanyTypeChanged] = useCompanyTypes()
     const token = auth.user?.access_token
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
 
     useEffect(() => {
         if (isCompanyChanged) {
@@ -41,6 +43,7 @@ export const Companies = () => {
                             return (newRow)
                         })
                         setCompaniesList(newList)
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                     })
             } catch (error) {
                 throw error
