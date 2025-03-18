@@ -47,8 +47,10 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
     const [notes, addNote, removeNote] = useNotifier()
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const auth = useAuth()
+    const [addItemCount, setAddItemCount] = useState(0)
 
     const handleModal = () => {
+        setAddItemCount(addItemCount + 1)
         setShow(true)
     }
 
@@ -63,6 +65,8 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
         const token = auth.user?.access_token
         if (form.checkValidity() === false) {
             setValidated(true)
+        }
+        else {
             client.paths[resource.paths['all']].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
                 .then(result => {
                     const note: Note = {
@@ -84,9 +88,10 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
         }
     }
 
+
     return (<>
         <Button variant="outline-primary" onClick={handleModal}>{resource.name} hinzufügen</Button>
-        <Modal show={show} onHide={() => handleClose()}>
+        <Modal key={"newItem" + String(addItemCount)} show={show} onHide={() => handleClose()}>
             <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, newItem)}>
                 <Modal.Header closeButton>
                     <Modal.Title>{resource.name} hinzufügen</Modal.Title>
