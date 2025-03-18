@@ -69,7 +69,10 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
         if (form.checkValidity() === false) {
             setValidated(true)
         } else {
-            client.paths[resource.paths['single']].put({ id: changedItem.meta.location, 'if-match': changedItem.meta.etag }, changedItem.data, { headers: { Authorization: `Bearer ${token}` } })
+            client.paths[resource.paths['single']].put(
+                { id: changedItem.meta.location, 'if-match': changedItem.meta.etag },
+                changedItem.data,
+                { headers: { Authorization: `Bearer ${token}` } })
                 .then(result => {
                     const note: Note = {
                         message: `Die Beziehungsart wurde erfolgreich geändert.`,
@@ -104,7 +107,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
                     if (setShow) {
                         setShow(false)
                     }
-                    addNote(note)
+                    addMainNote(note)
                     updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                 })
                 .catch(error => {
