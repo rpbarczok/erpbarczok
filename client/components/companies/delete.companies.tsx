@@ -5,6 +5,8 @@ import { Note } from "components/notifiers/notifiers.js"
 import React from "react"
 import { Button } from "react-bootstrap"
 import { useAuth } from "react-oidc-context"
+import { useContextThrowUndefined } from "utils/contextUndefined.js"
+import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
 
 interface DeleteCompanyComponent {
     company: DataWithMeta<Company>
@@ -17,13 +19,14 @@ interface DeleteCompanyComponent {
 export const DeleteCompanies = ({ company, setIsCompanyChanged, addNote, setShow, size }: DeleteCompanyComponent) => {
     const auth = useAuth()
     const token = auth.user?.access_token
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         const userConfirmed = window.confirm(`Willst du das Unternehmen '${company.data.name}' wirklich löschen?`)
         if (userConfirmed) {
             client.deleteCompanyById(company.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
-                .then((res) => {
+                .then(result => {
                     setIsCompanyChanged(true)
                     const note: Note = {
                         variant: 'warning',
@@ -33,6 +36,7 @@ export const DeleteCompanies = ({ company, setIsCompanyChanged, addNote, setShow
                         setShow(false)
                     }
                     addNote(note)
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                 })
                 .catch(error => {
                     const note: Note = {

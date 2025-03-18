@@ -8,6 +8,8 @@ import { CompanyType, InputCompanyTypes } from "./companyTypes/companyTypes.jsx"
 import { DataWithMeta } from "components/forms.jsx"
 import { Note, Notes } from "components/notifiers/notifiers.jsx"
 import { useNotifier } from "components/notifiers/useNotifier.js"
+import { useContextThrowUndefined } from "utils/contextUndefined.js"
+import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
 
 interface AddResourceComponent {
     resource: Resource
@@ -21,7 +23,7 @@ interface ActiveResourceComponent {
     setNewItem: React.Dispatch<SetStateAction<DataWithMeta<Field | CompanyType>>>
 }
 
-export const ActiveResource = ({resource, newItem, setNewItem}: ActiveResourceComponent) => {
+export const ActiveResource = ({ resource, newItem, setNewItem }: ActiveResourceComponent) => {
     switch (resource.name) {
         case 'Beziehung':
             return <InputCompanyTypes
@@ -43,7 +45,7 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
     const [validated, setValidated] = useState(false)
     const [newItem, setNewItem] = useState<DataWithMeta<Field | CompanyType>>(resource.empty)
     const [notes, addNote, removeNote] = useNotifier()
-
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const auth = useAuth()
 
     const handleModal = () => {
@@ -62,7 +64,7 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
         if (form.checkValidity() === false) {
             setValidated(true)
             client.paths[resource.paths['all']].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
-                .then((res) => {
+                .then(result => {
                     const note: Note = {
                         message: `Eine neue Beziehungsart wurde erfolgreich abgespeichert.`,
                         variant: 'success'
@@ -70,6 +72,7 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
                     addMainNote(note)
                     setShow(false)
                     setIsItemChanged(true)
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                 })
                 .catch(error => {
                     const note: Note = {
@@ -82,29 +85,29 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
     }
 
     return (<>
-            <Button variant="outline-primary" onClick={handleModal}>{resource.name} hinzufügen</Button>
-            <Modal show={show} onHide={() => handleClose()}>
-                <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, newItem)}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>{resource.name} hinzufügen</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Notes notes={notes} removeNote={removeNote} />
-                        <ActiveResource 
+        <Button variant="outline-primary" onClick={handleModal}>{resource.name} hinzufügen</Button>
+        <Modal show={show} onHide={() => handleClose()}>
+            <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, newItem)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{resource.name} hinzufügen</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Notes notes={notes} removeNote={removeNote} />
+                    <ActiveResource
                         resource={resource}
                         newItem={newItem} setNewItem={setNewItem}
-                        />
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <ButtonGroup className="w-100">
-                            <Button type="submit" variant='outline-primary'>Speichern</Button>
-                            <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Abbrechen</Button>
-                        </ButtonGroup>
-                    </Modal.Footer>
-                </Form>
+                    />
+                </Modal.Body>
+                <Modal.Footer>
+                    <ButtonGroup className="w-100">
+                        <Button type="submit" variant='outline-primary'>Speichern</Button>
+                        <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Abbrechen</Button>
+                    </ButtonGroup>
+                </Modal.Footer>
+            </Form>
 
-            </Modal>
-        </>
+        </Modal>
+    </>
     )
 }
 

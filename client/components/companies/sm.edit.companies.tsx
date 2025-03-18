@@ -1,14 +1,16 @@
-import { useReducer, useState } from "react"
-import { Button, ButtonGroup, Col, Container, Form, Row } from "react-bootstrap"
+import { useState } from "react"
+import { Button, ButtonGroup, Col, Form, Row } from "react-bootstrap"
 import { useAuth } from "react-oidc-context"
-import { ChangedCompanyAction, changedCompanyReducer } from "./company.reducer.js"
+import { ChangedCompanyAction } from "./company.reducer.js"
 import { DataWithMeta } from "components/forms.jsx"
 import { Company } from "./companies.jsx"
 import { CompanyType } from "components/resources/companyTypes/companyTypes.js"
 import { client } from "utils/openAPIClientAxios.js"
-import { Note, Notes } from "components/notifiers/notifiers.jsx"
+import { Note } from "components/notifiers/notifiers.jsx"
 import { InputCompanies } from "./input.companies.jsx"
-import { hasScope } from "utils/auth.js"
+import { hasPermission } from "utils/hasPermission.js"
+import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
+import { useContextThrowUndefined } from "utils/contextUndefined.js"
 
 interface SMEditCompanies {
     company: DataWithMeta<Company>
@@ -21,7 +23,7 @@ interface SMEditCompanies {
 
 export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged, addEditNote, changedCompany, changedCompanyDispatch }: SMEditCompanies) => {
     const [validated, setValidated] = useState<boolean>(false)
-
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
 
     const auth = useAuth()
     const token = auth.user?.access_token
@@ -36,14 +38,16 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
             client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
                 changedCompany.data,
                 { headers: { Authorization: `Bearer ${token}` } })
-                .then((res) => {
+                .then(result => {
                     const note: Note = {
                         variant: 'success',
                         message: `Unternehmen erfolgreich überarbeitet.`,
                     }
                     addEditNote(note)
                     setIsCompanyChanged(true)
-                })
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                }
+                )
                 .catch(function (error) {
                     const note: Note = {
                         variant: 'danger',
@@ -89,7 +93,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
             <Row>
                 <Col id='company' sm={12} lg={6} xl={5} >
                     <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
-                        {hasScope('user') ? <ButtonEdit /> : ''}
+                        {hasPermission(['user', 'admin'], permissions) ? <ButtonEdit /> : ''}
                         <InputCompanies
                             companyTypesList={companyTypesList}
                             changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch} />

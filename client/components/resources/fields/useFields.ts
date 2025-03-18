@@ -4,13 +4,15 @@ import { DataWithMeta } from "components/forms.jsx"
 import { Field } from "./fields.js"
 import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
 import { useAuth } from "react-oidc-context"
+import { useContextThrowUndefined } from "utils/contextUndefined.js"
+import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
 
 export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetStateAction<boolean>>] {
     const [listFields, setListFields] = useState<DataWithMeta<Field>[]>([])
     const [isFieldChanged, setIsFieldChanged] = useState<boolean>(true)
     const auth = useAuth()
     const token = auth.user?.access_token
-
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext) 
 
     useEffect(() => {
         if (isFieldChanged) {
@@ -27,6 +29,7 @@ export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetSta
                         return (newRow)
                     })
                     setListFields(newList)
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                 })
             setIsFieldChanged(false)
         }

@@ -11,6 +11,8 @@ import { Field } from "./fields/fields.jsx"
 import { ListItem } from "./list.resources.jsx"
 import { useAuth } from "react-oidc-context"
 import { AddResources } from "./add.resources.jsx"
+import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
+import { useContextThrowUndefined } from "utils/contextUndefined.js"
 
 interface MainResourcesComponent {
     resource: Resource
@@ -22,7 +24,7 @@ export const MainResources = ({ resource, isResourceChanged, setIsResourceChange
     const [isItemChanged, setIsItemChanged] = useState(true)
     const [mainNotes, addMainNote, removeMainNote] = useNotifier()
     const [newList, setNewList] = useState<DataWithMeta<CompanyType | Field>[]>([])
-
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const auth = useAuth()
     const token = auth.user?.access_token
 
@@ -42,6 +44,7 @@ export const MainResources = ({ resource, isResourceChanged, setIsResourceChange
                             return newRow
                         })
                         setNewList(newList)
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                     })
             } catch (error) {
                 throw Error

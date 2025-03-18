@@ -9,6 +9,8 @@ import { Button, ButtonGroup, Form, ListGroup, Modal } from "react-bootstrap"
 import { client } from "utils/openAPIClientAxios.js"
 import { useNotifier } from "components/notifiers/useNotifier.js"
 import { InputCompanyTypes } from "./companyTypes/companyTypes.jsx"
+import { useContextThrowUndefined } from "utils/contextUndefined.js"
+import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
 
 interface ListItemComponent {
     item: DataWithMeta<Field | CompanyType>
@@ -23,7 +25,7 @@ interface ActiveResourceComponent {
     setChangedItem: React.Dispatch<React.SetStateAction<DataWithMeta<Field | CompanyType>>>
 }
 
-const ActiveResource = ({resource, changedItem, setChangedItem}: ActiveResourceComponent) => {
+const ActiveResource = ({ resource, changedItem, setChangedItem }: ActiveResourceComponent) => {
     switch (resource.name) {
         case 'Beziehung':
             return <InputCompanyTypes
@@ -45,7 +47,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
     const [validated, setValidated] = useState<boolean>(false)
     const [changedItem, setChangedItem] = useState<DataWithMeta<CompanyType | Field>>(item)
     const [notes, addNote, removeNote] = useNotifier()
-
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const isNotChanged = changedItem.data === item.data
     const auth = useAuth()
     const token = auth.user?.access_token
@@ -68,7 +70,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
             setValidated(true)
         } else {
             client.paths[resource.paths['single']].put({ id: changedItem.meta.location, 'if-match': changedItem.meta.etag }, changedItem.data, { headers: { Authorization: `Bearer ${token}` } })
-                .then((res) => {
+                .then(result => {
                     const note: Note = {
                         message: `Die Beziehungsart wurde erfolgreich geändert.`,
                         variant: 'success'
@@ -76,6 +78,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
                     addMainNote(note)
                     setShow(false)
                     setIsItemChanged(true)
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                 })
                 .catch(error => {
                     const note: Note = {
@@ -92,7 +95,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
         const userConfirmed = window.confirm(`Willst du die ${resource.name} '${item.data.name}' wirklich löschen?`)
         if (userConfirmed) {
             client.paths[resource.paths['single']].delete(item.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
-                .then((res) => {
+                .then(result => {
                     setIsItemChanged(true)
                     const note: Note = {
                         variant: 'warning',
@@ -102,6 +105,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
                         setShow(false)
                     }
                     addNote(note)
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                 })
                 .catch(error => {
                     const note: Note = {
@@ -132,9 +136,9 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
                     </Modal.Header>
                     <Modal.Body>
                         <Notes notes={notes} removeNote={removeNote} />
-                        <ActiveResource 
-                        resource={resource}
-                        changedItem={changedItem} setChangedItem={setChangedItem}/>
+                        <ActiveResource
+                            resource={resource}
+                            changedItem={changedItem} setChangedItem={setChangedItem} />
                     </Modal.Body>
                     <Modal.Footer>
                         <ButtonGroup className="w-100">

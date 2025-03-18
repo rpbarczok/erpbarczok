@@ -1,6 +1,6 @@
 import '../../style.css'
 import './companies.css'
-import React, { useState } from "react"
+import React from "react"
 import { Row, Col, ButtonGroup, Button } from "react-bootstrap"
 import { useAuth } from "react-oidc-context"
 import { SMSearchCompanies } from './sm.search.companies.jsx'
@@ -13,9 +13,11 @@ import { AddCompany } from './add.companies.jsx'
 import { SMEditCompanies } from './sm.edit.companies.jsx'
 import { ChangedCompanyAction } from './company.reducer.js'
 import { Heading } from 'components/headings/heading.jsx'
-import { Note, Notes } from 'components/notifiers/notifiers.jsx'
+import { Notes } from 'components/notifiers/notifiers.jsx'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
-import { hasScope } from 'utils/auth.js'
+import { hasPermission } from 'utils/hasPermission.js'
+import { useContextThrowUndefined } from 'utils/contextUndefined.js'
+import { PermissionContext } from 'utils/permissionContext.js'
 
 interface CompaniesFormSMComponent {
     search: string
@@ -42,7 +44,7 @@ export const SMFormCompanies = ({ search,
     changedCompanyDispatch }: CompaniesFormSMComponent) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
-    const auth = useAuth()
+    const {permissions, setPermissions} = useContextThrowUndefined(PermissionContext)
 
     const buttonGroupAddDelete = <>
         <AddCompany
@@ -68,7 +70,7 @@ export const SMFormCompanies = ({ search,
             return (
                 <>
                     <Row className="d-none d-sm-block d-md-none">
-                        {hasScope('user') ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
+                        {hasPermission(['user', 'admin'], permissions) ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
                     </Row>
                     <Notes notes={editNotes} removeNote={removeEditNote} ></Notes>
                     <Row>
