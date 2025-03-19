@@ -1,5 +1,4 @@
 import React, { createContext } from "react"
-import { useContextThrowUndefined } from "./contextUndefined.js"
 
 export interface PermissionContextInterface {
     permissions: string[],

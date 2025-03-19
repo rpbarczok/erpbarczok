@@ -7,6 +7,7 @@ import { Button } from "react-bootstrap"
 import { useAuth } from "react-oidc-context"
 import { useContextThrowUndefined } from "utils/contextUndefined.js"
 import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
+import { LoadingContext } from "utils/loadingContext.js"
 
 interface DeleteCompanyComponent {
     company: DataWithMeta<Company>
@@ -20,11 +21,13 @@ export const DeleteCompanies = ({ company, setIsCompanyChanged, addNote, setShow
     const auth = useAuth()
     const token = auth.user?.access_token
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         const userConfirmed = window.confirm(`Willst du das Unternehmen '${company.data.name}' wirklich löschen?`)
         if (userConfirmed) {
+            setIsLoading(true)
             client.deleteCompanyById(company.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
                 .then(result => {
                     setIsCompanyChanged(true)
@@ -45,7 +48,7 @@ export const DeleteCompanies = ({ company, setIsCompanyChanged, addNote, setShow
                     }
                     addNote(note)
                 })
-
+                setIsLoading(false)
         }
     }
     return <Button size={size} className="standardDesign" variant="outline-danger" onClick={handleDelete}>Löschen</Button>

@@ -13,6 +13,7 @@ import { Col, Row } from 'react-bootstrap'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
 import { useContextThrowUndefined } from 'utils/contextUndefined.js'
 import { PermissionContext, updateUserPermissions } from 'utils/permissionContext.js'
+import { LoadingContext } from 'utils/loadingContext.js'
 
 interface FormCompaniesComponent {
     companiesList: DataWithMeta<Company>[]
@@ -27,7 +28,7 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
     const [isNew, setIsNew] = useState<boolean>(false) // Flag: triggers an clearance of the search input
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
     const {permissions, setPermissions} = useContextThrowUndefined(PermissionContext)
-    
+    const {isLoading, setIsLoading} = useContextThrowUndefined(LoadingContext)    
     const auth = useAuth()
     const token = auth.user?.access_token
 
@@ -64,6 +65,7 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
         if (active === 0 || active === undefined) {
             setActiveCompany(emptyCompany)
         } else {
+            setIsLoading(true)
             client.getCompanyById(active, null, { headers: { Authorization: `Bearer ${token}` } })
                 .then(result => {
                     if (result.data) {
@@ -76,6 +78,7 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
                 .catch(error => {
                     throw error
                 })
+            setIsLoading(false)
         }
     }
 

@@ -11,6 +11,7 @@ import { useNotifier } from "components/notifiers/useNotifier.js"
 import { InputCompanyTypes } from "./companyTypes/companyTypes.jsx"
 import { useContextThrowUndefined } from "utils/contextUndefined.js"
 import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
+import { LoadingContext } from "utils/loadingContext.js"
 
 interface ListItemComponent {
     item: DataWithMeta<Field | CompanyType>
@@ -51,7 +52,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
     const isNotChanged = changedItem.data === item.data
     const auth = useAuth()
     const token = auth.user?.access_token
-
+    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
     const handleModal = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         setShow(true)
@@ -69,6 +70,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
         if (form.checkValidity() === false) {
             setValidated(true)
         } else {
+            setIsLoading(true)
             client.paths[resource.paths['single']].put(
                 { id: changedItem.meta.location, 'if-match': changedItem.meta.etag },
                 changedItem.data,
@@ -90,6 +92,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
                     }
                     addNote(note)
                 })
+            setIsLoading(false)
         }
     }
 
@@ -97,6 +100,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
         e.preventDefault()
         const userConfirmed = window.confirm(`Willst du die ${resource.name} '${item.data.name}' wirklich löschen?`)
         if (userConfirmed) {
+            setIsLoading(true)
             client.paths[resource.paths['single']].delete(item.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
                 .then(result => {
                     setIsItemChanged(true)
@@ -117,7 +121,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
                     }
                     addNote(note)
                 })
-
+            setIsLoading(false)
         }
     }
 

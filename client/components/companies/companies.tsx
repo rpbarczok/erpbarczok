@@ -1,6 +1,6 @@
 import '../../style.css'
 import './companies.css'
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useAuth } from "react-oidc-context"
 import { client } from "utils/openAPIClientAxios.js"
 import { DataWithMeta } from "components/forms.jsx"
@@ -9,6 +9,7 @@ import { FormCompanies } from './form.companies.jsx'
 import { useCompanyTypes } from '../resources/companyTypes/useCompanyTypes.js'
 import { useContextThrowUndefined } from 'utils/contextUndefined.js'
 import { PermissionContext, updateUserPermissions } from 'utils/permissionContext.js'
+import { LoadingContext } from 'utils/loadingContext.js'
 
 export interface Company {
     "name": string
@@ -26,9 +27,11 @@ export const Companies = () => {
     const [companyTypesList, setIsCompanyTypeChanged] = useCompanyTypes()
     const token = auth.user?.access_token
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     useEffect(() => {
         if (isCompanyChanged) {
+            setIsLoading(true)
             try {
                 client.getCompanies(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
                     .then(result => {
@@ -48,6 +51,7 @@ export const Companies = () => {
             } catch (error) {
                 throw error
             }
+            setIsLoading(false)
             setIsCompanyChanged(false)
         }
     }, [isCompanyChanged])

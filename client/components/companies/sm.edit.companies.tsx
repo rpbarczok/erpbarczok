@@ -11,6 +11,7 @@ import { InputCompanies } from "./input.companies.jsx"
 import { hasPermission } from "utils/hasPermission.js"
 import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
 import { useContextThrowUndefined } from "utils/contextUndefined.js"
+import { LoadingContext } from "utils/loadingContext.js"
 
 interface SMEditCompanies {
     company: DataWithMeta<Company>
@@ -24,7 +25,7 @@ interface SMEditCompanies {
 export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged, addEditNote, changedCompany, changedCompanyDispatch }: SMEditCompanies) => {
     const [validated, setValidated] = useState<boolean>(false)
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-
+    const { isLoading, setIsLoading} = useContextThrowUndefined(LoadingContext)
     const auth = useAuth()
     const token = auth.user?.access_token
 
@@ -35,6 +36,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
         if (form.checkValidity() === false) {
             setValidated(true)
         } else {
+            setIsLoading(true)
             client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
                 changedCompany.data,
                 { headers: { Authorization: `Bearer ${token}` } })
@@ -55,6 +57,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
                     }
                     addEditNote(note)
                 })
+            setIsLoading(false)
         }
     }
 

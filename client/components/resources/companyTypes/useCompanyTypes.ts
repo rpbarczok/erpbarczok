@@ -6,6 +6,7 @@ import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
 import { useAuth } from "react-oidc-context"
 import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
 import { useContextThrowUndefined } from "utils/contextUndefined.js"
+import { LoadingContext } from "utils/loadingContext.js"
 
 export function useCompanyTypes(): [DataWithMeta<CompanyType>[], React.Dispatch<React.SetStateAction<boolean>>] {
     const [listCompanyTypes, setListCompanyTypes] = useState<DataWithMeta<CompanyType>[]>([])
@@ -13,10 +14,11 @@ export function useCompanyTypes(): [DataWithMeta<CompanyType>[], React.Dispatch<
     const auth = useAuth()
     const token = auth.user?.access_token
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-
+    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     useEffect(() => {
         if (isCompanyTypeChanged) {
+            setIsLoading(true)
             client.getCompanyTypes(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
                 .then(result => {
                     const newList = result?.data.map(row => {
@@ -32,6 +34,7 @@ export function useCompanyTypes(): [DataWithMeta<CompanyType>[], React.Dispatch<
                     setListCompanyTypes(newList)
                     updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                 })
+            setIsLoading(false)
             setIsCompanyTypeChanged(false)
         }
     }, [isCompanyTypeChanged])

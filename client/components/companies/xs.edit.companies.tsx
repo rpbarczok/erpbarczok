@@ -13,6 +13,7 @@ import { InputCompanies } from "./input.companies.jsx"
 import { hasPermission } from "utils/hasPermission.js"
 import { useContextThrowUndefined } from "utils/contextUndefined.js"
 import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
+import { LoadingContext } from "utils/loadingContext.js"
 
 interface XSEditCompaniesComponent {
     show: boolean
@@ -31,6 +32,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
     const [errorNotes, addErrorNote, removeErrorNote] = useNotifier()
     const auth = useAuth()
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     const token = auth.user?.access_token
     const isNotChanged: boolean = (activeCompany.data.name === changedCompany.data.name &&
@@ -45,6 +47,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
         if (form.checkValidity() === false) {
             setValidated(true)
         } else {
+            setIsLoading(true)
             client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
                 changedCompany.data,
                 { headers: { Authorization: `Bearer ${token}` } })
@@ -65,6 +68,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                     }
                     addErrorNote(note)
                 })
+            setIsLoading(false)
         }
     }
 
