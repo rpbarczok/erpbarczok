@@ -13,6 +13,7 @@ import { useAuth } from "react-oidc-context"
 import { AddResources } from "./add.resources.jsx"
 import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
 import { useContextThrowUndefined } from "utils/contextUndefined.js"
+import { LoadingContext } from "utils/loadingContext.js"
 
 interface MainResourcesComponent {
     resource: Resource
@@ -27,9 +28,11 @@ export const MainResources = ({ resource, isResourceChanged, setIsResourceChange
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const auth = useAuth()
     const token = auth.user?.access_token
+    const { isLoading, setIsLoading} = useContextThrowUndefined(LoadingContext)
 
     useEffect(() => {
         if (isItemChanged || isResourceChanged) {
+            setIsLoading(true)
             try {
                 client.paths[resource.paths['all']].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
                     .then(result => {
@@ -49,6 +52,7 @@ export const MainResources = ({ resource, isResourceChanged, setIsResourceChange
             } catch (error) {
                 throw Error
             }
+            setIsLoading(false)
             if (isItemChanged === true) {
                 setIsItemChanged(false)
             }

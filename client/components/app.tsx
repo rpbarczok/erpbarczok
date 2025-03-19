@@ -7,9 +7,10 @@ import { Forms } from './forms.jsx'
 import { Login } from './login/login.jsx'
 import { useAuth } from 'react-oidc-context'
 import { ThemeContext } from 'utils/themeContext.js'
-import { PermissionContext} from 'utils/permissionContext.js'
-import {Loading} from './login/loading.jsx'
+import { PermissionContext } from 'utils/permissionContext.js'
+import { DataLoading, LoginLoading } from './login/loading.jsx'
 import { LoginError } from './login/error.jsx'
+import { LoadingContext } from '../utils/loadingContext.js'
 
 export function App() {
     const startPage: FormTab = { name: "Stammdaten", id: "stammForm" }
@@ -18,6 +19,7 @@ export function App() {
     const auth = useAuth()
     const [theme, setTheme] = useState<'light' | 'dark'>(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
     const [permissions, setPermissions] = useState<string[]>([])
+    const [isLoading, setIsLoading] = useState(false)
 
     if (theme !== 'light' && theme !== 'dark') {
         setTheme('light')
@@ -27,38 +29,41 @@ export function App() {
     }
 
     if (auth.isLoading) {
-        return <Loading />
+        return <LoginLoading />
     }
 
     if (auth.error) {
-        return <LoginError message={auth.error.message ?? ''}/>
+        return <LoginError message={auth.error.message ?? ''} />
 
-        
+
     }
 
     if (auth.isAuthenticated) {
         return (
-            <PermissionContext.Provider value={{permissions: permissions, setPermissions: setPermissions}}>
-                <ThemeContext.Provider value={theme}>
-                    <Container fluid className="d-flex flex-column vh-100">
-                        <Navigation
-                            tabs={tabs} setTabs={setTabs}
-                            activeForm={activeForm} setActiveForm={setActiveForm}
-                            theme={theme} setTheme={setTheme}
-                        />
-                        <Forms activeForm={activeForm} />
-                        <Row className="bg-body-secondary" >
-                            <hr />
-                            <Col>
-                                <a href="https://www.flaticon.com/de/kostenlose-icons/panda" title="panda Icons">Panda Icons erstellt von Freepik - Flaticon</a>
-                            </Col>
-                            <Col  >
-                                <div className="float-end">© and made by rpbarczok</div>
-                            </Col>
-                        </Row>
-                    </Container>
-                </ThemeContext.Provider>
-            </PermissionContext.Provider>
+            <ThemeContext.Provider value={theme}>
+                <LoadingContext.Provider value={{ isLoading: isLoading, setIsLoading: setIsLoading }}>
+                    <PermissionContext.Provider value={{ permissions: permissions, setPermissions: setPermissions }}>
+                        <Container fluid className="d-flex flex-column vh-100">
+                            <Navigation
+                                tabs={tabs} setTabs={setTabs}
+                                activeForm={activeForm} setActiveForm={setActiveForm}
+                                theme={theme} setTheme={setTheme}
+                            />
+                            {isLoading ? <DataLoading /> : ''}
+                            <Forms activeForm={activeForm} />
+                            <Row className="bg-body-secondary" >
+                                <hr />
+                                <Col>
+                                    <a href="https://www.flaticon.com/de/kostenlose-icons/panda" title="panda Icons">Panda Icons erstellt von Freepik - Flaticon</a>
+                                </Col>
+                                <Col  >
+                                    <div className="float-end">© and made by rpbarczok</div>
+                                </Col>
+                            </Row>
+                        </Container>
+                    </PermissionContext.Provider>
+                </LoadingContext.Provider>
+            </ThemeContext.Provider>
         )
     }
 

@@ -10,6 +10,7 @@ import { Note, Notes } from "components/notifiers/notifiers.jsx"
 import { useNotifier } from "components/notifiers/useNotifier.js"
 import { useContextThrowUndefined } from "utils/contextUndefined.js"
 import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
+import { LoadingContext } from "utils/loadingContext.js"
 
 interface AddResourceComponent {
     resource: Resource
@@ -48,6 +49,7 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const auth = useAuth()
     const [addItemCount, setAddItemCount] = useState(0)
+    const { isLoading, setIsLoading} = useContextThrowUndefined(LoadingContext)
 
     const handleModal = () => {
         setAddItemCount(addItemCount + 1)
@@ -67,6 +69,7 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
             setValidated(true)
         }
         else {
+            setIsLoading(true)
             client.paths[resource.paths['all']].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
                 .then(result => {
                     const note: Note = {
@@ -85,6 +88,7 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
                     }
                     addNote(note)
                 })
+            setIsLoading(false)
         }
     }
 

@@ -12,6 +12,7 @@ import { Button, ButtonGroup, Form, Modal } from "react-bootstrap"
 import { InputCompanies } from "./input.companies.jsx"
 import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
 import { useContextThrowUndefined } from 'utils/contextUndefined.js'
+import { LoadingContext } from "utils/loadingContext.js"
 
 interface AddCompanyComponent {
     handleChangeActive: (active: number) => void
@@ -27,6 +28,7 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
     const [addNotes, addAddNote, removeAddNote] = useNotifier()
     const [newCompanyClick, setNewCompanyClick] = useState(0)
     const [show, setShow] = useState(false)
+    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     const auth = useAuth()
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
@@ -39,7 +41,7 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
         if (form.checkValidity() === false) {
             setValidated(true)
         } else {
-
+            setIsLoading(true)
             client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
                 .then(result => {
                     handleChangeActive(Number(removeBeforeLastDigits(result.headers.location)))
@@ -62,6 +64,7 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
                     }
                     addAddNote(note)
                 })
+            setIsLoading(false)
         }
     }
 
