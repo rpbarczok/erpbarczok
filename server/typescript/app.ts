@@ -134,8 +134,8 @@ window.scope = '${jsesc(process.env.SCOPE)}';
                     return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
                         try {
                             return await operationHandler(req, res, next)
-                        } catch (err: any) {
-                            next(err)
+                        } catch (error: any) {
+                            next(error)
                         }
 
                     }
@@ -176,9 +176,9 @@ window.scope = '${jsesc(process.env.SCOPE)}';
 
     // add API error handler
     app.set("json spaces", 2)
-    app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-        const status = err.status || 500
-        logger("Error %o.", err)
+    app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+        const status = error.status || 500
+        logger("Error %o.", error)
         if (process.env.NODE_ENV === 'production' && status === 500) {
             res.status(status).json({
                 status,
@@ -190,8 +190,8 @@ window.scope = '${jsesc(process.env.SCOPE)}';
 
         res.status(status).json({
             status,
-            message: err.message,
-            errors: err.errors
+            message: error.message,
+            errors: error.errors
         })
     })
 

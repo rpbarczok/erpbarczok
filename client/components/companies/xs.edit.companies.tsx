@@ -51,7 +51,9 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
             client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
                 changedCompany.data,
                 { headers: { Authorization: `Bearer ${token}` } })
-                .then(result => {
+                .then(
+                    result => {
+                    setIsLoading(false)
                     const note: Note = {
                         variant: 'success',
                         message: `Unternehmen erfolgreich überarbeitet.`,
@@ -60,15 +62,16 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                     setIsCompanyChanged(true)
                     setShow(false)
                     updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                })
-                .catch(function (error) {
+                },
+                error => {
+                    setIsLoading(false)
                     const note: Note = {
                         variant: 'danger',
                         message: `Fehler beim Speichern der Unternehmensdaten: ${error.message}`,
                     }
                     addErrorNote(note)
-                })
-            setIsLoading(false)
+                }
+            )
         }
     }
 

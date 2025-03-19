@@ -28,14 +28,15 @@ export const MainResources = ({ resource, isResourceChanged, setIsResourceChange
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const auth = useAuth()
     const token = auth.user?.access_token
-    const { isLoading, setIsLoading} = useContextThrowUndefined(LoadingContext)
+    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     useEffect(() => {
         if (isItemChanged || isResourceChanged) {
             setIsLoading(true)
-            try {
-                client.paths[resource.paths['all']].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
-                    .then(result => {
+            client.paths[resource.paths['all']].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
+                .then(
+                    result => {
+                        setIsLoading(false)
                         const newList = result?.data.map(row => {
                             const newRow: DataWithMeta<CompanyType | Field> = {
                                 meta: {
@@ -48,11 +49,12 @@ export const MainResources = ({ resource, isResourceChanged, setIsResourceChange
                         })
                         setNewList(newList)
                         updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                    })
-            } catch (error) {
-                throw Error
-            }
-            setIsLoading(false)
+                    },
+                    error => {
+                        setIsLoading(false)
+                        throw new Error(`Error while loading resource: ${error.message}`)
+                    }
+                )
             if (isItemChanged === true) {
                 setIsItemChanged(false)
             }

@@ -17,11 +17,11 @@ export const GET: Operation = async (req: Request, res: Response) => {
             .set(metaHeader)
             .json(companyNorm)
     }
-    catch (err) {
-        if (err instanceof NotFoundError) {
+    catch (error) {
+        if (error instanceof NotFoundError) {
             res.status(404).json({ "status": 404, "message": "not found" })
         } else {
-            throw err
+            throw error
         }
     }
 }
@@ -82,14 +82,14 @@ export const DELETE: Operation = async (req: Request, res: Response) => {
             .status(204)
             .end()
     }
-    catch (err) {
-        if (err instanceof NotFoundError) {
+    catch (error) {
+        if (error instanceof NotFoundError) {
             res
                 .status(404)
                 .json({ status: 404, message: "not found" })
         }
         else {
-            throw err
+            throw error
         }
     }
 }
@@ -138,10 +138,10 @@ export const PUT: Operation = async (req: Request, res: Response) => {
                     .set(metaHeader)
                     .end()
             }
-            catch (err) {
+            catch (error) {
                 res
                     .status(500)
-                    .json(error_formatter(500, err))
+                    .json(error_formatter(500, error))
             }
         }
         else {
@@ -150,13 +150,13 @@ export const PUT: Operation = async (req: Request, res: Response) => {
                 .json({ status: 412, message: "Precondition failed" })
         }
     }
-    catch (err) {
-        if (err instanceof NotFoundError) {
+    catch (error) {
+        if (error instanceof NotFoundError) {
             res
                 .status(404)
                 .json({ status: 404, message: "not found" })
         } else {
-            throw err
+            throw error
         }
     }
 }

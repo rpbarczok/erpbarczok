@@ -75,24 +75,27 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
                 { id: changedItem.meta.location, 'if-match': changedItem.meta.etag },
                 changedItem.data,
                 { headers: { Authorization: `Bearer ${token}` } })
-                .then(result => {
-                    const note: Note = {
-                        message: `Die Beziehungsart wurde erfolgreich geändert.`,
-                        variant: 'success'
+                .then(
+                    result => {
+                        setIsLoading(false)
+                        const note: Note = {
+                            message: `Die Beziehungsart wurde erfolgreich geändert.`,
+                            variant: 'success'
+                        }
+                        addMainNote(note)
+                        setShow(false)
+                        setIsItemChanged(true)
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                    },
+                    error => {
+                        setIsLoading(false)
+                        const note: Note = {
+                            message: `Fehler beim Ändern der Beziehung: ${error.message}`,
+                            variant: 'danger'
+                        }
+                        addNote(note)
                     }
-                    addMainNote(note)
-                    setShow(false)
-                    setIsItemChanged(true)
-                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                })
-                .catch(error => {
-                    const note: Note = {
-                        message: `Fehler beim Ändern der Beziehung: ${error.message}`,
-                        variant: 'danger'
-                    }
-                    addNote(note)
-                })
-            setIsLoading(false)
+                )
         }
     }
 
@@ -102,26 +105,29 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
         if (userConfirmed) {
             setIsLoading(true)
             client.paths[resource.paths['single']].delete(item.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
-                .then(result => {
-                    setIsItemChanged(true)
-                    const note: Note = {
-                        variant: 'warning',
-                        message: `${resource.name} wurde gelöscht.`,
+                .then(
+                    result => {
+                        setIsLoading(false)
+                        setIsItemChanged(true)
+                        const note: Note = {
+                            variant: 'warning',
+                            message: `${resource.name} wurde gelöscht.`,
+                        }
+                        if (setShow) {
+                            setShow(false)
+                        }
+                        addMainNote(note)
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                    },
+                    error => {
+                        setIsLoading(false)
+                        const note: Note = {
+                            variant: 'danger',
+                            message: `Löschen der ${resource.name} hat nicht geklappt: ${error.message}`,
+                        }
+                        addNote(note)
                     }
-                    if (setShow) {
-                        setShow(false)
-                    }
-                    addMainNote(note)
-                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                })
-                .catch(error => {
-                    const note: Note = {
-                        variant: 'danger',
-                        message: `Löschen der ${resource.name} hat nicht geklappt: ${error.message}`,
-                    }
-                    addNote(note)
-                })
-            setIsLoading(false)
+                )
         }
     }
 

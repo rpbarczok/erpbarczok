@@ -8,8 +8,8 @@ export const getAllCompanies = () => new Promise<Company[]>(async function (reso
         const companies = await Company.findAll({ include: CompanyType, order: [['name', 'ASC']] })
         resolve(companies)
     }
-    catch (err) {
-        reject(error_formatter(500, err))
+    catch (error) {
+        reject(error_formatter(500, error))
     }
 })
 
@@ -25,8 +25,8 @@ export const addCompany = (company: CompanyNorm) => new Promise<Company>(async f
             } else {
                 reject(error_formatter(500, 'Unexpected inernal error'))
             }
-        } catch (err) {
-            reject(error_formatter(500, err))
+        } catch (error) {
+            reject(error_formatter(500, error))
         }
     } else {
         reject(new NotFoundError())
@@ -42,8 +42,8 @@ export const getCompanyById = (id: number) => new Promise<Company>(async functio
             resolve(company)
         }
     }
-    catch (err) {
-        reject(error_formatter(500, err))
+    catch (error) {
+        reject(error_formatter(500, error))
     }
 })
 
@@ -56,8 +56,8 @@ export const deleteCompanyById = (id: number) => new Promise<void>(async (resolv
             resolve()
         }
     }
-    catch (err) {
-        reject(error_formatter(500, err))
+    catch (error) {
+        reject(error_formatter(500, error))
     }
 })
 export const putCompanyById = (id: number, company: CompanyNorm) => new Promise<Company>(async (resolve, reject) => {
@@ -92,7 +92,7 @@ export const putCompanyById = (id: number, company: CompanyNorm) => new Promise<
             reject(error_formatter(400, "Bad request"))
         }
     }
-    catch (err) {
-        reject(error_formatter(500, err))
+    catch (error) {
+        reject(error_formatter(500, error))
     }
 })

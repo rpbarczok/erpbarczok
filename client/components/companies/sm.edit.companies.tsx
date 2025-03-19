@@ -25,7 +25,7 @@ interface SMEditCompanies {
 export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged, addEditNote, changedCompany, changedCompanyDispatch }: SMEditCompanies) => {
     const [validated, setValidated] = useState<boolean>(false)
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-    const { isLoading, setIsLoading} = useContextThrowUndefined(LoadingContext)
+    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
     const auth = useAuth()
     const token = auth.user?.access_token
 
@@ -40,24 +40,26 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
             client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
                 changedCompany.data,
                 { headers: { Authorization: `Bearer ${token}` } })
-                .then(result => {
-                    const note: Note = {
-                        variant: 'success',
-                        message: `Unternehmen erfolgreich überarbeitet.`,
+                .then(
+                    result => {
+                        setIsLoading(false)
+                        const note: Note = {
+                            variant: 'success',
+                            message: `Unternehmen erfolgreich überarbeitet.`,
+                        }
+                        addEditNote(note)
+                        setIsCompanyChanged(true)
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                    },
+                    error => {
+                        setIsLoading(false)
+                        const note: Note = {
+                            variant: 'danger',
+                            message: `Fehler beim Speichern der Unternehmensdaten: ${error.message}`,
+                        }
+                        addEditNote(note)
                     }
-                    addEditNote(note)
-                    setIsCompanyChanged(true)
-                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                }
                 )
-                .catch(function (error) {
-                    const note: Note = {
-                        variant: 'danger',
-                        message: `Fehler beim Speichern der Unternehmensdaten: ${error.message}`,
-                    }
-                    addEditNote(note)
-                })
-            setIsLoading(false)
         }
     }
 

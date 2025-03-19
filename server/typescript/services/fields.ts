@@ -10,8 +10,8 @@ export const getAllFields = () => new Promise<Field[]>(async function (resolve, 
         const fields = await Field.findAll({ order: [['name', 'ASC']] })
         resolve(fields)
     }
-    catch (err) {
-        reject(error_formatter(500, err))
+    catch (error) {
+        reject(error_formatter(500, error))
     }
 })
 
@@ -22,8 +22,8 @@ export const addField = (field: FieldNorm) => new Promise<Field>(async function 
     try {
         const addedField = await Field.create(newField)
         resolve(addedField)
-    } catch (err) {
-        reject(error_formatter(500, err))
+    } catch (error) {
+        reject(error_formatter(500, error))
     }
 })
 
@@ -36,8 +36,8 @@ export const getFieldById = (id: number) => new Promise<Field>(async function (r
             resolve(field)
         }
     }
-    catch (err) {
-        reject(error_formatter(500, err))
+    catch (error) {
+        reject(error_formatter(500, error))
     }
 })
 
@@ -50,8 +50,8 @@ export const deleteFieldById = (id: number) => new Promise<void>(async (resolve,
             resolve()
         }
     }
-    catch (err) {
-        reject(error_formatter(500, err))
+    catch (error) {
+        reject(error_formatter(500, error))
     }
 })
 export const putFieldById = (id: number, field: FieldNorm) => new Promise<Field>(async (resolve, reject) => {
@@ -64,7 +64,7 @@ export const putFieldById = (id: number, field: FieldNorm) => new Promise<Field>
             resolve(updatedField)
         }
     }
-    catch (err) {
-        reject(error_formatter(500, err))
+    catch (error) {
+        reject(error_formatter(500, error))
     }
 })
