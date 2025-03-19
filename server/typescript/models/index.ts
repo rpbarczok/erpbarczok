@@ -38,13 +38,13 @@ Field.belongsToMany(Company, {through: "company_fields", onDelete: "CASCADE"})
 try {
     await sequelize.sync({ alter: true })
     logger("Drop and re-sync db.")
-} catch (err: any) {
-    logger("Failed to sync db: " + err.message)
-    throw err
+} catch (error: any) {
+    logger("Failed to sync db: " + error.message)
+    throw error
 }
 
 try {
     await setDefaultValues()
-} catch (err: any) {
+} catch (error: any) {
     logger("Failed to set default values")
 }

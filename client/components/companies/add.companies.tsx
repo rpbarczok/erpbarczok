@@ -43,28 +43,30 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
         } else {
             setIsLoading(true)
             client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
-                .then(result => {
-                    handleChangeActive(Number(removeBeforeLastDigits(result.headers.location)))
-                    const note: Note = {
-                        message: `Neues Unternehmen erfolgreich erstellt.`,
-                        variant: 'success',
-                    }
-                    addEditNote(note)
-                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                .then(
+                    result => {
+                        setIsLoading(false)
+                        handleChangeActive(Number(removeBeforeLastDigits(result.headers.location)))
+                        const note: Note = {
+                            message: `Neues Unternehmen erfolgreich erstellt.`,
+                            variant: 'success',
+                        }
+                        addEditNote(note)
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        setIsCompanyChanged(true)
+                        setIsNew(true)
+                        setShow(false)
 
-                    setIsCompanyChanged(true)
-                    setIsNew(true)
-                    setShow(false)
-
-                })
-                .catch((error) => {
-                    const note: Note = {
-                        variant: 'danger',
-                        message: `Fehler bei Erstellung des neuen Unternehmens: ${error.message}`,
+                    }, 
+                    error => {
+                        setIsLoading(false)
+                        const note: Note = {
+                            variant: 'danger',
+                            message: `Fehler bei Erstellung des neuen Unternehmens: ${error.message}`,
+                        }
+                        addAddNote(note)
                     }
-                    addAddNote(note)
-                })
-            setIsLoading(false)
+                )
         }
     }
 

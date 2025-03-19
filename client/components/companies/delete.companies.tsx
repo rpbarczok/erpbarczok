@@ -29,7 +29,9 @@ export const DeleteCompanies = ({ company, setIsCompanyChanged, addNote, setShow
         if (userConfirmed) {
             setIsLoading(true)
             client.deleteCompanyById(company.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
-                .then(result => {
+                .then(
+                    result => {
+                    setIsLoading(false)
                     setIsCompanyChanged(true)
                     const note: Note = {
                         variant: 'warning',
@@ -40,15 +42,16 @@ export const DeleteCompanies = ({ company, setIsCompanyChanged, addNote, setShow
                     }
                     addNote(note)
                     updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                })
-                .catch(error => {
+                },
+                error => {
+                    setIsLoading(false)
                     const note: Note = {
                         variant: 'danger',
                         message: `Löschen der Unternehmen hat nicht geklappt: ${error.message}`,
                     }
                     addNote(note)
-                })
-                setIsLoading(false)
+                }
+            )
         }
     }
     return <Button size={size} className="standardDesign" variant="outline-danger" onClick={handleDelete}>Löschen</Button>

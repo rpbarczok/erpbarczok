@@ -12,18 +12,18 @@ const writeOpenApiSpec = async () => {
     import {Document} from 'openapi-client-axios'
     export const openapiSpec: Document = ${JSON.stringify(apiSpec,null, 4)}
     `
-    fs.writeFile(target, content, err => {
-        if (err) {
-            console.log(err)
+    fs.writeFile(target, content, error => {
+        if (error) {
+            console.log(error)
         } else {
             console.log('OpenapiSpec Typescript for client successfully created')            
         }
     })
 
     const targetJSON = path.join(import.meta.dirname, 'client/utils/openapi.json')
-    fs.writeFile(targetJSON, JSON.stringify(apiSpec,null, 4), err => {
-        if (err) {
-            console.log(err)
+    fs.writeFile(targetJSON, JSON.stringify(apiSpec,null, 4), error => {
+        if (error) {
+            console.log(error)
         } else {
             console.log('OpenapiSpec Json File for client successfully created')
         }

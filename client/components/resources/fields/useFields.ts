@@ -20,21 +20,28 @@ export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetSta
         if (isFieldChanged) {
             setIsLoading(true)
             client.getFields(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
-                .then(result => {
-                    const newList = result?.data.map(row => {
-                        const newRow: DataWithMeta<Field> = {
-                            meta: {
-                                location: Number(removeBeforeLastDigits(row.meta.location)),
-                                etag: row.meta.etag
-                            },
-                            data: row.data
-                        }
-                        return (newRow)
-                    })
-                    setListFields(newList)
-                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                })
-            setIsLoading(false)
+                .then(
+                    result => {
+                        const newList = result?.data.map(row => {
+                            const newRow: DataWithMeta<Field> = {
+                                meta: {
+                                    location: Number(removeBeforeLastDigits(row.meta.location)),
+                                    etag: row.meta.etag
+                                },
+                                data: row.data
+                            }
+                            return (newRow)
+                        })
+                        setListFields(newList)
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        setIsLoading(false)
+                    },
+                    error => {
+                        setIsLoading(false)
+                        throw new Error(`Error while loading fields: ${error.message}`)
+                    }
+
+                )
             setIsFieldChanged(false)
         }
     }, [isFieldChanged])

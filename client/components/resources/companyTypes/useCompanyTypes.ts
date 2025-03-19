@@ -20,21 +20,26 @@ export function useCompanyTypes(): [DataWithMeta<CompanyType>[], React.Dispatch<
         if (isCompanyTypeChanged) {
             setIsLoading(true)
             client.getCompanyTypes(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
-                .then(result => {
-                    const newList = result?.data.map(row => {
-                        const newRow: DataWithMeta<CompanyType> = {
-                            meta: {
-                                location: Number(removeBeforeLastDigits(row.meta.location)),
-                                etag: row.meta.etag
-                            },
-                            data: row.data
-                        }
-                        return (newRow)
-                    })
-                    setListCompanyTypes(newList)
-                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                })
-            setIsLoading(false)
+                .then(
+                    result => {
+                        setIsLoading(false)
+                        const newList = result?.data.map(row => {
+                            const newRow: DataWithMeta<CompanyType> = {
+                                meta: {
+                                    location: Number(removeBeforeLastDigits(row.meta.location)),
+                                    etag: row.meta.etag
+                                },
+                                data: row.data
+                            }
+                            return (newRow)
+                        })
+                        setListCompanyTypes(newList)
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                    }, error => {
+                        setIsLoading(false)
+                        throw new Error(`Error while loading company types: ${error.message}`)
+                    }
+                )
             setIsCompanyTypeChanged(false)
         }
     }, [isCompanyTypeChanged])

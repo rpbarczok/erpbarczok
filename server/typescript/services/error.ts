@@ -1,18 +1,18 @@
-export function error_formatter(status: Number, err: any) {
+export function error_formatter(status: Number, error: any) {
 
   if (process.env.NODE_ENV === 'production' && status === 500) {
       return { status, message: "internal error" }
   }
 
-  if (err.message) {
-      return { status, message: err.message }
+  if (error.message) {
+      return { status, message: error.message }
   }
 
-  if (typeof (err) === "string") {
-      return { status, message: err }
+  if (typeof (error) === "string") {
+      return { status, message: error }
   }
 
-  return { status, message: JSON.stringify(err) }
+  return { status, message: JSON.stringify(error) }
 }
 
 export class NotFoundError extends Error {

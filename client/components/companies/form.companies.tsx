@@ -27,8 +27,8 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
     const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>(emptyCompany)
     const [isNew, setIsNew] = useState<boolean>(false) // Flag: triggers an clearance of the search input
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
-    const {permissions, setPermissions} = useContextThrowUndefined(PermissionContext)
-    const {isLoading, setIsLoading} = useContextThrowUndefined(LoadingContext)    
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
     const auth = useAuth()
     const token = auth.user?.access_token
 
@@ -67,18 +67,21 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
         } else {
             setIsLoading(true)
             client.getCompanyById(active, null, { headers: { Authorization: `Bearer ${token}` } })
-                .then(result => {
-                    if (result.data) {
-                        const company = { "meta": { 'location': Number(removeBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
-                        setActiveCompany(company)
-                        changedCompanyDispatch({ type: 'companyChange', newValue: company })
+                .then(
+                    result => {
+                        if (result.data) {
+                            const company = { "meta": { 'location': Number(removeBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
+                            setActiveCompany(company)
+                            changedCompanyDispatch({ type: 'companyChange', newValue: company })
+                        }
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        setIsLoading(false)
+                    },
+                    error => {
+                        setIsLoading(false)
+                        throw new Error(`Error while loading company: ${error.message}`)
                     }
-                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                })
-                .catch(error => {
-                    throw error
-                })
-            setIsLoading(false)
+                )
         }
     }
 

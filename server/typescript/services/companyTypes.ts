@@ -10,8 +10,8 @@ export const getAllCompanyTypes = () => new Promise<CompanyType[]>(async functio
         const companyTypes = await CompanyType.findAll({ order: [['name', 'ASC']] })
         resolve(companyTypes)
     }
-    catch (err) {
-        reject(error_formatter(500, err))
+    catch (error) {
+        reject(error_formatter(500, error))
     }
 })
 
@@ -22,8 +22,8 @@ export const addCompanyType = (companyType: CompanyTypeNorm) => new Promise<Comp
     try {
         const addedCompanyType = await CompanyType.create(newCompanyType)
         resolve(addedCompanyType)
-    } catch (err) {
-        reject(error_formatter(500, err))
+    } catch (error) {
+        reject(error_formatter(500, error))
     }
 })
 
@@ -36,8 +36,8 @@ export const getCompanyTypeById = (id: number) => new Promise<CompanyType>(async
             resolve(companyType)
         }
     }
-    catch (err) {
-        reject(error_formatter(500, err))
+    catch (error) {
+        reject(error_formatter(500, error))
     }
 })
 
@@ -50,8 +50,8 @@ export const deleteCompanyTypeById = (id: number) => new Promise<void>(async (re
             resolve()
         }
     }
-    catch (err) {
-        reject(error_formatter(500, err))
+    catch (error) {
+        reject(error_formatter(500, error))
     }
 })
 export const putCompanyTypeById = (id: number, companyType: CompanyTypeNorm) => new Promise<CompanyType>(async (resolve, reject) => {
@@ -64,7 +64,7 @@ export const putCompanyTypeById = (id: number, companyType: CompanyTypeNorm) => 
             resolve(updatedCompanyType)
         }
     }
-    catch (err) {
-        reject(error_formatter(500, err))
+    catch (error) {
+        reject(error_formatter(500, error))
     }
 })

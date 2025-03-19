@@ -32,9 +32,10 @@ export const Companies = () => {
     useEffect(() => {
         if (isCompanyChanged) {
             setIsLoading(true)
-            try {
-                client.getCompanies(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
-                    .then(result => {
+            client.getCompanies(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(
+                    result => {
+                        setIsLoading(false)
                         const newList = result?.data.map(row => {
                             const newRow: DataWithMeta<Company> = {
                                 meta: {
@@ -47,11 +48,12 @@ export const Companies = () => {
                         })
                         setCompaniesList(newList)
                         updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                    })
-            } catch (error) {
-                throw error
-            }
-            setIsLoading(false)
+                    },
+                    error => {
+                        setIsLoading(false)
+                        throw new Error(`Error while loading companies: ${error.message}`)
+                    }
+                )
             setIsCompanyChanged(false)
         }
     }, [isCompanyChanged])

@@ -15,9 +15,9 @@ export const GET: Operation = async (req: Request, res: Response) => {
             .set(fieldNormMeta)
             .json(fieldNorm)
     }
-    catch (err) {
-        if (err instanceof NotFoundError) res.status(404).json({ "status": 404, "message": "not found" })
-        else throw err
+    catch (error) {
+        if (error instanceof NotFoundError) res.status(404).json({ "status": 404, "message": "not found" })
+        else throw error
     }
 }
 
@@ -76,9 +76,9 @@ export const DELETE: Operation = async (req: Request, res: Response) => {
         await deleteFieldById(Number(req.params.id))
         res.status(204).end()
     }
-    catch (err) {
-        if (err instanceof NotFoundError) res.status(404).json({ status: 404, message: "not found" })
-        else throw err
+    catch (error) {
+        if (error instanceof NotFoundError) res.status(404).json({ status: 404, message: "not found" })
+        else throw error
     }
 }
 DELETE.apiSpec = {
@@ -129,10 +129,10 @@ export const PUT: Operation = async (req: Request, res: Response) => {
                     .set(fieldHeader)
                     .end()
             }
-            catch (err) {
+            catch (error) {
                 res
                     .status(500)
-                    .json(error_formatter(500, err))
+                    .json(error_formatter(500, error))
             }
         } else {
             res
@@ -141,12 +141,12 @@ export const PUT: Operation = async (req: Request, res: Response) => {
         }
 
     }
-    catch (err) {
-        if (err instanceof NotFoundError) {
+    catch (error) {
+        if (error instanceof NotFoundError) {
             res.status(404)
                 .json({ status: 404, message: "not found" })
         } else {
-            throw err
+            throw error
         }
     }
 }

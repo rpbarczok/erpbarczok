@@ -49,7 +49,7 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const auth = useAuth()
     const [addItemCount, setAddItemCount] = useState(0)
-    const { isLoading, setIsLoading} = useContextThrowUndefined(LoadingContext)
+    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     const handleModal = () => {
         setAddItemCount(addItemCount + 1)
@@ -71,24 +71,26 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
         else {
             setIsLoading(true)
             client.paths[resource.paths['all']].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
-                .then(result => {
-                    const note: Note = {
-                        message: `Eine neue Beziehungsart wurde erfolgreich abgespeichert.`,
-                        variant: 'success'
-                    }
-                    addMainNote(note)
-                    setShow(false)
-                    setIsItemChanged(true)
-                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                })
-                .catch(error => {
-                    const note: Note = {
-                        message: `Fehler beim Speichern der neuen Beziehungsart: ${error.message}`,
-                        variant: 'danger',
-                    }
-                    addNote(note)
-                })
-            setIsLoading(false)
+                .then(
+                    result => {
+                        setIsLoading(false)
+                        const note: Note = {
+                            message: `Eine neue Beziehungsart wurde erfolgreich abgespeichert.`,
+                            variant: 'success'
+                        }
+                        addMainNote(note)
+                        setShow(false)
+                        setIsItemChanged(true)
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                    },
+                    error => {
+                        setIsLoading(false)
+                        const note: Note = {
+                            message: `Fehler beim Speichern der neuen Beziehungsart: ${error.message}`,
+                            variant: 'danger',
+                        }
+                        addNote(note)
+                    })
         }
     }
 
