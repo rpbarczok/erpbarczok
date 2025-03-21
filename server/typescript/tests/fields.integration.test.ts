@@ -14,7 +14,7 @@ const iatAWeekAgo = iat - 8 * 60 * 60 * 24
 
 const audience = process.env.AUDIENCE || 'www.example.com'
 const issuer = process.env.IDP_SERVER || 'www.example.com'
-const scope = process.env.SCOPE || 'openid email admin user'
+const scope = process.env.SCOPE || 'openid email profile admin user'
 const secret = process.env.TEST_SECRET || 'secret'
 const algorithms = process.env.ALGORITHM_TEST?.split(' ') || ['HS256']
 

@@ -82,7 +82,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
     }
 
     const UserButtons = () => {
-        if (hasPermission(['user', 'admin'], permissions)) {
+        if (hasPermission(['user'], permissions)) {
             return <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Schließen</Button>
         } else {
             return (<ButtonGroup className="w-100">

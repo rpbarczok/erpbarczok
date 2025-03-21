@@ -44,7 +44,7 @@ export const SMFormCompanies = ({ search,
     changedCompanyDispatch }: CompaniesFormSMComponent) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
-    const {permissions, setPermissions} = useContextThrowUndefined(PermissionContext)
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
 
     const buttonGroupAddDelete = <>
         <AddCompany
@@ -70,7 +70,7 @@ export const SMFormCompanies = ({ search,
             return (
                 <>
                     <Row className="d-none d-sm-block d-md-none">
-                        {hasPermission(['user', 'admin'], permissions) ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
+                        {hasPermission(['user'], permissions) ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
                     </Row>
                     <Notes notes={editNotes} removeNote={removeEditNote} ></Notes>
                     <Row>
@@ -101,13 +101,11 @@ export const SMFormCompanies = ({ search,
                     />
                 </Col>
                 <Col className="d-none d-md-block" md={3}>
-                    <ButtonGroup vertical style={{ padding: '10px 0 0' }}>
-                        {buttonGroupAddDelete}
-                    </ButtonGroup >
+                {hasPermission(['user'], permissions) ?<ButtonGroup vertical style={{ padding: '10px 0 0' }}>{buttonGroupAddDelete}</ButtonGroup >: '' }
                 </Col>
             </Row >
             <hr />
-            <Edit/>
+            <Edit />
         </div>
     )
 }

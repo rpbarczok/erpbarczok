@@ -18,10 +18,11 @@ const onSigninCallback = (_user: User | void): void => {
   )
 }
 
+const redirect_uri = window.location.href
+
 export interface WindowAuth extends Window {
   idp_server?: string
   client_id?: string
-  redirect_uri?: string
   scope?: string
   audience?: string
 }
@@ -30,7 +31,6 @@ const windowAuth = window as WindowAuth
 
 if (!windowAuth.idp_server
   || !windowAuth.client_id
-  || !windowAuth.redirect_uri
   || !windowAuth.audience) {
 
   root.render(
@@ -39,7 +39,6 @@ if (!windowAuth.idp_server
         <h1>Konfiguration der Authentifizierungsparameter unvollständig</h1>
         <p>IDP-Server: {windowAuth.idp_server}</p>
         <p>Client-ID: {windowAuth.client_id}</p>
-        <p>Redirect URI: {windowAuth.redirect_uri}</p>
         <p>Audience: {windowAuth.audience}</p>
       </div>
       <div>
@@ -51,7 +50,7 @@ if (!windowAuth.idp_server
   const oidcConfig: AuthProviderProps = {
     authority: windowAuth.idp_server,
     client_id: windowAuth.client_id,
-    redirect_uri: windowAuth.redirect_uri,
+    redirect_uri: redirect_uri,
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     onSigninCallback: onSigninCallback,
     scope: windowAuth.scope,

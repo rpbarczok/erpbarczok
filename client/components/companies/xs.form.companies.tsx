@@ -10,6 +10,9 @@ import { ChangedCompanyAction } from "./company.reducer.js"
 import { Heading } from "components/headings/heading.jsx"
 import { Note, Notes } from "components/notifiers/notifiers.jsx"
 import { useNotifier } from "components/notifiers/useNotifier.js"
+import { hasPermission } from "utils/hasPermission.js"
+import { useContextThrowUndefined } from "utils/contextUndefined.js"
+import { PermissionContext } from "utils/permissionContext.js"
 
 interface XSFormCompaniesComponent {
     search: string
@@ -37,19 +40,20 @@ export const XSFormCompanies = ({
     changedCompanyDispatch }: XSFormCompaniesComponent) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
+    const {permissions, setPermissions} = useContextThrowUndefined(PermissionContext)
 
     return (
 
         <Col className="flex-grow-1 d-flex flex-column" style={{ overflowY: "hidden" }}>
             <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
             <Row style={{ margin: "10px 3px 0 3px" }}>
-                <AddCompany
+                {hasPermission(['user'], permissions) ? <AddCompany
                     handleChangeActive={handleChangeActive}
                     addEditNote={addEditNote}
                     setIsNew={setIsNew}
                     companyTypesList={companyTypesList}
                     setIsCompanyChanged={setIsCompanyChanged}
-                />
+                /> : '' }
             </Row>
             <Notes notes={editNotes} removeNote={removeEditNote}/>
             <XSSearchCompanies search={search} setSearch={setSearch} />
