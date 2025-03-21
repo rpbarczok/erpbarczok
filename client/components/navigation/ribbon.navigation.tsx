@@ -151,7 +151,7 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
                 <Navbar key="navbar-lg" className='bg-body-secondary d-none d-xl-block'>
                     <Nav>
                         <Groups />
-                        <NavDropdown className="ms-auto" key="account" title={auth.user?.profile?.email}>
+                        <NavDropdown drop="start" className="ms-auto" key="account" title={auth.user?.profile?.email ?? auth.user?.profile?.name}>
                             <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
                             <NavDropdown.Divider/>
                             <FormCheck
@@ -180,7 +180,7 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
 
                 </Col>
                 <Col className="ms-auto">
-                    <NavDropdown className="float-end" key="account" title={auth.user?.profile?.email}>
+                    <NavDropdown drop="start" className="float-end" key="account" title={auth.user?.profile?.email ?? auth.user?.profile?.name}>
                         <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
                         <Dropdown.Divider />
                         <FormCheck reverse type="switch" id="toggleTheme" onChange={(e) => toggleTheme(e, theme, setTheme)} label="Toggle Theme" />

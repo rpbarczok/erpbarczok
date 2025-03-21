@@ -98,7 +98,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
             <Row>
                 <Col id='company' sm={12} lg={6} xl={5} >
                     <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
-                        {hasPermission(['user', 'admin'], permissions) ? <ButtonEdit /> : ''}
+                        {hasPermission(['user'], permissions) ? <ButtonEdit /> : ''}
                         <InputCompanies
                             companyTypesList={companyTypesList}
                             changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch} />

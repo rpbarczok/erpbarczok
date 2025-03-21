@@ -1,5 +1,5 @@
 process.env.NODE_ENV="test"
-process.env.DEBUG="ERPBarczok:app"
+process.env.DEBUG="erpbarczok:app"
 process.env.DB_NAME="postgres"
 process.env.DB_USER="postgres"
 process.env.DB_PASSWORD="blablubber"
@@ -11,6 +11,6 @@ process.env.ALGORITHM="HS256"
 
 process.env.CLIENT_ID="123456789"
 process.env.IDP_SERVER="www.example.com"
-process.env.REDIRECT_URI="www.example.com"
 process.env.AUDIENCE="www.example.com"
-process.env.SCOPE="openid email admin user"
+process.env.SCOPE='openid email profile admin user'
+process.env.PERMISSION_CLAIM = 'scope'

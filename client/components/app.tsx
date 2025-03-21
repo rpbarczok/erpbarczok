@@ -21,12 +21,9 @@ export function App() {
     const [permissions, setPermissions] = useState<string[]>([])
     const [isLoading, setIsLoading] = useState(false)
 
-    if (theme !== 'light' && theme !== 'dark') {
-        setTheme('light')
-    }
-    window.onload = function () {
-        document.getElementsByTagName('html')[0].setAttribute('data-bs-theme', theme)
-    }
+
+    document.getElementsByTagName('html')[0].setAttribute('data-bs-theme', theme)
+    console.log(window.location.href)
 
     if (auth.isLoading) {
         return <LoginLoading />
@@ -34,8 +31,6 @@ export function App() {
 
     if (auth.error) {
         return <LoginError message={auth.error.message ?? ''} />
-
-
     }
 
     if (auth.isAuthenticated) {

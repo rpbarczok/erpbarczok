@@ -29,7 +29,7 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
     const [newCompanyClick, setNewCompanyClick] = useState(0)
     const [show, setShow] = useState(false)
     const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
-
+    
     const auth = useAuth()
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const token = auth.user?.access_token

@@ -24,7 +24,7 @@ export interface DataWithMeta<T> {
 }
 
 interface PermissionRequest extends JWTRequest {
-    userPermission?: string[]
+    userPermissions?: string[]
 }
 
 const startApp = async () => {
@@ -32,6 +32,7 @@ const startApp = async () => {
     const initSequelize = sequelize
     const logger = baseLogger.extend('app')
     const morganLogger = baseLogger.extend('morgan')
+    const permissionLogger = logger.extend('permission')
     const controllers = await loadControllers()
     logger("All controllers:", controllers)
 
@@ -61,10 +62,9 @@ const startApp = async () => {
 
     if (!process.env.CLIENT_ID
         || !process.env.IDP_SERVER
-        || !process.env.REDIRECT_URI
         || !process.env.AUDIENCE
     ) {
-        console.log('Konfigurationsangaben zu Authentifizierung (CLIENT_ID, IDP_SERVER, REDIRECT_URI, AUDIENCE) unvollständig')
+        logger('Konfigurationsangaben zu Authentifizierung (CLIENT_ID, IDP_SERVER, AUDIENCE) unvollständig')
         process.exit(1)
     }
 
@@ -74,7 +74,6 @@ const startApp = async () => {
             .send(`
 window.client_id = '${jsesc(process.env.CLIENT_ID)}';
 window.idp_server = '${jsesc(process.env.IDP_SERVER)}';
-window.redirect_uri = '${jsesc(process.env.REDIRECT_URI)}';
 window.audience = '${jsesc(process.env.AUDIENCE)}';
 window.scope = '${jsesc(process.env.SCOPE)}';
 `
@@ -95,10 +94,10 @@ window.scope = '${jsesc(process.env.SCOPE)}';
                     url: '/api-docs',
                     oauth: {
                         // https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/oauth2.md
-                        clientId: process.env.CLIENT_ID_SWAGGER,
+                        clientId: process.env.CLIENT_ID_SWAGGER ?? process.env.CLIENT_ID,
                         appName: 'ERPBarczok Swagger',
                         additionalQueryStringParams: { audience: process.env.AUDIENCE },
-                        scopes: process.env.SCOPE?.split(" ") || ['openid', 'email'],
+                        scopes: process.env.SCOPE?.split(" ") || ['openid', 'email', 'profile', 'admin', 'user'],
                         usePkceWithAuthorizationCodeGrant: true
                     }
                 }
@@ -111,11 +110,25 @@ window.scope = '${jsesc(process.env.SCOPE)}';
     app.use(jwtCheck)
 
     app.use((req: PermissionRequest, res, next) => {
-        const name = process.env.SCOPE_CLAIM || 'scope'
-        const userScope: string | string[] = req.auth ? req.auth[name] : []
-        req.userPermission = typeof userScope === 'string' ? userScope.split(" ") : userScope
+        const name = process.env.PERMISSION_CLAIM || 'roles'
+        const userPermissionsPrep: unknown = req.auth ? req.auth[name] : []
+        permissionLogger("Permissions from Request: ", userPermissionsPrep)
+        const userPermissionsArray: string[] = []
+        if (Array.isArray(userPermissionsPrep)) {
+            userPermissionsArray.push(...userPermissionsPrep)
+        } else if (typeof userPermissionsPrep === 'string') {
+            userPermissionsArray.push(...userPermissionsPrep.split(" "))
+        }
+        permissionLogger('Permissions from Request as Array: ', userPermissionsArray)
+        const userPermissions = ['public']
+        if (userPermissionsArray.some(permission => permission === 'user')) userPermissions.push('user')
+        if (userPermissionsArray.some(permission => permission === 'admin')) userPermissions.push('admin', 'user')
 
-        res.set('permissions', req.userPermission.join(' '))
+        req.userPermissions = userPermissions
+
+        res.set('permissions', req.userPermissions.join(' '))
+
+        permissionLogger('Full Permissions for Response: ', req.userPermissions.join(' '))
         next()
     })
 
@@ -144,28 +157,27 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             validateSecurity: {
                 handlers: {
                     openId: (req: PermissionRequest, requiredScopesArray, schema) => {
-
                         if (requiredScopesArray.length === 0) {
-                            console.log("No scope required. Authorized.")
+                            permissionLogger("No scope required. Authorized.")
                             return true
                         }
 
-                        if (!Array.isArray(req.userPermission)) {
-                            console.log("Scope has the wrong type. Authorization rejected.")
+                        if (!Array.isArray(req.userPermissions)) {
+                            permissionLogger("Scope has the wrong type. Authorization rejected.")
                             return false
                         }
 
-                        if (req.userPermission.length === 0) {
-                            console.log("No scopes provided, but scopes required: ", requiredScopesArray)
+                        if (req.userPermissions.length === 0) {
+                            permissionLogger("No scopes provided, but scopes required: ", requiredScopesArray)
                             return false
                         }
 
-                        if (req.userPermission.some((e) => requiredScopesArray.includes(e))) {
-                            console.log("Permission granted.")
+                        if (req.userPermissions.some((e) => requiredScopesArray.includes(e))) {
+                            permissionLogger("Permission granted.")
                             return true
                         }
 
-                        console.log("User has not the required scopes: User scopes: " + req.userPermission + ", Required Scopes: " + requiredScopesArray)
+                        permissionLogger("User has not the required scopes: User scopes: " + req.userPermissions + ", Required Scopes: " + requiredScopesArray)
                         return false
                     }
                 }
