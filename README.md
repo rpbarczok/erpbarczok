@@ -69,7 +69,7 @@ Additionally, set the __SCOPE__ variable to "openid email profile admin user" an
 ## Environment Variables:
 
 Variable | Description | Default Value | Example
--- | -- | -- | -- | --
+-- | -- | -- | -- 
 NODE_ENV | Describes the environment | | 'production', 'development'
 DB_NAME | Name of the used database | | 'erpbarczok_db'
 DB_USER | Name of the database user with access to the database |  | 'erpbarczok_app'
@@ -78,7 +78,7 @@ DB_HOST | Host of the database | | 'localhost'
 DB_PORT | Port of the database | | 5432
 CLIENT_ID | Client id of the app in the authenticator | |
 IDP_SERVER | URI of the IDP Server | | 'https://dev-example.eu.auth0.com/'
-AUDIENCE | Audience of the app as given by the authentication provider | yes | | 
+AUDIENCE | Audience of the app as given by the authentication provider | | 
 SCOPE | Scope needed to use the application | 'openid email profile admin user' | 
 PERMISSION_CLAIM | Claim name in access token in which the permissions of the authenticated user are stored | 'roles' | 'roles', 'permissions', 'scope'
 CLIENT_ID_SWAGGER | Client id for the swagger UI | CLIENT_ID |
