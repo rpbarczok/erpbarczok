@@ -112,14 +112,12 @@ window.scope = '${jsesc(process.env.SCOPE)}';
     app.use((req: PermissionRequest, res, next) => {
         const name = process.env.PERMISSION_CLAIM || 'roles'
         const userPermissionsPrep: unknown = req.auth ? req.auth[name] : []
-        permissionLogger("Permissions from Request: ", userPermissionsPrep)
         const userPermissionsArray: string[] = []
         if (Array.isArray(userPermissionsPrep)) {
             userPermissionsArray.push(...userPermissionsPrep)
         } else if (typeof userPermissionsPrep === 'string') {
             userPermissionsArray.push(...userPermissionsPrep.split(" "))
         }
-        permissionLogger('Permissions from Request as Array: ', userPermissionsArray)
         const userPermissions = ['public']
         if (userPermissionsArray.some(permission => permission === 'user')) userPermissions.push('user')
         if (userPermissionsArray.some(permission => permission === 'admin')) userPermissions.push('admin', 'user')
@@ -128,7 +126,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
 
         res.set('permissions', req.userPermissions.join(' '))
 
-        permissionLogger('Full Permissions for Response: ', req.userPermissions.join(' '))
+        permissionLogger('Permissions: ', req.userPermissions.join(' '))
         next()
     })
 

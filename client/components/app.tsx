@@ -23,7 +23,6 @@ export function App() {
 
 
     document.getElementsByTagName('html')[0].setAttribute('data-bs-theme', theme)
-    console.log(window.location.href)
 
     if (auth.isLoading) {
         return <LoginLoading />
