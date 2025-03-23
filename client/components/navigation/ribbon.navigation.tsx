@@ -136,13 +136,13 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
     }
 
     const logOutHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        try {
-            await auth.revokeTokens()
+        // try {
+        //     await auth.revokeTokens()
+        //     await auth.removeUser()
+        // } catch (error) {
             await auth.removeUser()
-        } catch (error) {
-            await auth.removeUser()
-            await auth.signoutRedirect()
-        }
+            await auth.signoutRedirect({post_logout_redirect_uri: window.location.href})
+        // }
     }
 
     return (
