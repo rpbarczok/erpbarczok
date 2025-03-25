@@ -20,34 +20,38 @@ interface XSListCompaniesComponent {
 
 export const XSListCompanies = ({ filteredCompanies, changedCompany, changedCompanyDispatch, activeCompany, companyTypesList, setIsCompanyChanged, handleChangeActive, addEditNote }: XSListCompaniesComponent) => {
     const [show, setShow] = useState(false)
-
     const handleOpenModal = (e: React.MouseEvent<Element, MouseEvent>, location: number) => {
         e.preventDefault
         handleChangeActive(location)
         setShow(true)
     }
-
     const List = () => {
+
         if (filteredCompanies.length === 0) {
             return (
                 <p>Keine Unternehmen gefunden!</p>
             )
         } else {
             return filteredCompanies.map((element) => {
+
                 return (
-                    <ListGroup.Item key={element.meta.location} onClick={(e) => handleOpenModal(e, element.meta.location)}>
-                        {element.data.name + (element.data.abbr ? " (" + element.data.abbr + ")" : "")}
-                    </ListGroup.Item>
+                    <>
+                        <ListGroup.Item key={element.meta.location} onClick={(e) => handleOpenModal(e, element.meta.location)}>
+                            {element.data.name + (element.data.abbr ? " (" + element.data.abbr + ")" : "")}
+                        </ListGroup.Item>
+                    </>
                 )
             }
             )
         }
     }
 
+
+
     return (
         <>
-            <div className="flex-grow-1 d-flex flex-column" style={{overflowY: "hidden", marginTop: "10px"}}>
-                <ListGroup id="company-list"  style={{overflowY: "scroll"}}>
+            <div className="flex-grow-1 d-flex flex-column" style={{ overflowY: "hidden", marginTop: "10px" }}>
+                <ListGroup id="company-list" style={{ overflowY: "scroll" }}>
                     <List />
                 </ListGroup >
             </div>

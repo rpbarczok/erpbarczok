@@ -177,7 +177,6 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
                             <GroupsNavXS />
                         </Dropdown.Menu>
                     </Dropdown>
-
                 </Col>
                 <Col className="ms-auto">
                     <NavDropdown drop="start" className="float-end" key="account" title={auth.user?.profile?.email ?? auth.user?.profile?.name}>

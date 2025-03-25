@@ -82,9 +82,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
     }
 
     const UserButtons = () => {
-        if (!hasPermission(['user'], permissions)) {
-            return <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Schließen</Button>
-        } else {
+        if (hasPermission(['user'], permissions)) {
             return (<ButtonGroup className="w-100">
                 <Button size="sm" variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Undo</Button>
                 <Button size="sm" type="submit" variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
@@ -97,6 +95,8 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                 />
                 <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Abbrechen</Button>
             </ButtonGroup>)
+        } else {
+            return <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Schließen</Button>
         }
 
     }
