@@ -89,7 +89,7 @@ export const putCompanyById = (id: number, company: CompanyNorm) => new Promise<
                 }
             }
         } else {
-            reject(error_formatter(400, "Bad request"))
+            reject(error_formatter(400, 'Bad request'))
         }
     }
     catch (error) {

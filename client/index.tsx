@@ -1,14 +1,14 @@
-import { createRoot } from "react-dom/client"
+import { createRoot } from 'react-dom/client'
 import { App } from './components/app.jsx'
 import './style.css'
 import { serviceWorkerRegistry } from './utils/serviceworker.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { StrictMode } from "react"
-import { AuthProvider, AuthProviderProps } from "react-oidc-context"
-import { User, WebStorageStateStore } from "oidc-client-ts"
-import { Button } from "react-bootstrap"
+import { StrictMode } from 'react'
+import { AuthProvider, AuthProviderProps } from 'react-oidc-context'
+import { User, WebStorageStateStore } from 'oidc-client-ts'
+import { Button } from 'react-bootstrap'
 
-const root = createRoot(document.getElementById("root") as HTMLElement)
+const root = createRoot(document.getElementById('root') as HTMLElement)
 
 const onSigninCallback = (_user: User | void): void => {
   window.history.replaceState(
@@ -42,7 +42,7 @@ if (!windowAuth.idp_server
         <p>Audience: {windowAuth.audience}</p>
       </div>
       <div>
-        <Button type="button" onClick={() => window.location.reload()}>Wiederholen</Button>
+        <Button type='button' onClick={() => window.location.reload()}>Wiederholen</Button>
       </div>
     </StrictMode>
   )
@@ -69,5 +69,5 @@ if (!windowAuth.idp_server
     </StrictMode>
   )
 
-  if (process.env.NODE_ENV === "production") serviceWorkerRegistry()
+  if (process.env.NODE_ENV === 'production') serviceWorkerRegistry()
 }

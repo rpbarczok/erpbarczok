@@ -1,18 +1,19 @@
-import { useContext, useReducer, useState } from "react"
-import { client } from "utils/openAPIClientAxios.js"
-import { changedCompanyReducer } from "./company.reducer.js"
-import { emptyCompany } from "./companies.jsx"
-import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
-import { useAuth } from "react-oidc-context"
-import { Note, Notes } from "components/notifiers/notifiers.jsx"
-import { useNotifier } from "components/notifiers/useNotifier.js"
-import { DataWithMeta } from "components/forms.jsx"
-import { CompanyType } from "components/resources/companyTypes/companyTypes.js"
-import { Button, ButtonGroup, Form, Modal } from "react-bootstrap"
-import { InputCompanies } from "./input.companies.jsx"
-import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
+import { useContext, useReducer, useState } from 'react'
+import { apiClient } from 'utils/openAPIClientAxios.js'
+import { changedCompanyReducer } from './company.reducer.js'
+import { emptyCompany } from './companies.jsx'
+import { removeBeforeLastDigits } from 'utils/removeBeforeLastDigits.js'
+import { useAuth } from 'react-oidc-context'
+import { Note, Notes } from 'components/notifiers/notifiers.jsx'
+import { useNotifier } from 'components/notifiers/useNotifier.js'
+import { DataWithMeta } from 'components/forms.jsx'
+import { CompanyType } from 'components/resources/companyTypes/companyTypes.js'
+import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
+import { InputCompanies } from './input.companies.jsx'
+import { PermissionContext, updateUserPermissions } from 'utils/permissionContext.js'
 import { useContextThrowUndefined } from 'utils/contextUndefined.js'
-import { LoadingContext } from "utils/loadingContext.js"
+import { LoadingContext } from 'utils/loadingContext.js'
+import { AppIndicator } from 'react-bootstrap-icons'
 
 interface AddCompanyComponent {
     handleChangeActive: (active: number) => void
@@ -29,12 +30,12 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
     const [newCompanyClick, setNewCompanyClick] = useState(0)
     const [show, setShow] = useState(false)
     const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
-    
+
     const auth = useAuth()
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const token = auth.user?.access_token
 
-    const handleSubmitAdd: React.FormEventHandler<HTMLFormElement> = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmitAdd: React.FormEventHandler<HTMLFormElement> = async (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget
         e.preventDefault()
         e.stopPropagation()
@@ -42,37 +43,43 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
             setValidated(true)
         } else {
             setIsLoading(true)
-            client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
-                .then(
-                    result => {
-                        setIsLoading(false)
-                        handleChangeActive(Number(removeBeforeLastDigits(result.headers.location)))
-                        const note: Note = {
-                            message: `Neues Unternehmen erfolgreich erstellt.`,
-                            variant: 'success',
-                        }
-                        addEditNote(note)
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                        setIsCompanyChanged(true)
-                        setIsNew(true)
-                        setShow(false)
 
-                    }, 
-                    error => {
-                        setIsLoading(false)
-                        const note: Note = {
-                            variant: 'danger',
-                            message: `Fehler bei Erstellung des neuen Unternehmens: ${error.message}`,
-                        }
-                        addAddNote(note)
+            try {
+                const client = await apiClient
+                const result = await client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
+                setIsLoading(false)
+                handleChangeActive(Number(removeBeforeLastDigits(result.headers.location)))
+                const note: Note = {
+                    message: `Neues Unternehmen erfolgreich erstellt.`,
+                    variant: 'success',
+                }
+                addEditNote(note)
+                updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                setIsCompanyChanged(true)
+                setIsNew(true)
+                setShow(false)
+            }
+            catch (error) {
+                setIsLoading(false)
+                if (error instanceof Error) {
+                    const note: Note = {
+                        variant: 'danger',
+                        message: `Fehler bei Erstellung des neuen Unternehmens: ${error.message}`,
                     }
-                )
+                    addAddNote(note)
+                } else {
+                    const note: Note =  {
+                        variant: 'danger',
+                        message: `Fehler bei Erstellung des neuen Unternehmens: ${error}`,
+                    }
+                }
+            }
         }
     }
 
     const handleShow = () => {
         setNewCompanyClick(newCompanyClick - 1)
-        changedCompanyDispatch({ type: "companyChange", newValue: emptyCompany })
+        changedCompanyDispatch({ type: 'companyChange', newValue: emptyCompany })
         setShow(true)
     }
 
@@ -86,12 +93,12 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
 
     return (
         <>
-            <Button className="standardDesign" variant="outline-primary" onClick={handleShow}>Hinzufügen</Button>
+            <Button className='standardDesign' variant='outline-primary' onClick={handleShow}>Hinzufügen</Button>
             <Modal
                 key={newCompanyClick}
                 show={show}
                 onHide={() => setShow(false)}
-                backdrop="static"
+                backdrop='static'
                 size='lg'>
                 <Form noValidate validated={validated} onSubmit={(e) => handleSubmitAdd(e)}>
                     <Modal.Header closeButton>
@@ -107,9 +114,9 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
                         </Modal.Body>
                     </Modal.Body>
                     <Modal.Footer>
-                        <ButtonGroup className="w-100">
-                            <Button type="submit" variant='outline-primary'>Speichern</Button>
-                            <Button variant="outline-secondary" onClick={(e) => handleClose(e)}>Abbrechen</Button>
+                        <ButtonGroup className='w-100'>
+                            <Button type='submit' variant='outline-primary'>Speichern</Button>
+                            <Button variant='outline-secondary' onClick={(e) => handleClose(e)}>Abbrechen</Button>
                         </ButtonGroup>
                     </Modal.Footer>
                 </Form>

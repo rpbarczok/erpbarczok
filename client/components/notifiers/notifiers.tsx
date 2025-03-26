@@ -1,4 +1,4 @@
-import { Alert } from "react-bootstrap"
+import { Alert } from 'react-bootstrap'
 
 export interface Note {
     variant: 'success' | 'info' | 'danger' | 'warning'

@@ -1,17 +1,17 @@
-import { DataWithMeta } from "components/forms.jsx"
-import { CompanyType } from "./companyTypes/companyTypes.jsx"
-import { Field, InputFields } from "./fields/fields.jsx"
-import { Note, Notes } from "components/notifiers/notifiers.jsx"
-import { Resource } from "./resourceList.js"
-import { useAuth } from "react-oidc-context"
-import React, { useState } from "react"
-import { Button, ButtonGroup, Form, ListGroup, Modal } from "react-bootstrap"
-import { client } from "utils/openAPIClientAxios.js"
-import { useNotifier } from "components/notifiers/useNotifier.js"
-import { InputCompanyTypes } from "./companyTypes/companyTypes.jsx"
-import { useContextThrowUndefined } from "utils/contextUndefined.js"
-import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
-import { LoadingContext } from "utils/loadingContext.js"
+import { DataWithMeta } from 'components/forms.jsx'
+import { CompanyType } from './companyTypes/companyTypes.jsx'
+import { Field, InputFields } from './fields/fields.jsx'
+import { Note, Notes } from 'components/notifiers/notifiers.jsx'
+import { Resource } from './resourceList.js'
+import { useAuth } from 'react-oidc-context'
+import React, { useState } from 'react'
+import { Button, ButtonGroup, Form, ListGroup, Modal } from 'react-bootstrap'
+import { apiClient } from 'utils/openAPIClientAxios.js'
+import { useNotifier } from 'components/notifiers/useNotifier.js'
+import { InputCompanyTypes } from './companyTypes/companyTypes.jsx'
+import { useContextThrowUndefined } from 'utils/contextUndefined.js'
+import { PermissionContext, updateUserPermissions } from 'utils/permissionContext.js'
+import { LoadingContext } from 'utils/loadingContext.js'
 
 interface ListItemComponent {
     item: DataWithMeta<Field | CompanyType>
@@ -63,7 +63,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
         setShow(false)
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>, changedItem: DataWithMeta<CompanyType | Field>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, changedItem: DataWithMeta<CompanyType | Field>) => {
         const form = e.currentTarget
         e.preventDefault()
         e.stopPropagation()
@@ -71,6 +71,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
             setValidated(true)
         } else {
             setIsLoading(true)
+            const client = await apiClient
             client.paths[resource.paths['single']].put(
                 { id: changedItem.meta.location, 'if-match': changedItem.meta.etag },
                 changedItem.data,
@@ -99,11 +100,12 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
         }
     }
 
-    const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         const userConfirmed = window.confirm(`Willst du die ${resource.name} '${item.data.name}' wirklich löschen?`)
         if (userConfirmed) {
             setIsLoading(true)
+            const client = await apiClient
             client.paths[resource.paths['single']].delete(item.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
                 .then(
                     result => {
@@ -139,7 +141,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
 
     return (
         <>
-            <ListGroup.Item className="standardDesign" onClick={handleModal}>
+            <ListGroup.Item className='standardDesign' onClick={handleModal}>
                 {item.data.name}
             </ListGroup.Item>
             <Modal show={show} onHide={() => handleClose()}>
@@ -154,11 +156,11 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
                             changedItem={changedItem} setChangedItem={setChangedItem} />
                     </Modal.Body>
                     <Modal.Footer>
-                        <ButtonGroup className="w-100">
-                            <Button size="sm" variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Undo</Button>
-                            <Button type="submit" variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
-                            <Button size="sm" variant="outline-danger" onClick={handleDelete}>Löschen</Button>
-                            <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Abbrechen</Button>
+                        <ButtonGroup className='w-100'>
+                            <Button size='sm' variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Undo</Button>
+                            <Button type='submit' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
+                            <Button size='sm' variant='outline-danger' onClick={handleDelete}>Löschen</Button>
+                            <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Abbrechen</Button>
                         </ButtonGroup>
                     </Modal.Footer>
                 </Form>

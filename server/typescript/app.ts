@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express'
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import cors, { CorsOptions } from 'cors'
-import { apiSpec } from "./openapi.js"
+import { apiSpec } from './openapi.js'
 import swaggerUi from 'swagger-ui-express'
 import OpenApiValidator from 'express-openapi-validator'
 import { baseLogger } from './logger.js'
@@ -34,7 +34,7 @@ const startApp = async () => {
     const morganLogger = baseLogger.extend('morgan')
     const permissionLogger = logger.extend('permission')
     const controllers = await loadControllers()
-    logger("All controllers:", controllers)
+    logger('All controllers:', controllers)
 
     app.use(morgan('dev', { stream: { write: msg => { morganLogger(msg); return true } } }))
     app.use(express.json())
@@ -43,10 +43,10 @@ const startApp = async () => {
 
     // handle CORS
 
-    const corsOptions: CorsOptions = { "origin": false, exposedHeaders: ["location", "etag", 'Permissions'] }
+    const corsOptions: CorsOptions = { 'origin': false, exposedHeaders: ['location', 'etag', 'Permissions'] }
     if (process.env.NODE_ENV != 'production') {
         corsOptions.origin = [
-            "http://localhost:3000"
+            'http://localhost:3000'
         ]
     }
 
@@ -70,7 +70,7 @@ const startApp = async () => {
 
     app.get('/config.js', (req, res, next) => {
         res
-            .set("content-type", "text/javascript; charset=utf-8")
+            .set('content-type', 'text/javascript; charset=utf-8')
             .send(`
 window.client_id = '${jsesc(process.env.CLIENT_ID)}';
 window.idp_server = '${jsesc(process.env.IDP_SERVER)}';
@@ -97,7 +97,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
                         clientId: process.env.CLIENT_ID_SWAGGER ?? process.env.CLIENT_ID,
                         appName: 'ERPBarczok Swagger',
                         additionalQueryStringParams: { audience: process.env.AUDIENCE },
-                        scopes: process.env.SCOPE?.split(" ") || ['openid', 'email', 'profile', 'admin', 'user'],
+                        scopes: process.env.SCOPE?.split(' ') || ['openid', 'email', 'profile', 'admin', 'user'],
                         usePkceWithAuthorizationCodeGrant: true
                     }
                 }
@@ -116,7 +116,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
         if (Array.isArray(userPermissionsPrep)) {
             userPermissionsArray.push(...userPermissionsPrep)
         } else if (typeof userPermissionsPrep === 'string') {
-            userPermissionsArray.push(...userPermissionsPrep.split(" "))
+            userPermissionsArray.push(...userPermissionsPrep.split(' '))
         }
         const userPermissions = ['public']
         if (userPermissionsArray.some(permission => permission === 'user')) userPermissions.push('user')
@@ -136,7 +136,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             apiSpec,
             validateResponses: true,
             operationHandlers: {
-                basePath: "",
+                basePath: '',
                 resolver: (basePath, apiRoute) => {
                     const apiPath = apiRoute.openApiRoute.substring(apiRoute.basePath.length)
                     const apiVerb = apiRoute.method
@@ -156,26 +156,26 @@ window.scope = '${jsesc(process.env.SCOPE)}';
                 handlers: {
                     openId: (req: PermissionRequest, requiredScopesArray, schema) => {
                         if (requiredScopesArray.length === 0) {
-                            permissionLogger("No scope required. Authorized.")
+                            permissionLogger('No scope required. Authorized.')
                             return true
                         }
 
                         if (!Array.isArray(req.userPermissions)) {
-                            permissionLogger("Scope has the wrong type. Authorization rejected.")
+                            permissionLogger('Scope has the wrong type. Authorization rejected.')
                             return false
                         }
 
                         if (req.userPermissions.length === 0) {
-                            permissionLogger("No scopes provided, but scopes required: ", requiredScopesArray)
+                            permissionLogger('No scopes provided, but scopes required: ', requiredScopesArray)
                             return false
                         }
 
                         if (req.userPermissions.some((e) => requiredScopesArray.includes(e))) {
-                            permissionLogger("Permission granted.")
+                            permissionLogger('Permission granted.')
                             return true
                         }
 
-                        permissionLogger("User has not the required scopes: User scopes: " + req.userPermissions + ", Required Scopes: " + requiredScopesArray)
+                        permissionLogger('User has not the required scopes: User scopes: ' + req.userPermissions + ', Required Scopes: ' + requiredScopesArray)
                         return false
                     }
                 }
@@ -185,14 +185,14 @@ window.scope = '${jsesc(process.env.SCOPE)}';
     )
 
     // add API error handler
-    app.set("json spaces", 2)
+    app.set('json spaces', 2)
     app.use((error: any, req: Request, res: Response, next: NextFunction) => {
         const status = error.status || 500
-        logger("Error %o.", error)
+        logger('Error %o.', error)
         if (process.env.NODE_ENV === 'production' && status === 500) {
             res.status(status).json({
                 status,
-                message: "Internal Server Error",
+                message: 'Internal Server Error',
                 errors: []
             })
             return

@@ -1,6 +1,6 @@
-import { DataTypes, Model, CreationOptional, InferAttributes, InferCreationAttributes, Sequelize, ForeignKey, NonAttribute } from "sequelize"
-import { CompanyType } from "./companyTypes.js"
-import { Field } from "./fields.js"
+import { DataTypes, Model, CreationOptional, InferAttributes, InferCreationAttributes, Sequelize, ForeignKey, NonAttribute } from 'sequelize'
+import { CompanyType } from './companyTypes.js'
+import { Field } from './fields.js'
 
 
 export class Company extends Model<InferAttributes<Company>, InferCreationAttributes<Company>> {
@@ -33,15 +33,15 @@ export const initializeCompany = (sequelize: Sequelize) => {
         },
         www: {
             type: DataTypes.STRING,
-            comment: "Internetadresse Unternehmens"
+            comment: 'Internetadresse Unternehmens'
         },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
     },
         {
             sequelize,
-            modelName: "company",
-            tableName: "companies"
+            modelName: 'company',
+            tableName: 'companies'
         }
     )
 }

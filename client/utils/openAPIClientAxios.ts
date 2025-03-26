@@ -1,7 +1,9 @@
-import {OpenAPIClientAxios, Document} from 'openapi-client-axios'
-import {Client} from "../types/openapi.js"
-import {openapiSpec} from './openapi.js'
+import { OpenAPIClientAxios, Document } from 'openapi-client-axios'
+import { type Client } from '../types/openapi.js'
+import { openapiSpec } from './openapi.js'
 
-const api = new OpenAPIClientAxios({ definition: openapiSpec as Document})
+const api = new OpenAPIClientAxios({ definition: openapiSpec as Document })
 
-export const client = await api.init<Client>()
+export const apiClient = api.init<Client>()
+
+

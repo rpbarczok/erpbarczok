@@ -41,13 +41,13 @@ export function combineCompanyWithMeta(company: Company): DataWithMeta<CompanyNo
 
 export function createCompanyMeta(company: Company): Meta {
     const companyNorm: CompanyNorm = normalizeCompany(company)
-    return { "location": "/companies/" + company.id, "etag": sha256(JSON.stringify(companyNorm)) }
+    return { 'location': '/companies/' + company.id, 'etag': sha256(JSON.stringify(companyNorm)) }
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
 
     const allCompanies = await getAllCompanies()
-    logger("getAllCompanies: %j.", allCompanies)
+    logger('getAllCompanies: %j.', allCompanies)
     const allCompaniesWithMeta: DataWithMeta<CompanyNorm>[] = allCompanies.map((row) => (combineCompanyWithMeta(row)))
     res
         .status(200)
@@ -55,79 +55,79 @@ export const GET: Operation = async (req: Request, res: Response) => {
 }
 
 GET.apiSpec = {
-    "summary": "Get a list of all companies",
-    "description": "GET request on all companies",
-    "operationId": "getCompanies",
-    "security": [
-        { "openId": [] }
+    'summary': 'Get a list of all companies',
+    'description': 'GET request on all companies',
+    'operationId': 'getCompanies',
+    'security': [
+        { 'openId': [] }
     ],
-    "tags": [
-        "Company"
+    'tags': [
+        'Company'
     ],
-    "responses": {
-        "200": {
-            "description": "Successful operation",
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "required": [
-                                "meta",
-                                "data"
+    'responses': {
+        '200': {
+            'description': 'Successful operation',
+            'content': {
+                'application/json': {
+                    'schema': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'required': [
+                                'meta',
+                                'data'
                             ],
-                            "additionalProperties": false,
-                            "properties": {
-                                "meta": {
-                                    "$ref": "#/components/schemas/meta"
+                            'additionalProperties': false,
+                            'properties': {
+                                'meta': {
+                                    '$ref': '#/components/schemas/meta'
                                 },
-                                "data": {
-                                    "$ref": "#/components/schemas/company"
+                                'data': {
+                                    '$ref': '#/components/schemas/company'
                                 }
                             }
                         }
                     },
-                    "examples": {
-                        "example-of-three-companies": {
-                            "value": [
+                    'examples': {
+                        'example-of-three-companies': {
+                            'value': [
                                 {
-                                    "meta": {
-                                        "location": "/companies/1",
-                                        "etag": "656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
+                                    'meta': {
+                                        'location': '/companies/1',
+                                        'etag': '656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a'
                                     },
-                                    "data": {
-                                        "name": "Firma A",
-                                        "abbr": "FRA",
-                                        "companyType": "Kunde"
+                                    'data': {
+                                        'name': 'Firma A',
+                                        'abbr': 'FRA',
+                                        'companyType': 'Kunde'
                                     }
                                 },
                                 {
-                                    "meta": {
-                                        "location": "/companies/2",
-                                        "etag": "656da9646b5a65673e4a1f504ac3d44282e2da0d939413619ef0fd33850f818a"
+                                    'meta': {
+                                        'location': '/companies/2',
+                                        'etag': '656da9646b5a65673e4a1f504ac3d44282e2da0d939413619ef0fd33850f818a'
                                     },
-                                    "data": {
-                                        "name": "Firma B",
-                                        "abbr": "FRB",
-                                        "companyType": "Lieferant"
+                                    'data': {
+                                        'name': 'Firma B',
+                                        'abbr': 'FRB',
+                                        'companyType': 'Lieferant'
                                     }
                                 },
                                 {
-                                    "meta": {
-                                        "location": "/companies/3",
-                                        "etag": "656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33853f818a"
+                                    'meta': {
+                                        'location': '/companies/3',
+                                        'etag': '656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33853f818a'
                                     },
-                                    "data": {
-                                        "name": "Firma C",
-                                        "abbr": "FRC",
-                                        "companyType": "Spediteur"
+                                    'data': {
+                                        'name': 'Firma C',
+                                        'abbr': 'FRC',
+                                        'companyType': 'Spediteur'
                                     }
                                 }
                             ]
                         },
-                        "empty-array": {
-                            "value": []
+                        'empty-array': {
+                            'value': []
                         }
                     }
                 }
@@ -143,33 +143,33 @@ export const POST: Operation = async (req: Request, res: Response) => {
         .end()
 }
 POST.apiSpec = {
-    "summary": "Create new company",
-    "description": "POST request for a new company, response new id",
-    "operationId": "postCompany",
-    "security": [
-        { "openId": [
-            "user"
+    'summary': 'Create new company',
+    'description': 'POST request for a new company, response new id',
+    'operationId': 'postCompany',
+    'security': [
+        { 'openId': [
+            'user'
         ] }
     ],
-    "tags": [
-        "Company"
+    'tags': [
+        'Company'
     ],
-    "requestBody": {
-        "description": "Add or update company",
-        "content": {
-            "application/json": {
-                "schema": {
-                    "$ref": "#/components/schemas/company"
+    'requestBody': {
+        'description': 'Add or update company',
+        'content': {
+            'application/json': {
+                'schema': {
+                    '$ref': '#/components/schemas/company'
                 }
             }
         }
     },
-    "responses": {
-        "201": {
-            "$ref": "#/components/responses/201"
+    'responses': {
+        '201': {
+            '$ref': '#/components/responses/201'
         },
-        "400": {
-            "$ref": "#/components/responses/400_validation_error"
+        '400': {
+            '$ref': '#/components/responses/400_validation_error'
         }
     }
 }

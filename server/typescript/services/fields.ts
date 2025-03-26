@@ -1,9 +1,9 @@
 import { error_formatter, NotFoundError } from './error.js'
-import { baseLogger } from "../logger.js"
-import { Field } from "../models/fields.js"
-import { FieldNorm } from "../controllers/fields/index.js"
+import { baseLogger } from '../logger.js'
+import { Field } from '../models/fields.js'
+import { FieldNorm } from '../controllers/fields/index.js'
 
-const logger = baseLogger.extend("services:fields")
+const logger = baseLogger.extend('services:fields')
 
 export const getAllFields = () => new Promise<Field[]>(async function (resolve, reject) {
     try {

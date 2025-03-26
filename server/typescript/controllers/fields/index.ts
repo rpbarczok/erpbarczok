@@ -16,7 +16,7 @@ export function normalizeField(field: Field): FieldNorm {
 
 export function createFieldMeta(field: Field): Meta {
     const fieldNorm: FieldNorm = normalizeField(field)
-    return { "location": "/fields/" + field.id, "etag": sha256(JSON.stringify(fieldNorm)) }
+    return { 'location': '/fields/' + field.id, 'etag': sha256(JSON.stringify(fieldNorm)) }
 }
 
 export function combineFieldWithMeta(field: Field): DataWithMeta<FieldNorm> {
@@ -34,83 +34,83 @@ export const GET: Operation = async (req: Request, res: Response) => {
 }
 
 GET.apiSpec = {
-    "summary": "Get a list of all fields",
-    "description": "GET request on all fields",
-    "operationId": "getFields",
-    "security": [
-        { "openId": [] }
+    'summary': 'Get a list of all fields',
+    'description': 'GET request on all fields',
+    'operationId': 'getFields',
+    'security': [
+        { 'openId': [] }
     ],
-    "tags": [
-        "Field"
+    'tags': [
+        'Field'
     ],
-    "responses": {
-        "200": {
-            "description": "Successful operation",
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "required": [
-                                "meta",
-                                "data"
+    'responses': {
+        '200': {
+            'description': 'Successful operation',
+            'content': {
+                'application/json': {
+                    'schema': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'required': [
+                                'meta',
+                                'data'
                             ],
-                            "additionalProperties": false,
-                            "properties": {
-                                "meta": {
-                                    "$ref": "#/components/schemas/meta"
+                            'additionalProperties': false,
+                            'properties': {
+                                'meta': {
+                                    '$ref': '#/components/schemas/meta'
                                 },
-                                "data": {
-                                    "$ref": "#/components/schemas/field"
+                                'data': {
+                                    '$ref': '#/components/schemas/field'
                                 }
                             }
                         }
                     },
-                    "examples": {
-                        "example-of-three-fields": {
-                            "value": [
+                    'examples': {
+                        'example-of-three-fields': {
+                            'value': [
                                 {
-                                    "meta": {
-                                        "location": "/fields/1",
-                                        "etag": "656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
+                                    'meta': {
+                                        'location': '/fields/1',
+                                        'etag': '656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a'
                                     },
-                                    "data": {
-                                        "name": "Lebensmittel"
+                                    'data': {
+                                        'name': 'Lebensmittel'
                                     }
                                 },
                                 {
-                                    "meta": {
-                                        "location": "/fields/2",
-                                        "etag": "656da9646b5a65673e5a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
+                                    'meta': {
+                                        'location': '/fields/2',
+                                        'etag': '656da9646b5a65673e5a1f504ac3d44232e2da0d939413619ef0fd33850f818a'
                                     },
-                                    "data": {
-                                        "name": "Haushaltsgeräte"
+                                    'data': {
+                                        'name': 'Haushaltsgeräte'
                                     }
                                 },
                                 {
-                                    "meta": {
-                                        "location": "/fields/3",
-                                        "etag": "656da9646b5a65673e4a1f504ac3d44262e2da0d939413619ef0fd33850f818a"
+                                    'meta': {
+                                        'location': '/fields/3',
+                                        'etag': '656da9646b5a65673e4a1f504ac3d44262e2da0d939413619ef0fd33850f818a'
                                     },
-                                    "data": {
-                                        "name": "Recht"
+                                    'data': {
+                                        'name': 'Recht'
                                     }
                                 }
                             ]
                         },
-                        "empty-array": {
-                            "value": []
+                        'empty-array': {
+                            'value': []
                         }
                     }
                 }
             }
         },
-        "400": {
-            "$ref": "#/components/responses/400_validation_error"
+        '400': {
+            '$ref': '#/components/responses/400_validation_error'
         },
-        "404": {
-            "$ref": "#/components/responses/404_not_found_error"
+        '404': {
+            '$ref': '#/components/responses/404_not_found_error'
         }
     }
 }
@@ -123,35 +123,35 @@ export const POST: Operation = async (req: Request, res: Response) => {
         .end()
 }
 POST.apiSpec = {
-    "summary": "Add new field",
-    "description": "POST request for a new field",
-    "operationId": "postField",
-    "security": [
+    'summary': 'Add new field',
+    'description': 'POST request for a new field',
+    'operationId': 'postField',
+    'security': [
         {
-            "openId": [
-                "admin"
+            'openId': [
+                'admin'
             ]
         }
     ],
-    "tags": [
-        "Field"
+    'tags': [
+        'Field'
     ],
-    "requestBody": {
-        "description": "Add field",
-        "content": {
-            "application/json": {
-                "schema": {
-                    "$ref": "#/components/schemas/field"
+    'requestBody': {
+        'description': 'Add field',
+        'content': {
+            'application/json': {
+                'schema': {
+                    '$ref': '#/components/schemas/field'
                 }
             }
         }
     },
-    "responses": {
-        "201": {
-            "$ref": "#/components/responses/201"
+    'responses': {
+        '201': {
+            '$ref': '#/components/responses/201'
         },
-        "400": {
-            "$ref": "#/components/responses/400_validation_error"
+        '400': {
+            '$ref': '#/components/responses/400_validation_error'
         }
     }
 }

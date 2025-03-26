@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react"
-import { Resource } from "./resourceList.js"
-import { Button, Form, ListGroup, Modal, Row } from "react-bootstrap"
-import { Notes } from "components/notifiers/notifiers.jsx"
-import { useNotifier } from "components/notifiers/useNotifier.js"
-import { client } from "utils/openAPIClientAxios.js"
-import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
-import { DataWithMeta } from "components/forms.jsx"
-import { CompanyType } from "./companyTypes/companyTypes.jsx"
-import { Field } from "./fields/fields.jsx"
-import { ListItem } from "./list.resources.jsx"
-import { useAuth } from "react-oidc-context"
-import { AddResources } from "./add.resources.jsx"
-import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
-import { useContextThrowUndefined } from "utils/contextUndefined.js"
-import { LoadingContext } from "utils/loadingContext.js"
+import React, { useEffect, useState } from 'react'
+import { Resource } from './resourceList.js'
+import { Button, Form, ListGroup, Modal, Row } from 'react-bootstrap'
+import { Notes } from 'components/notifiers/notifiers.jsx'
+import { useNotifier } from 'components/notifiers/useNotifier.js'
+import { apiClient } from 'utils/openAPIClientAxios.js'
+import { removeBeforeLastDigits } from 'utils/removeBeforeLastDigits.js'
+import { DataWithMeta } from 'components/forms.jsx'
+import { CompanyType } from './companyTypes/companyTypes.jsx'
+import { Field } from './fields/fields.jsx'
+import { ListItem } from './list.resources.jsx'
+import { useAuth } from 'react-oidc-context'
+import { AddResources } from './add.resources.jsx'
+import { PermissionContext, updateUserPermissions } from 'utils/permissionContext.js'
+import { useContextThrowUndefined } from 'utils/contextUndefined.js'
+import { LoadingContext } from 'utils/loadingContext.js'
 
 interface MainResourcesComponent {
     resource: Resource
@@ -33,28 +33,33 @@ export const MainResources = ({ resource, isResourceChanged, setIsResourceChange
     useEffect(() => {
         if (isItemChanged || isResourceChanged) {
             setIsLoading(true)
-            client.paths[resource.paths['all']].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
-                .then(
-                    result => {
-                        setIsLoading(false)
-                        const newList = result?.data.map(row => {
-                            const newRow: DataWithMeta<CompanyType | Field> = {
-                                meta: {
-                                    location: Number(removeBeforeLastDigits(row.meta.location)),
-                                    etag: row.meta.etag
-                                },
-                                data: row.data
-                            }
-                            return newRow
-                        })
-                        setNewList(newList)
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                    },
-                    error => {
-                        setIsLoading(false)
-                        throw new Error(`Error while loading resource: ${error.message}`)
-                    }
-                )
+
+            async function getResource() {
+                const client = await apiClient
+                client.paths[resource.paths['all']].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
+                    .then(
+                        result => {
+                            setIsLoading(false)
+                            const newList = result?.data.map(row => {
+                                const newRow: DataWithMeta<CompanyType | Field> = {
+                                    meta: {
+                                        location: Number(removeBeforeLastDigits(row.meta.location)),
+                                        etag: row.meta.etag
+                                    },
+                                    data: row.data
+                                }
+                                return newRow
+                            })
+                            setNewList(newList)
+                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        },
+                        error => {
+                            setIsLoading(false)
+                            throw new Error(`Error while loading resource: ${error.message}`)
+                        }
+                    )
+            }
+            getResource()
             if (isItemChanged === true) {
                 setIsItemChanged(false)
             }
@@ -88,7 +93,7 @@ export const MainResources = ({ resource, isResourceChanged, setIsResourceChange
             </Row>
             <Notes notes={mainNotes} removeNote={removeMainNote} />
             <Row>
-                <ListGroup className="standardDesign" key={resource.name + "-list"} >
+                <ListGroup className='standardDesign' key={resource.name + '-list'} >
                     {ListResources}
                 </ListGroup >
             </Row>

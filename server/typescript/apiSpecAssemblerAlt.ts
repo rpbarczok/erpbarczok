@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { baseLogger } from "./logger.js"
+import { baseLogger } from './logger.js'
 import { apiSpec as apiSpecBase } from './openapi.js'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { Request, Response, RequestHandler, NextFunction } from 'express'
@@ -17,7 +17,7 @@ interface VerbMap {
     [verb: string]: Operation
 }
 
-const logger = baseLogger.extend("apiSpecAssembler")
+const logger = baseLogger.extend('apiSpecAssembler')
 
 const apiPaths = apiSpecBase.paths
 
@@ -26,7 +26,7 @@ export const loadControllers = async () => {
     for (const apiPath in apiPaths) {
         controllers[apiPath] = {}
         const pathLogger = logger.extend(apiPath)
-        pathLogger("starting import of ", apiPath)
+        pathLogger('starting import of ', apiPath)
 
         const controllerPath = apiPath.slice(-1) === '/' ?
             path.join(import.meta.dirname, 'controllers', apiPath, 'index.js') :
@@ -38,13 +38,13 @@ export const loadControllers = async () => {
 
         if (controller.apiSpec as OpenAPIV3.PathItemObject) {
             Object.assign(apiSpecBase.paths[apiPath], controller.apiSpec)
-            pathLogger("Added generic api spec:", apiSpecBase.paths[apiPath])
+            pathLogger('Added generic api spec:', apiSpecBase.paths[apiPath])
         }
 
-        for (const apiVerbCap of ["GET", "PUT", "POST", "DELETE"]) {
+        for (const apiVerbCap of ['GET', 'PUT', 'POST', 'DELETE']) {
             const operation = controller[apiVerbCap]
             if (operation && operation.apiSpec) {
-                const apiVerbMin = apiVerbCap.toLowerCase() as "get" | "put" | "post" | "delete"
+                const apiVerbMin = apiVerbCap.toLowerCase() as 'get' | 'put' | 'post' | 'delete'
                 apiSpecBase.paths[apiPath][apiVerbMin] = operation.apiSpec
                 const handler: Operation = controller[apiVerbCap]
                 controllers[apiPath][apiVerbCap] = handler

@@ -1,10 +1,10 @@
-import { ChangeEvent } from "react"
-import { Form } from "react-bootstrap"
-import { DataWithMeta } from "components/forms.js"
+import { ChangeEvent } from 'react'
+import { Form } from 'react-bootstrap'
+import { DataWithMeta } from 'components/forms.js'
 
 
 export interface CompanyType {
-    "name": string
+    'name': string
 }
 
 interface InputCompanyTypesInterface {
@@ -22,10 +22,10 @@ export const InputCompanyTypes = ({companyType, setCompanyType}: InputCompanyTyp
         })
     }
     
-    return <Form.Group controlId="formBeziehung">
+    return <Form.Group controlId='formBeziehung'>
         <Form.Label>Beziehung</Form.Label>
-        <Form.Control required type="text" value={companyType.data.name} onChange={handleChangeName} />
-        <Form.Control.Feedback type="invalid">
+        <Form.Control required type='text' value={companyType.data.name} onChange={handleChangeName} />
+        <Form.Control.Feedback type='invalid'>
             Bitte eine Art der Beziehung zu einem Unternehmen eintragen.
         </Form.Control.Feedback>
     </Form.Group>

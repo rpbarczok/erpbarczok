@@ -1,17 +1,17 @@
-import { useState } from "react"
-import { Button, ButtonGroup, Col, Form, Row } from "react-bootstrap"
-import { useAuth } from "react-oidc-context"
-import { ChangedCompanyAction } from "./company.reducer.js"
-import { DataWithMeta } from "components/forms.jsx"
-import { Company } from "./companies.jsx"
-import { CompanyType } from "components/resources/companyTypes/companyTypes.js"
-import { client } from "utils/openAPIClientAxios.js"
-import { Note } from "components/notifiers/notifiers.jsx"
-import { InputCompanies } from "./input.companies.jsx"
-import { hasPermission } from "utils/hasPermission.js"
-import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
-import { useContextThrowUndefined } from "utils/contextUndefined.js"
-import { LoadingContext } from "utils/loadingContext.js"
+import { useState } from 'react'
+import { Button, ButtonGroup, Col, Form, Row } from 'react-bootstrap'
+import { useAuth } from 'react-oidc-context'
+import { ChangedCompanyAction } from './company.reducer.js'
+import { DataWithMeta } from 'components/forms.jsx'
+import { Company } from './companies.jsx'
+import { CompanyType } from 'components/resources/companyTypes/companyTypes.js'
+import { apiClient } from 'utils/openAPIClientAxios.js'
+import { Note } from 'components/notifiers/notifiers.jsx'
+import { InputCompanies } from './input.companies.jsx'
+import { hasPermission } from 'utils/hasPermission.js'
+import { PermissionContext, updateUserPermissions } from 'utils/permissionContext.js'
+import { useContextThrowUndefined } from 'utils/contextUndefined.js'
+import { LoadingContext } from 'utils/loadingContext.js'
 
 interface SMEditCompanies {
     company: DataWithMeta<Company>
@@ -29,7 +29,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
     const auth = useAuth()
     const token = auth.user?.access_token
 
-    const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget
         e.preventDefault()
         e.stopPropagation()
@@ -37,7 +37,8 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
             setValidated(true)
         } else {
             setIsLoading(true)
-            client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
+            const client = await apiClient
+            client.putCompanyById({ id: changedCompany.meta.location, 'if-match': changedCompany.meta.etag },
                 changedCompany.data,
                 { headers: { Authorization: `Bearer ${token}` } })
                 .then(
@@ -77,16 +78,16 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
 
         return (
             <>
-                <Row className="d-none d-sm-block">
-                    <ButtonGroup className="standardDesign float-end" >
-                        <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Speichern</Button>
-                        <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
+                <Row className='d-none d-sm-block'>
+                    <ButtonGroup className='standardDesign float-end' >
+                        <Button type='submit' className='standardDesign' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
+                        <Button className='standardDesign' variant='outline-primary' disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
                     </ButtonGroup>
                 </Row>
-                <Row className="d-block d-sm-none">
-                    <ButtonGroup className="standardDesign float-end" vertical>
-                        <Button type="submit" className="standardDesign" variant="outline-primary" disabled={isNotChanged}>Speichern</Button>
-                        <Button className="standardDesign" variant="outline-primary" disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
+                <Row className='d-block d-sm-none'>
+                    <ButtonGroup className='standardDesign float-end' vertical>
+                        <Button type='submit' className='standardDesign' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
+                        <Button className='standardDesign' variant='outline-primary' disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
                     </ButtonGroup>
                 </Row>
             </>

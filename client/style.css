@@ -1,8 +1,60 @@
- .standardDesign {
+.standardDesign {
     padding: 1em 0 0 0;
 }
 
 .lineWithButton{
     display: flex;
     justify-content: space-between;
+}
+
+
+/* Scrolboxes */
+
+.scrollBoxXS {
+    font-size: small;
+    overflow-y: scroll;
+
+}
+
+.scrollBox {
+    font-size: small;
+    overflow-y: scroll;
+    height: 9lh;
+}
+
+
+/* Headings */
+
+.stammForm-dark {
+    background-color: rgb(19, 132, 177);
+}
+
+.stammForm-light {
+    background-color: lightcyan;
+}
+
+.resForm-dark {
+    background-color: brown;
+}
+
+.resForm-light {
+    background-color: lightcoral;
+}
+
+.heading {
+    border-radius: 25px 0 0 0;
+    padding: 10px 0 5px 10px;
+}
+
+/* Login */
+
+.login-button {
+    width: 100%;
+    margin: 7px 0 0 0;
+    max-width: 700px;
+}
+
+.transparent-backdrop {
+    background-color: transparent !important;
+    border: 0px !important;
 }

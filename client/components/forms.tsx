@@ -1,7 +1,6 @@
-import { Companies } from "./companies/companies.jsx"
-import { Resources } from "./resources/resources.jsx"
-import { FormTab } from "./navigation/ribbon.jsx"
-import '../style.css'
+import { Companies } from './companies/companies.jsx'
+import { Resources } from './resources/resources.jsx'
+import { FormTab } from './navigation/ribbon.jsx'
 
 interface Meta {
     location: number
@@ -9,8 +8,8 @@ interface Meta {
 }
 
 export interface DataWithMeta<T> {
-    "meta": Meta
-    "data": T
+    'meta': Meta
+    'data': T
 }
 
 export const Forms = ({ activeForm }: { activeForm: FormTab }) => {
@@ -21,6 +20,6 @@ export const Forms = ({ activeForm }: { activeForm: FormTab }) => {
         case 'resForm':
             return <Resources />
         default:
-            return <h1 className="flex-grow-1"> {activeForm.name}: Work in Progress</h1>
+            return <h1 className='flex-grow-1'> {activeForm.name}: Work in Progress</h1>
     }
 }

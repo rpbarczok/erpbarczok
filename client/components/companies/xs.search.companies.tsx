@@ -1,6 +1,4 @@
 import { Form, InputGroup } from 'react-bootstrap'
-import '../../style.css'
-import './companies.css'
 import { ChangeEvent } from 'react'
 import { Search } from 'react-bootstrap-icons'
 
@@ -19,7 +17,7 @@ export function XSSearchCompanies({ search, setSearch }: XSSearchCompaniesInterf
         <>
             <InputGroup style={{ padding: '10px 0 0 0' }} >
                 <InputGroup.Text><Search /></InputGroup.Text>
-                <Form.Control type="text" className="standardDesign" value={search} onChange={handleSearch} placeholder='Suche (Firma, Kürzel)' />
+                <Form.Control type='text' className='standardDesign' value={search} onChange={handleSearch} placeholder='Suche (Firma, Kürzel)' />
             </InputGroup>
         </>
     )

@@ -10,24 +10,18 @@
     "stop_dev_db": "docker kill devdb; sleep 2",
     "start_dev_db": "npm run stop_dev_db ; docker run --name devdb -e POSTGRES_PASSWORD='blablubber' -p 8082:5432 -d --rm postgres:17.2-alpine3.20",
     "start": "dotenvx run -f .env -- npm run create_types && npm run start_dev_db && concurrently \"npm run server\" \"npm run client\"",
-
-    
     "create_openapi_spec": "tsx create-openapi-spec.ts",
     "create_types": "npm run create_openapi_spec && mkdir -p client/types && npx openapicmd typegen client/utils/openapi.json > client/types/openapi.d.ts",
-    
     "build_client": "npm run create_types && webpack --config webpack.prod.js",
     "build_server": "rm -fR server/ecmascript && npx tsc",
-    
     "start_test_db": "npm run stop_test_db ; docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",
     "stop_test_db": "docker kill testdb",
-
     "ecma_test": "npx mocha --config mocha-ecmascript-rc.cjs",
-    "ts_test": "npx mocha --config mocha-typescript-rc.cjs",
+    "ts_test": "npx mocha  --config mocha-typescript-rc.cjs",
     "test": "npm run start_test_db && npm run ts_test && npm run stop_test_db",
-    
+    "test_frontend": "npx mocha --config './client/.mocharc.json' './client/**/*.test.{ts,tsx}'",
     "pure_build": "npm run build_client && npm run build_server && npm run ecma_test",
     "build": "npm run start_test_db && npm run pure_build && npm run stop_test_db",
-    
     "docker_build": "npm run start_test_db && docker buildx build --load -t erpbarczok:latest --network host . && npm run stop_test_db",
     "docker": "docker compose up"
   },
@@ -56,14 +50,17 @@
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.26.0",
     "@dotenvx/dotenvx": "^1.33.0",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.2.0",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/debug": "^4.1.12",
+    "@types/jsdom": "^21.1.7",
     "@types/jsesc": "^3.0.3",
     "@types/mocha": "^10.0.10",
     "@types/morgan": "^1.9.9",
-    "@types/react": "^19.0.7",
-    "@types/react-dom": "^19.0.3",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
     "@types/supertest": "^6.0.2",
     "@types/swagger-ui-express": "^4.1.7",
     "axios": "^1.7.9",
@@ -75,8 +72,10 @@
     "expect": "^29.7.0",
     "express": "^4.21.2",
     "file-loader": "^6.2.0",
-    "globals": "^15.14.0",
+    "global-jsdom": "^26.0.0",
     "html-webpack-plugin": "^5.6.3",
+    "ignore-styles": "^5.0.1",
+    "jsdom": "^26.0.0",
     "mocha": "^11.0.1",
     "openapi-client-axios": "^7.5.5",
     "react": "^19.0.0",

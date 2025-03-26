@@ -1,11 +1,11 @@
-import { DataWithMeta } from "components/forms.jsx"
-import { Company } from "./companies.jsx"
-import { Button, Col, Container, ListGroup, Row } from "react-bootstrap"
-import { XSEditCompanies } from "./xs.edit.companies.jsx"
-import { useState } from "react"
-import { ChangedCompanyAction } from "./company.reducer.js"
-import { CompanyType } from "components/resources/companyTypes/companyTypes.js"
-import { Note } from "components/notifiers/notifiers.js"
+import { DataWithMeta } from 'components/forms.jsx'
+import { Company } from './companies.jsx'
+import { Button, Col, Container, ListGroup, Row } from 'react-bootstrap'
+import { XSEditCompanies } from './xs.edit.companies.jsx'
+import { useState } from 'react'
+import { ChangedCompanyAction } from './company.reducer.js'
+import { CompanyType } from 'components/resources/companyTypes/companyTypes.js'
+import { Note } from 'components/notifiers/notifiers.js'
 
 interface XSListCompaniesComponent {
     filteredCompanies: DataWithMeta<Company>[]
@@ -37,7 +37,7 @@ export const XSListCompanies = ({ filteredCompanies, changedCompany, changedComp
                 return (
                     <>
                         <ListGroup.Item key={element.meta.location} onClick={(e) => handleOpenModal(e, element.meta.location)}>
-                            {element.data.name + (element.data.abbr ? " (" + element.data.abbr + ")" : "")}
+                            {element.data.name + (element.data.abbr ? ' (' + element.data.abbr + ')' : '')}
                         </ListGroup.Item>
                     </>
                 )
@@ -50,8 +50,8 @@ export const XSListCompanies = ({ filteredCompanies, changedCompany, changedComp
 
     return (
         <>
-            <div className="flex-grow-1 d-flex flex-column" style={{ overflowY: "hidden", marginTop: "10px" }}>
-                <ListGroup id="company-list" style={{ overflowY: "scroll" }}>
+            <div className='flex-grow-1 d-flex flex-column' style={{ overflowY: 'hidden', marginTop: '10px' }}>
+                <ListGroup id='company-list' style={{ overflowY: 'scroll' }}>
                     <List />
                 </ListGroup >
             </div>

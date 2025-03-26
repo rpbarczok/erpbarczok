@@ -1,13 +1,11 @@
-import '../../style.css'
-import './navigation.css'
 import { groupForm, FormTab, Form as FormClass } from './ribbon.js'
 import { Navbar, Nav, NavDropdown, Row, Col, Dropdown, FormCheck, Form } from 'react-bootstrap'
 import React, { useState } from 'react'
 import { useAuth } from 'react-oidc-context'
 import { List, MoonStars, Sun } from 'react-bootstrap-icons'
 import { Theme, toggleTheme } from './toggleTheme.js'
-import { useContextThrowUndefined } from 'utils/contextUndefined.js'
-import { PermissionContext } from 'utils/permissionContext.js'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { PermissionContext } from '../../utils/permissionContext.js'
 
 interface RibbonNavigationInterface {
     tabs: FormTab[]
@@ -37,7 +35,7 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
         const userScopePrep: string[] = permissions.concat(['public'])
         const userScope = userScopePrep.map(string => string.replace('api://erpbarczok/',''))
         const groupFormsAuth = g.forms.filter(f => {
-            const formScopes = new Set(f.scopes.split(" "))
+            const formScopes = new Set(f.scopes.split(' '))
             return userScope.some(scope => formScopes.has(scope))
         })
         return { ...g, forms: groupFormsAuth }
@@ -67,13 +65,13 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
             if (g.forms.length !== 0) {
                 if (g.forms.length === 1) {
                     return (
-                        <Nav.Link className="ribbonDesign" key={g.id} onClick={() => handleClick(g.forms[0])}>
+                        <Nav.Link className='ribbonDesign' key={g.id} onClick={() => handleClick(g.forms[0])}>
                             {g.forms[0].name}
                         </Nav.Link>
                     )
                 } else {
                     return (
-                        <NavDropdown key={g.id} className="ribbonDesign" title={g.name}>
+                        <NavDropdown key={g.id} className='ribbonDesign' title={g.name}>
                             <Forms forms={g.forms} />
                         </NavDropdown>
                     )
@@ -112,14 +110,14 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
                 if (g.forms.length === 1) {
                     return (
                         <NavDropdown.Item>
-                            <Nav.Link className="dropdown-item nav-item dropdown" key={g.id} onClick={() => handleClick(g.forms[0])}>
+                            <Nav.Link className='dropdown-item nav-item dropdown' key={g.id} onClick={() => handleClick(g.forms[0])}>
                                 {g.forms[0].name}
                             </Nav.Link>
                         </NavDropdown.Item>
                     )
                 } else {
                     return (
-                        <NavDropdown className="dropdown-item" key={g.id} title={g.name}>
+                        <NavDropdown className='dropdown-item' key={g.id} title={g.name}>
                             <Forms forms={g.forms} />
                         </NavDropdown>
 
@@ -148,19 +146,19 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
     return (
         <div>
             <Row>
-                <Navbar key="navbar-lg" className='bg-body-secondary d-none d-xl-block'>
+                <Navbar key='navbar-lg' className='bg-body-secondary d-none d-xl-block'>
                     <Nav>
                         <Groups />
-                        <NavDropdown drop="start" className="ms-auto" key="account" title={auth.user?.profile?.email ?? auth.user?.profile?.name}>
-                            <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
+                        <NavDropdown drop='start' className='ms-auto' key='account' title={auth.user?.profile?.email ?? auth.user?.profile?.name}>
+                            <NavDropdown.Item key='logout' onClick={logOutHandler}>Logout</NavDropdown.Item>
                             <NavDropdown.Divider/>
                             <FormCheck
-                            className="ms-auto"
+                            className='ms-auto'
                             reverse
-                            type="switch"
-                            id="toggleTheme"
+                            type='switch'
+                            id='toggleTheme'
                             onChange={(e) => toggleTheme(e, theme, setTheme)}
-                            label="Toggle Theme"
+                            label='Toggle Theme'
                             />
                         </NavDropdown>
 
@@ -170,7 +168,7 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
             <Row className='bg-body-secondary d-xl-none align-items-center' style={{ padding: '8px 0 8px 0' }}>
                 <Col>
                     <Dropdown>
-                        <Dropdown.Toggle bsPrefix='dropdown' variant="outline-secondary">
+                        <Dropdown.Toggle bsPrefix='dropdown' variant='outline-secondary'>
                             <List />
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
@@ -178,11 +176,11 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
                         </Dropdown.Menu>
                     </Dropdown>
                 </Col>
-                <Col className="ms-auto">
-                    <NavDropdown drop="start" className="float-end" key="account" title={auth.user?.profile?.email ?? auth.user?.profile?.name}>
-                        <NavDropdown.Item key="logout" onClick={logOutHandler}>Logout</NavDropdown.Item>
+                <Col className='ms-auto'>
+                    <NavDropdown drop='start' className='float-end' key='account' title={auth.user?.profile?.email ?? auth.user?.profile?.name}>
+                        <NavDropdown.Item key='logout' onClick={logOutHandler}>Logout</NavDropdown.Item>
                         <Dropdown.Divider />
-                        <FormCheck reverse type="switch" id="toggleTheme" onChange={(e) => toggleTheme(e, theme, setTheme)} label="Toggle Theme" />
+                        <FormCheck reverse type='switch' id='toggleTheme' onChange={(e) => toggleTheme(e, theme, setTheme)} label='Toggle Theme' />
                     </NavDropdown>
                 </Col>
             </Row>

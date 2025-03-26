@@ -1,5 +1,3 @@
-import '../../style.css'
-import './resources.css'
 import { Field } from './fields/fields.js'
 import { CompanyType } from './companyTypes/companyTypes.js'
 import { DataWithMeta } from 'components/forms.js'
@@ -14,16 +12,16 @@ export interface Resource {
 }
 
 export const resourceList: Resource[] = [{
-    name: "Beziehung",
-    paths: { "all": "/company-types/", "single": "/company-types/{id}" },
+    name: 'Beziehung',
+    paths: { 'all': '/company-types/', 'single': '/company-types/{id}' },
     empty: {
         meta: { location: 0, etag: '' },
         data: { name: '' }
     }
 },
 {
-    name: "Branche",
-    paths: { "all": "/fields/", "single": "/fields/{id}" },
+    name: 'Branche',
+    paths: { 'all': '/fields/', 'single': '/fields/{id}' },
     empty: {
         meta: { location: 0, etag: '' },
         data: { name: '' }

@@ -16,7 +16,7 @@ export function normalizeCompanyType(companyType: CompanyType): CompanyTypeNorm 
 
 export function createCompanyTypeMeta(companyType: CompanyType): Meta {
     const companyTypeNorm: CompanyTypeNorm = normalizeCompanyType(companyType)
-    return { "location": "/company-types/" + companyType.id, "etag": sha256(JSON.stringify(companyTypeNorm)) }
+    return { 'location': '/company-types/' + companyType.id, 'etag': sha256(JSON.stringify(companyTypeNorm)) }
 }
 
 export function combineCompanyTypeWithMeta(companyType: CompanyType): DataWithMeta<CompanyTypeNorm> {
@@ -34,83 +34,83 @@ export const GET: Operation = async (req: Request, res: Response) => {
 }
 
 GET.apiSpec = {
-    "summary": "Get a list of all company types",
-    "description": "GET request on all companies",
-    "operationId": "getCompanyTypes",
-    "security": [
-        { "openId": [] }
+    'summary': 'Get a list of all company types',
+    'description': 'GET request on all companies',
+    'operationId': 'getCompanyTypes',
+    'security': [
+        { 'openId': [] }
     ],
-    "tags": [
-        "CompanyType"
+    'tags': [
+        'CompanyType'
     ],
-    "responses": {
-        "200": {
-            "description": "Successful operation",
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "required": [
-                                "meta",
-                                "data"
+    'responses': {
+        '200': {
+            'description': 'Successful operation',
+            'content': {
+                'application/json': {
+                    'schema': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'required': [
+                                'meta',
+                                'data'
                             ],
-                            "additionalProperties": false,
-                            "properties": {
-                                "meta": {
-                                    "$ref": "#/components/schemas/meta"
+                            'additionalProperties': false,
+                            'properties': {
+                                'meta': {
+                                    '$ref': '#/components/schemas/meta'
                                 },
-                                "data": {
-                                    "$ref": "#/components/schemas/companyType"
+                                'data': {
+                                    '$ref': '#/components/schemas/companyType'
                                 }
                             }
                         }
                     },
-                    "examples": {
-                        "example-of-three-companyTypes": {
-                            "value": [
+                    'examples': {
+                        'example-of-three-companyTypes': {
+                            'value': [
                                 {
-                                    "meta": {
-                                        "location": "/companyTypes/1",
-                                        "etag": "656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
+                                    'meta': {
+                                        'location': '/companyTypes/1',
+                                        'etag': '656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a'
                                     },
-                                    "data": {
-                                        "name": "Kunde"
+                                    'data': {
+                                        'name': 'Kunde'
                                     }
                                 },
                                 {
-                                    "meta": {
-                                        "location": "/companyTypes/2",
-                                        "etag": "656da9646b5a65673e5a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
+                                    'meta': {
+                                        'location': '/companyTypes/2',
+                                        'etag': '656da9646b5a65673e5a1f504ac3d44232e2da0d939413619ef0fd33850f818a'
                                     },
-                                    "data": {
-                                        "name": "Interessent"
+                                    'data': {
+                                        'name': 'Interessent'
                                     }
                                 },
                                 {
-                                    "meta": {
-                                        "location": "/companyTypes/3",
-                                        "etag": "656da9646b5a65673e4a1f504ac3d44262e2da0d939413619ef0fd33850f818a"
+                                    'meta': {
+                                        'location': '/companyTypes/3',
+                                        'etag': '656da9646b5a65673e4a1f504ac3d44262e2da0d939413619ef0fd33850f818a'
                                     },
-                                    "data": {
-                                        "name": "Spediteur"
+                                    'data': {
+                                        'name': 'Spediteur'
                                     }
                                 }
                             ]
                         },
-                        "empty-array": {
-                            "value": []
+                        'empty-array': {
+                            'value': []
                         }
                     }
                 }
             }
         },
-        "400": {
-            "$ref": "#/components/responses/400_validation_error"
+        '400': {
+            '$ref': '#/components/responses/400_validation_error'
         },
-        "404": {
-            "$ref": "#/components/responses/404_not_found_error"
+        '404': {
+            '$ref': '#/components/responses/404_not_found_error'
         }
     }
 }
@@ -123,35 +123,35 @@ export const POST: Operation = async (req: Request, res: Response) => {
         .end()
 }
 POST.apiSpec = {
-    "summary": "Add new company type",
-    "description": "POST request for a new company type",
-    "operationId": "postCompanyType",
-    "security": [
+    'summary': 'Add new company type',
+    'description': 'POST request for a new company type',
+    'operationId': 'postCompanyType',
+    'security': [
         {
-            "openId": [
-                "admin"
+            'openId': [
+                'admin'
             ]
         }
     ],
-    "tags": [
-        "CompanyType"
+    'tags': [
+        'CompanyType'
     ],
-    "requestBody": {
-        "description": "Add company type",
-        "content": {
-            "application/json": {
-                "schema": {
-                    "$ref": "#/components/schemas/companyType"
+    'requestBody': {
+        'description': 'Add company type',
+        'content': {
+            'application/json': {
+                'schema': {
+                    '$ref': '#/components/schemas/companyType'
                 }
             }
         }
     },
-    "responses": {
-        "201": {
-            "$ref": "#/components/responses/201"
+    'responses': {
+        '201': {
+            '$ref': '#/components/responses/201'
         },
-        "400": {
-            "$ref": "#/components/responses/400_validation_error"
+        '400': {
+            '$ref': '#/components/responses/400_validation_error'
         }
     }
 }

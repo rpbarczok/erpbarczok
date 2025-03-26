@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { baseLogger } from "../logger.js"
+import { baseLogger } from '../logger.js'
 import { apiSpec as apiSpecBase } from '../openapi.js'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { Request, Response, RequestHandler, NextFunction } from 'express'
@@ -18,7 +18,7 @@ interface VerbMap {
 }
 
 
-const logger = baseLogger.extend("apiSpecAssembler")
+const logger = baseLogger.extend('apiSpecAssembler')
 
 
 export const getControllerFiles = async () => {
@@ -41,11 +41,11 @@ export const openapiSpecAssembler = async (controllerFiles: PathMap) => {
     logger('Assembling OpenAPI spec')
     for (const controllerPath in controllerFiles) {
         for (const controllerItem in controllerFiles[controllerPath]) {
-            if (controllerItem === "apiSpec") {
+            if (controllerItem === 'apiSpec') {
                 Object.assign(apiSpecBase.paths[controllerItem], controllerFiles[controllerItem])
             }
-            if (["GET", "PUT", "POST", "DELETE"].includes(controllerItem)) {
-                const apiVerbMin = controllerItem.toLocaleLowerCase() as "get" | "put" | "post" | "delete"
+            if (['GET', 'PUT', 'POST', 'DELETE'].includes(controllerItem)) {
+                const apiVerbMin = controllerItem.toLocaleLowerCase() as 'get' | 'put' | 'post' | 'delete'
                 apiSpecBase.paths[controllerPath][apiVerbMin] = controllerFiles[controllerPath][controllerItem].apiSpec
             }
         }
@@ -62,7 +62,7 @@ export const loadControllers = async () => {
         controllers[apiPath] = {}
         for (const apiVerb in apiSpecBase.paths[apiPath]) {
             const apiVerbCap = apiVerb.toUpperCase()
-            if (["GET", "POST", "PUT", "DELETE"].includes(apiVerbCap)) {
+            if (['GET', 'POST', 'PUT', 'DELETE'].includes(apiVerbCap)) {
                 const operation: Operation = controllerFiles[apiPath][apiVerbCap]
                 if (operation) controllers[apiPath][apiVerbCap] = operation
             }

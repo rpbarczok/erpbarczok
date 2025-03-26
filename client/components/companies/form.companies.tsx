@@ -3,7 +3,7 @@ import { XSFormCompanies } from './xs.form.companies.jsx'
 import { DataWithMeta } from 'components/forms.jsx'
 import { Company, emptyCompany } from './companies.jsx'
 import React, { useEffect, useReducer, useState } from 'react'
-import { client } from 'utils/openAPIClientAxios.js'
+import { apiClient } from 'utils/openAPIClientAxios.js'
 import { useAuth } from 'react-oidc-context'
 import { removeBeforeLastDigits } from 'utils/removeBeforeLastDigits.js'
 import { CompanyType } from 'components/resources/companyTypes/companyTypes.js'
@@ -22,7 +22,7 @@ interface FormCompaniesComponent {
 }
 
 export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyChanged }: FormCompaniesComponent) => {
-    const [search, setSearch] = useState<string>("") // Content of the search input field
+    const [search, setSearch] = useState<string>('') // Content of the search input field
     const [listFiltered, setListFiltered] = useState(companiesList)
     const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>(emptyCompany)
     const [isNew, setIsNew] = useState<boolean>(false) // Flag: triggers an clearance of the search input
@@ -61,16 +61,17 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
         setIsNew(false)
     }, [search, companiesList])
 
-    function handleChangeActive(active: number) {
+    async function handleChangeActive(active: number) {
         if (active === 0 || active === undefined) {
             setActiveCompany(emptyCompany)
         } else {
             setIsLoading(true)
+            const client = await apiClient
             client.getCompanyById(active, null, { headers: { Authorization: `Bearer ${token}` } })
                 .then(
                     result => {
                         if (result.data) {
-                            const company = { "meta": { 'location': Number(removeBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
+                            const company = { 'meta': { 'location': Number(removeBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
                             setActiveCompany(company)
                             changedCompanyDispatch({ type: 'companyChange', newValue: company })
                         }
@@ -87,7 +88,7 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
 
     return (
         <>
-            <Row className="d-none d-sm-flex flex-grow-1 flex-column" style={{ overflowY: "scroll" }}>
+            <Row className='d-none d-sm-flex flex-grow-1 flex-column' style={{ overflowY: 'scroll' }}>
                 <SMFormCompanies
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}
@@ -99,7 +100,7 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
                     changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 />
             </Row>
-            <Row className="d-sm-none flex-grow-1 d-flex flex-column" style={{ overflowY: "hidden" }}>
+            <Row className='d-sm-none flex-grow-1 d-flex flex-column' style={{ overflowY: 'hidden' }}>
                 <XSFormCompanies
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}

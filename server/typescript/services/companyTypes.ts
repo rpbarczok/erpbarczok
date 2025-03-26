@@ -1,9 +1,9 @@
 import { error_formatter, NotFoundError } from './error.js'
-import { baseLogger } from "../logger.js"
-import { CompanyType } from "../models/companyTypes.js"
-import { CompanyTypeNorm } from "../controllers/company-types/index.js"
+import { baseLogger } from '../logger.js'
+import { CompanyType } from '../models/companyTypes.js'
+import { CompanyTypeNorm } from '../controllers/company-types/index.js'
 
-const logger = baseLogger.extend("services:companyTypes")
+const logger = baseLogger.extend('services:companyTypes')
 
 export const getAllCompanyTypes = () => new Promise<CompanyType[]>(async function (resolve, reject) {
     try {

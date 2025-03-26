@@ -1,4 +1,4 @@
-import { Note } from "./notifiers.jsx"
+import { Note } from './notifiers.jsx'
 
 interface NotifierAction {
     type: 'addNote' | 'removeNote'

@@ -1,8 +1,6 @@
-import '../../style.css'
-import './companies.css'
-import React from "react"
-import { Row, Col, ButtonGroup, Button } from "react-bootstrap"
-import { useAuth } from "react-oidc-context"
+import React from 'react'
+import { Row, Col, ButtonGroup, Button } from 'react-bootstrap'
+import { useAuth } from 'react-oidc-context'
 import { SMSearchCompanies } from './sm.search.companies.jsx'
 import { DataWithMeta } from 'components/forms.jsx'
 import { Company } from './companies.jsx'
@@ -69,7 +67,7 @@ export const SMFormCompanies = ({ search,
         } else {
             return (
                 <>
-                    <Row className="d-none d-sm-block d-md-none">
+                    <Row className='d-none d-sm-block d-md-none'>
                         {hasPermission(['user'], permissions) ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
                     </Row>
                     <Notes notes={editNotes} removeNote={removeEditNote} ></Notes>
@@ -88,8 +86,8 @@ export const SMFormCompanies = ({ search,
         }
     }
     return (
-        <div className="flex-grow-1" >
-            <Heading title="Stammdaten: Kunden, Lieferanten, Spediteure" cssClass="stammForm" />
+        <div className='flex-grow-1' >
+            <Heading title='Stammdaten: Kunden, Lieferanten, Spediteure' cssClass='stammForm' />
             <Row >
                 <Col sm={5} md={4}>
                     <SMSearchCompanies search={search} setSearch={setSearch} />
@@ -100,7 +98,7 @@ export const SMFormCompanies = ({ search,
                         activeCompany={activeCompany} handleChangeActive={handleChangeActive}
                     />
                 </Col>
-                <Col className="d-none d-md-block" md={3}>
+                <Col className='d-none d-md-block' md={3}>
                 {hasPermission(['user'], permissions) ?<ButtonGroup vertical style={{ padding: '10px 0 0' }}>{buttonGroupAddDelete}</ButtonGroup >: '' }
                 </Col>
             </Row >

@@ -1,6 +1,6 @@
-import React from "react"
+import React from 'react'
 
-export type Theme = "light" | "dark"
+export type Theme = 'light' | 'dark'
 
 export const toggleTheme = (e: React.ChangeEvent<HTMLInputElement>, theme: Theme, setTheme: React.Dispatch<React.SetStateAction<Theme>>) => {
     e.preventDefault

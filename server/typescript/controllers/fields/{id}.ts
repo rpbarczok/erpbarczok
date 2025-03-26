@@ -1,5 +1,5 @@
 import { getFieldById, deleteFieldById, putFieldById } from '../../services/fields.js'
-import { error_formatter, NotFoundError } from "../../services/error.js"
+import { error_formatter, NotFoundError } from '../../services/error.js'
 import type { Request, Response } from 'express'
 import { FieldNorm, normalizeField, createFieldMeta } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
@@ -16,57 +16,57 @@ export const GET: Operation = async (req: Request, res: Response) => {
             .json(fieldNorm)
     }
     catch (error) {
-        if (error instanceof NotFoundError) res.status(404).json({ "status": 404, "message": "not found" })
+        if (error instanceof NotFoundError) res.status(404).json({ 'status': 404, 'message': 'not found' })
         else throw error
     }
 }
 
 
 GET.apiSpec = {
-    "summary": "Get a certain field",
-    "description": "GET request on a certain field by id {id}",
-    "operationId": "getFieldById",
-    "security": [
-        { "openId": [] }
+    'summary': 'Get a certain field',
+    'description': 'GET request on a certain field by id {id}',
+    'operationId': 'getFieldById',
+    'security': [
+        { 'openId': [] }
     ],
-    "tags": [
-        "Field"
+    'tags': [
+        'Field'
     ],
-    "parameters": [
+    'parameters': [
         {
-            "$ref": "#/components/parameters/id-in-path"
+            '$ref': '#/components/parameters/id-in-path'
         }
     ],
-    "responses": {
-        "200": {
-            "description": "Successful operation",
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "$ref": "#/components/schemas/field"
+    'responses': {
+        '200': {
+            'description': 'Successful operation',
+            'content': {
+                'application/json': {
+                    'schema': {
+                        '$ref': '#/components/schemas/field'
 
                     },
-                    "examples": {
-                        "field": {
-                            "$ref": "#/components/examples/field"
+                    'examples': {
+                        'field': {
+                            '$ref': '#/components/examples/field'
                         }
                     }
                 }
             },
-            "headers": {
-                "etag": {
-                    "description": "Etag of the requested field",
-                    "schema": {
-                        "$ref": "#/components/schemas/etag"
+            'headers': {
+                'etag': {
+                    'description': 'Etag of the requested field',
+                    'schema': {
+                        '$ref': '#/components/schemas/etag'
                     }
                 }
             }
         },
-        "400": {
-            "$ref": "#/components/responses/400_validation_error"
+        '400': {
+            '$ref': '#/components/responses/400_validation_error'
         },
-        "404": {
-            "$ref": "#/components/responses/404_not_found_error"
+        '404': {
+            '$ref': '#/components/responses/404_not_found_error'
         }
     }
 }
@@ -77,41 +77,41 @@ export const DELETE: Operation = async (req: Request, res: Response) => {
         res.status(204).end()
     }
     catch (error) {
-        if (error instanceof NotFoundError) res.status(404).json({ status: 404, message: "not found" })
+        if (error instanceof NotFoundError) res.status(404).json({ status: 404, message: 'not found' })
         else throw error
     }
 }
 DELETE.apiSpec = {
-    "summary": "Remove a certain field",
-    "description": "DELETE request on field by id {id}",
-    "operationId": "deleteFieldById",
-    "security": [
+    'summary': 'Remove a certain field',
+    'description': 'DELETE request on field by id {id}',
+    'operationId': 'deleteFieldById',
+    'security': [
         {
-            "openId": [
-                "admin"
+            'openId': [
+                'admin'
             ]
         }
     ],
-    "tags": [
-        "Field"
+    'tags': [
+        'Field'
     ],
-    "parameters": [
+    'parameters': [
         {
-            "$ref": "#/components/parameters/id-in-path"
+            '$ref': '#/components/parameters/id-in-path'
         }
     ],
-    "responses": {
-        "204": {
-            "$ref": "#/components/responses/204_success"
+    'responses': {
+        '204': {
+            '$ref': '#/components/responses/204_success'
         },
-        "400": {
-            "$ref": "#/components/responses/400_validation_error"
+        '400': {
+            '$ref': '#/components/responses/400_validation_error'
         },
-        "404": {
-            "$ref": "#/components/responses/404_not_found_error"
+        '404': {
+            '$ref': '#/components/responses/404_not_found_error'
         },
-        "409": {
-            "$ref": "#/components/responses/409_conflict_error"
+        '409': {
+            '$ref': '#/components/responses/409_conflict_error'
         }
     }
 }
@@ -137,14 +137,14 @@ export const PUT: Operation = async (req: Request, res: Response) => {
         } else {
             res
                 .status(412)
-                .json({ status: 412, message: "Precondition failed" })
+                .json({ status: 412, message: 'Precondition failed' })
         }
 
     }
     catch (error) {
         if (error instanceof NotFoundError) {
             res.status(404)
-                .json({ status: 404, message: "not found" })
+                .json({ status: 404, message: 'not found' })
         } else {
             throw error
         }
@@ -152,49 +152,49 @@ export const PUT: Operation = async (req: Request, res: Response) => {
 }
 
 PUT.apiSpec = {
-    "summary": "Updates field with id {id}",
-    "description": "Put request on field by id {id}",
-    "operationId": "putFieldById",
-    "security": [
+    'summary': 'Updates field with id {id}',
+    'description': 'Put request on field by id {id}',
+    'operationId': 'putFieldById',
+    'security': [
         {
-            "openId": [
-                "admin"
+            'openId': [
+                'admin'
             ]
         }
     ],
-    "tags": [
-        "Field"
+    'tags': [
+        'Field'
     ],
-    "requestBody": {
-        "description": "Add field",
-        "content": {
-            "application/json": {
-                "schema": {
-                    "$ref": "#/components/schemas/field"
+    'requestBody': {
+        'description': 'Add field',
+        'content': {
+            'application/json': {
+                'schema': {
+                    '$ref': '#/components/schemas/field'
                 }
             }
         }
     },
-    "parameters": [
+    'parameters': [
         {
-            "$ref": "#/components/parameters/if-match"
+            '$ref': '#/components/parameters/if-match'
         },
         {
-            "$ref": "#/components/parameters/id-in-path"
+            '$ref': '#/components/parameters/id-in-path'
         }
     ],
-    "responses": {
-        "204": {
-            "$ref": "#/components/responses/204_updated"
+    'responses': {
+        '204': {
+            '$ref': '#/components/responses/204_updated'
         },
-        "400": {
-            "$ref": "#/components/responses/400_validation_error"
+        '400': {
+            '$ref': '#/components/responses/400_validation_error'
         },
-        "404": {
-            "$ref": "#/components/responses/404_not_found_error"
+        '404': {
+            '$ref': '#/components/responses/404_not_found_error'
         },
-        "412": {
-            "$ref": "#/components/responses/412_precondition_error"
+        '412': {
+            '$ref': '#/components/responses/412_precondition_error'
         }
     }
 }

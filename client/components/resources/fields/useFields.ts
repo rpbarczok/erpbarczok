@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react"
-import { client } from "utils/openAPIClientAxios.js"
-import { DataWithMeta } from "components/forms.jsx"
-import { Field } from "./fields.js"
-import { removeBeforeLastDigits } from "utils/removeBeforeLastDigits.js"
-import { useAuth } from "react-oidc-context"
-import { useContextThrowUndefined } from "utils/contextUndefined.js"
-import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
-import { LoadingContext } from "utils/loadingContext.js"
+import React, { useEffect, useState } from 'react'
+import { apiClient } from '../../../utils/openAPIClientAxios.js'
+import { DataWithMeta } from 'components/forms.jsx'
+import { Field } from './fields.js'
+import { removeBeforeLastDigits } from '../../../utils/removeBeforeLastDigits.js'
+import { useAuth } from 'react-oidc-context'
+import { useContextThrowUndefined } from '../../../utils/contextUndefined.js'
+import { PermissionContext, updateUserPermissions } from '../../../utils/permissionContext.js'
+import { LoadingContext } from '../../../utils/loadingContext.js'
 
 export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetStateAction<boolean>>] {
     const [listFields, setListFields] = useState<DataWithMeta<Field>[]>([])
@@ -19,7 +19,10 @@ export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetSta
     useEffect(() => {
         if (isFieldChanged) {
             setIsLoading(true)
-            client.getFields(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
+            
+            async function getFields() {
+                const client = await apiClient
+                client.getFields(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
                 .then(
                     result => {
                         const newList = result?.data.map(row => {
@@ -42,7 +45,12 @@ export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetSta
                     }
 
                 )
+            }
+
+            getFields()
+
             setIsFieldChanged(false)
+            
         }
     }, [isFieldChanged])
 

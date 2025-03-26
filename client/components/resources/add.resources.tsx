@@ -1,16 +1,16 @@
-import { Button, ButtonGroup, Form, Modal } from "react-bootstrap"
-import { Resource } from "./resourceList.js"
-import React, { SetStateAction, useState } from "react"
-import { useAuth } from "react-oidc-context"
-import { client } from "utils/openAPIClientAxios.js"
-import { Field, InputFields } from "./fields/fields.jsx"
-import { CompanyType, InputCompanyTypes } from "./companyTypes/companyTypes.jsx"
-import { DataWithMeta } from "components/forms.jsx"
-import { Note, Notes } from "components/notifiers/notifiers.jsx"
-import { useNotifier } from "components/notifiers/useNotifier.js"
-import { useContextThrowUndefined } from "utils/contextUndefined.js"
-import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
-import { LoadingContext } from "utils/loadingContext.js"
+import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
+import { Resource } from './resourceList.js'
+import React, { SetStateAction, useState } from 'react'
+import { useAuth } from 'react-oidc-context'
+import { apiClient } from 'utils/openAPIClientAxios.js'
+import { Field, InputFields } from './fields/fields.jsx'
+import { CompanyType, InputCompanyTypes } from './companyTypes/companyTypes.jsx'
+import { DataWithMeta } from 'components/forms.jsx'
+import { Note, Notes } from 'components/notifiers/notifiers.jsx'
+import { useNotifier } from 'components/notifiers/useNotifier.js'
+import { useContextThrowUndefined } from 'utils/contextUndefined.js'
+import { PermissionContext, updateUserPermissions } from 'utils/permissionContext.js'
+import { LoadingContext } from 'utils/loadingContext.js'
 
 interface AddResourceComponent {
     resource: Resource
@@ -61,7 +61,7 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
         setShow(false)
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>, item: DataWithMeta<CompanyType | Field>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, item: DataWithMeta<CompanyType | Field>) => {
         const form = e.currentTarget
         e.preventDefault()
         const token = auth.user?.access_token
@@ -70,6 +70,7 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
         }
         else {
             setIsLoading(true)
+            const client = await apiClient
             client.paths[resource.paths['all']].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
                 .then(
                     result => {
@@ -96,8 +97,8 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
 
 
     return (<>
-        <Button variant="outline-primary" onClick={handleModal}>{resource.name} hinzufügen</Button>
-        <Modal key={"newItem" + String(addItemCount)} show={show} onHide={() => handleClose()}>
+        <Button variant='outline-primary' onClick={handleModal}>{resource.name} hinzufügen</Button>
+        <Modal key={'newItem' + String(addItemCount)} show={show} onHide={() => handleClose()}>
             <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, newItem)}>
                 <Modal.Header closeButton>
                     <Modal.Title>{resource.name} hinzufügen</Modal.Title>
@@ -110,9 +111,9 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
                     />
                 </Modal.Body>
                 <Modal.Footer>
-                    <ButtonGroup className="w-100">
-                        <Button type="submit" variant='outline-primary'>Speichern</Button>
-                        <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Abbrechen</Button>
+                    <ButtonGroup className='w-100'>
+                        <Button type='submit' variant='outline-primary'>Speichern</Button>
+                        <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Abbrechen</Button>
                     </ButtonGroup>
                 </Modal.Footer>
             </Form>

@@ -41,7 +41,7 @@ const main = async () => {
   }
 
   /**
-   * Event listener for HTTP server "error" event.
+   * Event listener for HTTP server 'error' event.
    */
 
   function onError(error: any) {
@@ -69,7 +69,7 @@ const main = async () => {
   }
 
   /**
-   * Event listener for HTTP server "listening" event.
+   * Event listener for HTTP server 'listening' event.
    */
 
   function onListening() {

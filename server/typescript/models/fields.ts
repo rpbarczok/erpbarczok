@@ -1,4 +1,4 @@
-import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize, NonAttribute } from "sequelize"
+import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize, NonAttribute } from 'sequelize'
 
 export class Field extends Model<InferAttributes<Field>, InferCreationAttributes<Field>> {
     declare id: CreationOptional<number>
@@ -25,8 +25,8 @@ export const initializeField = (sequelize: Sequelize) => {
     },
         {
             sequelize,
-            modelName: "field",
-            tableName: "fields"
+            modelName: 'field',
+            tableName: 'fields'
         }
     )
 }

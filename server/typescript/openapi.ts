@@ -6,335 +6,335 @@ const openIdConnectUrl = (process.env.IDP_SERVER?.slice(-1) === '/') ? `${proces
 
 
 export const apiSpec: OpenAPIV3.DocumentV3 = {
-    "openapi": "3.0.3",
-    "info": {
-        "title": "ERPBarczok",
-        "description": "The Description of the API of the ERPBarczok App",
-        "version": "0.0.1"
+    'openapi': '3.0.3',
+    'info': {
+        'title': 'ERPBarczok',
+        'description': 'The Description of the API of the ERPBarczok App',
+        'version': '0.0.1'
     },
-    "servers": [
+    'servers': [
         {
-            "url": "/"
+            'url': '/'
         }
     ],
-    "tags": [
+    'tags': [
         {
-            "name": "Company"
+            'name': 'Company'
         },
         {
-            "name": "CompanyType"
+            'name': 'CompanyType'
         },
         {
-            "name": "Field"
+            'name': 'Field'
         }
     ],
-    "paths": {
-        "/companies/": {},
-        "/companies/{id}": {},
-        "/company-types/": {},
-        "/company-types/{id}": {},
-        "/fields/": {},
-        "/fields/{id}": {}
+    'paths': {
+        '/companies/': {},
+        '/companies/{id}': {},
+        '/company-types/': {},
+        '/company-types/{id}': {},
+        '/fields/': {},
+        '/fields/{id}': {}
     },
-    "components": {
-        "parameters": {
-            "id-in-path": {
-                "name": "id",
-                "in": "path",
-                "description": "Id of the entity",
-                "required": true,
-                "schema": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "example": 1
+    'components': {
+        'parameters': {
+            'id-in-path': {
+                'name': 'id',
+                'in': 'path',
+                'description': 'Id of the entity',
+                'required': true,
+                'schema': {
+                    'type': 'integer',
+                    'minimum': 1,
+                    'example': 1
                 }
             },
-            "if-match": {
-                "name": "if-match",
-                "in": "header",
-                "description": "etag in database must match etag specified in if-match as precondition",
-                "required": true,
-                "schema": {
-                    "$ref": "#/components/schemas/etag"
+            'if-match': {
+                'name': 'if-match',
+                'in': 'header',
+                'description': 'etag in database must match etag specified in if-match as precondition',
+                'required': true,
+                'schema': {
+                    '$ref': '#/components/schemas/etag'
                 }
             }
         },
-        "responses": {
-            "201": {
-                "description": "Successful operation",
-                "headers": {
-                    "location": {
-                        "description": "Relative URI of the new entity",
-                        "schema": {
-                            "$ref": "#/components/schemas/location"
+        'responses': {
+            '201': {
+                'description': 'Successful operation',
+                'headers': {
+                    'location': {
+                        'description': 'Relative URI of the new entity',
+                        'schema': {
+                            '$ref': '#/components/schemas/location'
                         }
                     },
-                    "etag": {
-                        "description": "Etag of the new entity",
-                        "schema": {
-                            "$ref": "#/components/schemas/etag"
+                    'etag': {
+                        'description': 'Etag of the new entity',
+                        'schema': {
+                            '$ref': '#/components/schemas/etag'
                         }
                     },
-                    "permissions": {
-                        "description": "Permission of the User",
-                        "schema": {
-                            "$ref": "#/components/schemas/permissions"
+                    'permissions': {
+                        'description': 'Permission of the User',
+                        'schema': {
+                            '$ref': '#/components/schemas/permissions'
                         }
                     }
                 }
             },
-            "204_updated": {
-                "description": "Successful operation",
-                "headers": {
-                    "location": {
-                        "description": "Relative URI of the updated entity",
-                        "schema": {
-                            "$ref": "#/components/schemas/location"
+            '204_updated': {
+                'description': 'Successful operation',
+                'headers': {
+                    'location': {
+                        'description': 'Relative URI of the updated entity',
+                        'schema': {
+                            '$ref': '#/components/schemas/location'
                         }
                     },
-                    "etag": {
-                        "description": "Etag of the updated entity",
-                        "schema": {
-                            "$ref": "#/components/schemas/etag"
+                    'etag': {
+                        'description': 'Etag of the updated entity',
+                        'schema': {
+                            '$ref': '#/components/schemas/etag'
                         }
                     },
-                    "permissions": {
-                        "description": "Permission of the User",
-                        "schema": {
-                            "$ref": "#/components/schemas/permissions"
+                    'permissions': {
+                        'description': 'Permission of the User',
+                        'schema': {
+                            '$ref': '#/components/schemas/permissions'
                         }
                     }
                 }
             },
-            "204_success": {
-                "description": "Successful operation",
-                "headers": {
-                    "permissions": {
-                        "description": "Permission of the User",
-                        "schema": {
-                            "$ref": "#/components/schemas/permissions"
+            '204_success': {
+                'description': 'Successful operation',
+                'headers': {
+                    'permissions': {
+                        'description': 'Permission of the User',
+                        'schema': {
+                            '$ref': '#/components/schemas/permissions'
                         }
                     }
                 }
             },
-            "400_validation_error": {
-                "description": "Bad request",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "$ref": "#/components/schemas/error"
+            '400_validation_error': {
+                'description': 'Bad request',
+                'content': {
+                    'application/json': {
+                        'schema': {
+                            '$ref': '#/components/schemas/error'
                         },
-                        "examples": {
-                            "400": {
-                                "$ref": "#/components/examples/error400"
+                        'examples': {
+                            '400': {
+                                '$ref': '#/components/examples/error400'
                             }
                         }
                     }
                 }
             },
-            "404_not_found_error": {
-                "description": "Not found",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "$ref": "#/components/schemas/error"
+            '404_not_found_error': {
+                'description': 'Not found',
+                'content': {
+                    'application/json': {
+                        'schema': {
+                            '$ref': '#/components/schemas/error'
                         },
-                        "examples": {
-                            "404": {
-                                "$ref": "#/components/examples/error404"
+                        'examples': {
+                            '404': {
+                                '$ref': '#/components/examples/error404'
                             }
                         }
                     }
                 }
             },
-            "409_conflict_error": {
-                "description": "Conflict: Used when you try to delete something, that is still referenced in der DB",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "$ref": "#/components/schemas/error"
+            '409_conflict_error': {
+                'description': 'Conflict: Used when you try to delete something, that is still referenced in der DB',
+                'content': {
+                    'application/json': {
+                        'schema': {
+                            '$ref': '#/components/schemas/error'
                         },
-                        "examples": {
-                            "409": {
-                                "$ref": "#/components/examples/error409"
+                        'examples': {
+                            '409': {
+                                '$ref': '#/components/examples/error409'
                             }
                         }
                     }
                 }
             },
-            "412_precondition_error": {
-                "description": "precondition failed",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "$ref": "#/components/schemas/error"
+            '412_precondition_error': {
+                'description': 'precondition failed',
+                'content': {
+                    'application/json': {
+                        'schema': {
+                            '$ref': '#/components/schemas/error'
                         },
-                        "examples": {
-                            "412": {
-                                "$ref": "#/components/examples/error412"
+                        'examples': {
+                            '412': {
+                                '$ref': '#/components/examples/error412'
                             }
                         }
                     }
                 }
             }
         },
-        "schemas": {
-            "location": {
-                "type": "string",
-                "format": "uri-reference",
-                "example": "location/1"
+        'schemas': {
+            'location': {
+                'type': 'string',
+                'format': 'uri-reference',
+                'example': 'location/1'
             },
-            "etag": {
-                "type": "string",
-                "example": "656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a"
+            'etag': {
+                'type': 'string',
+                'example': '656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a'
             },
-            "permissions": {
-                "type": "string",
-                "example": "user admin"
+            'permissions': {
+                'type': 'string',
+                'example': 'user admin'
             },
-            "meta": {
-                "type": "object",
-                "required": [
-                    "location",
-                    "etag"
+            'meta': {
+                'type': 'object',
+                'required': [
+                    'location',
+                    'etag'
                 ],
-                "additionalProperties": false,
-                "properties": {
-                    "location": {
-                        "$ref": "#/components/schemas/location"
+                'additionalProperties': false,
+                'properties': {
+                    'location': {
+                        '$ref': '#/components/schemas/location'
                     },
-                    "etag": {
-                        "$ref": "#/components/schemas/etag"
+                    'etag': {
+                        '$ref': '#/components/schemas/etag'
                     }
                 }
             },
-            "companyType": {
-                "type": "object",
-                "required": [
-                    "name"
+            'companyType': {
+                'type': 'object',
+                'required': [
+                    'name'
                 ],
-                "additionalProperties": false,
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "example": "Kunde",
-                        "maxLength": 32
+                'additionalProperties': false,
+                'properties': {
+                    'name': {
+                        'type': 'string',
+                        'example': 'Kunde',
+                        'maxLength': 32
                     }
                 }
             },
-            "field": {
-                "type": "object",
-                "required": [
-                    "name"
+            'field': {
+                'type': 'object',
+                'required': [
+                    'name'
                 ],
-                "additionalProperties": false,
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "example": "Lebensmittel",
-                        "maxLength": 32
+                'additionalProperties': false,
+                'properties': {
+                    'name': {
+                        'type': 'string',
+                        'example': 'Lebensmittel',
+                        'maxLength': 32
                     }
                 }
             },
-            "company": {
-                "type": "object",
-                "required": [
-                    "name",
-                    "companyType"
+            'company': {
+                'type': 'object',
+                'required': [
+                    'name',
+                    'companyType'
                 ],
-                "additionalProperties": false,
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "example": "Firma A"
+                'additionalProperties': false,
+                'properties': {
+                    'name': {
+                        'type': 'string',
+                        'example': 'Firma A'
                     },
-                    "abbr": {
-                        "type": "string",
-                        "example": "FRA",
-                        "maxLength": 3
+                    'abbr': {
+                        'type': 'string',
+                        'example': 'FRA',
+                        'maxLength': 3
                     },
-                    "www": {
-                        "type": "string",
-                        "example": "www.example.org"
+                    'www': {
+                        'type': 'string',
+                        'example': 'www.example.org'
                     },
-                    "companyType": {
-                        "type": "string",
-                        "example": "Kunde"
+                    'companyType': {
+                        'type': 'string',
+                        'example': 'Kunde'
                     }
                 }
             },
-            "error": {
-                "required": [
-                    "message",
-                    "status"
+            'error': {
+                'required': [
+                    'message',
+                    'status'
                 ],
-                "additionalProperties": false,
-                "properties": {
-                    "status": {
-                        "type": "integer"
+                'additionalProperties': false,
+                'properties': {
+                    'status': {
+                        'type': 'integer'
                     },
-                    "message": {
-                        "type": "string"
+                    'message': {
+                        'type': 'string'
                     },
-                    "errors": {
-                        "type": "array",
-                        "items": {}
+                    'errors': {
+                        'type': 'array',
+                        'items': {}
                     }
                 }
             }
         },
-        "securitySchemes": {
-            "openId": {
-                "type": "openIdConnect",
-                "openIdConnectUrl": `${openIdConnectUrl}`
+        'securitySchemes': {
+            'openId': {
+                'type': 'openIdConnect',
+                'openIdConnectUrl': `${openIdConnectUrl}`
             }
         },
-        "examples": {
-            "company": {
-                "value": {
-                    "name": "Firma A",
-                    "abbr": "FRA",
-                    "www": "www.example.de",
-                    "companyType": "Kunde"
+        'examples': {
+            'company': {
+                'value': {
+                    'name': 'Firma A',
+                    'abbr': 'FRA',
+                    'www': 'www.example.de',
+                    'companyType': 'Kunde'
                 }
             },
-            "companyType": {
-                "value": {
-                    "name": "Kunde"
+            'companyType': {
+                'value': {
+                    'name': 'Kunde'
                 }
             },
-            "field": {
-                "value": {
-                    "name": "Lebensmittel"
+            'field': {
+                'value': {
+                    'name': 'Lebensmittel'
                 }
             },
-            "error400": {
-                "value": {
-                    "status": 400,
-                    "message": "request/body must NOT have additional properties",
-                    "errors": {
-                        "path": "/body/invalid",
-                        "message": "must NOT have additional properties",
-                        "errorCode": "additionalProperties.openapi.validation"
+            'error400': {
+                'value': {
+                    'status': 400,
+                    'message': 'request/body must NOT have additional properties',
+                    'errors': {
+                        'path': '/body/invalid',
+                        'message': 'must NOT have additional properties',
+                        'errorCode': 'additionalProperties.openapi.validation'
                     }
                 }
             },
-            "error404": {
-                "value": {
-                    "status": 404,
-                    "message": "Not found"
+            'error404': {
+                'value': {
+                    'status': 404,
+                    'message': 'Not found'
                 }
             },
-            "error409": {
-                "value": {
-                    "status": 409,
-                    "message": "Entity can not be deleted since it is still referenced"
+            'error409': {
+                'value': {
+                    'status': 409,
+                    'message': 'Entity can not be deleted since it is still referenced'
                 }
             },
-            "error412": {
-                "value": {
-                    "status": 412,
-                    "message": "Precondition failed"
+            'error412': {
+                'value': {
+                    'status': 412,
+                    'message': 'Precondition failed'
                 }
             }
         }

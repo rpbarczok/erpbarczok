@@ -44,27 +44,27 @@ You will find the value of the __AUDIENCE__ variable in the settings of the API 
 
 You will find the value of the __CLIENT_ID__ variable in the settings of the Application settings.
 
-You will find the value for the __IDP_SERVER__ at the 'Tenant Settings' in the tab 'Custom Domains'. Use the domain prefixed with "https://" for the IDP_SERVER environment variable. 
+You will find the value for the __IDP_SERVER__ at the 'Tenant Settings' in the tab 'Custom Domains'. Use the domain prefixed with 'https://' for the IDP_SERVER environment variable. 
 
 Enter the URI of your application in the text box 'Allowed Callback URLs'. 
 
-Additionally, set the __SCOPE__ variable to "openid email profile admin user" and the __PERMISSION_CLAIM__ to 'scope' if you use Auth0.
+Additionally, set the __SCOPE__ variable to 'openid email profile admin user' and the __PERMISSION_CLAIM__ to 'scope' if you use Auth0.
 
 ### EntraID
 For EntraID, you need to register the API and the Application separately, too. Please follow the EntraID instructions to register them. For the application, be sure to set Single Page Application during the registration.
 
 ERPBarczok needs a JWT (JSON Web Token) that is not opaque. Therefore, you must navigate to the registry of the API. Open the tab manifest and change in the 'api' object the 'requestedAccessTokenVersion' to 2.
 
-Then navigate to 'Expose an API' and add the scope 'use'. It is shown as "api://erpbarczok/use". Set the __SCOPE__ variable to "openid email profile api://erpbarczok/use".
-At the next tab "App roles" create two new roles: admin and user. You can later add these roles to different users of your application. For the role system of EntraID to work in your application, set the __PERMISSION_CLAIM__ variable to "roles".
+Then navigate to 'Expose an API' and add the scope 'use'. It is shown as 'api://erpbarczok/use'. Set the __SCOPE__ variable to 'openid email profile api://erpbarczok/use'.
+At the next tab 'App roles' create two new roles: admin and user. You can later add these roles to different users of your application. For the role system of EntraID to work in your application, set the __PERMISSION_CLAIM__ variable to 'roles'.
 
 You will find the value of the __CLIENT_ID__ and the __AUDIENCE__ variable in the App registration area. The 'Application (client) ID' of the Application is the client id, the 'Application (client) ID' of the API is the audience.
 
 You will find the value for the __IDP_SERVER__ at the App registrations. Click on the 'Endpoints' tab and search for 'Authority URL (Accounts in this organizational directory only)'.
 
-You need the __JWKS_URI__ variable for EntraID. The easiest way to find it is to look for the 'OpenID Connect metadata document' in the endpoints offcanvas. Open this URI and look in the JSON file for the "jwks-uri". 
+You need the __JWKS_URI__ variable for EntraID. The easiest way to find it is to look for the 'OpenID Connect metadata document' in the endpoints offcanvas. Open this URI and look in the JSON file for the 'jwks-uri'. 
 
-Additionally, set the __SCOPE__ variable to "openid email profile admin user" and the __PERMISSION_CLAIM__ to 'scope' if you use Auth0.
+Additionally, set the __SCOPE__ variable to 'openid email profile admin user' and the __PERMISSION_CLAIM__ to 'scope' if you use Auth0.
 
 ## Environment Variables:
 

@@ -1,5 +1,3 @@
-import '../../style.css'
-import './navigation.css'
 import {Nav} from 'react-bootstrap'
 import {XLg} from 'react-bootstrap-icons'
 import React from 'react'
@@ -36,11 +34,11 @@ export function TabsNavigation({ tabs, setTabs, setActiveForm, activeForm }: Tab
 
     function handleDragStart(e: React.DragEvent<HTMLElement>) {
         const id: string= (e.target as HTMLElement).id
-        e.dataTransfer.setData("text", id)
+        e.dataTransfer.setData('text', id)
     }
 
     function handleDrop(e: React.DragEvent<HTMLElement>) {
-        const indexDraggedFrom = Number(e.dataTransfer.getData("text"))
+        const indexDraggedFrom = Number(e.dataTransfer.getData('text'))
         const draggedFrom  = tabs[indexDraggedFrom]
         const indexDroppedOn = Number(e.currentTarget.id)
         const newList = tabs.map((tab, index) => {
@@ -73,22 +71,22 @@ export function TabsNavigation({ tabs, setTabs, setActiveForm, activeForm }: Tab
     const Tabs = () => {
 
         const openForms = tabs.map((tab, index) => { 
-            const tabName = tab.name + " "
+            const tabName = tab.name + ' '
             if (tab.id === activeForm.id) {
                 return (
                     <Nav.Item key={tab.id} id={index.toString()} draggable={true} onDragStart={handleDragStart} onDrop={handleDrop} onDragOver={allowDrop} onDragEnter={allowDrop}>
-                        <Nav.Link active className="lineWithButton" draggable={false}>
-                            <span role="button" onClick={() => handleClick(tab)}>{tabName}</span>
-                            <span role="button" onClick={() => handleClose(tab)}><XLg /></span>
+                        <Nav.Link active className='lineWithButton' draggable={false}>
+                            <span role='button' onClick={() => handleClick(tab)}>{tabName}</span>
+                            <span role='button' onClick={() => handleClose(tab)}><XLg /></span>
                         </Nav.Link>
                     </Nav.Item>
                 )
             } else {
                 return (
                     <Nav.Item key={tab.id} id={index.toString()} draggable={true} onDragStart={handleDragStart} onDrop={handleDrop} onDragOver={allowDrop} onDragEnter={allowDrop}>
-                        <Nav.Link draggable={false} className="lineWithButton" >
-                            <span role="button" onClick={() => handleClick(tab)} >{tabName}</span>
-                            <span role="button" onClick={() => handleClose(tab)} ><XLg /></span>
+                        <Nav.Link draggable={false} className='lineWithButton' >
+                            <span role='button' onClick={() => handleClick(tab)} >{tabName}</span>
+                            <span role='button' onClick={() => handleClose(tab)} ><XLg /></span>
                         </Nav.Link>
                     </Nav.Item>
                 )
@@ -98,7 +96,7 @@ export function TabsNavigation({ tabs, setTabs, setActiveForm, activeForm }: Tab
     }
 
     return (
-        <Nav variant="tabs" >
+        <Nav variant='tabs' >
             <Tabs />
         </Nav>
     )

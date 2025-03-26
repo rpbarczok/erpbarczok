@@ -1,5 +1,5 @@
 import { getCompanyTypeById, deleteCompanyTypeById, putCompanyTypeById } from '../../services/companyTypes.js'
-import { error_formatter, NotFoundError } from "../../services/error.js"
+import { error_formatter, NotFoundError } from '../../services/error.js'
 import type { Request, Response } from 'express'
 import { CompanyTypeNorm, normalizeCompanyType, createCompanyTypeMeta } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
@@ -17,57 +17,57 @@ export const GET: Operation = async (req: Request, res: Response) => {
             .json(companyTypeNorm)
     }
     catch (error) {
-        if (error instanceof NotFoundError) res.status(404).json({ "status": 404, "message": "not found" })
+        if (error instanceof NotFoundError) res.status(404).json({ 'status': 404, 'message': 'not found' })
         else throw error
     }
 }
 
 
 GET.apiSpec = {
-    "summary": "Get a certain companyType",
-    "description": "GET request on a certain companyType by id {id}",
-    "operationId": "getCompanyTypeById",
-    "security": [
-        { "openId": [] }
+    'summary': 'Get a certain companyType',
+    'description': 'GET request on a certain companyType by id {id}',
+    'operationId': 'getCompanyTypeById',
+    'security': [
+        { 'openId': [] }
     ],
-    "tags": [
-        "CompanyType"
+    'tags': [
+        'CompanyType'
     ],
-    "parameters": [
+    'parameters': [
         {
-            "$ref": "#/components/parameters/id-in-path"
+            '$ref': '#/components/parameters/id-in-path'
         }
     ],
-    "responses": {
-        "200": {
-            "description": "Successful operation",
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "$ref": "#/components/schemas/companyType"
+    'responses': {
+        '200': {
+            'description': 'Successful operation',
+            'content': {
+                'application/json': {
+                    'schema': {
+                        '$ref': '#/components/schemas/companyType'
 
                     },
-                    "examples": {
-                        "companyType": {
-                            "$ref": "#/components/examples/companyType"
+                    'examples': {
+                        'companyType': {
+                            '$ref': '#/components/examples/companyType'
                         }
                     }
                 }
             },
-            "headers": {
-                "etag": {
-                    "description": "Etag of the requested companyType",
-                    "schema": {
-                        "$ref": "#/components/schemas/etag"
+            'headers': {
+                'etag': {
+                    'description': 'Etag of the requested companyType',
+                    'schema': {
+                        '$ref': '#/components/schemas/etag'
                     }
                 }
             }
         },
-        "400": {
-            "$ref": "#/components/responses/400_validation_error"
+        '400': {
+            '$ref': '#/components/responses/400_validation_error'
         },
-        "404": {
-            "$ref": "#/components/responses/404_not_found_error"
+        '404': {
+            '$ref': '#/components/responses/404_not_found_error'
         }
     }
 }
@@ -83,44 +83,44 @@ export const DELETE: Operation = async (req: Request, res: Response) => {
             await deleteCompanyTypeById(Number(req.params.id))
             res.status(204).end()
         } else {
-            res.status(409).json({ status: 409, message: "Conflict" })
+            res.status(409).json({ status: 409, message: 'Conflict' })
         }
 
     }
     catch (error) {
-        if (error instanceof NotFoundError) res.status(404).json({ status: 404, message: "not found" })
+        if (error instanceof NotFoundError) res.status(404).json({ status: 404, message: 'not found' })
         else throw error
     }
 }
 DELETE.apiSpec = {
-    "summary": "Remove a certain company type",
-    "description": "DELETE request on company type by id {id}",
-    "operationId": "deleteCompanyTypeById",
-    "security": [
-        { "openId": [
-            "admin"
+    'summary': 'Remove a certain company type',
+    'description': 'DELETE request on company type by id {id}',
+    'operationId': 'deleteCompanyTypeById',
+    'security': [
+        { 'openId': [
+            'admin'
         ] }
     ],
-    "tags": [
-        "CompanyType"
+    'tags': [
+        'CompanyType'
     ],
-    "parameters": [
+    'parameters': [
         {
-            "$ref": "#/components/parameters/id-in-path"
+            '$ref': '#/components/parameters/id-in-path'
         }
     ],
-    "responses": {
-        "204": {
-            "$ref": "#/components/responses/204_success"
+    'responses': {
+        '204': {
+            '$ref': '#/components/responses/204_success'
         },
-        "400": {
-            "$ref": "#/components/responses/400_validation_error"
+        '400': {
+            '$ref': '#/components/responses/400_validation_error'
         },
-        "404": {
-            "$ref": "#/components/responses/404_not_found_error"
+        '404': {
+            '$ref': '#/components/responses/404_not_found_error'
         },
-        "409": {
-            "$ref": "#/components/responses/409_conflict_error"
+        '409': {
+            '$ref': '#/components/responses/409_conflict_error'
         }
     }
 }
@@ -146,14 +146,14 @@ export const PUT: Operation = async (req: Request, res: Response) => {
         } else {
             res
                 .status(412)
-                .json({ status: 412, message: "Precondition failed" })
+                .json({ status: 412, message: 'Precondition failed' })
         }
 
     }
     catch (error) {
         if (error instanceof NotFoundError) {
             res.status(404)
-                .json({ status: 404, message: "not found" })
+                .json({ status: 404, message: 'not found' })
         } else {
             throw error
         }
@@ -161,47 +161,47 @@ export const PUT: Operation = async (req: Request, res: Response) => {
 }
 
 PUT.apiSpec = {
-    "summary": "Updates company type with id {id}",
-    "description": "Put request on company type by id {id}",
-    "operationId": "putCompanyTypeById",
-    "security": [
-        { "openId": [
-            "admin"
+    'summary': 'Updates company type with id {id}',
+    'description': 'Put request on company type by id {id}',
+    'operationId': 'putCompanyTypeById',
+    'security': [
+        { 'openId': [
+            'admin'
         ] }
     ],
-    "tags": [
-        "CompanyType"
+    'tags': [
+        'CompanyType'
     ],
-    "requestBody": {
-        "description": "Add companyType",
-        "content": {
-            "application/json": {
-                "schema": {
-                    "$ref": "#/components/schemas/companyType"
+    'requestBody': {
+        'description': 'Add companyType',
+        'content': {
+            'application/json': {
+                'schema': {
+                    '$ref': '#/components/schemas/companyType'
                 }
             }
         }
     },
-    "parameters": [
+    'parameters': [
         {
-            "$ref": "#/components/parameters/if-match"
+            '$ref': '#/components/parameters/if-match'
         },
         {
-            "$ref": "#/components/parameters/id-in-path"
+            '$ref': '#/components/parameters/id-in-path'
         }
     ],
-    "responses": {
-        "204": {
-            "$ref": "#/components/responses/204_updated"
+    'responses': {
+        '204': {
+            '$ref': '#/components/responses/204_updated'
         },
-        "400": {
-            "$ref": "#/components/responses/400_validation_error"
+        '400': {
+            '$ref': '#/components/responses/400_validation_error'
         },
-        "404": {
-            "$ref": "#/components/responses/404_not_found_error"
+        '404': {
+            '$ref': '#/components/responses/404_not_found_error'
         },
-        "412": {
-            "$ref": "#/components/responses/412_precondition_error"
+        '412': {
+            '$ref': '#/components/responses/412_precondition_error'
         }
     }
 }

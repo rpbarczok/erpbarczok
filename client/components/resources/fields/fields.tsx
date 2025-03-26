@@ -1,11 +1,9 @@
-import '../../../style.css'
-import '../resources.css'
 import { DataWithMeta } from '../../forms.js'
 import { Form } from 'react-bootstrap'
 import React, { ChangeEvent } from 'react'
 
 export interface Field {
-    "name": string
+    'name': string
 }
 
 interface InputFieldComponent {
@@ -24,10 +22,10 @@ export const InputFields = ({ field, setField }: InputFieldComponent) => {
 
     return (
         <>
-            <Form.Group controlId="formFirma">
+            <Form.Group controlId='formFirma'>
                 <Form.Label>Branche</Form.Label>
-                <Form.Control required type="text" value={field.data.name} onChange={handleChangeName} />
-                <Form.Control.Feedback type="invalid">
+                <Form.Control required type='text' value={field.data.name} onChange={handleChangeName} />
+                <Form.Control.Feedback type='invalid'>
                     Bitte eine Branche eintragen.
                 </Form.Control.Feedback>
             </Form.Group>

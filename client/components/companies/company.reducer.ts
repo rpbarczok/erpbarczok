@@ -1,5 +1,5 @@
-import { DataWithMeta } from "components/forms.jsx"
-import { Company } from "./companies.jsx"
+import { DataWithMeta } from 'components/forms.jsx'
+import { Company } from './companies.jsx'
 
 
 export interface ChangedCompanyAction {
@@ -15,7 +15,7 @@ export function changedCompanyReducer(changedCompany: DataWithMeta<Company>, act
                     meta: changedCompany.meta,
                     data: {
                         ...changedCompany.data,
-                        "name": action.newValue,
+                        'name': action.newValue,
                     }
                 }
             }
@@ -25,7 +25,7 @@ export function changedCompanyReducer(changedCompany: DataWithMeta<Company>, act
                         meta: changedCompany.meta,
                         data: {
                             ...changedCompany.data,
-                            "abbr": action.newValue,
+                            'abbr': action.newValue,
                         }
                     })
             }
@@ -35,7 +35,7 @@ export function changedCompanyReducer(changedCompany: DataWithMeta<Company>, act
                         meta: changedCompany.meta,
                         data: {
                             ...changedCompany.data,
-                            "www": action.newValue,
+                            'www': action.newValue,
                         }
                     })
             }
@@ -44,7 +44,7 @@ export function changedCompanyReducer(changedCompany: DataWithMeta<Company>, act
                     meta: changedCompany.meta,
                     data: {
                         ...changedCompany.data,
-                        "companyType": action.newValue,
+                        'companyType': action.newValue,
                     }
                 })
             }

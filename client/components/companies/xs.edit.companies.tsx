@@ -1,19 +1,19 @@
-import { DataWithMeta } from "components/forms.jsx"
-import { Button, ButtonGroup, Col, Form, Modal, Row } from "react-bootstrap"
-import { Company } from "./companies.jsx"
-import React, { useState } from "react"
-import { Note, Notes } from "components/notifiers/notifiers.jsx"
-import { useNotifier } from "components/notifiers/useNotifier.js"
-import { CompanyType } from "components/resources/companyTypes/companyTypes.js"
-import { DeleteCompanies } from "./delete.companies.jsx"
-import { client } from "utils/openAPIClientAxios.js"
-import { useAuth } from "react-oidc-context"
-import { ChangedCompanyAction } from "./company.reducer.js"
-import { InputCompanies } from "./input.companies.jsx"
-import { hasPermission } from "utils/hasPermission.js"
-import { useContextThrowUndefined } from "utils/contextUndefined.js"
-import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
-import { LoadingContext } from "utils/loadingContext.js"
+import { DataWithMeta } from 'components/forms.jsx'
+import { Button, ButtonGroup, Col, Form, Modal, Row } from 'react-bootstrap'
+import { Company } from './companies.jsx'
+import React, { useState } from 'react'
+import { Note, Notes } from 'components/notifiers/notifiers.jsx'
+import { useNotifier } from 'components/notifiers/useNotifier.js'
+import { CompanyType } from 'components/resources/companyTypes/companyTypes.js'
+import { DeleteCompanies } from './delete.companies.jsx'
+import { apiClient } from 'utils/openAPIClientAxios.js'
+import { useAuth } from 'react-oidc-context'
+import { ChangedCompanyAction } from './company.reducer.js'
+import { InputCompanies } from './input.companies.jsx'
+import { hasPermission } from 'utils/hasPermission.js'
+import { useContextThrowUndefined } from 'utils/contextUndefined.js'
+import { PermissionContext, updateUserPermissions } from 'utils/permissionContext.js'
+import { LoadingContext } from 'utils/loadingContext.js'
 
 interface XSEditCompaniesComponent {
     show: boolean
@@ -40,7 +40,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
         activeCompany.data.www === changedCompany.data.www &&
         activeCompany.data.companyType === changedCompany.data.companyType)
 
-    const handleSubmitEdit: React.FormEventHandler<HTMLFormElement> = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmitEdit: React.FormEventHandler<HTMLFormElement> = async (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget
         e.preventDefault()
         e.stopPropagation()
@@ -48,7 +48,8 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
             setValidated(true)
         } else {
             setIsLoading(true)
-            client.putCompanyById({ id: changedCompany.meta.location, "if-match": changedCompany.meta.etag },
+            const client = await apiClient
+            client.putCompanyById({ id: changedCompany.meta.location, 'if-match': changedCompany.meta.etag },
                 changedCompany.data,
                 { headers: { Authorization: `Bearer ${token}` } })
                 .then(
@@ -83,9 +84,9 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
 
     const UserButtons = () => {
         if (hasPermission(['user'], permissions)) {
-            return (<ButtonGroup className="w-100">
-                <Button size="sm" variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Undo</Button>
-                <Button size="sm" type="submit" variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
+            return (<ButtonGroup className='w-100'>
+                <Button size='sm' variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Undo</Button>
+                <Button size='sm' type='submit' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
                 <DeleteCompanies
                     company={changedCompany}
                     setIsCompanyChanged={setIsCompanyChanged}
@@ -93,10 +94,10 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                     setShow={setShow}
                     size='sm'
                 />
-                <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Abbrechen</Button>
+                <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Abbrechen</Button>
             </ButtonGroup>)
         } else {
-            return <Button size="sm" variant="outline-secondary" onClick={() => setShow(false)}>Schließen</Button>
+            return <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Schließen</Button>
         }
 
     }
@@ -106,7 +107,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
             key={changedCompany.meta.location}
             show={show}
             onHide={() => setShow(false)}
-            backdrop="static"
+            backdrop='static'
             size='lg'>
             <Form noValidate validated={validated} onSubmit={handleSubmitEdit}>
                 <Modal.Header closeButton>

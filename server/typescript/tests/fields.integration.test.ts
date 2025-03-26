@@ -18,12 +18,13 @@ const scope = process.env.SCOPE || 'openid email profile admin user'
 const secret = process.env.TEST_SECRET || 'secret'
 const algorithms = ['HS256']
 
+
 //@ts-ignore
 const validTokenAdmin: string = jwt.sign(
     {
-        "iss": issuer,
-        "aud": audience,
-        "iat": iat,
+        'iss': issuer,
+        'aud': audience,
+        'iat': iat,
         'scope': scope,
         'expiresIn': '1h',
         'alg': algorithms[0],
@@ -33,9 +34,9 @@ const validTokenAdmin: string = jwt.sign(
 
 const validTokenGuest: string = jwt.sign(
     {
-        "iss": issuer,
-        "aud": audience,
-        "iat": iat,
+        'iss': issuer,
+        'aud': audience,
+        'iat': iat,
         'scope': 'openid email',
         'expiresIn': '1h',
         'alg': algorithms[0],
@@ -45,9 +46,9 @@ const validTokenGuest: string = jwt.sign(
 
 const validTokenUser: string = jwt.sign(
     {
-        "iss": issuer,
-        "aud": audience,
-        "iat": iat,
+        'iss': issuer,
+        'aud': audience,
+        'iat': iat,
         'scope': 'openid email user',
         'expiresIn': '1h',
         'alg': algorithms[0],
@@ -57,9 +58,9 @@ const validTokenUser: string = jwt.sign(
 
 const expiredToken: string = jwt.sign(
     {
-        "iss": issuer,
-        "aud": audience,
-        "iat": iatAWeekAgo,
+        'iss': issuer,
+        'aud': audience,
+        'iat': iatAWeekAgo,
         'scope': scope,
         'alg': algorithms[0],
         'exp': iatADayAgo
@@ -67,9 +68,9 @@ const expiredToken: string = jwt.sign(
     secret
 )
 
-const fieldA = { "name": "Lebensmittel" }
-const fieldB = { "name": "Haushaltsgeräte" }
-const fieldC = { "name": "Recht" }
+const fieldA = { 'name': 'Lebensmittel' }
+const fieldB = { 'name': 'Haushaltsgeräte' }
+const fieldC = { 'name': 'Recht' }
 const etagA = sha256(JSON.stringify(fieldA))
 const etagB = sha256(JSON.stringify(fieldB))
 const etagC = sha256(JSON.stringify(fieldC))
@@ -91,10 +92,10 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .set('Accept', 'application/json')
                 .expect('content-type', /json/)
                 .expect(401)
-            expect(response.headers["content-type"]).toMatch(/json/)
+            expect(response.headers['content-type']).toMatch(/json/)
             expect(response.status).toEqual(401)
             expect(response.body.status).toEqual(401)
-            expect(response.body.message).toEqual("No authorization token was found")
+            expect(response.body.message).toEqual('No authorization token was found')
         })
 
         it('GET /fields/ should fail with 401 for expired AuthN', async () => {
@@ -104,10 +105,10 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .set('Authorization', `Bearer ${expiredToken}`)
                 .expect('content-type', /json/)
                 .expect(401)
-            expect(response.headers["content-type"]).toMatch(/json/)
+            expect(response.headers['content-type']).toMatch(/json/)
             expect(response.status).toEqual(401)
             expect(response.body.status).toEqual(401)
-            expect(response.body.message).toEqual("jwt expired")
+            expect(response.body.message).toEqual('jwt expired')
         })
 
         it('GET /fields/ should succeed with 200 and return [] for a fresh and empty DB as Guest', async () => {
@@ -117,7 +118,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('content-type', /json/)
                 .expect(200, [])
-            expect(response.headers["content-type"]).toMatch(/json/)
+            expect(response.headers['content-type']).toMatch(/json/)
             expect(response.status).toEqual(200)
             expect(response.body).toEqual([])
         })
@@ -129,7 +130,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect('content-type', /json/)
                 .expect(200, [])
-            expect(response.headers["content-type"]).toMatch(/json/)
+            expect(response.headers['content-type']).toMatch(/json/)
             expect(response.status).toEqual(200)
             expect(response.body).toEqual([])
         })
@@ -141,7 +142,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .expect('content-type', /json/)
                 .expect(200, [])
-            expect(response.headers["content-type"]).toMatch(/json/)
+            expect(response.headers['content-type']).toMatch(/json/)
             expect(response.status).toEqual(200)
             expect(response.body).toEqual([])
         })
@@ -150,43 +151,43 @@ describe('/fields/ HTTP integration Tests', async function () {
             const response = await request(app)
                 .post('/fields/')
                 .send(fieldA)
-                .set('Accept', "application/json")
+                .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect(401)
-            expect(response.headers["content-type"]).toMatch(/json/)
+            expect(response.headers['content-type']).toMatch(/json/)
             expect(response.status).toEqual(401)
             expect(response.body.status).toEqual(401)
-            expect(response.body.message).toEqual("unauthorized")
+            expect(response.body.message).toEqual('unauthorized')
         })
 
         it('post /fields with name should fail with 401 because of missing authZ ', async () => {
             const response = await request(app)
                 .post('/fields/')
                 .send(fieldA)
-                .set('Accept', "application/json")
+                .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .expect(201, '')
-            expect(response.headers["location"]).toEqual("/fields/1")
-            expect(response.headers["etag"]).toEqual(sha256(JSON.stringify(fieldA)))
+            expect(response.headers['location']).toEqual('/fields/1')
+            expect(response.headers['etag']).toEqual(sha256(JSON.stringify(fieldA)))
         })
 
         it('Post /fields with name', async () => {
             const response = await request(app)
                 .post('/fields/')
                 .send(fieldB)
-                .set('Accept', "application/json")
+                .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .expect(201, '')
-                .expect("location", "/fields/2")
-            expect(response.headers["location"]).toEqual("/fields/2")
-            expect(response.headers["etag"]).toEqual(sha256(JSON.stringify(fieldB)))
+                .expect('location', '/fields/2')
+            expect(response.headers['location']).toEqual('/fields/2')
+            expect(response.headers['etag']).toEqual(sha256(JSON.stringify(fieldB)))
         })
 
         it('Post /fields without name fails', async () => {
             const response = await request(app)
                 .post('/fields/')
                 .send({})
-                .set('Accept', "application/json")
+                .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .expect('Content-Type', /json/)
                 .expect(400)
@@ -199,7 +200,7 @@ describe('/fields/ HTTP integration Tests', async function () {
         it('Post /fields with extra attributes fails', async () => {
             const response = await request(app)
                 .post('/fields/')
-                .send({ "name": "Sonstiges", "extra": "bla" })
+                .send({ 'name': 'Sonstiges', 'extra': 'bla' })
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -212,7 +213,7 @@ describe('/fields/ HTTP integration Tests', async function () {
         it('Post /fields with invalid name type fails (array)', async () => {
             const response = await request(app)
                 .post('/fields/')
-                .send({ "name": {} })
+                .send({ 'name': {} })
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .expect('Content-Type', /json/)
@@ -232,8 +233,8 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.status).toBe(200)
             expect(response.body).toEqual(
                 [
-                    { "meta": { "location": "/fields/2", "etag": etagB }, "data": fieldB },
-                    { "meta": { "location": "/fields/1", "etag": etagA }, "data": fieldA }
+                    { 'meta': { 'location': '/fields/2', 'etag': etagB }, 'data': fieldB },
+                    { 'meta': { 'location': '/fields/1', 'etag': etagA }, 'data': fieldA }
                 ])
         })
     })
@@ -247,7 +248,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, fieldB)
-            expect(response.headers['location']).toEqual("/fields/2")
+            expect(response.headers['location']).toEqual('/fields/2')
             expect(response.headers['etag']).toEqual(etagB)
         })
 
@@ -259,7 +260,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe("not found")
+            expect(response.body.message).toBe('not found')
             expect(response.body.errors).toBeNull
         })
 
@@ -271,7 +272,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)
-            expect(response.body.message).toMatch("must be >= 1")
+            expect(response.body.message).toMatch('must be >= 1')
             expect(response.body.errors).toBeNull
         })
 
@@ -283,7 +284,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)
-            expect(response.body.message).toMatch("must be integer")
+            expect(response.body.message).toMatch('must be integer')
             expect(response.body.errors).toBeInstanceOf(Array)
         })
     })
@@ -297,8 +298,8 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, fieldB)
-            expect(response.headers["location"]).toEqual("/fields/2")
-            expect(response.headers["etag"]).toEqual(etagB)
+            expect(response.headers['location']).toEqual('/fields/2')
+            expect(response.headers['etag']).toEqual(etagB)
         })
 
         it('Put /fields/{id} of existing field fails with 401 with Guest ', async () => {
@@ -311,7 +312,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .send(fieldC)
                 .expect(401)
             expect(response.body.status).toBe(401)
-            expect(response.body.message).toMatch("unauthorized")
+            expect(response.body.message).toMatch('unauthorized')
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
@@ -325,7 +326,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .send(fieldC)
                 .expect(401)
             expect(response.body.status).toBe(401)
-            expect(response.body.message).toMatch("unauthorized")
+            expect(response.body.message).toMatch('unauthorized')
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
@@ -364,7 +365,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .send(fieldC)
                 .expect(412)
             expect(response.body.status).toBe(412)
-            expect(response.body.message).toMatch("Precondition failed")
+            expect(response.body.message).toMatch('Precondition failed')
         })
     })
 
@@ -378,7 +379,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect('Content-Type', /json/)
                 .expect(401)
             expect(response.body.status).toBe(401)
-            expect(response.body.message).toBe("unauthorized")
+            expect(response.body.message).toBe('unauthorized')
             expect(response.body.errors).toBeNull
         })
         
@@ -390,7 +391,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect('Content-Type', /json/)
                 .expect(401)
             expect(response.body.status).toBe(401)
-            expect(response.body.message).toBe("unauthorized")
+            expect(response.body.message).toBe('unauthorized')
             expect(response.body.errors).toBeNull
         })
 
@@ -410,7 +411,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe("not found")
+            expect(response.body.message).toBe('not found')
             expect(response.body.errors).toBeNull
         })
 
@@ -422,7 +423,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)
-            expect(response.body.message).toMatch("must be >= 1")
+            expect(response.body.message).toMatch('must be >= 1')
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
@@ -434,7 +435,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)
-            expect(response.body.message).toMatch("must be >= 1")
+            expect(response.body.message).toMatch('must be >= 1')
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
@@ -446,7 +447,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect('Content-Type', /json/)
                 .expect(400)
             expect(response.body.status).toBe(400)
-            expect(response.body.message).toMatch("must be integer")
+            expect(response.body.message).toMatch('must be integer')
             expect(response.body.errors).toBeInstanceOf(Array)
         })
     })
