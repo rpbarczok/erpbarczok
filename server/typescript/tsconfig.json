@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "outDir": "../ecmascript",
+    "module": "nodenext",
+  },
+  "strict": true,
+}

@@ -13,7 +13,7 @@
     "create_openapi_spec": "tsx create-openapi-spec.ts",
     "create_types": "npm run create_openapi_spec && mkdir -p client/types && npx openapicmd typegen client/utils/openapi.json > client/types/openapi.d.ts",
     "build_client": "npm run create_types && webpack --config webpack.prod.js",
-    "build_server": "cd server && rm -fR ecmascript && npx tsc",
+    "build_server": "cd server/typescript && rm -fR ecmascript && npx tsc",
     "start_test_db": "npm run stop_test_db ; docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",
     "stop_test_db": "docker kill testdb",
     "ecma_test": "npx mocha --config mocha-ecmascript-rc.cjs",

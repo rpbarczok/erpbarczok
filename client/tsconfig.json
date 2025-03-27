@@ -1,5 +1,4 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
     "noEmit": true,
@@ -9,9 +8,8 @@
     ],
     "target": "ES2022",
     "moduleResolution": "nodenext",
-    "module": "NodeNext"
+    "module": "NodeNext",
+    "jsx": "react-jsxdev",
   },
-  "exclude": [
-    "../server/typescript/**/*",
-  ]
+  "strict": true
 }
