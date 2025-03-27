@@ -12,6 +12,6 @@
     "module": "NodeNext"
   },
   "exclude": [
-    "server/typescript/**/*",
+    "../server/typescript/**/*",
   ]
 }
