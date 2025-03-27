@@ -1,12 +1,12 @@
 import { Col, Form, Row } from 'react-bootstrap'
 import { ChangedCompanyAction } from './company.reducer.js'
 import { Company } from './companies.js'
-import { DataWithMeta } from 'components/forms.jsx'
-import { CompanyType } from 'components/resources/companyTypes/companyTypes.js'
+import { DataWithMeta } from '../../components/forms.jsx'
+import { CompanyType } from '../../components/resources/companyTypes/companyTypes.js'
 import { CompanyTypesDropdown } from './companyTypesDropdown.companies.jsx'
 import { hasPermission } from '../../utils/hasPermission.js'
-import { PermissionContext } from 'utils/permissionContext.js'
-import { useContextThrowUndefined } from 'utils/contextUndefined.js'
+import { PermissionContext } from '../../utils/permissionContext.js'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 
 interface InputCompaniesComponent {
     companyTypesList: DataWithMeta<CompanyType>[]

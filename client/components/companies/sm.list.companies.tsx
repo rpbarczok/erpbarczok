@@ -1,4 +1,4 @@
-import { DataWithMeta } from 'components/forms.jsx'
+import { DataWithMeta } from '../../components/forms.jsx'
 import { Company } from './companies.jsx'
 import { ListGroup } from 'react-bootstrap'
 

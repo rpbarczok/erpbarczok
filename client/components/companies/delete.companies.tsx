@@ -1,13 +1,13 @@
-import { apiClient } from 'utils/openAPIClientAxios.js'
+import { apiClient } from '../../utils/openAPIClientAxios.js'
 import { Company } from './companies.js'
-import { DataWithMeta } from 'components/forms.js'
-import { Note } from 'components/notifiers/notifiers.js'
+import { DataWithMeta } from '../../components/forms.js'
+import { Note } from '../../components/notifiers/notifiers.js'
 import React from 'react'
 import { Button } from 'react-bootstrap'
 import { useAuth } from 'react-oidc-context'
-import { useContextThrowUndefined } from 'utils/contextUndefined.js'
-import { PermissionContext, updateUserPermissions } from 'utils/permissionContext.js'
-import { LoadingContext } from 'utils/loadingContext.js'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
+import { LoadingContext } from '../../utils/loadingContext.js'
 
 interface DeleteCompanyComponent {
     company: DataWithMeta<Company>
