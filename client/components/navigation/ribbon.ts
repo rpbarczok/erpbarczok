@@ -44,7 +44,7 @@ const formArray: Form[] = [
     { name: 'Reklamationen', id: 'reklForm', group: 'rekl', scopes: 'public', order: 0 },
     { name: 'Belastungen', id: 'belForm', group: 'rekl', scopes: 'public', order: 1 },
     { name: 'Gutschriften', id: 'gutForm', group: 'rekl', scopes: 'public', order: 2 },
-    { name: 'Rechnung', id: 'rechForm', group: 'rech', scopes: 'public', order: 0 },
+    { name: 'Rechnungen', id: 'rechForm', group: 'rech', scopes: 'public', order: 0 },
     { name: 'Resources', id: 'resForm', group: 'admin', scopes: 'admin', order: 0 }]
 
 //* List of all Groups in Ribbon *//
@@ -53,7 +53,6 @@ const groupArray: FormGroup[] = [
     { name: 'Stammdaten', id: 'stamm', order: 1 },
     { name: 'Artikel', id: 'art', order: 2 },
     { name: 'Aufträge', id: 'auf', order: 3 },
-    { name: 'Lager', id: 'lag', order: 6 },
     { name: 'Reklamationen', id: 'rekl', order: 7 },
     { name: 'Lieferungen', id: 'lief', order: 4 },
     { name: 'Spedition/ER', id: 'sped', order: 5 },
