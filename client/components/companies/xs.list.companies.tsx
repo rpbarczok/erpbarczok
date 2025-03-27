@@ -1,11 +1,11 @@
-import { DataWithMeta } from 'components/forms.jsx'
+import { DataWithMeta } from '../../components/forms.jsx'
 import { Company } from './companies.jsx'
 import { Button, Col, Container, ListGroup, Row } from 'react-bootstrap'
 import { XSEditCompanies } from './xs.edit.companies.jsx'
 import { useState } from 'react'
 import { ChangedCompanyAction } from './company.reducer.js'
-import { CompanyType } from 'components/resources/companyTypes/companyTypes.js'
-import { Note } from 'components/notifiers/notifiers.js'
+import { CompanyType } from '../../components/resources/companyTypes/companyTypes.js'
+import { Note } from '../../components/notifiers/notifiers.js'
 
 interface XSListCompaniesComponent {
     filteredCompanies: DataWithMeta<Company>[]

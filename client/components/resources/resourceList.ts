@@ -1,6 +1,6 @@
 import { Field } from './fields/fields.js'
 import { CompanyType } from './companyTypes/companyTypes.js'
-import { DataWithMeta } from 'components/forms.js'
+import { DataWithMeta } from '../../components/forms.js'
 
 export interface Resource {
     name: string

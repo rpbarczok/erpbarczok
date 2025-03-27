@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { apiClient } from '../../../utils/openAPIClientAxios.js'
-import { DataWithMeta } from 'components/forms.jsx'
+import { DataWithMeta } from '../../../components/forms.jsx'
 import { CompanyType } from './companyTypes.js'
 import { removeBeforeLastDigits } from '../../../utils/removeBeforeLastDigits.js'
 import { useAuth } from 'react-oidc-context'
