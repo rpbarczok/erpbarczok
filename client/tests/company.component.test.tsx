@@ -22,6 +22,8 @@ describe('Company Form Test', (): void => {
 
     describe('Company Edit', (): void => {
         describe('company edit modal SM', (): void => {
+
+            
             it('displays correctly all labels', (): void => {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
