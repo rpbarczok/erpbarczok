@@ -1,18 +1,18 @@
-import { PermissionContext } from "utils/permissionContext.js"
+import { PermissionContext } from "../utils/permissionContext.js"
 import { render } from "./utils/contextWrapper.js"
-import { AddCompanyModal } from "components/companies/add.companies.js"
+import { AddCompanyModal } from "../components/companies/add.companies.js"
 import { expect } from "expect"
 import { cleanup, screen } from '@testing-library/react';
 import { emptyCompany } from "components/companies/companies.js";
 import { noop, asyncNoop, companyTestList, companyTestTypesList, emptyList } from "./utils/testdata.js";
-import { SMFormCompanies } from "components/companies/sm.form.companies.js";
-import { XSFormCompanies } from "components/companies/xs.form.companies.js";
-import { XSEditCompanies } from "components/companies/xs.edit.companies.js";
-import { SMEditCompanies } from "components/companies/sm.edit.companies.js";
-import { XSListCompanies } from "components/companies/xs.list.companies.js";
-import { SMListCompanies } from "components/companies/sm.list.companies.js";
-import { SMSearchCompanies } from "components/companies/sm.search.companies.js";
-import { XSSearchCompanies } from "components/companies/xs.search.companies.js";
+import { SMFormCompanies } from "../components/companies/sm.form.companies.js";
+import { XSFormCompanies } from "../components/companies/xs.form.companies.js";
+import { XSEditCompanies } from "../components/companies/xs.edit.companies.js";
+import { SMEditCompanies } from "../components/companies/sm.edit.companies.js";
+import { XSListCompanies } from "../components/companies/xs.list.companies.js";
+import { SMListCompanies } from "../components/companies/sm.list.companies.js";
+import { SMSearchCompanies } from "../components/companies/sm.search.companies.js";
+import { XSSearchCompanies } from "../components/companies/xs.search.companies.js";
 
 afterEach(cleanup)
 
