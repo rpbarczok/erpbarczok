@@ -84,12 +84,6 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
                         <Button className='standardDesign' variant='outline-primary' disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
                     </ButtonGroup>
                 </Row>
-                <Row className='d-block d-sm-none'>
-                    <ButtonGroup className='standardDesign float-end' vertical>
-                        <Button type='submit' className='standardDesign' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
-                        <Button className='standardDesign' variant='outline-primary' disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
-                    </ButtonGroup>
-                </Row>
             </>
         )
     }

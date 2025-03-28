@@ -1,52 +1,98 @@
-// import React from 'react';
-// import { render, screen } from '@testing-library/react';
-// import { expect } from 'expect';
-// import { useState } from 'react';
-// import { Form, FormNav, FormTab } from '../components/navigation/ribbon.js';
-// import { RibbonNavigation } from '../components/navigation/ribbon.navigation.js';
-// import { PermissionContext } from '../utils/permissionContext.js';
-// import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
-// import { WebStorageStateStore } from 'oidc-client-ts';
+import { screen } from '@testing-library/react';
+import { expect } from 'expect';
+import { FormTab } from '../components/navigation/ribbon.js';
+import { RibbonNavigation } from '../components/navigation/ribbon.navigation.js';
+import { PermissionContext } from '../utils/permissionContext.js';
+import { render } from './utils/contextWrapper.js';
+import { TabsNavigation } from 'components/navigation/tabs.navigation.js';
 
-// const startPage: FormTab = { name: 'Stammdaten', id: 'stammForm' }
+const startForm: FormTab = { name: 'Stammdaten', id: 'stammForm' }
+const anfForm: FormTab = { name: 'Anfragen', id: 'anfForm' }
 
-// describe('Navigation Component Test', (): void => {
-//     describe('Navigation Ribbon Test', (): void => {
+const groupsListPublic = [
+    "Startseite",
+    "Stammdaten",
+    "Artikel",
+    "Aufträge",
+    "Reklamationen",
+    "Lieferungen",
+    "Spedition/ER",
+    "Rechnungen"
+]
 
+const groupsListUser = [...groupsListPublic]
 
-//         it('displays the ribbon navigation', async (): Promise<void> => {
-//             // Arrange
-//             const tabs = [startPage]
-//             const setTabs = () => { }
-//             const setActiveForm = () => { }
-//             const theme = 'light'
-//             const setTheme = () => { }
+const groupsListAdmin = [...groupsListUser, "Resources"]
 
-//             const oidcConfig: AuthProviderProps = {
-//                 authority: 'test',
-//                 client_id: 'test',
-//                 redirect_uri: 'test',
-//                 userStore: new WebStorageStateStore({ store: window.localStorage }),
-//                 scope: "openid profile email admin user",
-//                 extraQueryParams: {
-//                     audience: 'test'
-//                 }
-//             }
+const permissionGroups = {
+    public: groupsListPublic,
+    user: groupsListUser,
+    admin: groupsListAdmin
+}
 
-//             // Act
-//             render(
-//                 <AuthProvider { ...oidcConfig }>
-//                 <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: () => { } }}>
-//                     <RibbonNavigation
-//                         tabs={tabs} setTabs={setTabs}
-//                         setActiveForm={setActiveForm}
-//                         theme={theme} setTheme={setTheme}
-//                     />
-//                 </PermissionContext.Provider>
-//                 </AuthProvider >
-//             )
-//         // Assert
-        
-//     })
-// })
-// })
+const forbiddenGroupsAdmin = []
+const forbiddenGroupsUser = [...forbiddenGroupsAdmin]
+const forbiddenGroupsPublic = [...forbiddenGroupsUser]
+
+const forbiddenGroups = {
+    public: forbiddenGroupsPublic,
+    user: forbiddenGroupsUser,
+    admin: forbiddenGroupsAdmin
+}
+
+const noob = () => { }
+
+describe('Navigation Component Test', (): void => {
+
+    describe('Navigation Ribbon Test with permissions"', (): void => {
+
+        // Arrange
+        const tabs = [startForm]
+        const theme = 'light'
+
+        for (const permission in permissionGroups) {
+
+            it(`displays the ribbon navigation for ${permission}`, async (): Promise<void> => {
+                // Act
+                render(
+                    <PermissionContext.Provider value={{ permissions: [permission], setPermissions: () => { } }}>
+                        <RibbonNavigation
+                            tabs={tabs} setTabs={noob}
+                            setActiveForm={noob}
+                            theme={theme} setTheme={noob}
+                        />
+                    </PermissionContext.Provider>
+                )
+
+                // Assert
+                for (const group of permissionGroups[permission]) {
+                    expect(screen.getByText(group)).not.toBeNull()
+                }
+
+                for (const group of forbiddenGroups[permission]) {
+                    expect(screen.queryByText(group)).toBeNull()
+                }
+            })
+        }
+    })
+
+    describe('displays the tab navigation', (): void => {
+        it('displays the tab navigation', async (): Promise<void> => {
+            // Arrange
+            const tabs = [startForm, anfForm]
+            const activeForm = anfForm
+            // Act
+            render( 
+                <TabsNavigation
+                    tabs={tabs} setTabs={noob}
+                    activeForm={activeForm} setActiveForm={noob}
+            />
+            )
+            // Assert 
+            expect(screen.getByText('Anfragen')).not.toBeNull()
+            expect(screen.getByText('Stammdaten')).not.toBeNull()
+            expect(document.getElementsByClassName('active')[0].textContent).toBe('Anfragen ')
+        })
+
+    })
+})

@@ -65,7 +65,7 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
         } else {
             setIsLoading(true)
             const client = await apiClient
-            client.getCompanyById(active, null, { headers: { Authorization: `Bearer ${token}` } })
+            return client.getCompanyById(active, null, { headers: { Authorization: `Bearer ${token}` } })
                 .then(
                     result => {
                         if (result.data) {

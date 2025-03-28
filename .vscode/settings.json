@@ -17,6 +17,8 @@
         "hstore",
         "jwks",
         "liefschein",
+        "nodenext",
+        "noob",
         "oidc",
         "openapi",
         "openapicmd",

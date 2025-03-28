@@ -12,38 +12,33 @@ interface XSListCompaniesComponent {
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
     activeCompany: DataWithMeta<Company>
-    handleChangeActive: (active: number) => void
+    handleChangeActive: (active: number) => Promise<void>
     companyTypesList: DataWithMeta<CompanyType>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     addEditNote: (note: Note) => void
 }
 
 export const XSListCompanies = ({ filteredCompanies, changedCompany, changedCompanyDispatch, activeCompany, companyTypesList, setIsCompanyChanged, handleChangeActive, addEditNote }: XSListCompaniesComponent) => {
+
     const [show, setShow] = useState(false)
-    const handleOpenModal = (e: React.MouseEvent<Element, MouseEvent>, location: number) => {
+
+    const handleOpenModal = async (e: React.MouseEvent<Element, MouseEvent>, location: number) => {
         e.preventDefault
-        handleChangeActive(location)
+        await handleChangeActive(location)
         setShow(true)
     }
+
+
     const List = () => {
 
-        if (filteredCompanies.length === 0) {
+        return filteredCompanies.map((element) => {
             return (
-                <p>Keine Unternehmen gefunden!</p>
-            )
-        } else {
-            return filteredCompanies.map((element) => {
-
-                return (
-                    <>
-                        <ListGroup.Item key={element.meta.location} onClick={(e) => handleOpenModal(e, element.meta.location)}>
-                            {element.data.name + (element.data.abbr ? ' (' + element.data.abbr + ')' : '')}
-                        </ListGroup.Item>
-                    </>
-                )
-            }
+                <ListGroup.Item key={element.meta.location} onClick={(e) => handleOpenModal(e, element.meta.location)}>
+                    {element.data.name + (element.data.abbr ? ' (' + element.data.abbr + ')' : '')}
+                </ListGroup.Item>
             )
         }
+        )
     }
 
 
@@ -51,18 +46,19 @@ export const XSListCompanies = ({ filteredCompanies, changedCompany, changedComp
     return (
         <>
             <div className='flex-grow-1 d-flex flex-column' style={{ overflowY: 'hidden', marginTop: '10px' }}>
-                <ListGroup id='company-list' style={{ overflowY: 'scroll' }}>
-                    <List />
+                <ListGroup key='company-list-xs' id='company-list-xs' style={{ overflowY: 'scroll' }}>
+                    {filteredCompanies.length > 0 ? <List /> : ''}
                 </ListGroup >
+                <XSEditCompanies
+                    key={activeCompany.meta.location}
+                    show={show} setShow={setShow}
+                    companyTypesList={companyTypesList}
+                    addEditNote={addEditNote}
+                    setIsCompanyChanged={setIsCompanyChanged}
+                    changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
+                    activeCompany={activeCompany}
+                />
             </div>
-            <XSEditCompanies
-                show={show} setShow={setShow}
-                companyTypesList={companyTypesList}
-                addEditNote={addEditNote}
-                setIsCompanyChanged={setIsCompanyChanged}
-                changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-                activeCompany={activeCompany}
-            />
         </>
     )
 }
