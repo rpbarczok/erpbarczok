@@ -85,7 +85,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
     const UserButtons = () => {
         if (hasPermission(['user'], permissions)) {
             return (<ButtonGroup className='w-100'>
-                <Button size='sm' variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Undo</Button>
+                <Button size='sm' variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Rückgängig</Button>
                 <Button size='sm' type='submit' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
                 <DeleteCompanies
                     company={changedCompany}

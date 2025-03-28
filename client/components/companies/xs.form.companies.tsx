@@ -19,7 +19,7 @@ interface XSFormCompaniesComponent {
     setSearch: React.Dispatch<React.SetStateAction<string>>
     filteredCompanies: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>
-    handleChangeActive: (active: number) => void
+    handleChangeActive: (active: number) => Promise<void>
     companyTypesList: DataWithMeta<CompanyType>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>

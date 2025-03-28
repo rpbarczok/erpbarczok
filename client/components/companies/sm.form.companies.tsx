@@ -1,4 +1,3 @@
-import React from 'react'
 import { Row, Col, ButtonGroup, Button } from 'react-bootstrap'
 import { SMSearchCompanies } from './sm.search.companies.jsx'
 import { DataWithMeta } from '../../components/forms.jsx'

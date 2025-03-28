@@ -40,7 +40,7 @@ const forbiddenGroups = {
     admin: forbiddenGroupsAdmin
 }
 
-const noob = () => { }
+const noop = () => { }
 
 describe('Navigation Component Test', (): void => {
 
@@ -57,9 +57,9 @@ describe('Navigation Component Test', (): void => {
                 render(
                     <PermissionContext.Provider value={{ permissions: [permission], setPermissions: () => { } }}>
                         <RibbonNavigation
-                            tabs={tabs} setTabs={noob}
-                            setActiveForm={noob}
-                            theme={theme} setTheme={noob}
+                            tabs={tabs} setTabs={noop}
+                            setActiveForm={noop}
+                            theme={theme} setTheme={noop}
                         />
                     </PermissionContext.Provider>
                 )
@@ -84,8 +84,8 @@ describe('Navigation Component Test', (): void => {
             // Act
             render( 
                 <TabsNavigation
-                    tabs={tabs} setTabs={noob}
-                    activeForm={activeForm} setActiveForm={noob}
+                    tabs={tabs} setTabs={noop}
+                    activeForm={activeForm} setActiveForm={noop}
             />
             )
             // Assert 

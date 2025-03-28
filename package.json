@@ -10,19 +10,24 @@
     "stop_dev_db": "docker kill devdb; sleep 2",
     "start_dev_db": "npm run stop_dev_db ; docker run --name devdb -e POSTGRES_PASSWORD='blablubber' -p 8082:5432 -d --rm postgres:17.2-alpine3.20",
     "start": "dotenvx run -f .env -- npm run create_types && npm run start_dev_db && concurrently \"npm run server\" \"npm run client\"",
+
     "create_openapi_spec": "tsx create-openapi-spec.ts",
     "create_types": "npm run create_openapi_spec && mkdir -p client/types && npx openapicmd typegen client/utils/openapi.json > client/types/openapi.d.ts",
     "build_client": "npm run create_types && webpack --config webpack.prod.js",
     "build_server": "cd server/typescript && rm -fR ecmascript && npx tsc",
+
     "start_test_db": "npm run stop_test_db ; docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",
     "stop_test_db": "docker kill testdb",
     "ecma_test": "npx mocha --config mocha-ecmascript-rc.cjs",
     "ts_test": "cd server && npx mocha  --config mocha-typescript-rc.cjs",
-    "test": "npm run start_test_db && npm run ts_test && npm run stop_test_db",
     "test_frontend": "cd client && npx mocha --config ./mocha-typescript-rc.cjs './**/*.test.{ts,tsx}'",
+    "test_backend": "npm run ts_test",
+    "test": "npm run start_test_db && npm run ts_test && npm run test_frontend && npm run stop_test_db",
+
     "pure_build": "npm run build_client && npm run build_server && npm run ecma_test",
     "build": "npm run start_test_db && npm run pure_build && npm run stop_test_db",
     "docker_build": "npm run start_test_db && docker buildx build --load -t erpbarczok:latest --network host . && npm run stop_test_db",
+
     "docker": "docker compose up"
   },
   "author": "Ralph Barczok",

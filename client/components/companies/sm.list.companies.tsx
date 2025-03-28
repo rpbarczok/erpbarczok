@@ -30,7 +30,7 @@ export const SMListCompanies = ({ filteredCompanies, activeCompany, handleChange
     }
 
     return (
-        <ListGroup className='scrollBox standardDesign d-none d-sm-block' style={{ marginTop: '10px'}} id = 'company-list' >
-    <List />
+        <ListGroup className='scrollBox standardDesign d-none d-sm-block' style={{ marginTop: '10px' }} id='company-list' >
+            <List />
         </ListGroup >)
 }

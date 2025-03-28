@@ -6,7 +6,7 @@ import { ThemeContext } from 'utils/themeContext.js';
 import { LoadingContext } from 'utils/loadingContext.js';
 
 const theme = 'light'
-const noob = () => { }
+const noop = () => { }
 const oidcConfig: AuthProviderProps = {
     authority: 'test',
     client_id: 'test',
@@ -22,7 +22,7 @@ const AllTheProviders = ({ children }: { children: React.ReactNode, permission: 
     return (
         <AuthProvider {...oidcConfig}>
             <ThemeContext.Provider value={theme}>
-                <LoadingContext.Provider value={{ isLoading: false, setIsLoading: noob }}>
+                <LoadingContext.Provider value={{ isLoading: false, setIsLoading: noop }}>
                     {children}
                 </LoadingContext.Provider>
             </ThemeContext.Provider>

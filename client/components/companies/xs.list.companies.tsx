@@ -47,7 +47,7 @@ export const XSListCompanies = ({ filteredCompanies, changedCompany, changedComp
         <>
             <div className='flex-grow-1 d-flex flex-column' style={{ overflowY: 'hidden', marginTop: '10px' }}>
                 <ListGroup key='company-list-xs' id='company-list-xs' style={{ overflowY: 'scroll' }}>
-                    {filteredCompanies.length > 0 ? <List /> : ''}
+                    {filteredCompanies.length > 0 ? <List /> : <span>Keine Unternehmen gefunden</span>}
                 </ListGroup >
                 <XSEditCompanies
                     key={activeCompany.meta.location}
