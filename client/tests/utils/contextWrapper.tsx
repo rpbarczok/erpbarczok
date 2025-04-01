@@ -1,9 +1,9 @@
 import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
-import { WebStorageStateStore } from 'oidc-client-ts';
-import React, { ReactElement } from 'react';
+import { LoadingContext } from 'utils/loadingContext.js';
+import { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { ThemeContext } from 'utils/themeContext.js';
-import { LoadingContext } from 'utils/loadingContext.js';
+import { WebStorageStateStore } from 'oidc-client-ts';
 
 const theme = 'light'
 const noop = () => { }

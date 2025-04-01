@@ -1,4 +1,4 @@
-import { Company } from "../../components/companies/companies.jsx"
+import { Company } from "../../components/companies/CompanyFormBasis.js"
 import { DataWithMeta } from "../../components/forms.jsx"
 
 export const noop = () => { }

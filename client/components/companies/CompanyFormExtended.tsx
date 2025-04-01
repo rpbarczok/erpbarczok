@@ -1,25 +1,29 @@
-import { SMFormCompanies } from './sm.form.companies.jsx'
-import { XSFormCompanies } from './xs.form.companies.jsx'
-import { DataWithMeta } from '../../components/forms.jsx'
-import { Company, emptyCompany } from './companies.jsx'
-import { useEffect, useReducer, useState } from 'react'
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { useAuth } from 'react-oidc-context'
-import { removeBeforeLastDigits } from '../../utils/removeBeforeLastDigits.js'
-import { CompanyType } from '../../components/resources/companyTypes/companyTypes.js'
-import { changedCompanyReducer } from './company.reducer.js'
-import { Row } from 'react-bootstrap'
-import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
+import { changedCompanyReducer } from './changedCompanyReducer.js'
+import { Company, emptyCompany } from './CompanyFormBasis.jsx'
+import { CompanySMForm } from './CompanySMForm.jsx'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyXSForm } from './CompanyXSForm.jsx'
+import { DataWithMeta } from '../forms.js'
 import { LoadingContext } from '../../utils/loadingContext.js'
+import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
+import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLastDigits.js'
+import { Row } from 'react-bootstrap'
+import { useAuth } from 'react-oidc-context'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { useEffect, useReducer, useState } from 'react'
 
-interface FormCompaniesComponent {
+interface CompanyFormExtendedInterface {
     companiesList: DataWithMeta<Company>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     companyTypesList: DataWithMeta<CompanyType>[]
 }
 
-export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyChanged }: FormCompaniesComponent) => {
+export const CompanyFormExtended = (
+    { companiesList,
+        companyTypesList,
+        setIsCompanyChanged }: CompanyFormExtendedInterface) => {
+
     const [search, setSearch] = useState<string>('') // Content of the search input field
     const [listFiltered, setListFiltered] = useState(companiesList)
     const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>(emptyCompany)
@@ -48,10 +52,10 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
         })
 
         if (newList.length === 0) {
-            handleChangeActive(0)
+            changeActive(0)
         } else {
             if (!newList.some((e) => e.meta.location === activeCompany.meta.location)) {
-                handleChangeActive(newList[0].meta.location)
+                changeActive(newList[0].meta.location)
             }
         }
 
@@ -59,7 +63,7 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
         setIsNew(false)
     }, [search, companiesList])
 
-    async function handleChangeActive(active: number) {
+    async function changeActive(active: number) {
         if (active === 0 || active === undefined) {
             setActiveCompany(emptyCompany)
         } else {
@@ -69,7 +73,7 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
                 .then(
                     result => {
                         if (result.data) {
-                            const company = { 'meta': { 'location': Number(removeBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
+                            const company = { 'meta': { 'location': Number(removeStringBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
                             setActiveCompany(company)
                             changedCompanyDispatch({ type: 'companyChange', newValue: company })
                         }
@@ -87,11 +91,11 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
     return (
         <>
             <Row className='d-none d-sm-flex flex-grow-1 flex-column' style={{ overflowY: 'scroll' }}>
-                <SMFormCompanies
+                <CompanySMForm
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}
                     activeCompany={activeCompany}
-                    handleChangeActive={handleChangeActive}
+                    changeActive={changeActive}
                     companyTypesList={companyTypesList}
                     setIsCompanyChanged={setIsCompanyChanged}
                     setIsNew={setIsNew}
@@ -99,11 +103,11 @@ export const FormCompanies = ({ companiesList, companyTypesList, setIsCompanyCha
                 />
             </Row>
             <Row className='d-sm-none flex-grow-1 d-flex flex-column' style={{ overflowY: 'hidden' }}>
-                <XSFormCompanies
+                <CompanyXSForm
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}
                     activeCompany={activeCompany}
-                    handleChangeActive={handleChangeActive}
+                    changeActive={changeActive}
                     companyTypesList={companyTypesList}
                     setIsCompanyChanged={setIsCompanyChanged}
                     setIsNew={setIsNew}

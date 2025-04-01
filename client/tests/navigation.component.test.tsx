@@ -1,10 +1,10 @@
-import { screen } from '@testing-library/react';
 import { expect } from 'expect';
 import { FormTab } from '../components/navigation/ribbon.js';
-import { RibbonNavigation } from '../components/navigation/ribbon.navigation.js';
+import { NavigationRibbon } from '../components/navigation/NavigationRibbon.jsx';
+import { NavigationTabs } from 'components/navigation/NavigationTabs.jsx';
 import { PermissionContext } from '../utils/permissionContext.js';
 import { render } from './utils/contextWrapper.js';
-import { TabsNavigation } from 'components/navigation/tabs.navigation.js';
+import { screen } from '@testing-library/react';
 
 const startForm: FormTab = { name: 'Stammdaten', id: 'stammForm' }
 const anfForm: FormTab = { name: 'Anfragen', id: 'anfForm' }
@@ -56,7 +56,7 @@ describe('Navigation Component Test', (): void => {
                 // Act
                 render(
                     <PermissionContext.Provider value={{ permissions: [permission], setPermissions: () => { } }}>
-                        <RibbonNavigation
+                        <NavigationRibbon
                             tabs={tabs} setTabs={noop}
                             setActiveForm={noop}
                             theme={theme} setTheme={noop}
@@ -83,7 +83,7 @@ describe('Navigation Component Test', (): void => {
             const activeForm = anfForm
             // Act
             render( 
-                <TabsNavigation
+                <NavigationTabs
                     tabs={tabs} setTabs={noop}
                     activeForm={activeForm} setActiveForm={noop}
             />

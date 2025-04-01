@@ -1,19 +1,19 @@
-import { useState } from 'react'
-import { Button, ButtonGroup, Col, Form, Row } from 'react-bootstrap'
-import { useAuth } from 'react-oidc-context'
-import { ChangedCompanyAction } from './company.reducer.js'
-import { DataWithMeta } from '../../components/forms.jsx'
-import { Company } from './companies.jsx'
-import { CompanyType } from '../../components/resources/companyTypes/companyTypes.js'
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { Note } from '../../components/notifiers/notifiers.jsx'
-import { InputCompanies } from './input.companies.jsx'
+import { Button, ButtonGroup, Col, Form, Row } from 'react-bootstrap'
+import { ChangedCompanyAction } from './changedCompanyReducer.js'
+import { Company } from './CompanyFormBasis.jsx'
+import { CompanyInput } from './CompanyInput.jsx'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { DataWithMeta } from '../forms.js'
 import { hasPermission } from '../../utils/hasPermission.js'
-import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
-import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { LoadingContext } from '../../utils/loadingContext.js'
+import { Note } from '../notifiers/Notes.jsx'
+import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
+import { useAuth } from 'react-oidc-context'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { useState } from 'react'
 
-interface SMEditCompanies {
+interface CompanySMEditInterface {
     company: DataWithMeta<Company>
     companyTypesList: DataWithMeta<CompanyType>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
@@ -22,7 +22,7 @@ interface SMEditCompanies {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged, addEditNote, changedCompany, changedCompanyDispatch }: SMEditCompanies) => {
+export const CompanySMEdit = ({ company, companyTypesList, setIsCompanyChanged, addEditNote, changedCompany, changedCompanyDispatch }: CompanySMEditInterface) => {
     const [validated, setValidated] = useState<boolean>(false)
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
@@ -94,7 +94,7 @@ export const SMEditCompanies = ({ company, companyTypesList, setIsCompanyChanged
                 <Col id='company' sm={12} lg={6} xl={5} >
                     <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
                         {hasPermission(['user'], permissions) ? <ButtonEdit /> : ''}
-                        <InputCompanies
+                        <CompanyInput
                             companyTypesList={companyTypesList}
                             changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch} />
                     </Form>

@@ -6,7 +6,7 @@ import { Context, useContext } from 'react';
     if (value === undefined) {
         const name = context.displayName ?? 'Unnamed' 
         throw new Error(
-            `${name} context consumer was used outside of a context provider.`
+            `${name} context was used outside of a context provider.`
         )
     }
     return value;

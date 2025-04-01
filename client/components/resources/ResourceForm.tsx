@@ -1,27 +1,27 @@
-import React, { useEffect, useState } from 'react'
-import { Resource } from './resourceList.js'
-import { Button, Form, ListGroup, Modal, Row } from 'react-bootstrap'
-import { Notes } from '../../components/notifiers/notifiers.jsx'
-import { useNotifier } from '../../components/notifiers/useNotifier.js'
+import { AddResources } from './ResourceAdd.jsx'
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { removeBeforeLastDigits } from '../../utils/removeBeforeLastDigits.js'
-import { DataWithMeta } from '../../components/forms.jsx'
-import { CompanyType } from './companyTypes/companyTypes.jsx'
-import { Field } from './fields/fields.jsx'
-import { ListItem } from './list.resources.jsx'
-import { useAuth } from 'react-oidc-context'
-import { AddResources } from './add.resources.jsx'
-import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
-import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { CompanyType } from './companyTypes/CompanyTypesInput.js'
+import { DataWithMeta } from '../forms.js'
+import { Field } from './fields/Fields.js'
+import { ListGroup, Row } from 'react-bootstrap'
 import { LoadingContext } from '../../utils/loadingContext.js'
+import { Notes } from '../notifiers/Notes.js'
+import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
+import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLastDigits.js'
+import { Resource } from './resourceList.js'
+import { ResourcesList } from './ResourcesList.jsx'
+import { useAuth } from 'react-oidc-context'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { useEffect, useState } from 'react'
+import { useNotifier } from '../notifiers/useNotifier.js'
 
-interface MainResourcesComponent {
+interface ResourceFormComponent {
     resource: Resource
     isResourceChanged: boolean
     setIsResourceChanged: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const MainResources = ({ resource, isResourceChanged, setIsResourceChanged }: MainResourcesComponent) => {
+export const ResourceForm = ({ resource, isResourceChanged, setIsResourceChanged }: ResourceFormComponent) => {
     const [isItemChanged, setIsItemChanged] = useState(true)
     const [mainNotes, addMainNote, removeMainNote] = useNotifier()
     const [newList, setNewList] = useState<DataWithMeta<CompanyType | Field>[]>([])
@@ -43,7 +43,7 @@ export const MainResources = ({ resource, isResourceChanged, setIsResourceChange
                             const newList = result?.data.map(row => {
                                 const newRow: DataWithMeta<CompanyType | Field> = {
                                     meta: {
-                                        location: Number(removeBeforeLastDigits(row.meta.location)),
+                                        location: Number(removeStringBeforeLastDigits(row.meta.location)),
                                         etag: row.meta.etag
                                     },
                                     data: row.data
@@ -70,7 +70,7 @@ export const MainResources = ({ resource, isResourceChanged, setIsResourceChange
     }, [isItemChanged, isResourceChanged])
 
     const ListResources = newList.map(item => {
-        return <ListItem
+        return <ResourcesList
             key={item.data.name + String(item.meta.location)}
             resource={resource}
             setIsItemChanged={setIsItemChanged}

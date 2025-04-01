@@ -1,5 +1,6 @@
+import { Note } from './Notes.jsx'
 import { useState, useCallback } from 'react'
-import { Note } from './notifiers.jsx'
+
 
 export function useNotifier(): [Note[], (note: Note) => void, (note: Note) => void] {
     const [notes, setNotes] = useState<Note[]>([])

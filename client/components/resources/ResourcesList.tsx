@@ -1,40 +1,34 @@
-import { DataWithMeta } from '../../components/forms.jsx'
-import { CompanyType } from './companyTypes/companyTypes.jsx'
-import { Field, InputFields } from './fields/fields.jsx'
-import { Note, Notes } from '../../components/notifiers/notifiers.jsx'
+import { apiClient } from '../../utils/openAPIClientAxios.js'
+import { Button, ButtonGroup, Form, ListGroup, Modal } from 'react-bootstrap'
+import { CompanyType } from './companyTypes/CompanyTypesInput.js'
+import { DataWithMeta } from '../forms.js'
+import { Field, FieldsInput } from './fields/Fields.js'
+import { CompanyTypesInput } from './companyTypes/CompanyTypesInput.js'
+import { LoadingContext } from '../../utils/loadingContext.js'
+import { Note, Notes } from '../notifiers/Notes.jsx'
+import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { Resource } from './resourceList.js'
 import { useAuth } from 'react-oidc-context'
-import React, { useState } from 'react'
-import { Button, ButtonGroup, Form, ListGroup, Modal } from 'react-bootstrap'
-import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { useNotifier } from '../../components/notifiers/useNotifier.js'
-import { InputCompanyTypes } from './companyTypes/companyTypes.jsx'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
-import { LoadingContext } from '../../utils/loadingContext.js'
+import { useNotifier } from '../notifiers/useNotifier.js'
+import { useState } from 'react'
 
-interface ListItemComponent {
-    item: DataWithMeta<Field | CompanyType>
-    setIsItemChanged: React.Dispatch<React.SetStateAction<boolean>>
-    addMainNote: (note: Note) => void
-    resource: Resource
-}
 
-interface ActiveResourceComponent {
+interface ResourceActiveInterface {
     resource: Resource
     changedItem: DataWithMeta<Field | CompanyType>
     setChangedItem: React.Dispatch<React.SetStateAction<DataWithMeta<Field | CompanyType>>>
 }
 
-const ActiveResource = ({ resource, changedItem, setChangedItem }: ActiveResourceComponent) => {
+const ResourceActive = ({ resource, changedItem, setChangedItem }: ResourceActiveInterface) => {
     switch (resource.name) {
         case 'Beziehung':
-            return <InputCompanyTypes
+            return <CompanyTypesInput
                 companyType={changedItem}
                 setCompanyType={setChangedItem}
             />
         case 'Branche':
-            return <InputFields
+            return <FieldsInput
                 field={changedItem}
                 setField={setChangedItem} />
         default:
@@ -43,7 +37,14 @@ const ActiveResource = ({ resource, changedItem, setChangedItem }: ActiveResourc
 
 }
 
-export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: ListItemComponent) => {
+interface ResourcesListInterface {
+    item: DataWithMeta<Field | CompanyType>
+    setIsItemChanged: React.Dispatch<React.SetStateAction<boolean>>
+    addMainNote: (note: Note) => void
+    resource: Resource
+}
+
+export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }: ResourcesListInterface) => {
     const [show, setShow] = useState(false)
     const [validated, setValidated] = useState<boolean>(false)
     const [changedItem, setChangedItem] = useState<DataWithMeta<CompanyType | Field>>(item)
@@ -151,7 +152,7 @@ export const ListItem = ({ resource, setIsItemChanged, addMainNote, item }: List
                     </Modal.Header>
                     <Modal.Body>
                         <Notes notes={notes} removeNote={removeNote} />
-                        <ActiveResource
+                        <ResourceActive
                             resource={resource}
                             changedItem={changedItem} setChangedItem={setChangedItem} />
                     </Modal.Body>

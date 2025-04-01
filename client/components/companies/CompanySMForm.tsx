@@ -1,26 +1,26 @@
-import { Row, Col, ButtonGroup, Button } from 'react-bootstrap'
-import { SMSearchCompanies } from './sm.search.companies.jsx'
-import { DataWithMeta } from '../../components/forms.jsx'
-import { Company } from './companies.jsx'
-import { SMListCompanies } from './sm.list.companies.jsx'
-import { CompanyType } from '../../components/resources/companyTypes/companyTypes.js'
-import { DeleteCompanies } from './delete.companies.jsx'
-import { AddCompany } from './add.companies.jsx'
-import { SMEditCompanies } from './sm.edit.companies.jsx'
-import { ChangedCompanyAction } from './company.reducer.js'
-import { Heading } from '../../components/headings/heading.jsx'
-import { Notes } from '../../components/notifiers/notifiers.jsx'
-import { useNotifier } from '../../components/notifiers/useNotifier.js'
+import { ButtonGroup, Col, Row } from 'react-bootstrap'
+import { ChangedCompanyAction } from './changedCompanyReducer.js'
+import { CompaniesSMList } from './CompaniesSMList.jsx'
+import { Company } from './CompanyFormBasis.jsx'
+import { CompanyAdd } from './CompanyAdd.jsx'
+import { CompanyDelete } from './CompanyDelete.jsx'
+import { CompanySMEdit } from './CompanySMEdit.jsx'
+import { CompanySMSearch } from './CompanySMSearch.jsx'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { DataWithMeta } from '../forms.js'
 import { hasPermission } from '../../utils/hasPermission.js'
-import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { Heading } from '../headings/Heading.js'
+import { Notes } from '../notifiers/Notes.js'
 import { PermissionContext } from '../../utils/permissionContext.js'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { useNotifier } from '../notifiers/useNotifier.js'
 
-interface CompaniesFormSMComponent {
+interface CompaniesSMFormInterface {
     search: string
     setSearch: React.Dispatch<React.SetStateAction<string>>
     filteredCompanies: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>
-    handleChangeActive: (active: number) => void
+    changeActive: (active: number) => void
     companyTypesList: DataWithMeta<CompanyType>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
@@ -28,29 +28,29 @@ interface CompaniesFormSMComponent {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const SMFormCompanies = ({ search,
+export const CompanySMForm = ({ search,
     setSearch,
     filteredCompanies,
     activeCompany,
-    handleChangeActive,
+    changeActive,
     companyTypesList,
     setIsCompanyChanged,
     setIsNew,
     changedCompany,
-    changedCompanyDispatch }: CompaniesFormSMComponent) => {
+    changedCompanyDispatch }: CompaniesSMFormInterface) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
 
     const buttonGroupAddDelete = <>
-        <AddCompany
-            handleChangeActive={handleChangeActive}
+        <CompanyAdd
+            changeActive={changeActive}
             addEditNote={addEditNote}
             setIsNew={setIsNew}
             setIsCompanyChanged={setIsCompanyChanged}
             companyTypesList={companyTypesList}
         />
-        <DeleteCompanies
+        <CompanyDelete
             company={activeCompany}
             setIsCompanyChanged={setIsCompanyChanged}
             addNote={addEditNote}
@@ -70,7 +70,7 @@ export const SMFormCompanies = ({ search,
                     </Row>
                     <Notes notes={editNotes} removeNote={removeEditNote} ></Notes>
                     <Row>
-                        <SMEditCompanies
+                        <CompanySMEdit
                             key={activeCompany.meta.location}
                             company={activeCompany}
                             companyTypesList={companyTypesList}
@@ -88,16 +88,16 @@ export const SMFormCompanies = ({ search,
             <Heading title='Stammdaten: Kunden, Lieferanten, Spediteure' cssClass='stammForm' />
             <Row >
                 <Col sm={5} md={4}>
-                    <SMSearchCompanies search={search} setSearch={setSearch} />
+                    <CompanySMSearch search={search} setSearch={setSearch} />
                 </Col>
                 <Col sm={7} md={5}>
-                    <SMListCompanies
+                    <CompaniesSMList
                         filteredCompanies={filteredCompanies}
-                        activeCompany={activeCompany} handleChangeActive={handleChangeActive}
+                        activeCompany={activeCompany} changeActive={changeActive}
                     />
                 </Col>
                 <Col className='d-none d-md-block' md={3}>
-                {hasPermission(['user'], permissions) ?<ButtonGroup vertical style={{ padding: '10px 0 0' }}>{buttonGroupAddDelete}</ButtonGroup >: '' }
+                    {hasPermission(['user'], permissions) ? <ButtonGroup vertical style={{ padding: '10px 0 0' }}>{buttonGroupAddDelete}</ButtonGroup > : ''}
                 </Col>
             </Row >
             <hr />

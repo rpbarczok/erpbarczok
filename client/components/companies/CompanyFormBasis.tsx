@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react'
-import { useAuth } from 'react-oidc-context'
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { DataWithMeta } from '../../components/forms.jsx'
-import { removeBeforeLastDigits } from '../../utils/removeBeforeLastDigits.js'
-import { FormCompanies } from './form.companies.jsx'
+import { CompanyFormExtended } from './CompanyFormExtended.jsx'
+import { DataWithMeta } from '../forms.js'
+import { LoadingContext } from '../../utils/loadingContext.js'
+import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
+import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLastDigits.js'
+import { useAuth } from 'react-oidc-context'
 import { useCompanyTypes } from '../resources/companyTypes/useCompanyTypes.js'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
-import { LoadingContext } from '../../utils/loadingContext.js'
+import { useEffect, useState } from 'react'
 
 export interface Company {
     'name': string
@@ -18,7 +18,7 @@ export interface Company {
 
 export const emptyCompany: DataWithMeta<Company> = { 'meta': { 'location': 0, 'etag': '' }, 'data': { 'name': '', 'companyType': 'default', 'abbr': '', 'www': '' } }
 
-export const Companies = () => {
+export const CompanyFormBasis = () => {
     const auth = useAuth()
     const [isCompanyChanged, setIsCompanyChanged] = useState<boolean>(true) // Flag: triggers a new GET /companies/ request
     const [companiesList, setCompaniesList] = useState<DataWithMeta<Company>[]>([]) // List of all Companies
@@ -40,7 +40,7 @@ export const Companies = () => {
                             const newList = result?.data.map(row => {
                                 const newRow: DataWithMeta<Company> = {
                                     meta: {
-                                        location: Number(removeBeforeLastDigits(row.meta.location)),
+                                        location: Number(removeStringBeforeLastDigits(row.meta.location)),
                                         etag: row.meta.etag
                                     },
                                     data: row.data
@@ -65,7 +65,7 @@ export const Companies = () => {
 
     return (
         <>
-            <FormCompanies
+            <CompanyFormExtended
                 companiesList={companiesList}
                 companyTypesList={companyTypesList}
                 setIsCompanyChanged={setIsCompanyChanged} />

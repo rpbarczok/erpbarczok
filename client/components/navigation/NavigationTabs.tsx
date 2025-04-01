@@ -1,16 +1,15 @@
+import { FormTab } from './ribbon.js'
 import {Nav} from 'react-bootstrap'
 import {XLg} from 'react-bootstrap-icons'
-import React from 'react'
-import { FormTab } from './ribbon.js'
 
-interface TabsNavigationInterface {
+interface NavigationTabsInterface {
     tabs: FormTab[]
     setTabs: React.Dispatch<React.SetStateAction<FormTab[]>>
     setActiveForm: React.Dispatch<React.SetStateAction<FormTab>>
     activeForm: FormTab
 }
 
-export function TabsNavigation({ tabs, setTabs, setActiveForm, activeForm }: TabsNavigationInterface) {
+export function NavigationTabs({ tabs, setTabs, setActiveForm, activeForm }: NavigationTabsInterface) {
 
 
     const handleClose = (tab: FormTab) => {

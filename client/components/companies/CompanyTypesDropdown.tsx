@@ -1,11 +1,11 @@
-import { DataWithMeta } from '../../components/forms.jsx'
-import { CompanyType } from '../../components/resources/companyTypes/companyTypes.js'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { DataWithMeta } from '../forms.js'
 
-interface CompanyTypesComponent {
+interface CompanyTypesInterface {
     companyTypesList: DataWithMeta<CompanyType>[]
 }
 
-export const CompanyTypesDropdown = ({ companyTypesList }: CompanyTypesComponent) => {
+export const CompanyTypesDropdown = ({ companyTypesList }: CompanyTypesInterface) => {
     const optionsDefault = [<option key='default' value=''>Rolle auswählen</option>]
     const options = companyTypesList.map((role: DataWithMeta<CompanyType>) => {
         return (

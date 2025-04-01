@@ -1,6 +1,5 @@
-import { DataWithMeta } from '../../components/forms.jsx'
-import { Company } from './companies.jsx'
-
+import { DataWithMeta } from '../forms.js'
+import { Company } from './CompanyFormBasis.jsx'
 
 export interface ChangedCompanyAction {
     type: 'nameChange' | 'abbrChange' | 'wwwChange' | 'companyTypeChange' | 'companyChange'

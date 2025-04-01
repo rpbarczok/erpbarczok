@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
 import { apiClient } from '../../../utils/openAPIClientAxios.js'
 import { DataWithMeta } from '../../../components/forms.jsx'
-import { Field } from './fields.js'
-import { removeBeforeLastDigits } from '../../../utils/removeBeforeLastDigits.js'
+import { Field } from './Fields.js'
+import { LoadingContext } from '../../../utils/loadingContext.js'
+import { PermissionContext, updateUserPermissions } from '../../../utils/permissionContext.js'
+import { removeStringBeforeLastDigits } from '../../../utils/removeStringBeforeLastDigits.js'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../../utils/contextUndefined.js'
-import { PermissionContext, updateUserPermissions } from '../../../utils/permissionContext.js'
-import { LoadingContext } from '../../../utils/loadingContext.js'
+import { useEffect, useState } from 'react'
 
 export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetStateAction<boolean>>] {
     const [listFields, setListFields] = useState<DataWithMeta<Field>[]>([])
@@ -28,7 +28,7 @@ export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetSta
                         const newList = result?.data.map(row => {
                             const newRow: DataWithMeta<Field> = {
                                 meta: {
-                                    location: Number(removeBeforeLastDigits(row.meta.location)),
+                                    location: Number(removeStringBeforeLastDigits(row.meta.location)),
                                     etag: row.meta.etag
                                 },
                                 data: row.data

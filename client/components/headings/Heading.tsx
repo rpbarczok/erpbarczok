@@ -1,6 +1,7 @@
 import {Col, Row} from 'react-bootstrap'
-import { useContext } from 'react'
 import { ThemeContext } from '../../utils/themeContext.js'
+import { useContext } from 'react'
+
 
 interface HeadingInterface {
     title: string

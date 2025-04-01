@@ -1,30 +1,38 @@
-import { DataWithMeta } from '../../components/forms.jsx'
-import { Company } from './companies.jsx'
-import { Button, Col, Container, ListGroup, Row } from 'react-bootstrap'
-import { XSEditCompanies } from './xs.edit.companies.jsx'
+import { ChangedCompanyAction } from './changedCompanyReducer.js'
+import { Company } from './CompanyFormBasis.jsx'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyXSEdit } from './CompanyXSEdit.jsx'
+import { DataWithMeta } from '../forms.js'
+import { ListGroup} from 'react-bootstrap'
+import { Note } from '../notifiers/Notes.jsx'
 import { useState } from 'react'
-import { ChangedCompanyAction } from './company.reducer.js'
-import { CompanyType } from '../../components/resources/companyTypes/companyTypes.js'
-import { Note } from '../../components/notifiers/notifiers.js'
 
-interface XSListCompaniesComponent {
+interface CompanyXSListInterface {
     filteredCompanies: DataWithMeta<Company>[]
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
     activeCompany: DataWithMeta<Company>
-    handleChangeActive: (active: number) => Promise<void>
+    changeActive: (active: number) => Promise<void>
     companyTypesList: DataWithMeta<CompanyType>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     addEditNote: (note: Note) => void
 }
 
-export const XSListCompanies = ({ filteredCompanies, changedCompany, changedCompanyDispatch, activeCompany, companyTypesList, setIsCompanyChanged, handleChangeActive, addEditNote }: XSListCompaniesComponent) => {
+export const CompaniesXSList = (
+    { filteredCompanies, 
+        changedCompany, 
+        changedCompanyDispatch, 
+        activeCompany, 
+        companyTypesList, 
+        setIsCompanyChanged, 
+        changeActive, 
+        addEditNote }: CompanyXSListInterface) => {
 
     const [show, setShow] = useState(false)
 
     const handleOpenModal = async (e: React.MouseEvent<Element, MouseEvent>, location: number) => {
         e.preventDefault
-        await handleChangeActive(location)
+        await changeActive(location)
         setShow(true)
     }
 
@@ -49,7 +57,7 @@ export const XSListCompanies = ({ filteredCompanies, changedCompany, changedComp
                 <ListGroup key='company-list-xs' id='company-list-xs' style={{ overflowY: 'scroll' }}>
                     {filteredCompanies.length > 0 ? <List /> : <span>Keine Unternehmen gefunden</span>}
                 </ListGroup >
-                <XSEditCompanies
+                <CompanyXSEdit
                     key={activeCompany.meta.location}
                     show={show} setShow={setShow}
                     companyTypesList={companyTypesList}

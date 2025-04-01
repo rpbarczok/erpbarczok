@@ -1,13 +1,13 @@
-import { Form, InputGroup } from 'react-bootstrap'
 import { ChangeEvent } from 'react'
+import { Form, InputGroup } from 'react-bootstrap'
 import { Search } from 'react-bootstrap-icons'
 
-interface XSSearchCompaniesInterface {
+interface CompanyXSSearchInterface {
     search: string
     setSearch: React.Dispatch<React.SetStateAction<string>>
 }
 
-export function XSSearchCompanies({ search, setSearch }: XSSearchCompaniesInterface) {
+export function CompanyXSSearch({ search, setSearch }: CompanyXSSearchInterface) {
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value)

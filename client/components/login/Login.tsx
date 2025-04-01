@@ -1,4 +1,4 @@
-import { Button, Container, Image, Row, Col } from 'react-bootstrap'
+import { Button, Col, Row } from 'react-bootstrap'
 import { useAuth } from 'react-oidc-context'
 
 export const Login = () => {

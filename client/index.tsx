@@ -1,12 +1,11 @@
-import { createRoot } from 'react-dom/client'
-import { App } from './components/app.jsx'
-// import './style.css'
-import { serviceWorkerRegistry } from './utils/serviceworker.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { StrictMode } from 'react'
+import { App } from './components/app.jsx'
 import { AuthProvider, AuthProviderProps } from 'react-oidc-context'
-import { User, WebStorageStateStore } from 'oidc-client-ts'
 import { Button } from 'react-bootstrap'
+import { createRoot } from 'react-dom/client'
+import { serviceWorkerRegistry } from './utils/serviceworker.js'
+import { StrictMode } from 'react'
+import { User, WebStorageStateStore } from 'oidc-client-ts'
 
 const root = createRoot(document.getElementById('root') as HTMLElement)
 

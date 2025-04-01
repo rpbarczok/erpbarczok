@@ -1,5 +1,6 @@
+import { Company } from '../CompanyFormBasis.jsx';
 import { DataWithMeta } from '../../../components/forms.jsx';
-import { Company } from '../companies.jsx';
+
 
 export const filterList = (list: DataWithMeta<Company>[], search: string) => {
     if (search) {
@@ -19,6 +20,5 @@ export const filterList = (list: DataWithMeta<Company>[], search: string) => {
     } else {
         return list
     }
-    
 }
 

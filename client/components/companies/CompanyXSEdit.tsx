@@ -1,21 +1,21 @@
-import { DataWithMeta } from '../../components/forms.jsx'
-import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
-import { Company } from './companies.jsx'
-import { useState } from 'react'
-import { Note, Notes } from '../../components/notifiers/notifiers.jsx'
-import { useNotifier } from '../../components/notifiers/useNotifier.js'
-import { CompanyType } from '../../components/resources/companyTypes/companyTypes.js'
-import { DeleteCompanies } from './delete.companies.jsx'
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { useAuth } from 'react-oidc-context'
-import { ChangedCompanyAction } from './company.reducer.js'
-import { InputCompanies } from './input.companies.jsx'
+import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
+import { ChangedCompanyAction } from './changedCompanyReducer.js'
+import { Company } from './CompanyFormBasis.jsx'
+import { CompanyDelete } from './CompanyDelete.jsx'
+import { CompanyInput } from './CompanyInput.jsx'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { DataWithMeta } from '../forms.js'
 import { hasPermission } from '../../utils/hasPermission.js'
-import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { LoadingContext } from '../../utils/loadingContext.js'
+import { Note, Notes } from '../notifiers/Notes.js'
+import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
+import { useAuth } from 'react-oidc-context'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { useNotifier } from '../notifiers/useNotifier.js'
+import { useState } from 'react'
 
-interface XSEditCompaniesComponent {
+interface CompanyXSEditInterface {
     show: boolean
     setShow: React.Dispatch<React.SetStateAction<boolean>>
     companyTypesList: DataWithMeta<CompanyType>[]
@@ -26,7 +26,7 @@ interface XSEditCompaniesComponent {
     activeCompany: DataWithMeta<Company>
 }
 
-export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, setIsCompanyChanged, changedCompany, changedCompanyDispatch, activeCompany }: XSEditCompaniesComponent) => {
+export const CompanyXSEdit = ({ show, setShow, companyTypesList, addEditNote, setIsCompanyChanged, changedCompany, changedCompanyDispatch, activeCompany }: CompanyXSEditInterface) => {
 
     const [validated, setValidated] = useState(false)
     const [errorNotes, addErrorNote, removeErrorNote] = useNotifier()
@@ -87,7 +87,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
             return (<ButtonGroup className='w-100'>
                 <Button size='sm' variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Rückgängig</Button>
                 <Button size='sm' type='submit' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
-                <DeleteCompanies
+                <CompanyDelete
                     company={changedCompany}
                     setIsCompanyChanged={setIsCompanyChanged}
                     addNote={addEditNote}
@@ -115,7 +115,7 @@ export const XSEditCompanies = ({ show, setShow, companyTypesList, addEditNote, 
                 </Modal.Header>
                 <Modal.Body>
                     <Notes notes={errorNotes} removeNote={removeErrorNote} />
-                    <InputCompanies
+                    <CompanyInput
                         companyTypesList={companyTypesList}
                         changedCompany={changedCompany}
                         changedCompanyDispatch={changedCompanyDispatch}

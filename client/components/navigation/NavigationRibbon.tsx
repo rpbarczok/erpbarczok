@@ -1,13 +1,12 @@
-import { groupForm, FormTab, Form as FormClass } from './ribbon.js'
-import { Navbar, Nav, NavDropdown, Row, Col, Dropdown, FormCheck, Form } from 'react-bootstrap'
-import React, { useState } from 'react'
-import { useAuth } from 'react-oidc-context'
-import { List, MoonStars, Sun } from 'react-bootstrap-icons'
-import { Theme, toggleTheme } from './toggleTheme.js'
-import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { Col, Dropdown, FormCheck, Navbar, Nav, NavDropdown, Row } from 'react-bootstrap'
+import { Form as FormClass, FormTab, groupForm } from './ribbon.js'
+import { List } from 'react-bootstrap-icons'
 import { PermissionContext } from '../../utils/permissionContext.js'
+import { Theme, toggleTheme } from './toggleTheme.js'
+import { useAuth } from 'react-oidc-context'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 
-interface RibbonNavigationInterface {
+interface NavigationRibbonInterface {
     tabs: FormTab[]
     setTabs: React.Dispatch<React.SetStateAction<FormTab[]>>
     setActiveForm: React.Dispatch<React.SetStateAction<FormTab>>
@@ -15,10 +14,10 @@ interface RibbonNavigationInterface {
     setTheme: React.Dispatch<React.SetStateAction<Theme>>
 }
 
-export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme }: RibbonNavigationInterface) {
+export function NavigationRibbon({ tabs, setTabs, setActiveForm, theme, setTheme }: NavigationRibbonInterface) {
 
     const auth = useAuth()
-    const {permissions, setPermissions} = useContextThrowUndefined(PermissionContext)
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
 
     const handleClick = (form: FormTab) => {
         //check whether tab is already open
@@ -33,7 +32,7 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
 
     const groupFormAuth = groupForm.map(g => {
         const userScopePrep: string[] = permissions.concat(['public'])
-        const userScope = userScopePrep.map(string => string.replace('api://erpbarczok/',''))
+        const userScope = userScopePrep.map(string => string.replace('api://erpbarczok/', ''))
         const groupFormsAuth = g.forms.filter(f => {
             const formScopes = new Set(f.scopes.split(' '))
             return userScope.some(scope => formScopes.has(scope))
@@ -138,8 +137,8 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
         //     await auth.revokeTokens()
         //     await auth.removeUser()
         // } catch (error) {
-            await auth.removeUser()
-            await auth.signoutRedirect({post_logout_redirect_uri: window.location.href})
+        await auth.removeUser()
+        await auth.signoutRedirect({ post_logout_redirect_uri: window.location.href })
         // }
     }
 
@@ -151,14 +150,14 @@ export function RibbonNavigation({ tabs, setTabs, setActiveForm, theme, setTheme
                         <Groups />
                         <NavDropdown drop='start' className='ms-auto' key='account' title={auth.user?.profile?.email ?? auth.user?.profile?.name}>
                             <NavDropdown.Item key='logout' onClick={logOutHandler}>Logout</NavDropdown.Item>
-                            <NavDropdown.Divider/>
+                            <NavDropdown.Divider />
                             <FormCheck
-                            className='ms-auto'
-                            reverse
-                            type='switch'
-                            id='toggleTheme'
-                            onChange={(e) => toggleTheme(e, theme, setTheme)}
-                            label='Toggle Theme'
+                                className='ms-auto'
+                                reverse
+                                type='switch'
+                                id='toggleTheme'
+                                onChange={(e) => toggleTheme(e, theme, setTheme)}
+                                label='Toggle Theme'
                             />
                         </NavDropdown>
 

@@ -1,33 +1,31 @@
+import { AddCompanyModal } from "../components/companies/CompanyAdd.js"
+import { cleanup, screen } from '@testing-library/react';
+import { CompaniesSMList } from "../components/companies/CompaniesSMList.js";
+import { CompaniesXSList } from "../components/companies/CompaniesXSList.js";
+import { CompanySMEdit } from "../components/companies/CompanySMEdit.js";
+import { CompanySMForm } from "../components/companies/CompanySMForm.js";
+import { CompanySMSearch } from "../components/companies/CompanySMSearch.js";
+import { CompanyXSEdit } from "../components/companies/CompanyXSEdit.js";
+import { CompanyXSForm } from "../components/companies/CompanyXSForm.js";
+import { CompanyXSSearch } from "../components/companies/CompanyXSSearch.js";
+import { emptyCompany } from "components/companies/CompanyFormBasis.js";
+import { expect } from "expect"
+import { noop, asyncNoop, companyTestList, companyTestTypesList, emptyList } from "./utils/testdata.js";
 import { PermissionContext } from "../utils/permissionContext.js"
 import { render } from "./utils/contextWrapper.js"
-import { AddCompanyModal } from "../components/companies/add.companies.js"
-import { expect } from "expect"
-import { cleanup, screen } from '@testing-library/react';
-import { emptyCompany } from "components/companies/companies.js";
-import { noop, asyncNoop, companyTestList, companyTestTypesList, emptyList } from "./utils/testdata.js";
-import { SMFormCompanies } from "../components/companies/sm.form.companies.js";
-import { XSFormCompanies } from "../components/companies/xs.form.companies.js";
-import { XSEditCompanies } from "../components/companies/xs.edit.companies.js";
-import { SMEditCompanies } from "../components/companies/sm.edit.companies.js";
-import { XSListCompanies } from "../components/companies/xs.list.companies.js";
-import { SMListCompanies } from "../components/companies/sm.list.companies.js";
-import { SMSearchCompanies } from "../components/companies/sm.search.companies.js";
-import { XSSearchCompanies } from "../components/companies/xs.search.companies.js";
 
 afterEach(cleanup)
 
 describe('Company Form Test', (): void => {
     const inputLabelList = ['Firma', 'Kürzel (max 3 Zeichen)', 'Art der Beziehung zum Unternehmen', 'Homepage']
-    const permissionList = [['public'], ['public', 'user'], ['public', 'user', 'admin']]
 
     describe('Company Edit', (): void => {
         describe('company edit modal SM', (): void => {
 
-            
             it('displays correctly all labels', (): void => {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
-                        <SMEditCompanies
+                        <CompanySMEdit
                             key={companyTestList[0].meta.location}
                             company={companyTestList[0]}
                             companyTypesList={companyTestTypesList}
@@ -47,7 +45,7 @@ describe('Company Form Test', (): void => {
             it('displays correctly all inputs when active company exists', (): void => {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
-                        <SMEditCompanies
+                        <CompanySMEdit
                             key={companyTestList[0].meta.location}
                             company={companyTestList[0]}
                             companyTypesList={companyTestTypesList}
@@ -70,7 +68,7 @@ describe('Company Form Test', (): void => {
 
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
-                        <XSEditCompanies
+                        <CompanyXSEdit
                             key={companyTestList[0].meta.location}
                             show={true} setShow={noop}
                             companyTypesList={companyTestTypesList}
@@ -90,7 +88,7 @@ describe('Company Form Test', (): void => {
 
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
-                        <XSEditCompanies
+                        <CompanyXSEdit
                             key={companyTestList[0].meta.location}
                             show={true} setShow={noop}
                             companyTypesList={companyTestTypesList}
@@ -112,7 +110,7 @@ describe('Company Form Test', (): void => {
 
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
-                        <XSEditCompanies
+                        <CompanyXSEdit
                             key={companyTestList[0].meta.location}
                             show={true} setShow={noop}
                             companyTypesList={companyTestTypesList}
@@ -133,7 +131,7 @@ describe('Company Form Test', (): void => {
             it('displays only "Schließen" with permission public', (): void => {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
-                        <XSEditCompanies
+                        <CompanyXSEdit
                             key={companyTestList[0].meta.location}
                             show={true} setShow={noop}
                             companyTypesList={companyTestTypesList}
@@ -151,7 +149,7 @@ describe('Company Form Test', (): void => {
             it('displays all buttons with permission public user', (): void => {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
-                        <XSEditCompanies
+                        <CompanyXSEdit
                             key={companyTestList[0].meta.location}
                             show={true} setShow={noop}
                             companyTypesList={companyTestTypesList}
@@ -176,9 +174,9 @@ describe('Company Form Test', (): void => {
             it('displays correctly the test list', (): void => {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
-                        <SMListCompanies
+                        <CompaniesSMList
                             filteredCompanies={companyTestList}
-                            activeCompany={companyTestList[0]} handleChangeActive={asyncNoop}
+                            activeCompany={companyTestList[0]} changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
                 )
@@ -194,9 +192,9 @@ describe('Company Form Test', (): void => {
             it('displays correctly the empty list', (): void => {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
-                        <SMListCompanies
+                        <CompaniesSMList
                             filteredCompanies={companyTestList}
-                            activeCompany={companyTestList[0]} handleChangeActive={asyncNoop}
+                            activeCompany={companyTestList[0]} changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
                 )
@@ -210,10 +208,10 @@ describe('Company Form Test', (): void => {
             it('displays correctly the test list', (): void => {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
-                        <XSListCompanies
+                        <CompaniesXSList
                             filteredCompanies={companyTestList}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
-                            handleChangeActive={asyncNoop} activeCompany={companyTestList[0]}
+                            changeActive={asyncNoop} activeCompany={companyTestList[0]}
                             companyTypesList={companyTestTypesList}
                             setIsCompanyChanged={noop}
                             addEditNote={noop}
@@ -232,10 +230,10 @@ describe('Company Form Test', (): void => {
             it('displays correctly the empty list', (): void => {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
-                        <XSListCompanies
+                        <CompaniesXSList
                             filteredCompanies={emptyList}
                             changedCompany={emptyCompany} changedCompanyDispatch={noop}
-                            handleChangeActive={asyncNoop} activeCompany={emptyCompany}
+                            changeActive={asyncNoop} activeCompany={emptyCompany}
                             companyTypesList={companyTestTypesList}
                             setIsCompanyChanged={noop}
                             addEditNote={noop}
@@ -253,7 +251,7 @@ describe('Company Form Test', (): void => {
         it('displays correctly the search input SM', (): void => {
             render(
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
-                    <SMSearchCompanies search={'test'} setSearch={noop} />
+                    <CompanySMSearch search={'test'} setSearch={noop} />
                 </PermissionContext.Provider>
             )
 
@@ -264,7 +262,7 @@ describe('Company Form Test', (): void => {
         it('displays correctly the search input XS', (): void => {
             render(
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
-                    <XSSearchCompanies search={'test'} setSearch={noop} />
+                    <CompanyXSSearch search={'test'} setSearch={noop} />
                 </PermissionContext.Provider>
             )
 
@@ -274,7 +272,7 @@ describe('Company Form Test', (): void => {
         it('displays correctly the placeholder', (): void => {
             render(
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
-                    <XSSearchCompanies search={''} setSearch={noop} />
+                    <CompanyXSSearch search={''} setSearch={noop} />
                 </PermissionContext.Provider>
             )
 
@@ -290,7 +288,7 @@ describe('Company Form Test', (): void => {
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                     <AddCompanyModal
                         changedCompany={emptyCompany}
-                        handleChangeActive={noop}
+                        changeActive={noop}
                         addEditNote={noop}
                         setIsCompanyChanged={noop}
                         setIsNew={noop}
@@ -312,7 +310,7 @@ describe('Company Form Test', (): void => {
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                     <AddCompanyModal
                         changedCompany={emptyCompany}
-                        handleChangeActive={noop}
+                        changeActive={noop}
                         addEditNote={noop}
                         setIsCompanyChanged={noop}
                         setIsNew={noop}
@@ -336,7 +334,7 @@ describe('Company Form Test', (): void => {
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                     <AddCompanyModal
                         changedCompany={emptyCompany}
-                        handleChangeActive={noop}
+                        changeActive={noop}
                         addEditNote={noop}
                         setIsCompanyChanged={noop}
                         setIsNew={noop}
@@ -361,11 +359,11 @@ describe('Company Form Test', (): void => {
                 render(
 
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
-                        <SMFormCompanies
+                        <CompanySMForm
                             search={''} setSearch={noop}
                             filteredCompanies={companyTestList}
                             activeCompany={companyTestList[0]}
-                            handleChangeActive={noop}
+                            changeActive={noop}
                             companyTypesList={companyTestTypesList}
                             setIsCompanyChanged={noop}
                             setIsNew={noop}
@@ -384,11 +382,11 @@ describe('Company Form Test', (): void => {
                 render(
 
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
-                        <SMFormCompanies
+                        <CompanySMForm
                             search={''} setSearch={noop}
                             filteredCompanies={companyTestList}
                             activeCompany={companyTestList[0]}
-                            handleChangeActive={noop}
+                            changeActive={noop}
                             companyTypesList={companyTestTypesList}
                             setIsCompanyChanged={noop}
                             setIsNew={noop}
@@ -410,11 +408,11 @@ describe('Company Form Test', (): void => {
                 render(
 
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
-                        <XSFormCompanies
+                        <CompanyXSForm
                             search={''} setSearch={noop}
                             filteredCompanies={companyTestList}
                             activeCompany={companyTestList[0]}
-                            handleChangeActive={asyncNoop}
+                            changeActive={asyncNoop}
                             companyTypesList={companyTestTypesList}
                             setIsCompanyChanged={noop}
                             setIsNew={noop}
@@ -425,27 +423,29 @@ describe('Company Form Test', (): void => {
 
                 expect(screen.queryByText('Hinzufügen')).toBeNull()
             })
+
+
+            it('displays all buttons with permission user', (): void => {
+                render(
+
+                    <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
+                        <CompanyXSForm
+                            search={''} setSearch={noop}
+                            filteredCompanies={companyTestList}
+                            activeCompany={companyTestList[0]}
+                            changeActive={asyncNoop}
+                            companyTypesList={companyTestTypesList}
+                            setIsCompanyChanged={noop}
+                            setIsNew={noop}
+                            changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
+                        />
+                    </PermissionContext.Provider>
+                )
+
+                expect(screen.queryAllByText('Hinzufügen')).toHaveLength(1)
+            })
         })
 
-        it('displays all buttons with permission user', (): void => {
-            render(
-
-                <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
-                    <XSFormCompanies
-                        search={''} setSearch={noop}
-                        filteredCompanies={companyTestList}
-                        activeCompany={companyTestList[0]}
-                        handleChangeActive={asyncNoop}
-                        companyTypesList={companyTestTypesList}
-                        setIsCompanyChanged={noop}
-                        setIsNew={noop}
-                        changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
-                    />
-                </PermissionContext.Provider>
-            )
-
-            expect(screen.queryAllByText('Hinzufügen')).toHaveLength(1)
-        })
     })
 
 })

@@ -1,7 +1,6 @@
-import { Note, Notes } from '../components/notifiers/notifiers.js'
-import { render, screen, waitFor } from '@testing-library/react'
+import { Note, Notes } from '../components/notifiers/Notes.jsx'
 import { expect } from 'expect'
-
+import { render, screen } from '@testing-library/react'
 
 describe('Notifier Component Test', (): void => {
     it('given a note list with one message, displays the message', async function (): Promise<void> {

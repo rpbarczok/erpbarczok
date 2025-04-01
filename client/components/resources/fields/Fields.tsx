@@ -1,16 +1,16 @@
+import { ChangeEvent } from 'react'
 import { DataWithMeta } from '../../forms.js'
 import { Form } from 'react-bootstrap'
-import React, { ChangeEvent } from 'react'
 
 export interface Field {
     'name': string
 }
 
-interface InputFieldComponent {
+interface FieldsInputInterface {
     field: DataWithMeta<Field>
     setField: React.Dispatch<React.SetStateAction<DataWithMeta<Field>>>
 }
-export const InputFields = ({ field, setField }: InputFieldComponent) => {
+export const FieldsInput = ({ field, setField }: FieldsInputInterface) => {
     
     const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()

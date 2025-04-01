@@ -1,15 +1,14 @@
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { Company } from './companies.js'
-import { DataWithMeta } from '../../components/forms.js'
-import { Note } from '../../components/notifiers/notifiers.js'
-import React from 'react'
 import { Button } from 'react-bootstrap'
+import { Company } from './CompanyFormBasis.jsx'
+import { DataWithMeta } from '../forms.js'
+import { LoadingContext } from '../../utils/loadingContext.js'
+import { Note } from '../notifiers/Notes.jsx'
+import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
-import { LoadingContext } from '../../utils/loadingContext.js'
 
-interface DeleteCompanyComponent {
+interface CompanyDeleteInterface {
     company: DataWithMeta<Company>
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     addNote: (note: Note) => void
@@ -17,7 +16,7 @@ interface DeleteCompanyComponent {
     size?: 'sm' | 'lg'
 }
 
-export const DeleteCompanies = ({ company, setIsCompanyChanged, addNote, setShow, size }: DeleteCompanyComponent) => {
+export const CompanyDelete = ({ company, setIsCompanyChanged, addNote, setShow, size }: CompanyDeleteInterface) => {
     const auth = useAuth()
     const token = auth.user?.access_token
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)

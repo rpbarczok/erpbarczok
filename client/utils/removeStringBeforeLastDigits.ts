@@ -1,4 +1,4 @@
-export function removeBeforeLastDigits(str: string): number {
+export function removeStringBeforeLastDigits(str: string): number {
     // Regex to find the last sequence of digits
     const regex = /\d+$/;
     // Find the match

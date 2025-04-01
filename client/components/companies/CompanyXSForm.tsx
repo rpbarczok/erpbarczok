@@ -1,25 +1,24 @@
-import React from 'react'
+import { ChangedCompanyAction } from './changedCompanyReducer.js'
 import { Col, Row } from 'react-bootstrap'
-import { XSSearchCompanies } from './xs.search.companies.jsx'
-import { DataWithMeta } from '../../components/forms.jsx'
-import { Company } from './companies.jsx'
-import { XSListCompanies } from './xs.list.companies.jsx'
-import { AddCompany } from './add.companies.jsx'
-import { CompanyType } from '../../components/resources/companyTypes/companyTypes.js'
-import { ChangedCompanyAction } from './company.reducer.js'
-import { Heading } from '../../components/headings/heading.jsx'
-import { Note, Notes } from '../../components/notifiers/notifiers.jsx'
-import { useNotifier } from '../../components/notifiers/useNotifier.js'
+import { CompaniesXSList } from './CompaniesXSList.jsx'
+import { Company } from './CompanyFormBasis.jsx'
+import { CompanyAdd } from './CompanyAdd.jsx'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyXSSearch } from './CompanyXSSearch.jsx'
+import { DataWithMeta } from '../forms.js'
 import { hasPermission } from '../../utils/hasPermission.js'
-import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { Heading } from '../headings/Heading.js'
+import { Notes } from '../notifiers/Notes.js'
 import { PermissionContext } from '../../utils/permissionContext.js'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { useNotifier } from '../notifiers/useNotifier.js'
 
-interface XSFormCompaniesComponent {
+interface CompanyXSFormInterface {
     search: string
     setSearch: React.Dispatch<React.SetStateAction<string>>
     filteredCompanies: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>
-    handleChangeActive: (active: number) => Promise<void>
+    changeActive: (active: number) => Promise<void>
     companyTypesList: DataWithMeta<CompanyType>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
@@ -27,17 +26,17 @@ interface XSFormCompaniesComponent {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const XSFormCompanies = ({
+export const CompanyXSForm = ({
     search,
     setSearch,
     filteredCompanies,
     activeCompany,
-    handleChangeActive,
+    changeActive,
     companyTypesList,
     setIsCompanyChanged,
     setIsNew,
     changedCompany,
-    changedCompanyDispatch }: XSFormCompaniesComponent) => {
+    changedCompanyDispatch }: CompanyXSFormInterface) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
     const {permissions, setPermissions} = useContextThrowUndefined(PermissionContext)
@@ -47,8 +46,8 @@ export const XSFormCompanies = ({
         <Col className='flex-grow-1 d-flex flex-column' style={{ overflowY: 'hidden' }}>
             <Heading title='Stammdaten: Kunden, Lieferanten, Spediteure' cssClass='stammForm' />
             <Row style={{ margin: '10px 3px 0 3px' }}>
-                {hasPermission(['user'], permissions) ? <AddCompany
-                    handleChangeActive={handleChangeActive}
+                {hasPermission(['user'], permissions) ? <CompanyAdd
+                    changeActive={changeActive}
                     addEditNote={addEditNote}
                     setIsNew={setIsNew}
                     companyTypesList={companyTypesList}
@@ -56,11 +55,11 @@ export const XSFormCompanies = ({
                 /> : '' }
             </Row>
             <Notes notes={editNotes} removeNote={removeEditNote}/>
-            <XSSearchCompanies search={search} setSearch={setSearch} />
-            <XSListCompanies
+            <CompanyXSSearch search={search} setSearch={setSearch} />
+            <CompaniesXSList
                 filteredCompanies={filteredCompanies}
                 changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-                handleChangeActive={handleChangeActive} activeCompany={activeCompany}
+                changeActive={changeActive} activeCompany={activeCompany}
                 companyTypesList={companyTypesList}
                 setIsCompanyChanged={setIsCompanyChanged}
                 addEditNote={addEditNote}

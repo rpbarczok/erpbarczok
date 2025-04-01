@@ -1,20 +1,20 @@
 import { Col, Form, Row } from 'react-bootstrap'
-import { ChangedCompanyAction } from './company.reducer.js'
-import { Company } from './companies.js'
-import { DataWithMeta } from '../../components/forms.jsx'
-import { CompanyType } from '../../components/resources/companyTypes/companyTypes.js'
-import { CompanyTypesDropdown } from './companyTypesDropdown.companies.jsx'
+import { ChangedCompanyAction } from './changedCompanyReducer.js'
+import { Company } from './CompanyFormBasis.jsx'
+import { DataWithMeta } from '../forms.js'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyTypesDropdown } from './CompanyTypesDropdown.jsx'
 import { hasPermission } from '../../utils/hasPermission.js'
 import { PermissionContext } from '../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 
-interface InputCompaniesComponent {
+interface CompanyInputInterface {
     companyTypesList: DataWithMeta<CompanyType>[]
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const InputCompanies = ({ companyTypesList, changedCompanyDispatch, changedCompany }: InputCompaniesComponent) => {
+export const CompanyInput = ({ companyTypesList, changedCompanyDispatch, changedCompany }: CompanyInputInterface) => {
 
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {

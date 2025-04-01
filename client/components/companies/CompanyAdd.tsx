@@ -1,28 +1,28 @@
-import { useReducer, useState } from 'react'
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { ChangedCompanyAction, changedCompanyReducer } from './company.reducer.js'
-import { Company, emptyCompany } from './companies.jsx'
-import { removeBeforeLastDigits } from '../../utils/removeBeforeLastDigits.js'
-import { useAuth } from 'react-oidc-context'
-import { Note, Notes } from '../../components/notifiers/notifiers.jsx'
-import { useNotifier } from '../../components/notifiers/useNotifier.js'
-import { DataWithMeta } from '../../components/forms.jsx'
-import { CompanyType } from '../../components/resources/companyTypes/companyTypes.js'
 import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
-import { InputCompanies } from './input.companies.jsx'
-import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
-import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { ChangedCompanyAction, changedCompanyReducer } from './changedCompanyReducer.js'
+import { Company, emptyCompany } from './CompanyFormBasis.jsx'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { DataWithMeta } from '../forms.js'
+import { CompanyInput } from './CompanyInput.jsx'
 import { LoadingContext } from '../../utils/loadingContext.js'
+import { Note, Notes } from '../notifiers/Notes.jsx'
+import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
+import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLastDigits.js'
+import { useAuth } from 'react-oidc-context'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { useNotifier } from '../notifiers/useNotifier.js'
+import { useReducer, useState } from 'react'
 
-interface AddCompanyComponent {
-    handleChangeActive: (active: number) => void
+interface CompanyAddComponent {
+    changeActive: (active: number) => void
     addEditNote: (note: Note) => void
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
     companyTypesList: DataWithMeta<CompanyType>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCompanyChanged, companyTypesList }: AddCompanyComponent) => {
+export const CompanyAdd = ({ changeActive, addEditNote, setIsNew, setIsCompanyChanged, companyTypesList }: CompanyAddComponent) => {
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
     const [newCompanyClick, setNewCompanyClick] = useState(0)
     const [show, setShow] = useState(false)
@@ -37,7 +37,7 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
             <Button className='standardDesign' variant='outline-primary' onClick={handleShow}>Hinzufügen</Button>
             <AddCompanyModal 
             changedCompany={changedCompany}
-            handleChangeActive={handleChangeActive}
+            changeActive={changeActive}
             addEditNote = {addEditNote}
             setIsCompanyChanged={setIsCompanyChanged}
             setIsNew={setIsNew}
@@ -53,7 +53,7 @@ export const AddCompany = ({ handleChangeActive, addEditNote, setIsNew, setIsCom
 
 interface AddCompanyModalComponent {
     changedCompany: DataWithMeta<Company>
-    handleChangeActive: (active: number) => void
+    changeActive: (active: number) => void
     addEditNote: (note: Note) => void
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
@@ -66,7 +66,7 @@ interface AddCompanyModalComponent {
 
 export const AddCompanyModal = ({
     changedCompany, 
-    handleChangeActive, 
+    changeActive, 
     addEditNote, 
     setIsCompanyChanged, 
     setIsNew, 
@@ -104,7 +104,7 @@ export const AddCompanyModal = ({
                 const client = await apiClient
                 const result = await client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
                 setIsLoading(false)
-                handleChangeActive(Number(removeBeforeLastDigits(result.headers.location)))
+                changeActive(Number(removeStringBeforeLastDigits(result.headers.location)))
                 const note: Note = {
                     message: `Neues Unternehmen erfolgreich erstellt.`,
                     variant: 'success',
@@ -146,7 +146,7 @@ export const AddCompanyModal = ({
             <Modal.Body>
                 <Notes notes={addNotes} removeNote={removeAddNote} />
                 <Modal.Body>
-                    <InputCompanies
+                    <CompanyInput
                         companyTypesList={companyTypesList}
                         changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                     />

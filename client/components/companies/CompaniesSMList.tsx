@@ -1,15 +1,15 @@
-import { DataWithMeta } from '../../components/forms.jsx'
-import { Company } from './companies.jsx'
+import { Company } from './CompanyFormBasis.jsx'
+import { DataWithMeta } from '../forms.js'
 import { ListGroup } from 'react-bootstrap'
 
 
-interface SMListCompaniesComponent {
+interface CompaniesSMListInterface {
     filteredCompanies: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>
-    handleChangeActive: (active: number) => void
+    changeActive: (active: number) => void
 }
 
-export const SMListCompanies = ({ filteredCompanies, activeCompany, handleChangeActive }: SMListCompaniesComponent) => {
+export const CompaniesSMList = ({ filteredCompanies, activeCompany, changeActive }: CompaniesSMListInterface) => {
 
     const List = () => {
         if (filteredCompanies.length === 0) {
@@ -19,7 +19,7 @@ export const SMListCompanies = ({ filteredCompanies, activeCompany, handleChange
         } else {
             return filteredCompanies.map((element) => {
                 return (
-                    <ListGroup.Item className='standardDesign' key={element.meta.location} active={element.meta.location === activeCompany.meta.location} onClick={() => handleChangeActive(element.meta.location)} >
+                    <ListGroup.Item className='standardDesign' key={element.meta.location} active={element.meta.location === activeCompany.meta.location} onClick={() => changeActive(element.meta.location)} >
                         {element.data.name + (element.data.abbr ? ' (' + element.data.abbr + ')' : '')}
                     </ListGroup.Item>
                 )
