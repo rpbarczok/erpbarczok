@@ -9,5 +9,4 @@ client/utils/openapi.json
 client/utils/openapi.ts
 azure.notes.md
 docker.md
-.eslintrc.json
-.eslintignore
+eslint.config.js
