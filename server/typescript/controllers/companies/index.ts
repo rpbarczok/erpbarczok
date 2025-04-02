@@ -48,6 +48,7 @@ export function createCompanyMeta(company: Company): Meta {
 export const GET: Operation = async (req: Request, res: Response) => {
     const allCompaniesSearchResult = await getAllCompanies()
     if (allCompaniesSearchResult instanceof ErrorWithStatus) {
+        logger('Error when getting all companies: ', allCompaniesSearchResult.message)
         res
         .status(allCompaniesSearchResult.status)
         .json({status: allCompaniesSearchResult.status, message: allCompaniesSearchResult.message})

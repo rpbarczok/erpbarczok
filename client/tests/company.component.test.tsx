@@ -426,7 +426,6 @@ describe('Company Form Test', (): void => {
                 expect(screen.queryByText('Hinzufügen')).toBeNull()
             })
 
-
             it('displays all buttons with permission user', (): void => {
                 render(
 

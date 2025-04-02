@@ -2,13 +2,17 @@ import { createNewError } from './error.js'
 import { Company } from '../models/companies.js'
 import { CompanyType } from '../models/companyTypes.js'
 import { CompanyNorm, CompanyFK } from '../controllers/companies/index.js'
+import { baseLogger } from '../logger.js'
 
 export const getAllCompanies = async () => {
+    const logger = baseLogger.extend('getAllCompanies')
     try {
         const companies = await Company.findAll({ include: CompanyType, order: [['name', 'ASC']] })
+        logger(companies)
         return companies
     }
     catch (error) {
+        logger(error)
         return createNewError(500, error.message)
     }
 }

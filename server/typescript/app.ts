@@ -8,11 +8,12 @@ import morgan from 'morgan'
 import path from 'path'
 import swaggerUi from 'swagger-ui-express'
 import { baseLogger } from './logger.js'
-// import { sequelize } from './models/index.js'
+import { sequelize } from './models/index.js'
 import { apiSpec } from './openapi.js'
 import { loadControllers } from './utils/apiSpecAssembler.js'
 import { jwtCheck } from './utils/auth.js'
 import { ErrorWithStatus } from './services/error.js'
+import { setDefaultValues } from './models/default-values.js'
 
 export interface Meta {
     location: string
@@ -31,7 +32,7 @@ interface PermissionRequest extends JWTRequest {
 const startApp = async () => {
     const app = express()
     const logger = baseLogger.extend('app')
-    // const initSeqeulize = await sequelize
+    const database = sequelize
     const morganLogger = baseLogger.extend('morgan')
     const permissionLogger = logger.extend('permission')
     const controllers = await loadControllers()
@@ -56,6 +57,23 @@ const startApp = async () => {
     // static content
 
     app.use(express.static(path.join(import.meta.dirname, '..', 'public')))
+
+
+    // initialize Database
+
+    try {
+        await database.sync({ alter: true })
+        logger('Drop and re-sync db.')
+    } catch (error) {
+        logger('Failed to sync db: ' + error.message)
+        throw error
+    }
+    
+    try {
+        await setDefaultValues()
+    } catch (error) {
+        logger('Failed to set default values: ' + error.message)
+    }
 
     // mitteilen, wo das OAS-Document ist
 
