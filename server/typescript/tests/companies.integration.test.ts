@@ -18,7 +18,6 @@ const scope = process.env.SCOPE || 'openid email profile admin user'
 const secret = process.env.TEST_SECRET || 'secret'
 const algorithms = ['HS256']
 
-//@ts-ignore
 const validTokenAdmin: string = jwt.sign(
     {
         'iss': issuer,
@@ -147,7 +146,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body).toEqual([])
         })
 
-        it('Post /company/ with name, companyType and abbr fails as Guest', async () => {
+        it('Post /companies/ with name, companyType and abbr fails as Guest', async () => {
             const response = await request(app)
                 .post('/companies/')
                 .send(companyA)
@@ -160,8 +159,20 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Post /company/ with name, companyType and abbr succeeds as User', async () => {
+        it('Post /companies/ with name, companyType and abbr fails with expired token', async () => {
             const response = await request(app)
+                .post('/companies/')
+                .send(companyA)
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${expiredToken}`)
+                .expect(401)
+            expect(response.status).toEqual(401)
+            expect(response.body.status).toEqual(401)
+            expect(response.body.message).toMatch('jwt expired')
+        })
+
+        it('Post /company/ with name, companyType and abbr succeeds as User', async () => {
+            await request(app)
                 .post('/companies/')
                 .send(companyA)
                 .set('Accept', 'application/json')
@@ -172,7 +183,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         })
 
         it('Post /company/ with name only succeeds', async () => {
-            const response = await request(app)
+            await request(app)
                 .post('/companies/')
                 .send(companyB)
                 .set('Accept', 'application/json')
@@ -315,7 +326,6 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .expect(404)
             expect(response.body.status).toBe(404)
             expect(response.body.message).toBe('not found')
-            expect(response.body.errors).toBeNull
         })
 
         it('GET /companies/{id} with negative id fails', async () => {
@@ -327,7 +337,6 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .expect(400)
             expect(response.body.status).toBe(400)
             expect(response.body.message).toMatch('must be >= 1')
-            expect(response.body.errors).toBeNull
         })
 
         it('GET /companies/{id} with strange id fails', async () => {
@@ -358,7 +367,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         })
 
         it('GET /api-docs works', async () => {
-            const response = await request(app)
+            await request(app)
                 .get('/api-docs')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -366,7 +375,7 @@ describe('/companies/ HTTP integration Tests', async function () {
         })
 
         it('GET /docs/ works', async () => {
-            const response = await request(app)
+            await request(app)
                 .get('/docs/')
                 .set('Accept', 'text/html')
                 .expect('Content-Type', new RegExp('text/html'))
@@ -374,12 +383,12 @@ describe('/companies/ HTTP integration Tests', async function () {
         })
 
         it('GET /something fails', async () => {
-            const response = await request(app)
+            await request(app)
                 .get('/something')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
-                .expect(404, { status: 404, message: 'not found', errors: [{ path: '/something', message: 'not found' }] })
+                .expect(404, { status: 404, message: 'not found', errors: [] })
         })
     })
 
@@ -599,7 +608,7 @@ describe('/companies/ HTTP integration Tests', async function () {
 
     describe('DELETE /companies/{id}', async function () {
 
-        it('DELETE /company-types/{id} with existing company fails', async () => {
+        it('DELETE /company-types/{id} with existing company fails when no etag', async () => {
             const response = await request(app)
                 .delete('/company-types/1')
                 .set('Accept', 'application/json')
@@ -619,8 +628,8 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.message).toMatch('unauthorized')
         })
 
-        it('DELETE /companies/{id} existing company succeeds', async () => {          
-            const response = await request(app)
+        it('DELETE /companies/{id} existing company succeeds', async () => {
+            await request(app)
                 .delete('/companies/1')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenUser}`)
@@ -636,7 +645,6 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .expect(404)
             expect(response.body.status).toBe(404)
             expect(response.body.message).toBe('not found')
-            expect(response.body.errors).toBeNull
         })
 
         it('DELETE /companies/{id} with negative id fails', async () => {

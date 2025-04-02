@@ -1,5 +1,4 @@
-import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize, NonAttribute } from 'sequelize'
-import { Company } from './companies.js'
+import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize} from 'sequelize'
 
 export class CompanyType extends Model<InferAttributes<CompanyType>, InferCreationAttributes<CompanyType>> {
     declare id: CreationOptional<number>

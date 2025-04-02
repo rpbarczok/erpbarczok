@@ -22,10 +22,10 @@ export const CompanyFormBasis = () => {
     const auth = useAuth()
     const [isCompanyChanged, setIsCompanyChanged] = useState<boolean>(true) // Flag: triggers a new GET /companies/ request
     const [companiesList, setCompaniesList] = useState<DataWithMeta<Company>[]>([]) // List of all Companies
-    const [companyTypesList, setIsCompanyTypeChanged] = useCompanyTypes()
+    const [companyTypesList] = useCompanyTypes()
     const token = auth.user?.access_token
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     useEffect(() => {
         if (isCompanyChanged) {

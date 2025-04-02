@@ -4,9 +4,9 @@ import { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { ThemeContext } from 'utils/themeContext.js';
 import { WebStorageStateStore } from 'oidc-client-ts';
+import { noop } from './testdata.js';
 
 const theme = 'light'
-const noop = () => { }
 const oidcConfig: AuthProviderProps = {
     authority: 'test',
     client_id: 'test',

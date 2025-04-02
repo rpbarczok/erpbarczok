@@ -9,7 +9,7 @@ describe('Notifier Component Test', (): void => {
             return (a: Note[]) => a.filter(n => n !== note)
         }
 
-        render(<Notes notes={notes} removeNote={(note) => deleteNote(notes[0])} />)
+        render(<Notes notes={notes} removeNote={() => deleteNote(notes[0])} />)
 
         expect(screen.getByText('Test')).not.toBeNull()
     })

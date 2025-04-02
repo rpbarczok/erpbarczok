@@ -1,30 +1,28 @@
 import { getCompanyById, deleteCompanyById, putCompanyById } from '../../services/companies.js'
-import { NotFoundError, error_formatter } from '../../services/error.js'
+import { ErrorWithStatus } from '../../services/error.js'
 import type { Request, Response } from 'express'
-import { CompanyNorm, normalizeCompany, createCompanyMeta } from './index.js'
+import { normalizeCompany, createCompanyMeta } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { Meta } from '../../app.js'
 
 
 
 export const GET: Operation = async (req: Request, res: Response) => {
-    try {
-        const company = await getCompanyById(Number(req.params.id))
-        const companyNorm: CompanyNorm = normalizeCompany(company)
-        const metaHeader: Meta = createCompanyMeta(company)
+    const result = await getCompanyById(Number(req.params.id))
+    if (result instanceof ErrorWithStatus) {
+        res
+        .status(result.status)
+        .json({ 'status': result.status, 'message': result.message, 'errors': [] })
+    } else {
+        const companyNorm = normalizeCompany(result)
+        const metaHeader: Meta = createCompanyMeta(result)
         res
             .status(200)
             .set(metaHeader)
             .json(companyNorm)
     }
-    catch (error) {
-        if (error instanceof NotFoundError) {
-            res.status(404).json({ 'status': 404, 'message': 'not found' })
-        } else {
-            throw error
-        }
-    }
 }
+
 
 
 GET.apiSpec = {
@@ -69,6 +67,9 @@ GET.apiSpec = {
         '400': {
             '$ref': '#/components/responses/400_validation_error'
         },
+        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
+        },
         '404': {
             '$ref': '#/components/responses/404_not_found_error'
         }
@@ -76,31 +77,28 @@ GET.apiSpec = {
 }
 
 export const DELETE: Operation = async (req: Request, res: Response) => {
-    try {
-        await deleteCompanyById(Number(req.params.id))
+    const result = await deleteCompanyById(Number(req.params.id))
+    if (result instanceof ErrorWithStatus) {
+        res
+            .status(result.status)
+            .json({ status: result.status, message: result.message, 'errors': [] })
+    } else {
         res
             .status(204)
             .end()
     }
-    catch (error) {
-        if (error instanceof NotFoundError) {
-            res
-                .status(404)
-                .json({ status: 404, message: 'not found' })
-        }
-        else {
-            throw error
-        }
-    }
 }
+
 DELETE.apiSpec = {
     'summary': 'Remove a certain company',
     'description': 'DELETE request on company by id {id}',
     'operationId': 'deleteCompanyById',
     'security': [
-        { 'openId': [
-            'user'
-        ] }
+        {
+            'openId': [
+                'user'
+            ]
+        }
     ],
     'tags': [
         'Company'
@@ -117,6 +115,9 @@ DELETE.apiSpec = {
         '400': {
             '$ref': '#/components/responses/400_validation_error'
         },
+        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
+        },
         '404': {
             '$ref': '#/components/responses/404_not_found_error'
         },
@@ -127,47 +128,49 @@ DELETE.apiSpec = {
 }
 
 export const PUT: Operation = async (req: Request, res: Response) => {
-    try {
-        const oldCompany = await getCompanyById(Number(req.params.id))
-        const oldCompanyWithMeta = createCompanyMeta(oldCompany)
+
+    const oldCompanySearchResult = await getCompanyById(Number(req.params.id))
+    
+    if (oldCompanySearchResult instanceof ErrorWithStatus) {
+        res
+            .status(oldCompanySearchResult.status)
+            .json({ status: oldCompanySearchResult.status, message: oldCompanySearchResult.message })
+    } else {
+        const oldCompanyWithMeta = createCompanyMeta(oldCompanySearchResult)
         if (oldCompanyWithMeta.etag === req.headers['if-match']) {
-            try {
-                const updatedCompany = await putCompanyById(Number(req.params.id), req.body)
+            const updatedCompany = await putCompanyById(Number(req.params.id), req.body)
+            if (updatedCompany instanceof ErrorWithStatus) {
+                res
+                    .status(updatedCompany.status)
+                    .json({ status: updatedCompany.status, message: updatedCompany.message })
+            } else {
                 const metaHeader = createCompanyMeta(updatedCompany)
                 res.status(204)
                     .set(metaHeader)
                     .end()
             }
-            catch (error) {
-                res
-                    .status(500)
-                    .json(error_formatter(500, error))
-            }
         }
         else {
             res
                 .status(412)
-                .json({ status: 412, message: 'Precondition failed' })
-        }
-    }
-    catch (error) {
-        if (error instanceof NotFoundError) {
-            res
-                .status(404)
-                .json({ status: 404, message: 'not found' })
-        } else {
-            throw error
+                .json({ status: 412, message: 'Precondition failed', 'errors': [] })
         }
     }
 }
+
+
+
+
 PUT.apiSpec = {
     'summary': 'Updates company with id {id}',
     'description': 'Put request on company by id {id}',
     'operationId': 'putCompanyById',
     'security': [
-        { 'openId': [
-            'user'
-        ] }
+        {
+            'openId': [
+                'user'
+            ]
+        }
     ],
     'tags': [
         'Company'
@@ -196,6 +199,9 @@ PUT.apiSpec = {
         },
         '400': {
             '$ref': '#/components/responses/400_validation_error'
+        },
+        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
         },
         '404': {
             '$ref': '#/components/responses/404_not_found_error'

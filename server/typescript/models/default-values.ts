@@ -1,4 +1,3 @@
-import { Company } from './companies.js'
 import { CompanyType } from './companyTypes.js'
 import { setDefaultValuesDev } from './default-values-dev.js'
 import { Field } from './fields.js'

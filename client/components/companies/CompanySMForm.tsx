@@ -6,11 +6,11 @@ import { CompanyAdd } from './CompanyAdd.jsx'
 import { CompanyDelete } from './CompanyDelete.jsx'
 import { CompanySMEdit } from './CompanySMEdit.jsx'
 import { CompanySMSearch } from './CompanySMSearch.jsx'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../forms.js'
 import { hasPermission } from '../../utils/hasPermission.js'
-import { Heading } from '../headings/Heading.js'
-import { Notes } from '../notifiers/Notes.js'
+import { Heading } from '../headings/Heading.jsx'
+import { Notes } from '../notifiers/Notes.jsx'
 import { PermissionContext } from '../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
@@ -40,7 +40,7 @@ export const CompanySMForm = ({ search,
     changedCompanyDispatch }: CompaniesSMFormInterface) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+    const { permissions } = useContextThrowUndefined(PermissionContext)
 
     const buttonGroupAddDelete = <>
         <CompanyAdd

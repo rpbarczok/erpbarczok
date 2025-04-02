@@ -1,26 +1,26 @@
 import { getFieldById, deleteFieldById, putFieldById } from '../../services/fields.js'
-import { error_formatter, NotFoundError } from '../../services/error.js'
+import { ErrorWithStatus } from '../../services/error.js'
 import type { Request, Response } from 'express'
 import { FieldNorm, normalizeField, createFieldMeta } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { Meta } from '../../app.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
-    try {
-        const field = await getFieldById(Number(req.params.id))
-        const fieldNorm: FieldNorm = normalizeField(field)
-        const fieldNormMeta: Meta = createFieldMeta(field)
+    const fieldSearchResult = await getFieldById(Number(req.params.id))
+    if (fieldSearchResult instanceof ErrorWithStatus) {
+        res
+            .status(fieldSearchResult.status)
+            .json({ status: fieldSearchResult.status, message: fieldSearchResult.message })
+    } else {
+        const fieldNorm: FieldNorm = normalizeField(fieldSearchResult)
+        const fieldNormMeta: Meta = createFieldMeta(fieldSearchResult)
         res
             .status(200)
             .set(fieldNormMeta)
             .json(fieldNorm)
     }
-    catch (error) {
-        if (error instanceof NotFoundError) res.status(404).json({ 'status': 404, 'message': 'not found' })
-        else throw error
-    }
-}
 
+}
 
 GET.apiSpec = {
     'summary': 'Get a certain field',
@@ -65,6 +65,9 @@ GET.apiSpec = {
         '400': {
             '$ref': '#/components/responses/400_validation_error'
         },
+        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
+        },
         '404': {
             '$ref': '#/components/responses/404_not_found_error'
         }
@@ -73,12 +76,33 @@ GET.apiSpec = {
 
 export const DELETE: Operation = async (req: Request, res: Response) => {
     try {
-        await deleteFieldById(Number(req.params.id))
-        res.status(204).end()
+        const result = await deleteFieldById(Number(req.params.id))
+        if (result instanceof ErrorWithStatus) {
+            res
+                .status(result.status)
+                .json(
+                    {
+                        status: result.status,
+                        message: result.message,
+                        'errors': []
+                    })
+        } else {
+            res
+                .status(204)
+                .end()
+        }
+
     }
     catch (error) {
-        if (error instanceof NotFoundError) res.status(404).json({ status: 404, message: 'not found' })
-        else throw error
+        console.log("Der fehlerhafte Fehler: ", error)
+        res
+            .status(error.status)
+            .json(
+                {
+                    status: error.status,
+                    message: error.message,
+                    'errors': []
+                })
     }
 }
 DELETE.apiSpec = {
@@ -107,6 +131,9 @@ DELETE.apiSpec = {
         '400': {
             '$ref': '#/components/responses/400_validation_error'
         },
+        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
+        },
         '404': {
             '$ref': '#/components/responses/404_not_found_error'
         },
@@ -117,36 +144,30 @@ DELETE.apiSpec = {
 }
 
 export const PUT: Operation = async (req: Request, res: Response) => {
-    try {
-        const dbField = await getFieldById(Number(req.params.id))
-        const dbFieldMeta = createFieldMeta(dbField)
+    const dbFieldSearchResult = await getFieldById(Number(req.params.id))
+    if (dbFieldSearchResult instanceof ErrorWithStatus) {
+        res
+            .status(dbFieldSearchResult.status)
+            .json({ status: dbFieldSearchResult.status, message: dbFieldSearchResult.message, 'errors': [] })
+    } else {
+        const dbFieldMeta = createFieldMeta(dbFieldSearchResult)
         if (dbFieldMeta.etag === req.headers['if-match']) {
-            try {
-                const updatedField = await putFieldById(Number(req.params.id), req.body)
+            const updatedField = await putFieldById(Number(req.params.id), req.body)
+            if (updatedField instanceof ErrorWithStatus) {
+                res
+                    .status(updatedField.status)
+                    .json({ status: updatedField.status, message: updatedField.message, 'errors': [] })
+            } else {
                 const fieldHeader = createFieldMeta(updatedField)
                 res
                     .status(204)
                     .set(fieldHeader)
                     .end()
             }
-            catch (error) {
-                res
-                    .status(500)
-                    .json(error_formatter(500, error))
-            }
         } else {
             res
                 .status(412)
-                .json({ status: 412, message: 'Precondition failed' })
-        }
-
-    }
-    catch (error) {
-        if (error instanceof NotFoundError) {
-            res.status(404)
-                .json({ status: 404, message: 'not found' })
-        } else {
-            throw error
+                .json({ status: 412, message: 'Precondition failed', 'errors': [] })
         }
     }
 }

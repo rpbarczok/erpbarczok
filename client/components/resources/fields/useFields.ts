@@ -1,6 +1,6 @@
 import { apiClient } from '../../../utils/openAPIClientAxios.js'
 import { DataWithMeta } from '../../../components/forms.jsx'
-import { Field } from './Fields.js'
+import { Field } from './Fields.jsx'
 import { LoadingContext } from '../../../utils/loadingContext.js'
 import { PermissionContext, updateUserPermissions } from '../../../utils/permissionContext.js'
 import { removeStringBeforeLastDigits } from '../../../utils/removeStringBeforeLastDigits.js'
@@ -14,7 +14,7 @@ export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetSta
     const auth = useAuth()
     const token = auth.user?.access_token
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     useEffect(() => {
         if (isFieldChanged) {

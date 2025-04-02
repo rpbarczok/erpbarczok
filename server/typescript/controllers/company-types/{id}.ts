@@ -1,5 +1,5 @@
 import { getCompanyTypeById, deleteCompanyTypeById, putCompanyTypeById } from '../../services/companyTypes.js'
-import { error_formatter, NotFoundError } from '../../services/error.js'
+import { ErrorWithStatus } from '../../services/error.js'
 import type { Request, Response } from 'express'
 import { CompanyTypeNorm, normalizeCompanyType, createCompanyTypeMeta } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
@@ -7,21 +7,21 @@ import { Meta } from '../../app.js'
 import { Company } from '../../models/companies.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
-    try {
-        const companyType = await getCompanyTypeById(Number(req.params.id))
-        const companyTypeNorm: CompanyTypeNorm = normalizeCompanyType(companyType)
-        const companyTypeNormMeta: Meta = createCompanyTypeMeta(companyType)
+
+    const companyTypeSearchResult = await getCompanyTypeById(Number(req.params.id))
+    if (companyTypeSearchResult instanceof ErrorWithStatus) {
+        res
+            .status(companyTypeSearchResult.status)
+            .json({ status: companyTypeSearchResult.status, message: companyTypeSearchResult.message })
+    } else {
+        const companyTypeNorm: CompanyTypeNorm = normalizeCompanyType(companyTypeSearchResult)
+        const companyTypeNormMeta: Meta = createCompanyTypeMeta(companyTypeSearchResult)
         res
             .status(200)
             .set(companyTypeNormMeta)
             .json(companyTypeNorm)
     }
-    catch (error) {
-        if (error instanceof NotFoundError) res.status(404).json({ 'status': 404, 'message': 'not found' })
-        else throw error
-    }
 }
-
 
 GET.apiSpec = {
     'summary': 'Get a certain companyType',
@@ -73,33 +73,33 @@ GET.apiSpec = {
 }
 
 export const DELETE: Operation = async (req: Request, res: Response) => {
-    try {
-        const { count, rows } = await Company.findAndCountAll({
-            where: {
-                companyTypeId: Number(req.params.id)
-            }
-        })
-        if (count === 0) {
-            await deleteCompanyTypeById(Number(req.params.id))
-            res.status(204).end()
-        } else {
-            res.status(409).json({ status: 409, message: 'Conflict' })
+    const { count } = await Company.findAndCountAll({
+        where: {
+            companyTypeId: Number(req.params.id)
         }
+    })
+    if (count === 0) {
+        const result = await deleteCompanyTypeById(Number(req.params.id))
+        if (result instanceof ErrorWithStatus) {
+            res.status(result.status).json({ status: result.status, message: result.message })
+        }
+        res.status(204).end()
+    } else {
+        res.status(409).json({ status: 409, message: 'Conflict' })
+    }
 
-    }
-    catch (error) {
-        if (error instanceof NotFoundError) res.status(404).json({ status: 404, message: 'not found' })
-        else throw error
-    }
 }
+
 DELETE.apiSpec = {
     'summary': 'Remove a certain company type',
     'description': 'DELETE request on company type by id {id}',
     'operationId': 'deleteCompanyTypeById',
     'security': [
-        { 'openId': [
-            'admin'
-        ] }
+        {
+            'openId': [
+                'admin'
+            ]
+        }
     ],
     'tags': [
         'CompanyType'
@@ -116,6 +116,9 @@ DELETE.apiSpec = {
         '400': {
             '$ref': '#/components/responses/400_validation_error'
         },
+        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
+        },
         '404': {
             '$ref': '#/components/responses/404_not_found_error'
         },
@@ -126,48 +129,57 @@ DELETE.apiSpec = {
 }
 
 export const PUT: Operation = async (req: Request, res: Response) => {
-    try {
-        const dbCompanyType = await getCompanyTypeById(Number(req.params.id))
-        const dbCompanyTypeMeta = createCompanyTypeMeta(dbCompanyType)
+
+    const dbCompanyTypeSearchResult = await getCompanyTypeById(Number(req.params.id))
+
+    if (dbCompanyTypeSearchResult instanceof ErrorWithStatus) {
+
+        res
+            .status(dbCompanyTypeSearchResult.status)
+            .json({ status: dbCompanyTypeSearchResult.status, message: dbCompanyTypeSearchResult.message })
+    } else {
+
+        const dbCompanyTypeMeta = createCompanyTypeMeta(dbCompanyTypeSearchResult)
+
         if (dbCompanyTypeMeta.etag === req.headers['if-match']) {
-            try {
-                const updatedCompanyType = await putCompanyTypeById(Number(req.params.id), req.body)
+
+            const updatedCompanyType = await putCompanyTypeById(Number(req.params.id), req.body)
+
+            if (updatedCompanyType instanceof ErrorWithStatus) {
+
+                res
+                    .status(updatedCompanyType.status)
+                    .json({ status: updatedCompanyType.status, message: updatedCompanyType.message })
+
+            } else {
+
                 const companyTypeHeader = createCompanyTypeMeta(updatedCompanyType)
+
                 res
                     .status(204)
                     .set(companyTypeHeader)
                     .end()
             }
-            catch (error) {
-                res
-                    .status(500)
-                    .json(error_formatter(500, error))
-            }
+
         } else {
             res
                 .status(412)
                 .json({ status: 412, message: 'Precondition failed' })
         }
-
-    }
-    catch (error) {
-        if (error instanceof NotFoundError) {
-            res.status(404)
-                .json({ status: 404, message: 'not found' })
-        } else {
-            throw error
-        }
     }
 }
+
 
 PUT.apiSpec = {
     'summary': 'Updates company type with id {id}',
     'description': 'Put request on company type by id {id}',
     'operationId': 'putCompanyTypeById',
     'security': [
-        { 'openId': [
-            'admin'
-        ] }
+        {
+            'openId': [
+                'admin'
+            ]
+        }
     ],
     'tags': [
         'CompanyType'
@@ -196,6 +208,9 @@ PUT.apiSpec = {
         },
         '400': {
             '$ref': '#/components/responses/400_validation_error'
+        },
+        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
         },
         '404': {
             '$ref': '#/components/responses/404_not_found_error'

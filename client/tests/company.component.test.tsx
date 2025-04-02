@@ -56,8 +56,8 @@ describe('Company Form Test', (): void => {
                     </PermissionContext.Provider >
                 )
 
-                for (const [key, value] of Object.entries(companyTestList[0].data)) {
-                    expect(screen.getByDisplayValue(value)).not.toBeNull
+                for (const value of Object.values(companyTestList[0].data)) {
+                    expect(screen.getByDisplayValue(value)).not.toBeNull()
                 }
 
             })
@@ -123,8 +123,8 @@ describe('Company Form Test', (): void => {
                 )
 
                 // Assert
-                for (const [key, value] of Object.entries(companyTestList[0].data)) {
-                    expect(screen.queryByDisplayValue(value)).not.toBeNull
+                for (const value of Object.values(companyTestList[0].data)) {
+                    expect(screen.queryByDisplayValue(value)).not.toBeNull()
                 }
             })
 
@@ -143,12 +143,12 @@ describe('Company Form Test', (): void => {
                     </PermissionContext.Provider >
                 )
 
-                expect(screen.queryByText('Schließen')).not.toBeNull
+                expect(screen.queryByText('Schließen')).not.toBeNull()
             })
 
             it('displays all buttons with permission public user', (): void => {
                 render(
-                    <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
+                    <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                         <CompanyXSEdit
                             key={companyTestList[0].meta.location}
                             show={true} setShow={noop}
@@ -161,10 +161,10 @@ describe('Company Form Test', (): void => {
                     </PermissionContext.Provider >
                 )
 
-                expect(screen.queryByText('Abbrechen')).not.toBeNull
-                expect(screen.queryByText('Rückgängig')).not.toBeNull
-                expect(screen.queryByText('Löschen')).not.toBeNull
-                expect(screen.queryByText('Speichern')).not.toBeNull
+                expect(screen.queryByText('Abbrechen')).not.toBeNull()
+                expect(screen.queryByText('Rückgängig')).not.toBeNull()
+                expect(screen.queryByText('Löschen')).not.toBeNull()
+                expect(screen.queryByText('Speichern')).not.toBeNull()
             })
         })
     })
@@ -182,9 +182,11 @@ describe('Company Form Test', (): void => {
                 )
 
                 for (const company of companyTestList) {
-                    company.data.abbr
-                        ? expect(screen.getByText(company.data.name + ' (' + company.data.abbr + ')')).not.toBeNull()
-                        : expect(screen.getByText(company.data.name)).not.toBeNull()
+                    if (company.data.abbr) {
+                        expect(screen.getByText(company.data.name + ' (' + company.data.abbr + ')')).not.toBeNull()
+                    } else {
+                        expect(screen.getByText(company.data.name)).not.toBeNull()
+                    }
                 }
 
             })
@@ -220,11 +222,11 @@ describe('Company Form Test', (): void => {
                 )
 
                 for (const company of companyTestList) {
-                    company.data.abbr
-                        ? expect(screen.getByText(company.data.name + ' (' + company.data.abbr + ')')).not.toBeNull()
-                        : expect(screen.getByText(company.data.name)).not.toBeNull()
-                }
-
+                    if(company.data.abbr)  {
+                        expect(screen.getByText(company.data.name + ' (' + company.data.abbr + ')')).not.toBeNull()
+                     } else {
+                        expect(screen.getByText(company.data.name)).not.toBeNull()}
+                     } 
             })
 
             it('displays correctly the empty list', (): void => {

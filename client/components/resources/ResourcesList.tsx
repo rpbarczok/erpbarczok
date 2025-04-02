@@ -1,9 +1,9 @@
 import { apiClient } from '../../utils/openAPIClientAxios.js'
 import { Button, ButtonGroup, Form, ListGroup, Modal } from 'react-bootstrap'
-import { CompanyType } from './companyTypes/CompanyTypesInput.js'
+import { CompanyType } from './companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../forms.js'
-import { Field, FieldsInput } from './fields/Fields.js'
-import { CompanyTypesInput } from './companyTypes/CompanyTypesInput.js'
+import { Field, FieldsInput } from './fields/Fields.jsx'
+import { CompanyTypesInput } from './companyTypes/CompanyTypesInput.jsx'
 import { LoadingContext } from '../../utils/loadingContext.js'
 import { Note, Notes } from '../notifiers/Notes.jsx'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
@@ -53,7 +53,7 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
     const isNotChanged = changedItem.data === item.data
     const auth = useAuth()
     const token = auth.user?.access_token
-    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
     const handleModal = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         setShow(true)

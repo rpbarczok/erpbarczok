@@ -40,6 +40,7 @@ const forbiddenGroups = {
     admin: forbiddenGroupsAdmin
 }
 
+// eslint-disable-next-line
 const noop = () => { }
 
 describe('Navigation Component Test', (): void => {
@@ -55,7 +56,7 @@ describe('Navigation Component Test', (): void => {
             it(`displays the ribbon navigation for ${permission}`, async (): Promise<void> => {
                 // Act
                 render(
-                    <PermissionContext.Provider value={{ permissions: [permission], setPermissions: () => { } }}>
+                    <PermissionContext.Provider value={{ permissions: [permission], setPermissions: noop }}>
                         <NavigationRibbon
                             tabs={tabs} setTabs={noop}
                             setActiveForm={noop}

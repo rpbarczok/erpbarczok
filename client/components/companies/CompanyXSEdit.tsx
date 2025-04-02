@@ -1,19 +1,19 @@
-import { apiClient } from '../../utils/openAPIClientAxios.js'
+import { useState } from 'react'
 import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
-import { ChangedCompanyAction } from './changedCompanyReducer.js'
-import { Company } from './CompanyFormBasis.jsx'
-import { CompanyDelete } from './CompanyDelete.jsx'
-import { CompanyInput } from './CompanyInput.jsx'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
-import { DataWithMeta } from '../forms.js'
-import { hasPermission } from '../../utils/hasPermission.js'
-import { LoadingContext } from '../../utils/loadingContext.js'
-import { Note, Notes } from '../notifiers/Notes.js'
-import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { hasPermission } from '../../utils/hasPermission.js'
+import { LoadingContext } from '../../utils/loadingContext.js'
+import { apiClient } from '../../utils/openAPIClientAxios.js'
+import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
+import { DataWithMeta } from '../forms.js'
+import { Note, Notes } from '../notifiers/Notes.jsx'
 import { useNotifier } from '../notifiers/useNotifier.js'
-import { useState } from 'react'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
+import { ChangedCompanyAction } from './changedCompanyReducer.js'
+import { CompanyDelete } from './CompanyDelete.jsx'
+import { Company } from './CompanyFormBasis.jsx'
+import { CompanyInput } from './CompanyInput.js'
 
 interface CompanyXSEditInterface {
     show: boolean
@@ -32,7 +32,7 @@ export const CompanyXSEdit = ({ show, setShow, companyTypesList, addEditNote, se
     const [errorNotes, addErrorNote, removeErrorNote] = useNotifier()
     const auth = useAuth()
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     const token = auth.user?.access_token
     const isNotChanged: boolean = (activeCompany.data.name === changedCompany.data.name &&

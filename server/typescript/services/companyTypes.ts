@@ -1,70 +1,73 @@
-import { error_formatter, NotFoundError } from './error.js'
+import { createNewError } from './error.js'
 import { baseLogger } from '../logger.js'
 import { CompanyType } from '../models/companyTypes.js'
 import { CompanyTypeNorm } from '../controllers/company-types/index.js'
 
 const logger = baseLogger.extend('services:companyTypes')
 
-export const getAllCompanyTypes = () => new Promise<CompanyType[]>(async function (resolve, reject) {
+export const getAllCompanyTypes = async () => {
+    logger('Get all company types')
     try {
         const companyTypes = await CompanyType.findAll({ order: [['name', 'ASC']] })
-        resolve(companyTypes)
+        logger('Got all company types')
+        return companyTypes
     }
     catch (error) {
-        reject(error_formatter(500, error))
+        return createNewError(500, error.message)
     }
-})
+}
 
-export const addCompanyType = (companyType: CompanyTypeNorm) => new Promise<CompanyType>(async function (resolve, reject) {
+export const addCompanyType = async (companyType: CompanyTypeNorm) => {
     const newCompanyType = {
         name: companyType.name
     }
     try {
         const addedCompanyType = await CompanyType.create(newCompanyType)
-        resolve(addedCompanyType)
+        return addedCompanyType
     } catch (error) {
-        reject(error_formatter(500, error))
+        return createNewError(500, error.message)
     }
-})
+}
 
-export const getCompanyTypeById = (id: number) => new Promise<CompanyType>(async function (resolve, reject) {
+export const getCompanyTypeById = async (id: number) => {
     try {
         const companyType = await CompanyType.findByPk(id)
         if (companyType === null) {
-            reject(new NotFoundError())
+            return createNewError(404)
         } else {
-            resolve(companyType)
+            return companyType
         }
     }
     catch (error) {
-        reject(error_formatter(500, error))
+        return createNewError(500, error.message)
     }
-})
+}
 
-export const deleteCompanyTypeById = (id: number) => new Promise<void>(async (resolve, reject) => {
+export const deleteCompanyTypeById = async (id: number) => {
     try {
         const deletedRowsCount = await CompanyType.destroy({ where: { id: id } })
         if (deletedRowsCount === 0) {
-            reject(new NotFoundError)
+            return createNewError(404)
         } else {
-            resolve()
+            return
         }
     }
     catch (error) {
-        reject(error_formatter(500, error))
+        return createNewError(500, error.message)
     }
-})
-export const putCompanyTypeById = (id: number, companyType: CompanyTypeNorm) => new Promise<CompanyType>(async (resolve, reject) => {
+}
+
+export const putCompanyTypeById = async (id: number, companyType: CompanyTypeNorm) => {
     try {
         const oldCompanyType = await CompanyType.findByPk(id)
         if (oldCompanyType === null) {
-            reject(new NotFoundError())
+            return createNewError(404)
         } else {
             const updatedCompanyType = await oldCompanyType.update(companyType)
-            resolve(updatedCompanyType)
+            return updatedCompanyType
         }
     }
     catch (error) {
-        reject(error_formatter(500, error))
+        return createNewError(500, error.message)
     }
-})
+}

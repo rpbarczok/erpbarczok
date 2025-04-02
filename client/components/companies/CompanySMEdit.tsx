@@ -3,7 +3,7 @@ import { Button, ButtonGroup, Col, Form, Row } from 'react-bootstrap'
 import { ChangedCompanyAction } from './changedCompanyReducer.js'
 import { Company } from './CompanyFormBasis.jsx'
 import { CompanyInput } from './CompanyInput.jsx'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../forms.js'
 import { hasPermission } from '../../utils/hasPermission.js'
 import { LoadingContext } from '../../utils/loadingContext.js'
@@ -25,7 +25,7 @@ interface CompanySMEditInterface {
 export const CompanySMEdit = ({ company, companyTypesList, setIsCompanyChanged, addEditNote, changedCompany, changedCompanyDispatch }: CompanySMEditInterface) => {
     const [validated, setValidated] = useState<boolean>(false)
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
     const auth = useAuth()
     const token = auth.user?.access_token
 

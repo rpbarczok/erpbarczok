@@ -2,7 +2,7 @@ import { apiClient } from '../../utils/openAPIClientAxios.js'
 import { changedCompanyReducer } from './changedCompanyReducer.js'
 import { Company, emptyCompany } from './CompanyFormBasis.jsx'
 import { CompanySMForm } from './CompanySMForm.jsx'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { CompanyXSForm } from './CompanyXSForm.jsx'
 import { DataWithMeta } from '../forms.js'
 import { LoadingContext } from '../../utils/loadingContext.js'
@@ -30,7 +30,7 @@ export const CompanyFormExtended = (
     const [isNew, setIsNew] = useState<boolean>(false) // Flag: triggers an clearance of the search input
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
     const auth = useAuth()
     const token = auth.user?.access_token
 

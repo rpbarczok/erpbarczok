@@ -118,7 +118,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                 }
             },
             '400_validation_error': {
-                'description': 'Bad request',
+                'description': 'Bad request.',
                 'content': {
                     'application/json': {
                         'schema': {
@@ -132,8 +132,23 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                     }
                 }
             },
+            '401_authorization_error': {
+                'description': 'Unauthorized.',
+                'content': {
+                    'application/json': {
+                        'schema': {
+                            '$ref': '#/components/schemas/error'
+                        },
+                        'examples': {
+                            '401': {
+                                '$ref': '#/components/examples/error401'
+                            }
+                        }
+                    }
+                }
+            },
             '404_not_found_error': {
-                'description': 'Not found',
+                'description': 'not found',
                 'content': {
                     'application/json': {
                         'schema': {
@@ -311,30 +326,31 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
             'error400': {
                 'value': {
                     'status': 400,
-                    'message': 'request/body must NOT have additional properties',
-                    'errors': {
-                        'path': '/body/invalid',
-                        'message': 'must NOT have additional properties',
-                        'errorCode': 'additionalProperties.openapi.validation'
-                    }
+                    'message': 'request/body must NOT have additional properties'
+                }
+            },
+            'error401': {
+                'value': {
+                    'status': 401,
+                    'message': 'Unauthorized'
                 }
             },
             'error404': {
                 'value': {
                     'status': 404,
-                    'message': 'Not found'
+                    'message': 'not found'
                 }
             },
             'error409': {
                 'value': {
                     'status': 409,
-                    'message': 'Entity can not be deleted since it is still referenced'
+                    'message': 'Entity can not be deleted since it is still referenced.'
                 }
             },
             'error412': {
                 'value': {
                     'status': 412,
-                    'message': 'Precondition failed'
+                    'message': 'Precondition failed.'
                 }
             }
         }

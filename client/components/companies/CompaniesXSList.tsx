@@ -1,6 +1,6 @@
 import { ChangedCompanyAction } from './changedCompanyReducer.js'
 import { Company } from './CompanyFormBasis.jsx'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { CompanyXSEdit } from './CompanyXSEdit.jsx'
 import { DataWithMeta } from '../forms.js'
 import { ListGroup} from 'react-bootstrap'
@@ -31,7 +31,7 @@ export const CompaniesXSList = (
     const [show, setShow] = useState(false)
 
     const handleOpenModal = async (e: React.MouseEvent<Element, MouseEvent>, location: number) => {
-        e.preventDefault
+        e.preventDefault()
         await changeActive(location)
         setShow(true)
     }

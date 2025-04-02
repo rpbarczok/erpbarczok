@@ -2,7 +2,7 @@ import path from 'node:path'
 import { baseLogger } from './logger.js'
 import { apiSpec as apiSpecBase } from './openapi.js'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
-import { Request, Response, RequestHandler, NextFunction } from 'express'
+import { Request, Response, NextFunction } from 'express'
 
 export interface Operation {
     (req: Request, res: Response, next: NextFunction): Promise<void>
@@ -10,7 +10,7 @@ export interface Operation {
 }
 
 interface PathMap {
-    [path: string]: VerbMap
+    [key: string]: VerbMap
 }
 
 interface VerbMap {

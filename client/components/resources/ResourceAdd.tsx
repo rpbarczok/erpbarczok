@@ -1,16 +1,17 @@
 import { apiClient } from '../../utils/openAPIClientAxios.js'
 import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
-import { CompanyType, InputCompanyTypes } from './companyTypes/CompanyTypesInput.js'
+import { CompanyType, CompanyTypesInput } from './companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../forms.js'
-import { Field, InputFields } from './fields/Fields.js'
+import { Field, FieldsInput } from './fields/Fields.jsx'
 import { LoadingContext } from '../../utils/loadingContext.js'
-import { Note, Notes } from '../notifiers/Notes.js'
+import { Note, Notes } from '../notifiers/Notes.jsx'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { Resource } from './resourceList.js'
 import { SetStateAction, useState } from 'react'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { useNotifier } from '../notifiers/useNotifier.js'
+import { useNotifier } from 'components/notifiers/useNotifier.js'
+
 
 interface AddResourceComponent {
     resource: Resource
@@ -27,12 +28,12 @@ interface ActiveResourceComponent {
 export const ActiveResource = ({ resource, newItem, setNewItem }: ActiveResourceComponent) => {
     switch (resource.name) {
         case 'Beziehung':
-            return <InputCompanyTypes
+            return <CompanyTypesInput
                 companyType={newItem}
                 setCompanyType={setNewItem}
             />
         case 'Branche':
-            return <InputFields
+            return <FieldsInput
                 field={newItem}
                 setField={setNewItem} />
         default:
@@ -49,7 +50,7 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const auth = useAuth()
     const [addItemCount, setAddItemCount] = useState(0)
-    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     const handleModal = () => {
         setAddItemCount(addItemCount + 1)
@@ -61,7 +62,7 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
         setShow(false)
     }
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, item: DataWithMeta<CompanyType | Field>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget
         e.preventDefault()
         const token = auth.user?.access_token
@@ -99,7 +100,7 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
     return (<>
         <Button variant='outline-primary' onClick={handleModal}>{resource.name} hinzufügen</Button>
         <Modal key={'newItem' + String(addItemCount)} show={show} onHide={() => handleClose()}>
-            <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, newItem)}>
+            <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
                 <Modal.Header closeButton>
                     <Modal.Title>{resource.name} hinzufügen</Modal.Title>
                 </Modal.Header>

@@ -4,6 +4,7 @@ import { CompanyType } from '../../models/companyTypes.js'
 import { getAllCompanyTypes, addCompanyType } from '../../services/companyTypes.js'
 import { Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
+import { ErrorWithStatus } from '../../services/error.js'
 
 export interface CompanyTypeNorm {
     name: string
@@ -26,11 +27,18 @@ export function combineCompanyTypeWithMeta(companyType: CompanyType): DataWithMe
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
-    const allCompanyTypes = await getAllCompanyTypes()
-    const allCompanyTypesWithMeta: DataWithMeta<CompanyTypeNorm>[] = allCompanyTypes.map(row => combineCompanyTypeWithMeta(row))
-    res
-        .status(200)
-        .json(allCompanyTypesWithMeta)
+    const allCompanyTypesSearchResult = await getAllCompanyTypes()
+    if (allCompanyTypesSearchResult instanceof ErrorWithStatus) {
+        res
+            .status(allCompanyTypesSearchResult.status)
+            .json({ status: allCompanyTypesSearchResult.status, message: allCompanyTypesSearchResult.message })
+    } else {
+        const allCompanyTypesWithMeta: DataWithMeta<CompanyTypeNorm>[] = allCompanyTypesSearchResult.map(row => combineCompanyTypeWithMeta(row))
+        res
+            .status(200)
+            .json(allCompanyTypesWithMeta)
+    }
+
 }
 
 GET.apiSpec = {
@@ -109,18 +117,28 @@ GET.apiSpec = {
         '400': {
             '$ref': '#/components/responses/400_validation_error'
         },
+        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
+        },
         '404': {
             '$ref': '#/components/responses/404_not_found_error'
         }
     }
 }
 export const POST: Operation = async (req: Request, res: Response) => {
-    const newCompanyType = await addCompanyType(req.body)
-    const newCompanyTypeMeta = createCompanyTypeMeta(newCompanyType)
-    res
-        .status(201)
-        .set(newCompanyTypeMeta)
-        .end()
+    const newCompanyTypeSearchResult = await addCompanyType(req.body)
+    if (newCompanyTypeSearchResult instanceof ErrorWithStatus) {
+        res
+            .status(newCompanyTypeSearchResult.status)
+            .json({ status: newCompanyTypeSearchResult.status, message: newCompanyTypeSearchResult.message })
+    } else {
+        const newCompanyTypeMeta = createCompanyTypeMeta(newCompanyTypeSearchResult)
+        res
+            .status(201)
+            .set(newCompanyTypeMeta)
+            .end()
+    }
+
 }
 POST.apiSpec = {
     'summary': 'Add new company type',
@@ -152,6 +170,8 @@ POST.apiSpec = {
         },
         '400': {
             '$ref': '#/components/responses/400_validation_error'
+        },        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
         }
     }
 }

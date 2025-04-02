@@ -1,11 +1,11 @@
 import { AddResources } from './ResourceAdd.jsx'
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { CompanyType } from './companyTypes/CompanyTypesInput.js'
+import { CompanyType } from './companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../forms.js'
-import { Field } from './fields/Fields.js'
+import { Field } from './fields/Fields.jsx'
 import { ListGroup, Row } from 'react-bootstrap'
 import { LoadingContext } from '../../utils/loadingContext.js'
-import { Notes } from '../notifiers/Notes.js'
+import { Notes } from '../notifiers/Notes.jsx'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLastDigits.js'
 import { Resource } from './resourceList.js'
@@ -28,7 +28,7 @@ export const ResourceForm = ({ resource, isResourceChanged, setIsResourceChanged
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const auth = useAuth()
     const token = auth.user?.access_token
-    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     useEffect(() => {
         if (isItemChanged || isResourceChanged) {

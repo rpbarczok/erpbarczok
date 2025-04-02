@@ -1,4 +1,4 @@
-import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize, NonAttribute } from 'sequelize'
+import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize } from 'sequelize'
 
 export class Field extends Model<InferAttributes<Field>, InferCreationAttributes<Field>> {
     declare id: CreationOptional<number>

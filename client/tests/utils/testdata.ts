@@ -1,8 +1,10 @@
 import { Company } from "../../components/companies/CompanyFormBasis.js"
 import { DataWithMeta } from "../../components/forms.jsx"
 
+// eslint-disable-next-line
 export const noop = () => { }
 
+// eslint-disable-next-line
 export const asyncNoop = async () => {}
 
 export const companyTestTypesList = [

@@ -5,6 +5,7 @@ import { Company } from '../../models/companies.js'
 import { sha256 } from '../../hasher.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { baseLogger } from '../../logger.js'
+import { ErrorWithStatus } from '../../services/error.js'
 
 const logger = baseLogger.extend('controllers:companies')
 
@@ -23,7 +24,7 @@ export interface CompanyFK {
 }
 
 export function normalizeCompany(company: Company) {
-    const result: CompanyNorm = { name: company.name, companyType: company.companyType!.name}
+    const result: CompanyNorm = { name: company.name, companyType: company.companyType.name}
     if (company.abbr) {
         result.abbr = company.abbr
     }
@@ -45,13 +46,18 @@ export function createCompanyMeta(company: Company): Meta {
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
-
-    const allCompanies = await getAllCompanies()
-    logger('getAllCompanies: %j.', allCompanies)
-    const allCompaniesWithMeta: DataWithMeta<CompanyNorm>[] = allCompanies.map((row) => (combineCompanyWithMeta(row)))
-    res
-        .status(200)
-        .json(allCompaniesWithMeta)
+    const allCompaniesSearchResult = await getAllCompanies()
+    if (allCompaniesSearchResult instanceof ErrorWithStatus) {
+        res
+        .status(allCompaniesSearchResult.status)
+        .json({status: allCompaniesSearchResult.status, message: allCompaniesSearchResult.message})
+    } else {
+        logger('getAllCompanies: %j.', allCompaniesSearchResult)
+        const allCompaniesWithMeta: DataWithMeta<CompanyNorm>[] = allCompaniesSearchResult.map((row) => (combineCompanyWithMeta(row)))
+        res
+            .status(200)
+            .json(allCompaniesWithMeta)
+    }
 }
 
 GET.apiSpec = {
@@ -132,15 +138,25 @@ GET.apiSpec = {
                     }
                 }
             }
+        },
+        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
         }
     }
 }
 
 export const POST: Operation = async (req: Request, res: Response) => {
-    const newCompany = await addCompany(req.body)
-    res.status(204)
-        .set(createCompanyMeta(newCompany))
+    const newCompanySearchResult = await addCompany(req.body)
+    if (newCompanySearchResult instanceof ErrorWithStatus) {
+        res
+        .status(newCompanySearchResult.status)
+        .json({status: newCompanySearchResult.status, message: newCompanySearchResult.message})
+    } else {
+        res.status(204)
+        .set(createCompanyMeta(newCompanySearchResult))
         .end()
+    }
+
 }
 POST.apiSpec = {
     'summary': 'Create new company',
@@ -170,6 +186,9 @@ POST.apiSpec = {
         },
         '400': {
             '$ref': '#/components/responses/400_validation_error'
+        },
+        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
         }
     }
 }

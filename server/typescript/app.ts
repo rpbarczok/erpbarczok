@@ -1,17 +1,18 @@
-import express, { Request, Response, NextFunction } from 'express'
 import cookieParser from 'cookie-parser'
-import morgan from 'morgan'
 import cors, { CorsOptions } from 'cors'
-import { apiSpec } from './openapi.js'
-import swaggerUi from 'swagger-ui-express'
-import OpenApiValidator from 'express-openapi-validator'
-import { baseLogger } from './logger.js'
-import { loadControllers } from './utils/apiSpecAssembler.js'
-import { sequelize } from './models/index.js'
-import path from 'path'
-import { jwtCheck } from './utils/auth.js'
+import express, { NextFunction, Request, Response } from 'express'
 import { Request as JWTRequest } from 'express-jwt'
+import OpenApiValidator from 'express-openapi-validator'
 import jsesc from 'jsesc'
+import morgan from 'morgan'
+import path from 'path'
+import swaggerUi from 'swagger-ui-express'
+import { baseLogger } from './logger.js'
+// import { sequelize } from './models/index.js'
+import { apiSpec } from './openapi.js'
+import { loadControllers } from './utils/apiSpecAssembler.js'
+import { jwtCheck } from './utils/auth.js'
+import { ErrorWithStatus } from './services/error.js'
 
 export interface Meta {
     location: string
@@ -29,8 +30,8 @@ interface PermissionRequest extends JWTRequest {
 
 const startApp = async () => {
     const app = express()
-    const initSequelize = sequelize
     const logger = baseLogger.extend('app')
+    // const initSeqeulize = await sequelize
     const morganLogger = baseLogger.extend('morgan')
     const permissionLogger = logger.extend('permission')
     const controllers = await loadControllers()
@@ -58,7 +59,7 @@ const startApp = async () => {
 
     // mitteilen, wo das OAS-Document ist
 
-    app.use('/api-docs', (req, res, next) => { res.json(apiSpec) })
+    app.use('/api-docs', (req, res) => { res.json(apiSpec) })
 
     if (!process.env.CLIENT_ID
         || !process.env.IDP_SERVER
@@ -68,7 +69,7 @@ const startApp = async () => {
         process.exit(1)
     }
 
-    app.get('/config.js', (req, res, next) => {
+    app.get('/config.js', (req, res) => {
         res
             .set('content-type', 'text/javascript; charset=utf-8')
             .send(`
@@ -94,7 +95,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
                     url: '/api-docs',
                     oauth: {
                         // https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/oauth2.md
-                        clientId: process.env.CLIENT_ID_SWAGGER ?? process.env.CLIENT_ID,
+                        clientId: process.env.CLIENT_ID_SWAGGER || process.env.CLIENT_ID,
                         appName: 'ERPBarczok Swagger',
                         additionalQueryStringParams: { audience: process.env.AUDIENCE },
                         scopes: process.env.SCOPE?.split(' ') || ['openid', 'email', 'profile', 'admin', 'user'],
@@ -145,7 +146,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
                     return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
                         try {
                             return await operationHandler(req, res, next)
-                        } catch (error: any) {
+                        } catch (error: unknown) {
                             next(error)
                         }
 
@@ -154,7 +155,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             },
             validateSecurity: {
                 handlers: {
-                    openId: (req: PermissionRequest, requiredScopesArray, schema) => {
+                    openId: (req: PermissionRequest, requiredScopesArray) => {
                         if (requiredScopesArray.length === 0) {
                             permissionLogger('No scope required. Authorized.')
                             return true
@@ -186,23 +187,60 @@ window.scope = '${jsesc(process.env.SCOPE)}';
 
     // add API error handler
     app.set('json spaces', 2)
-    app.use((error: any, req: Request, res: Response, next: NextFunction) => {
-        const status = error.status || 500
+    app.use(
+        (error: unknown, req: Request, res: Response, _next: NextFunction) => {
         logger('Error %o.', error)
-        if (process.env.NODE_ENV === 'production' && status === 500) {
-            res.status(status).json({
-                status,
-                message: 'Internal Server Error',
-                errors: []
-            })
-            return
-        }
+        if (error instanceof ErrorWithStatus) {
+            res
+                .status(error.status)
+                .json({
+                    status: error.status,
+                    message: error.message,
+                    errors: []
+                })
+        } else {
+            if (typeof error === 'object') {
+                if ('status' in error && (typeof error.status === 'number')) {
+                    if ('message' in error && typeof error.message === 'string') {
+                        res
+                            .status(error.status)
+                            .json({
+                                status: error.status,
+                                message: error.message,
+                                errors: []
+                            })
+                    }
+                    else {
+                        res
+                            .status(error.status)
+                            .json({
+                                status: error.status,
+                                message: 'Unspecified ' + String(error.status) + " error.",
+                                errors: []
+                            })
+                    }
+                }
+                else {
+                    res
+                        .status(500)
+                        .json({
+                            send: 500,
+                            message: 'Unspecified internal error.',
+                            errors: []
+                        })
+                }
 
-        res.status(status).json({
-            status,
-            message: error.message,
-            errors: error.errors
-        })
+            }
+            else {
+                res
+                    .status(500)
+                    .json({
+                        status: 500,
+                        message: 'Unspecified internal error.',
+                        errors: []
+                    })
+            }
+        }
     })
 
     return app

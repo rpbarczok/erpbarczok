@@ -1,9 +1,9 @@
 import { expect } from 'expect'
 import './utils/env.test.js'
-import { getAllFields, getFieldById, deleteFieldById, putFieldById, addField, } from '../services/fields.js'
+import { getAllFields, getFieldById, deleteFieldById, putFieldById, addField } from '../services/fields.js'
 import { sequelize } from '../models/index.js'
-import { NotFoundError } from '../services/error.js'
 import { Field } from '../models/fields.js'
+import { ErrorWithStatus } from '../services/error.js'
 
 
 describe('Field Unit Tests', async function () {
@@ -45,7 +45,9 @@ describe('Field Unit Tests', async function () {
         })
 
         it('getFieldById(17) returns error', async () => {
-            await expect(getFieldById(17)).rejects.toBeInstanceOf(NotFoundError)
+            await expect(getFieldById(17)).resolves.toEqual(
+                expect.any(ErrorWithStatus) && expect.objectContaining({status:404, message: 'not found'})
+            )
         })
     })
 
@@ -63,7 +65,7 @@ describe('Field Unit Tests', async function () {
         })
 
         it('putFieldId(1) remove name returns error', async () => {
-            // @ts-ignore:next-line
+            // @ts-expect-error Provoke error by giving object without props
             await expect(putFieldById(1, {})).resolves.toEqual(
                 expect.any(Field) && expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Spediteur', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
             )
@@ -76,17 +78,22 @@ describe('Field Unit Tests', async function () {
         })
 
         it('putFieldById(17) returns error', async () => {
-            await expect(putFieldById(17, { 'name': 'Sonstiges' })).rejects.toBeInstanceOf(NotFoundError)
+            await expect(putFieldById(17, { 'name': 'Sonstiges' })).resolves.toEqual(
+                expect.any(ErrorWithStatus) && expect.objectContaining({status:404, message: 'not found'}
+
+                ))
         })
     })
 
     describe('Test DeleteFieldById', async function () {
-        it('deleteFieldById resolves', async () => {
-            await expect(deleteFieldById(1)).resolves.toBeUndefined
+        it('deleteFieldById succeeds', () => {
+            expect(deleteFieldById(1)).resolves.toBeUndefined()
         })
 
-        it('subsequent deleteFieldById(1) throws NotFoundError', async () => {
-            await expect(deleteFieldById(1)).rejects.toBeInstanceOf(NotFoundError)
+        it('subsequent deleteFieldById(1) resolves to Error', async () => {
+            await expect(deleteFieldById(1)).resolves.toEqual(
+                expect.any(ErrorWithStatus) && expect.objectContaining({status:404, message: 'not found'})
+            )
         })
 
         it('getAllFields returns only /fields/2', async () => {

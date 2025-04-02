@@ -3,12 +3,12 @@ import { Col, Row } from 'react-bootstrap'
 import { CompaniesXSList } from './CompaniesXSList.jsx'
 import { Company } from './CompanyFormBasis.jsx'
 import { CompanyAdd } from './CompanyAdd.jsx'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { CompanyXSSearch } from './CompanyXSSearch.jsx'
 import { DataWithMeta } from '../forms.js'
 import { hasPermission } from '../../utils/hasPermission.js'
-import { Heading } from '../headings/Heading.js'
-import { Notes } from '../notifiers/Notes.js'
+import { Heading } from '../headings/Heading.jsx'
+import { Notes } from '../notifiers/Notes.jsx'
 import { PermissionContext } from '../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
@@ -39,7 +39,7 @@ export const CompanyXSForm = ({
     changedCompanyDispatch }: CompanyXSFormInterface) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
-    const {permissions, setPermissions} = useContextThrowUndefined(PermissionContext)
+    const {permissions} = useContextThrowUndefined(PermissionContext)
 
     return (
 

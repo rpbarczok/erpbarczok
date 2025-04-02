@@ -24,7 +24,7 @@ const main = async () => {
 
   // * Normalize a port into a number, string, or false.
 
-  function normalizePort(val: any) {
+  function normalizePort(val: string) {
     const port = parseInt(val, 10);
 
     if (isNaN(port)) {
@@ -44,10 +44,11 @@ const main = async () => {
    * Event listener for HTTP server 'error' event.
    */
 
-  function onError(error: any) {
+  function onError(error) {
     if (error.syscall !== 'listen') {
       throw error;
     }
+
 
     const bind = typeof port === 'string'
       ? 'Pipe ' + port
@@ -75,7 +76,7 @@ const main = async () => {
   function onListening() {
     const addr = server.address();
     if (!addr) {
-      logger('Server address not found.')
+      logger('Server address not found')
     } else {
       const bind = typeof addr === 'string'
         ? 'pipe ' + addr

@@ -17,7 +17,7 @@ interface NavigationRibbonInterface {
 export function NavigationRibbon({ tabs, setTabs, setActiveForm, theme, setTheme }: NavigationRibbonInterface) {
 
     const auth = useAuth()
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+    const { permissions } = useContextThrowUndefined(PermissionContext)
 
     const handleClick = (form: FormTab) => {
         //check whether tab is already open
@@ -132,7 +132,7 @@ export function NavigationRibbon({ tabs, setTabs, setActiveForm, theme, setTheme
         )
     }
 
-    const logOutHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const logOutHandler = async () => {
         // try {
         //     await auth.revokeTokens()
         //     await auth.removeUser()
@@ -148,7 +148,7 @@ export function NavigationRibbon({ tabs, setTabs, setActiveForm, theme, setTheme
                 <Navbar key='navbar-lg' className='bg-body-secondary d-none d-xl-block'>
                     <Nav>
                         <Groups />
-                        <NavDropdown drop='start' className='ms-auto' key='account' title={auth.user?.profile?.email ?? auth.user?.profile?.name}>
+                        <NavDropdown drop='start' className='ms-auto' key='account' title={auth.user?.profile?.email || auth.user?.profile?.name}>
                             <NavDropdown.Item key='logout' onClick={logOutHandler}>Logout</NavDropdown.Item>
                             <NavDropdown.Divider />
                             <FormCheck
@@ -176,7 +176,7 @@ export function NavigationRibbon({ tabs, setTabs, setActiveForm, theme, setTheme
                     </Dropdown>
                 </Col>
                 <Col className='ms-auto'>
-                    <NavDropdown drop='start' className='float-end' key='account' title={auth.user?.profile?.email ?? auth.user?.profile?.name}>
+                    <NavDropdown drop='start' className='float-end' key='account' title={auth.user?.profile?.email || auth.user?.profile?.name}>
                         <NavDropdown.Item key='logout' onClick={logOutHandler}>Logout</NavDropdown.Item>
                         <Dropdown.Divider />
                         <FormCheck reverse type='switch' id='toggleTheme' onChange={(e) => toggleTheme(e, theme, setTheme)} label='Toggle Theme' />

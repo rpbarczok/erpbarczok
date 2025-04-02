@@ -5,7 +5,6 @@ import { sequelize } from '../models/index.js'
 import { expect } from 'expect'
 import { App } from 'supertest/types.js'
 import { sha256 } from '../hasher.js'
-import { jwtCheck } from '../utils/auth.js'
 import jwt from 'jsonwebtoken'
 
 const iat = Math.floor(Date.now() / 1000)
@@ -18,8 +17,6 @@ const scope = process.env.SCOPE || 'openid email profile admin user'
 const secret = process.env.TEST_SECRET || 'secret'
 const algorithms = ['HS256']
 
-
-//@ts-ignore
 const validTokenAdmin: string = jwt.sign(
     {
         'iss': issuer,
@@ -147,7 +144,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body).toEqual([])
         })
 
-        it('post /fields with name should fail with 401 because of missing authZ ', async () => {
+        it('post /fields with name should fail with 401 because of missing authZ for User', async () => {
             const response = await request(app)
                 .post('/fields/')
                 .send(fieldA)
@@ -160,7 +157,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.message).toEqual('unauthorized')
         })
 
-        it('post /fields with name should fail with 401 because of missing authZ ', async () => {
+        it('post /fields with name should succeed with 201 for Admin', async () => {
             const response = await request(app)
                 .post('/fields/')
                 .send(fieldA)
@@ -261,7 +258,6 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect(404)
             expect(response.body.status).toBe(404)
             expect(response.body.message).toBe('not found')
-            expect(response.body.errors).toBeNull
         })
 
         it('Get /field/{id} fails with 400 with negative id fails', async () => {
@@ -273,7 +269,6 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect(400)
             expect(response.body.status).toBe(400)
             expect(response.body.message).toMatch('must be >= 1')
-            expect(response.body.errors).toBeNull
         })
 
         it('Get /field/{id} fails with 400 with strange id', async () => {
@@ -380,7 +375,6 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect(401)
             expect(response.body.status).toBe(401)
             expect(response.body.message).toBe('unauthorized')
-            expect(response.body.errors).toBeNull
         })
         
         it('DELETE /fields/{id} existing fields fails with 401 as User', async () => {
@@ -392,11 +386,10 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect(401)
             expect(response.body.status).toBe(401)
             expect(response.body.message).toBe('unauthorized')
-            expect(response.body.errors).toBeNull
         })
 
         it('DELETE /fields/{id} existing fields succeeds as Admin', async () => {
-            const response = await request(app)
+            await request(app)
                 .delete('/fields/1')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
@@ -412,7 +405,6 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect(404)
             expect(response.body.status).toBe(404)
             expect(response.body.message).toBe('not found')
-            expect(response.body.errors).toBeNull
         })
 
         it('DELETE /fields/{id} fails with 400 with negative id', async () => {

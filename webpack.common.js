@@ -39,7 +39,7 @@ const config = {
     resolve: {
         modules: [import.meta.dirname, 'client', 'node_modules'],
         extensionAlias: {
-            '.js': ['.ts', '.js'],
+            '.js': ['.ts', '.js', '.tsx', '.jsx'],
             '.jsx': ['.tsx', '.jsx']
         },
         extensions: ['.js', '.jsx', '.ts', '.tsx', '.css']

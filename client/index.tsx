@@ -5,11 +5,11 @@ import { Button } from 'react-bootstrap'
 import { createRoot } from 'react-dom/client'
 import { serviceWorkerRegistry } from './utils/serviceworker.js'
 import { StrictMode } from 'react'
-import { User, WebStorageStateStore } from 'oidc-client-ts'
+import { WebStorageStateStore } from 'oidc-client-ts'
 
 const root = createRoot(document.getElementById('root') as HTMLElement)
 
-const onSigninCallback = (_user: User | void): void => {
+const onSigninCallback = (): void => {
   window.history.replaceState(
     {},
     document.title,

@@ -4,6 +4,7 @@ import { Field } from '../../models/fields.js'
 import { getAllFields, addField } from '../../services/fields.js'
 import { Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
+import { ErrorWithStatus } from '../../services/error.js'
 
 export interface FieldNorm {
     name: string
@@ -26,11 +27,19 @@ export function combineFieldWithMeta(field: Field): DataWithMeta<FieldNorm> {
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
-    const allFields = await getAllFields()
-    const allFieldsWithMeta: DataWithMeta<FieldNorm>[] = allFields.map(row => combineFieldWithMeta(row))
-    res
-        .status(200)
-        .json(allFieldsWithMeta)
+    const allFieldsSearchResult = await getAllFields()
+    if (allFieldsSearchResult instanceof ErrorWithStatus) {
+        res
+        .status(allFieldsSearchResult.status)
+        .send({status: allFieldsSearchResult.status, message: allFieldsSearchResult.message})
+        .end()
+    } else {
+        const allFieldsWithMeta: DataWithMeta<FieldNorm>[] = allFieldsSearchResult.map(row => combineFieldWithMeta(row))
+        res
+            .status(200)
+            .send(allFieldsWithMeta)
+            .end()
+    }
 }
 
 GET.apiSpec = {
@@ -109,19 +118,30 @@ GET.apiSpec = {
         '400': {
             '$ref': '#/components/responses/400_validation_error'
         },
+        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
+        },
         '404': {
             '$ref': '#/components/responses/404_not_found_error'
         }
     }
 }
 export const POST: Operation = async (req: Request, res: Response) => {
-    const newField = await addField(req.body)
-    const newFieldMeta = createFieldMeta(newField)
-    res
-        .status(201)
-        .set(newFieldMeta)
+    const newFieldAddResult = await addField(req.body)
+    if (newFieldAddResult instanceof ErrorWithStatus) {
+        res
+        .status(newFieldAddResult.status)
+        .json({status: newFieldAddResult.status, message: newFieldAddResult.message})
         .end()
+    } else {
+        const newFieldMeta = createFieldMeta(newFieldAddResult)
+        res
+            .status(201)
+            .set(newFieldMeta)
+            .end()
+    }
 }
+
 POST.apiSpec = {
     'summary': 'Add new field',
     'description': 'POST request for a new field',
@@ -149,6 +169,9 @@ POST.apiSpec = {
     'responses': {
         '201': {
             '$ref': '#/components/responses/201'
+        },
+        '401': {
+            '$ref': '#/components/responses/401_authorization_error'
         },
         '400': {
             '$ref': '#/components/responses/400_validation_error'

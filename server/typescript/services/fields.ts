@@ -1,70 +1,74 @@
-import { error_formatter, NotFoundError } from './error.js'
+import {  createNewError} from './error.js'
 import { baseLogger } from '../logger.js'
 import { Field } from '../models/fields.js'
 import { FieldNorm } from '../controllers/fields/index.js'
 
 const logger = baseLogger.extend('services:fields')
 
-export const getAllFields = () => new Promise<Field[]>(async function (resolve, reject) {
+export const getAllFields = async () => {
+    logger('Get all fields')
     try {
         const fields = await Field.findAll({ order: [['name', 'ASC']] })
-        resolve(fields)
+        logger('Got all fields')
+        return fields
     }
     catch (error) {
-        reject(error_formatter(500, error))
+        logger('Error while getting all fields')
+        return createNewError(500, error.message)
     }
-})
+}
 
-export const addField = (field: FieldNorm) => new Promise<Field>(async function (resolve, reject) {
+export const addField = async (field: FieldNorm) => {
     const newField = {
         name: field.name
     }
     try {
         const addedField = await Field.create(newField)
-        resolve(addedField)
+        return addedField
     } catch (error) {
-        reject(error_formatter(500, error))
+        return createNewError(500, error.message)
     }
-})
+}
 
-export const getFieldById = (id: number) => new Promise<Field>(async function (resolve, reject) {
+export const getFieldById = async (id: number) => {
     try {
         const field = await Field.findByPk(id)
         if (field === null) {
-            reject(new NotFoundError())
+            return createNewError(404)
         } else {
-            resolve(field)
+            return field
         }
     }
     catch (error) {
-        reject(error_formatter(500, error))
+        return createNewError(500, error.message)
     }
-})
+}
 
-export const deleteFieldById = (id: number) => new Promise<void>(async (resolve, reject) => {
+export const deleteFieldById = async (id: number) => {
     try {
         const deletedRowsCount = await Field.destroy({ where: { id: id } })
         if (deletedRowsCount === 0) {
-            reject(new NotFoundError)
+            return createNewError(404)
         } else {
-            resolve()
+            return
         }
     }
     catch (error) {
-        reject(error_formatter(500, error))
+        return createNewError(500, error.message)
     }
-})
-export const putFieldById = (id: number, field: FieldNorm) => new Promise<Field>(async (resolve, reject) => {
+}
+
+export const putFieldById = async (id: number, field: FieldNorm) => {
     try {
         const oldField = await Field.findByPk(id)
         if (oldField === null) {
-            reject(new NotFoundError())
+            return createNewError(404)
         } else {
             const updatedField = await oldField.update(field)
-            resolve(updatedField)
+            return updatedField
         }
     }
     catch (error) {
-        reject(error_formatter(500, error))
+        return createNewError(500, error.message)
     }
-})
+}

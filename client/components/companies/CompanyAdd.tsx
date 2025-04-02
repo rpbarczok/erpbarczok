@@ -2,7 +2,7 @@ import { apiClient } from '../../utils/openAPIClientAxios.js'
 import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
 import { ChangedCompanyAction, changedCompanyReducer } from './changedCompanyReducer.js'
 import { Company, emptyCompany } from './CompanyFormBasis.jsx'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../forms.js'
 import { CompanyInput } from './CompanyInput.jsx'
 import { LoadingContext } from '../../utils/loadingContext.js'
@@ -77,7 +77,7 @@ export const AddCompanyModal = ({
     changedCompanyDispatch}: AddCompanyModalComponent) => {
     const [validated, setValidated] = useState<boolean>(false)
     const [addNotes, addAddNote, removeAddNote] = useNotifier()
-    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     const auth = useAuth()
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
@@ -128,6 +128,7 @@ export const AddCompanyModal = ({
                         variant: 'danger',
                         message: `Fehler bei Erstellung des neuen Unternehmens: ${error}`,
                     }
+                    addAddNote(note)
                 }
             }
         }

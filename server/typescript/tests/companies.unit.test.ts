@@ -2,7 +2,7 @@ import { expect } from 'expect'
 import './utils/env.test.js'
 import { getAllCompanies, addCompany, getCompanyById, deleteCompanyById, putCompanyById } from '../services/companies.js'
 import {sequelize} from '../models/index.js'
-import { NotFoundError } from '../services/error.js'
+import { ErrorWithStatus } from '../services/error.js'
 import { Company } from '../models/companies.js'
 import { CompanyType } from '../models/companyTypes.js'
 
@@ -59,7 +59,9 @@ describe('Company Unit Tests', async function () {
         })
 
         it('getCompanyById(17) returns error', async () => {
-            await expect(getCompanyById(17)).rejects.toBeInstanceOf(NotFoundError)
+            await expect(getCompanyById(17)).resolves.toEqual(
+                expect.any(ErrorWithStatus) && expect.objectContaining({status: 404, message: 'not found'})
+            )
         })
     })
 
@@ -164,8 +166,10 @@ describe('Company Unit Tests', async function () {
         })
 
         it('putCompanyById(1) remove name returns error', async () => {
-            // @ts-ignore:next-line
-            await expect(putCompanyById(1, { 'abbr': 'FRA', 'companyType': 'Kunde' })).rejects.toEqual({status: 400, message: 'Bad request'})
+            // @ts-expect-error Provoke error by giving company without required name prop
+            await expect(putCompanyById(1, { 'abbr': 'FRA', 'companyType': 'Kunde' })).resolves.toEqual(
+                expect.any(ErrorWithStatus) && expect.objectContaining({status: 400, message: 'Bad request.'})
+            )
         })
 
         it("getCompanyById(1) returns {'id': 1, 'name': 'Firma C', 'abbr': 'FRC, 'www': null, 'companyType': 'Kunde'} after unsuccessful delete", async () => {
@@ -184,12 +188,16 @@ describe('Company Unit Tests', async function () {
         })
 
         it('putCompanyById(17) returns error', async () => {
-            await expect(putCompanyById(17, { 'name': 'Firma D', 'abbr': 'FRD', 'companyType': 'Kunde' })).rejects.toBeInstanceOf(NotFoundError)
+            await expect(putCompanyById(17, { 'name': 'Firma D', 'abbr': 'FRD', 'companyType': 'Kunde' })).resolves.toEqual(
+                expect.any(ErrorWithStatus) && expect.objectContaining({status: 404, message: 'not found'})
+            )
         })
 
         it('putCompanyById(1) remove companyType returns error', async () => {
-            // @ts-ignore:next-line
-            await expect(putCompanyById(1, { 'name': 'Firma C', 'abbr': 'FRC' })).rejects.toEqual({status: 400, message: 'Bad request'})
+            // @ts-expect-error Provoke error by giving company without required company type
+            await expect(putCompanyById(1, { 'name': 'Firma C', 'abbr': 'FRC' })).resolves.toEqual(
+                expect.any(ErrorWithStatus) && expect.objectContaining({status: 400, message: 'Bad request.'})
+            )
         })
 
         it("getCompanyById(1) returns {'id': 1, 'name': 'Firma C', 'abbr': 'FRC, 'www': null, 'companyType': 'Kunde'} after unsuccessful delete", async () => {
@@ -232,11 +240,13 @@ describe('Company Unit Tests', async function () {
     describe('Test DeleteCompanyById', function () {
 
         it('deleteCompanyById resolves', async () => {
-            await expect(deleteCompanyById(1)).resolves.toBeUndefined
+            expect(deleteCompanyById(1)).resolves.toBeUndefined()
         })
 
-        it('subsequent deleteCompanyById(1) throws NotFoundError', async () => {
-            await expect(deleteCompanyById(1)).rejects.toBeInstanceOf(NotFoundError)
+        it('subsequent deleteCompanyById(1) resolves to Error', async () => {
+            await expect(deleteCompanyById(1)).resolves.toEqual(
+                expect.any(ErrorWithStatus) && expect.objectContaining({status: 404, message: 'not found'})
+            )
         })
 
         it('getAllCompanies returns only 2', async () => {

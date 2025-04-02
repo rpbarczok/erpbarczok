@@ -2,7 +2,7 @@ import { Col, Form, Row } from 'react-bootstrap'
 import { ChangedCompanyAction } from './changedCompanyReducer.js'
 import { Company } from './CompanyFormBasis.jsx'
 import { DataWithMeta } from '../forms.js'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { CompanyTypesDropdown } from './CompanyTypesDropdown.jsx'
 import { hasPermission } from '../../utils/hasPermission.js'
 import { PermissionContext } from '../../utils/permissionContext.js'
@@ -16,7 +16,7 @@ interface CompanyInputInterface {
 
 export const CompanyInput = ({ companyTypesList, changedCompanyDispatch, changedCompany }: CompanyInputInterface) => {
 
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+    const { permissions } = useContextThrowUndefined(PermissionContext)
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
         changedCompanyDispatch({ type: 'nameChange', newValue: e.target.value })

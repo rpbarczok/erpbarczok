@@ -5,7 +5,6 @@ import { sequelize } from '../models/index.js'
 import { expect } from 'expect'
 import { App } from 'supertest/types.js'
 import { sha256 } from '../hasher.js'
-import { jwtCheck } from '../utils/auth.js'
 import jwt from 'jsonwebtoken'
 
 const iat = Math.floor(Date.now() / 1000)
@@ -18,7 +17,6 @@ const scope = process.env.SCOPE || 'openid email profile admin user'
 const secret = process.env.TEST_SECRET || 'secret'
 const algorithms = ['HS256']
 
-//@ts-ignore
 const validTokenAdmin: string = jwt.sign(
     {
         'iss': issuer,
@@ -260,7 +258,6 @@ describe('/company-types/ HTTP integration Tests', async function () {
                 .expect(404)
             expect(response.body.status).toBe(404)
             expect(response.body.message).toBe('not found')
-            expect(response.body.errors).toBeNull
         })
 
         it('Get /company-type/{id} fails with 400 with negative id fails', async () => {
@@ -272,7 +269,6 @@ describe('/company-types/ HTTP integration Tests', async function () {
                 .expect(400)
             expect(response.body.status).toBe(400)
             expect(response.body.message).toMatch('must be >= 1')
-            expect(response.body.errors).toBeNull
         })
 
         it('Get /company-type/{id} fails with 400 with strange id', async () => {
@@ -379,7 +375,6 @@ describe('/company-types/ HTTP integration Tests', async function () {
                 .expect(401)
             expect(response.body.status).toBe(401)
             expect(response.body.message).toBe('unauthorized')
-            expect(response.body.errors).toBeNull
         })
         
         it('DELETE /company-types/{id} existing company-types fails with 401 as User', async () => {
@@ -391,11 +386,10 @@ describe('/company-types/ HTTP integration Tests', async function () {
                 .expect(401)
             expect(response.body.status).toBe(401)
             expect(response.body.message).toBe('unauthorized')
-            expect(response.body.errors).toBeNull
         })
 
         it('DELETE /company-types/{id} existing company-types succeeds as Admin', async () => {
-            const response = await request(app)
+            await request(app)
                 .delete('/company-types/1')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
@@ -411,7 +405,6 @@ describe('/company-types/ HTTP integration Tests', async function () {
                 .expect(404)
             expect(response.body.status).toBe(404)
             expect(response.body.message).toBe('not found')
-            expect(response.body.errors).toBeNull
         })
 
         it('DELETE /company-types/{id} fails with 400 with negative id', async () => {

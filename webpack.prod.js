@@ -21,7 +21,7 @@ const config = merge(common, {
                 }
             ]
         }),
-        // generat Service Worker
+        // generate Service Worker
         // https://webpack.js.org/guides/progressive-web-application/
         new WorkboxPlugin.GenerateSW({
             clientsClaim: true,

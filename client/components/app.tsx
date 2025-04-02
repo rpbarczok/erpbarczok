@@ -28,7 +28,7 @@ export function App() {
     }
 
     if (auth.error) {
-        return <LoginError message={auth.error.message ?? ''} />
+        return <LoginError message={auth.error.message || ''} />
     }
 
     if (auth.isAuthenticated) {

@@ -1,5 +1,5 @@
 import { apiClient } from '../../../utils/openAPIClientAxios.js'
-import { CompanyType } from './CompanyTypesInput.js'
+import { CompanyType } from './CompanyTypesInput.jsx'
 import { DataWithMeta } from '../../../components/forms.jsx'
 import { LoadingContext } from '../../../utils/loadingContext.js'
 import { PermissionContext, updateUserPermissions } from '../../../utils/permissionContext.js'
@@ -14,7 +14,7 @@ export function useCompanyTypes(): [DataWithMeta<CompanyType>[], React.Dispatch<
     const auth = useAuth()
     const token = auth.user?.access_token
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-    const { isLoading, setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
 
     useEffect(() => {
         if (isCompanyTypeChanged) {

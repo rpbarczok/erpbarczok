@@ -1,4 +1,4 @@
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../forms.js'
 
 interface CompanyTypesInterface {
