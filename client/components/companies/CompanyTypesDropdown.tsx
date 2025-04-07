@@ -1,5 +1,5 @@
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
-import { DataWithMeta } from '../forms.js'
+import { DataWithMeta } from '../Pages.jsx'
 
 interface CompanyTypesInterface {
     companyTypesList: DataWithMeta<CompanyType>[]

@@ -1,21 +1,21 @@
 import { ButtonGroup, Col, Row } from 'react-bootstrap'
 import { ChangedCompanyAction } from './changedCompanyReducer.js'
-import { CompaniesSMList } from './CompaniesSMList.jsx'
-import { Company } from './CompanyFormBasis.jsx'
-import { CompanyAdd } from './CompanyAdd.jsx'
-import { CompanyDelete } from './CompanyDelete.jsx'
-import { CompanySMEdit } from './CompanySMEdit.jsx'
-import { CompanySMSearch } from './CompanySMSearch.jsx'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
-import { DataWithMeta } from '../forms.js'
+import { CompaniesSMList } from './CompaniesSMList.js'
+import { Company } from './CompanyPageBasis.js'
+import { CompanyAdd } from './CompanyAdd.js'
+import { CompanyDelete } from './CompanyDelete.js'
+import { CompanySMEdit } from './CompanySMEdit.js'
+import { CompanySMSearch } from './CompanySMSearch.js'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { DataWithMeta } from '../Pages.jsx'
 import { hasPermission } from '../../utils/hasPermission.js'
-import { Heading } from '../headings/Heading.jsx'
-import { Notes } from '../notifiers/Notes.jsx'
+import { Heading } from '../headings/Heading.js'
+import { Notes } from '../notifiers/Notes.js'
 import { PermissionContext } from '../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
 
-interface CompaniesSMFormInterface {
+interface CompaniesSMPageInterface {
     search: string
     setSearch: React.Dispatch<React.SetStateAction<string>>
     filteredCompanies: DataWithMeta<Company>[]
@@ -28,7 +28,7 @@ interface CompaniesSMFormInterface {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const CompanySMForm = ({ search,
+export const CompanySMPage = ({ search,
     setSearch,
     filteredCompanies,
     activeCompany,
@@ -37,7 +37,7 @@ export const CompanySMForm = ({ search,
     setIsCompanyChanged,
     setIsNew,
     changedCompany,
-    changedCompanyDispatch }: CompaniesSMFormInterface) => {
+    changedCompanyDispatch }: CompaniesSMPageInterface) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
     const { permissions } = useContextThrowUndefined(PermissionContext)
@@ -85,7 +85,7 @@ export const CompanySMForm = ({ search,
     }
     return (
         <div className='flex-grow-1' >
-            <Heading title='Stammdaten: Kunden, Lieferanten, Spediteure' cssClass='stammForm' />
+            <Heading title='Stammdaten: Kunden, Lieferanten, Spediteure' cssClass='stamm' />
             <Row >
                 <Col sm={5} md={4}>
                     <CompanySMSearch search={search} setSearch={setSearch} />

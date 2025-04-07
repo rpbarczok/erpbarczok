@@ -1,7 +1,7 @@
 import { apiClient } from '../../utils/openAPIClientAxios.js'
 import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
 import { CompanyType, CompanyTypesInput } from './companyTypes/CompanyTypesInput.jsx'
-import { DataWithMeta } from '../forms.js'
+import { DataWithMeta } from '../Pages.jsx'
 import { Field, FieldsInput } from './fields/Fields.jsx'
 import { LoadingContext } from '../../utils/loadingContext.js'
 import { Note, Notes } from '../notifiers/Notes.jsx'

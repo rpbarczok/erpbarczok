@@ -1,5 +1,5 @@
-import { Company } from '../CompanyFormBasis.jsx';
-import { DataWithMeta } from '../../../components/forms.jsx';
+import { Company } from '../CompanyPageBasis.js';
+import { DataWithMeta } from '../../Pages.jsx';
 
 
 export const filterList = (list: DataWithMeta<Company>[], search: string) => {

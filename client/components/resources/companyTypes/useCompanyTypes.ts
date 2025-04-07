@@ -1,6 +1,6 @@
 import { apiClient } from '../../../utils/openAPIClientAxios.js'
 import { CompanyType } from './CompanyTypesInput.jsx'
-import { DataWithMeta } from '../../../components/forms.jsx'
+import { DataWithMeta } from '../../Pages.jsx'
 import { LoadingContext } from '../../../utils/loadingContext.js'
 import { PermissionContext, updateUserPermissions } from '../../../utils/permissionContext.js'
 import { removeStringBeforeLastDigits } from '../../../utils/removeStringBeforeLastDigits.js'

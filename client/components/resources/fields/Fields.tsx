@@ -1,5 +1,5 @@
 import { ChangeEvent } from 'react'
-import { DataWithMeta } from '../../forms.js'
+import { DataWithMeta } from '../../Pages.jsx'
 import { Form } from 'react-bootstrap'
 
 export interface Field {

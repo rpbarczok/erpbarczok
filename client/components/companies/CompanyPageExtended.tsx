@@ -1,10 +1,10 @@
 import { apiClient } from '../../utils/openAPIClientAxios.js'
 import { changedCompanyReducer } from './changedCompanyReducer.js'
-import { Company, emptyCompany } from './CompanyFormBasis.jsx'
-import { CompanySMForm } from './CompanySMForm.jsx'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
-import { CompanyXSForm } from './CompanyXSForm.jsx'
-import { DataWithMeta } from '../forms.js'
+import { Company, emptyCompany } from './CompanyPageBasis.js'
+import { CompanySMPage } from './CompanySMPage.jsx'
+import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyXSPage } from './CompanyXSPage.jsx'
+import { DataWithMeta } from '../Pages.jsx'
 import { LoadingContext } from '../../utils/loadingContext.js'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLastDigits.js'
@@ -13,16 +13,16 @@ import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useEffect, useReducer, useState } from 'react'
 
-interface CompanyFormExtendedInterface {
+interface CompanyPageExtendedInterface {
     companiesList: DataWithMeta<Company>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     companyTypesList: DataWithMeta<CompanyType>[]
 }
 
-export const CompanyFormExtended = (
+export const CompanyPageExtended = (
     { companiesList,
         companyTypesList,
-        setIsCompanyChanged }: CompanyFormExtendedInterface) => {
+        setIsCompanyChanged }: CompanyPageExtendedInterface) => {
 
     const [search, setSearch] = useState<string>('') // Content of the search input field
     const [listFiltered, setListFiltered] = useState(companiesList)
@@ -91,7 +91,7 @@ export const CompanyFormExtended = (
     return (
         <>
             <Row className='d-none d-sm-flex flex-grow-1 flex-column' style={{ overflowY: 'scroll' }}>
-                <CompanySMForm
+                <CompanySMPage
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}
                     activeCompany={activeCompany}
@@ -103,7 +103,7 @@ export const CompanyFormExtended = (
                 />
             </Row>
             <Row className='d-sm-none flex-grow-1 d-flex flex-column' style={{ overflowY: 'hidden' }}>
-                <CompanyXSForm
+                <CompanyXSPage
                     search={search} setSearch={setSearch}
                     filteredCompanies={listFiltered}
                     activeCompany={activeCompany}

@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { App } from './components/app.jsx'
+import { App } from './components/App.js'
 import { AuthProvider, AuthProviderProps } from 'react-oidc-context'
 import { Button } from 'react-bootstrap'
 import { createRoot } from 'react-dom/client'

@@ -10,6 +10,7 @@
     "moduleResolution": "nodenext",
     "module": "NodeNext",
     "jsx": "react-jsxdev",
+    "strictNullChecks": true
   },
   "strict": true
 }

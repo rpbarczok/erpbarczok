@@ -1,9 +1,9 @@
 import { apiClient } from '../../utils/openAPIClientAxios.js'
 import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
 import { ChangedCompanyAction, changedCompanyReducer } from './changedCompanyReducer.js'
-import { Company, emptyCompany } from './CompanyFormBasis.jsx'
+import { Company, emptyCompany } from './CompanyPageBasis.jsx'
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
-import { DataWithMeta } from '../forms.js'
+import { DataWithMeta } from '../Pages.jsx'
 import { CompanyInput } from './CompanyInput.jsx'
 import { LoadingContext } from '../../utils/loadingContext.js'
 import { Note, Notes } from '../notifiers/Notes.jsx'
@@ -91,7 +91,7 @@ export const AddCompanyModal = ({
         }
     }
 
-    const handleSubmitAdd: React.FormEventHandler<HTMLFormElement> = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmitAdd: React.PageEventHandler<HTMLPageElement> = async (e: React.PageEvent<HTMLPageElement>) => {
         const form = e.currentTarget
         e.preventDefault()
         e.stopPropagation()

@@ -1,6 +1,6 @@
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { CompanyFormExtended } from './CompanyFormExtended.jsx'
-import { DataWithMeta } from '../forms.js'
+import { CompanyPageExtended } from './CompanyPageExtended.jsx'
+import { DataWithMeta } from '../Pages.jsx'
 import { LoadingContext } from '../../utils/loadingContext.js'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLastDigits.js'
@@ -18,7 +18,7 @@ export interface Company {
 
 export const emptyCompany: DataWithMeta<Company> = { 'meta': { 'location': 0, 'etag': '' }, 'data': { 'name': '', 'companyType': 'default', 'abbr': '', 'www': '' } }
 
-export const CompanyFormBasis = () => {
+export const CompanyPageBasis = () => {
     const auth = useAuth()
     const [isCompanyChanged, setIsCompanyChanged] = useState<boolean>(true) // Flag: triggers a new GET /companies/ request
     const [companiesList, setCompaniesList] = useState<DataWithMeta<Company>[]>([]) // List of all Companies
@@ -65,7 +65,7 @@ export const CompanyFormBasis = () => {
 
     return (
         <>
-            <CompanyFormExtended
+            <CompanyPageExtended
                 companiesList={companiesList}
                 companyTypesList={companyTypesList}
                 setIsCompanyChanged={setIsCompanyChanged} />

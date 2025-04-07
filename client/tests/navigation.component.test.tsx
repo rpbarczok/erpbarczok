@@ -1,13 +1,13 @@
 import { expect } from 'expect';
-import { FormTab } from '../components/navigation/ribbon.js';
-import { NavigationRibbon } from '../components/navigation/NavigationRibbon.jsx';
-import { NavigationTabs } from 'components/navigation/NavigationTabs.jsx';
+import { PageTab } from '../components/navigation_alt/ribbon.js';
+import { NavigationRibbon } from '../components/navigation_alt/NavigationRibbon.js';
+import { NavigationTabs } from 'components/navigation_alt/NavigationTabs.js';
 import { PermissionContext } from '../utils/permissionContext.js';
 import { render } from './utils/contextWrapper.js';
 import { screen } from '@testing-library/react';
 
-const startForm: FormTab = { name: 'Stammdaten', id: 'stammForm' }
-const anfForm: FormTab = { name: 'Anfragen', id: 'anfForm' }
+const startPage: PageTab = { name: 'Stammdaten', id: 'stammPage' }
+const anfPage: PageTab = { name: 'Anfragen', id: 'anfPage' }
 
 const groupsListPublic = [
     "Startseite",
@@ -48,7 +48,7 @@ describe('Navigation Component Test', (): void => {
     describe('Navigation Ribbon Test with permissions"', (): void => {
 
         // Arrange
-        const tabs = [startForm]
+        const tabs = [startPage]
         const theme = 'light'
 
         for (const permission in permissionGroups) {
@@ -59,7 +59,7 @@ describe('Navigation Component Test', (): void => {
                     <PermissionContext.Provider value={{ permissions: [permission], setPermissions: noop }}>
                         <NavigationRibbon
                             tabs={tabs} setTabs={noop}
-                            setActiveForm={noop}
+                            setActivePage={noop}
                             theme={theme} setTheme={noop}
                         />
                     </PermissionContext.Provider>
@@ -80,13 +80,13 @@ describe('Navigation Component Test', (): void => {
     describe('displays the tab navigation', (): void => {
         it('displays the tab navigation', async (): Promise<void> => {
             // Arrange
-            const tabs = [startForm, anfForm]
-            const activeForm = anfForm
+            const tabs = [startPage, anfPage]
+            const activePage = anfPage
             // Act
             render( 
                 <NavigationTabs
                     tabs={tabs} setTabs={noop}
-                    activeForm={activeForm} setActiveForm={noop}
+                    activePage={activePage} setActivePage={noop}
             />
             )
             // Assert 

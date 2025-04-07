@@ -3,12 +3,12 @@ import { cleanup, screen } from '@testing-library/react';
 import { CompaniesSMList } from "../components/companies/CompaniesSMList.js";
 import { CompaniesXSList } from "../components/companies/CompaniesXSList.js";
 import { CompanySMEdit } from "../components/companies/CompanySMEdit.js";
-import { CompanySMForm } from "../components/companies/CompanySMForm.js";
+import { CompanySMPage } from "../components/companies/CompanySMPage.js";
 import { CompanySMSearch } from "../components/companies/CompanySMSearch.js";
 import { CompanyXSEdit } from "../components/companies/CompanyXSEdit.js";
-import { CompanyXSForm } from "../components/companies/CompanyXSForm.js";
+import { CompanyXSPage } from "../components/companies/CompanyXSPage.js";
 import { CompanyXSSearch } from "../components/companies/CompanyXSSearch.js";
-import { emptyCompany } from "components/companies/CompanyFormBasis.js";
+import { emptyCompany } from "components/companies/CompanyPageBasis.js";
 import { expect } from "expect"
 import { noop, asyncNoop, companyTestList, companyTestTypesList, emptyList } from "./utils/testdata.js";
 import { PermissionContext } from "../utils/permissionContext.js"
@@ -16,7 +16,7 @@ import { render } from "./utils/contextWrapper.js"
 
 afterEach(cleanup)
 
-describe('Company Form Test', (): void => {
+describe('Company Page Test', (): void => {
     const inputLabelList = ['Firma', 'Kürzel (max 3 Zeichen)', 'Art der Beziehung zum Unternehmen', 'Homepage']
 
     describe('Company Edit', (): void => {
@@ -355,13 +355,13 @@ describe('Company Form Test', (): void => {
         })
     })
 
-    describe('Company Form Buttons', (): void => {
-        describe('Company Form Buttons SM', (): void => {
+    describe('Company Page Buttons', (): void => {
+        describe('Company Page Buttons SM', (): void => {
             it('displays no buttons with permission public', (): void => {
                 render(
 
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
-                        <CompanySMForm
+                        <CompanySMPage
                             search={''} setSearch={noop}
                             filteredCompanies={companyTestList}
                             activeCompany={companyTestList[0]}
@@ -384,7 +384,7 @@ describe('Company Form Test', (): void => {
                 render(
 
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
-                        <CompanySMForm
+                        <CompanySMPage
                             search={''} setSearch={noop}
                             filteredCompanies={companyTestList}
                             activeCompany={companyTestList[0]}
@@ -405,12 +405,12 @@ describe('Company Form Test', (): void => {
             })
         })
 
-        describe('Company Form Buttons XS', (): void => {
+        describe('Company Page Buttons XS', (): void => {
             it('displays no buttons with permission public', (): void => {
                 render(
 
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
-                        <CompanyXSForm
+                        <CompanyXSPage
                             search={''} setSearch={noop}
                             filteredCompanies={companyTestList}
                             activeCompany={companyTestList[0]}
@@ -430,7 +430,7 @@ describe('Company Form Test', (): void => {
                 render(
 
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
-                        <CompanyXSForm
+                        <CompanyXSPage
                             search={''} setSearch={noop}
                             filteredCompanies={companyTestList}
                             activeCompany={companyTestList[0]}

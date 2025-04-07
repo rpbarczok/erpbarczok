@@ -25,19 +25,19 @@
 
 /* Headings */
 
-.stammForm-dark {
+.stamm-dark {
     background-color: rgb(19, 132, 177);
 }
 
-.stammForm-light {
+.stamm-light {
     background-color: lightcyan;
 }
 
-.resForm-dark {
+.admin-dark {
     background-color: brown;
 }
 
-.resForm-light {
+.admin-light {
     background-color: lightcoral;
 }
 

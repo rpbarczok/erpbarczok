@@ -1,27 +1,27 @@
-import { AddResources } from './ResourceAdd.jsx'
+import { AddResources } from './ResourceAdd.js'
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { CompanyType } from './companyTypes/CompanyTypesInput.jsx'
-import { DataWithMeta } from '../forms.js'
-import { Field } from './fields/Fields.jsx'
+import { CompanyType } from './companyTypes/CompanyTypesInput.js'
+import { DataWithMeta } from '../Pages.jsx'
+import { Field } from './fields/Fields.js'
 import { ListGroup, Row } from 'react-bootstrap'
 import { LoadingContext } from '../../utils/loadingContext.js'
-import { Notes } from '../notifiers/Notes.jsx'
+import { Notes } from '../notifiers/Notes.js'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLastDigits.js'
 import { Resource } from './resourceList.js'
-import { ResourcesList } from './ResourcesList.jsx'
+import { ResourcesList } from './ResourcesList.js'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useEffect, useState } from 'react'
 import { useNotifier } from '../notifiers/useNotifier.js'
 
-interface ResourceFormComponent {
+interface ResourcePageComponent {
     resource: Resource
     isResourceChanged: boolean
     setIsResourceChanged: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const ResourceForm = ({ resource, isResourceChanged, setIsResourceChanged }: ResourceFormComponent) => {
+export const ResourcePage = ({ resource, isResourceChanged, setIsResourceChanged }: ResourcePageComponent) => {
     const [isItemChanged, setIsItemChanged] = useState(true)
     const [mainNotes, addMainNote, removeMainNote] = useNotifier()
     const [newList, setNewList] = useState<DataWithMeta<CompanyType | Field>[]>([])

@@ -1,5 +1,5 @@
 import { apiClient } from '../../../utils/openAPIClientAxios.js'
-import { DataWithMeta } from '../../../components/forms.jsx'
+import { DataWithMeta } from '../../Pages.jsx'
 import { Field } from './Fields.jsx'
 import { LoadingContext } from '../../../utils/loadingContext.js'
 import { PermissionContext, updateUserPermissions } from '../../../utils/permissionContext.js'

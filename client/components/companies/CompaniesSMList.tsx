@@ -1,5 +1,5 @@
-import { Company } from './CompanyFormBasis.jsx'
-import { DataWithMeta } from '../forms.js'
+import { Company } from './CompanyPageBasis.jsx'
+import { DataWithMeta } from '../Pages.jsx'
 import { ListGroup } from 'react-bootstrap'
 
 

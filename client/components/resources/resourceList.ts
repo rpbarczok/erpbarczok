@@ -1,5 +1,5 @@
 import { CompanyType } from './companyTypes/CompanyTypesInput.jsx'
-import { DataWithMeta } from '../../components/forms.js'
+import { DataWithMeta } from '../Pages.jsx'
 import { Field } from './fields/Fields.jsx'
 
 export interface Resource {

@@ -1,20 +1,24 @@
 import { Container, Row, Col } from 'react-bootstrap'
-import { DataLoading, LoginLoading } from './login/Loading.jsx'
-import { Forms } from './forms.jsx'
-import { FormTab } from './navigation/ribbon.js'
+import { DataLoading, LoginLoading } from './login/Loading.js'
+import { Pages } from './Pages.jsx'
 import { LoadingContext } from '../utils/loadingContext.js'
-import { Login } from './login/Login.jsx'
-import { LoginError } from './login/LoginError.jsx'
-import { Navigation } from './navigation/Navigation.jsx'
+import { Login } from './login/Login.js'
+import { LoginError } from './login/LoginError.js'
+import { Navigation } from './navigation/Navigation.js'
 import { PermissionContext } from '../utils/permissionContext.js'
 import { ThemeContext } from '../utils/themeContext.js'
 import { useAuth } from 'react-oidc-context'
 import { useState } from 'react'
 
+export interface OpenPage {
+    name: string
+    id: string
+}
+
 export function App() {
-    const startPage: FormTab = { name: 'Stammdaten', id: 'stammForm' }
-    const [activeForm, setActiveForm] = useState<FormTab>(startPage)
-    const [tabs, setTabs] = useState<FormTab[]>([startPage])
+    const startPage: OpenPage = { name: 'Stammdaten', id: 'stamm' }
+    const [activePage, setActivePage] = useState<OpenPage>(startPage)
+    const [openPages, setOpenPages] = useState<OpenPage[]>([startPage])
     const auth = useAuth()
     const [theme, setTheme] = useState<'light' | 'dark'>(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
     const [permissions, setPermissions] = useState<string[]>([])
@@ -38,12 +42,12 @@ export function App() {
                     <PermissionContext.Provider value={{ permissions: permissions, setPermissions: setPermissions }}>
                         <Container fluid className='d-flex flex-column vh-100'>
                             <Navigation
-                                tabs={tabs} setTabs={setTabs}
-                                activeForm={activeForm} setActiveForm={setActiveForm}
+                                openPages={openPages} setOpenPages={setOpenPages}
+                                activePage={activePage} setActivePage={setActivePage}
                                 theme={theme} setTheme={setTheme}
                             />
                             {isLoading ? <DataLoading /> : ''}
-                            <Forms activeForm={activeForm} />
+                            <Pages activePage={activePage} />
                             <Row className='bg-body-secondary' >
                                 <hr />
                                 <Col>

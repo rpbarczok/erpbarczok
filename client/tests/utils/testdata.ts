@@ -1,5 +1,5 @@
-import { Company } from "../../components/companies/CompanyFormBasis.js"
-import { DataWithMeta } from "../../components/forms.jsx"
+import { Company } from "../../components/companies/CompanyPageBasis.js"
+import { DataWithMeta } from "../../components/Pages.js"
 
 // eslint-disable-next-line
 export const noop = () => { }
