@@ -1,7 +1,5 @@
-export function createNewError(status: number, message?: string): ErrorWithStatus {
-  if ((message && status !== 500) || (status === 500 && process.env.NODE_ENV !== 'production')) {
-    return new ErrorWithStatus(status, message)
-  } else {
+export function createNewError(status: number, error?: unknown): ErrorWithStatus {
+  if (!error) {
     let messageText = 'Error'
     switch (status) {
       case 400:
@@ -26,15 +24,29 @@ export function createNewError(status: number, message?: string): ErrorWithStatu
         messageText = 'Unspecified internal error.'
         break
     }
-    const error = new ErrorWithStatus(status, messageText)
-    return error
+    return new ErrorWithStatus(status, messageText)
+  } else if (typeof error === 'string') {
+    if ((error && status !== 500) || (status === 500 && process.env.NODE_ENV !== 'production')) {
+      return new ErrorWithStatus(status, error)
+    } else {
+      return new ErrorWithStatus(500, 'Unspecified internal error.')
+    }
+  } else if (typeof error === 'object') {
+    for (const key in error) {
+      if (key === 'message') {
+        if (typeof error[key] === 'string') {
+          const newError = new ErrorWithStatus(status, error[key])
+          return newError
+        }
+      }
+    }
   }
+  return new ErrorWithStatus(500, 'Unspecified internal error.')
 }
-
 
 export class ErrorWithStatus extends Error {
 
-  constructor(status: number, message: string, ...args: unknown[]) {
+  constructor(status: number, message: string, ...args: ErrorOptions[]) {
     super(message, ...args)
     this.status = status
   }

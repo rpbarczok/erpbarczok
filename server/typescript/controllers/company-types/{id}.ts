@@ -1,7 +1,7 @@
 import { getCompanyTypeById, deleteCompanyTypeById, putCompanyTypeById } from '../../services/companyTypes.js'
-import { ErrorWithStatus } from '../../services/error.js'
+import { createNewError, ErrorWithStatus } from '../../services/error.js'
 import type { Request, Response } from 'express'
-import { CompanyTypeNorm, normalizeCompanyType, createCompanyTypeMeta } from './index.js'
+import { CompanyTypeNorm, normalizeCompanyType, createCompanyTypeMeta, isCompanyTypeNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { Meta } from '../../app.js'
 import { Company } from '../../models/companies.js'
@@ -129,43 +129,51 @@ DELETE.apiSpec = {
 }
 
 export const PUT: Operation = async (req: Request, res: Response) => {
+    if (isCompanyTypeNorm(req.body)) {
+        const dbCompanyTypeSearchResult = await getCompanyTypeById(Number(req.params.id))
 
-    const dbCompanyTypeSearchResult = await getCompanyTypeById(Number(req.params.id))
+        if (dbCompanyTypeSearchResult instanceof ErrorWithStatus) {
 
-    if (dbCompanyTypeSearchResult instanceof ErrorWithStatus) {
+            res
+                .status(dbCompanyTypeSearchResult.status)
+                .json({ status: dbCompanyTypeSearchResult.status, message: dbCompanyTypeSearchResult.message })
+        } else {
 
-        res
-            .status(dbCompanyTypeSearchResult.status)
-            .json({ status: dbCompanyTypeSearchResult.status, message: dbCompanyTypeSearchResult.message })
-    } else {
+            const dbCompanyTypeMeta = createCompanyTypeMeta(dbCompanyTypeSearchResult)
 
-        const dbCompanyTypeMeta = createCompanyTypeMeta(dbCompanyTypeSearchResult)
+            if (dbCompanyTypeMeta.etag === req.headers['if-match']) {
 
-        if (dbCompanyTypeMeta.etag === req.headers['if-match']) {
+                const updatedCompanyType = await putCompanyTypeById(Number(req.params.id), req.body)
 
-            const updatedCompanyType = await putCompanyTypeById(Number(req.params.id), req.body)
+                if (updatedCompanyType instanceof ErrorWithStatus) {
 
-            if (updatedCompanyType instanceof ErrorWithStatus) {
+                    res
+                        .status(updatedCompanyType.status)
+                        .json({ status: updatedCompanyType.status, message: updatedCompanyType.message })
 
-                res
-                    .status(updatedCompanyType.status)
-                    .json({ status: updatedCompanyType.status, message: updatedCompanyType.message })
+                } else {
+
+                    const companyTypeHeader = createCompanyTypeMeta(updatedCompanyType)
+
+                    res
+                        .status(204)
+                        .set(companyTypeHeader)
+                        .end()
+                }
 
             } else {
-
-                const companyTypeHeader = createCompanyTypeMeta(updatedCompanyType)
-
+                const newError = createNewError(412)
                 res
-                    .status(204)
-                    .set(companyTypeHeader)
-                    .end()
+                    .status(newError.status)
+                    .json({ status: newError.status, message: newError.message })
             }
-
-        } else {
-            res
-                .status(412)
-                .json({ status: 412, message: 'Precondition failed' })
         }
+
+    } else {
+        const newError = createNewError(400)
+        res
+            .status(newError.status)
+            .json({ status: newError.status, message: newError.message })
     }
 }
 

@@ -2,30 +2,46 @@
 
 import eslint from '@eslint/js';
 import globals from "globals";
-import tseslint from 'typescript-eslint';
+import tseslint from 'typescript-eslint'
+import mochaPlugin from 'eslint-plugin-mocha'
 
 export default tseslint.config(
   {
     ignores: [
-      'server/public/**/*', 
-      'server/ecmascript/**/*', 
-      'server/mocha-typescript-rc.cjs', 
-      'server/mocha-ecmascript-rc.cjs', 
+      'eslint.config.js',
+      'webpack.*',
+      'server/mocha-ecmascript-rc.cjs',
+      'server/mocha-typescript-rc.cjs',
+      'server/ecmascript/**/*',
+      'server/public/**/*',
+      'node_modules/**/*',
+      'create-openapi-spec.ts',
+      'client/public/**/*',
       'client/types/**/*',
       'client/mocha-typescript-rc.cjs',
     ]
   },
   eslint.configs.recommended,
-  tseslint.configs.strict,
-  tseslint.configs.stylistic,
-  {    
+  tseslint.configs.strictTypeChecked,
+  tseslint.configs.stylisticTypeChecked,
+  mochaPlugin.configs.flat.recommended,
+  {
     rules: {
       '@typescript-eslint/consistent-indexed-object-style': ['error', 'index-signature'],
-      "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+      "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        {
+          checksConditionals: true,
+          checksSpreads: true,
+          checksVoidReturn: false,
+        },
+      ],
     },
     languageOptions: {
-      globals: {
-        ...globals.browser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       }
     }
   }

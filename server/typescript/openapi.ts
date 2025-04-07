@@ -2,7 +2,7 @@
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 
 
-const openIdConnectUrl = (process.env.IDP_SERVER?.slice(-1) === '/') ? `${process.env.IDP_SERVER}.well-known/openid-configuration` : `${process.env.IDP_SERVER}/.well-known/openid-configuration`
+const openIdConnectUrl = process.env.IDP_SERVER?.endsWith('/') ? `${process.env.IDP_SERVER}.well-known/openid-configuration` : `${String(process.env.IDP_SERVER)}/.well-known/openid-configuration`
 
 
 export const apiSpec: OpenAPIV3.DocumentV3 = {
@@ -301,7 +301,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
         'securitySchemes': {
             'openId': {
                 'type': 'openIdConnect',
-                'openIdConnectUrl': `${openIdConnectUrl}`
+                'openIdConnectUrl': openIdConnectUrl
             }
         },
         'examples': {

@@ -4,11 +4,21 @@ import { Field } from '../../models/fields.js'
 import { getAllFields, addField } from '../../services/fields.js'
 import { Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
-import { ErrorWithStatus } from '../../services/error.js'
+import { createNewError, ErrorWithStatus } from '../../services/error.js'
 
 export interface FieldNorm {
     name: string
 }
+
+export const isFieldNorm = (value: unknown): value is FieldNorm => {
+    if (typeof value === 'object' && value !== null ) {
+        const keys = Object.keys(value)
+        if (keys.includes('name')) {
+            return (keys.every(key => ['name'].includes(key)))
+        }
+    }
+    return false
+} 
 
 export function normalizeField(field: Field): FieldNorm {
     const result: FieldNorm = { name: field.name }
@@ -127,19 +137,26 @@ GET.apiSpec = {
     }
 }
 export const POST: Operation = async (req: Request, res: Response) => {
-    const newFieldAddResult = await addField(req.body)
-    if (newFieldAddResult instanceof ErrorWithStatus) {
-        res
-        .status(newFieldAddResult.status)
-        .json({status: newFieldAddResult.status, message: newFieldAddResult.message})
-        .end()
-    } else {
-        const newFieldMeta = createFieldMeta(newFieldAddResult)
-        res
-            .status(201)
-            .set(newFieldMeta)
+    if (isFieldNorm(req.body)) {
+        const newFieldAddResult = await addField(req.body)
+        if (newFieldAddResult instanceof ErrorWithStatus) {
+            res
+            .status(newFieldAddResult.status)
+            .json({status: newFieldAddResult.status, message: newFieldAddResult.message})
             .end()
+        } else {
+            const newFieldMeta = createFieldMeta(newFieldAddResult)
+            res
+                .status(201)
+                .set(newFieldMeta)
+                .end()
+        }
+    } else {
+        res
+        .status(400)
+        .json(createNewError(400))
     }
+
 }
 
 POST.apiSpec = {

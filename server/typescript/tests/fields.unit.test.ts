@@ -2,103 +2,100 @@ import { expect } from 'expect'
 import './utils/env.test.js'
 import { getAllFields, getFieldById, deleteFieldById, putFieldById, addField } from '../services/fields.js'
 import { sequelize } from '../models/index.js'
-import { Field } from '../models/fields.js'
-import { ErrorWithStatus } from '../services/error.js'
 
-
-describe('Field Unit Tests', async function () {
+describe('Field Unit Tests', function () {
     this.timeout(5000)
+
     before(async function () {
         await sequelize.sync({ force: true })
     })
 
-    describe('test getAllFields / addField', async function () {
-        it('should return [] for a fresh and empty DB', async () => {
+    describe('test getAllFields / addField', function () {
+        it('should return [] for a fresh and empty DB', async function () {
             await expect(getAllFields()).resolves.toHaveLength(0)
         })
 
-        it('addField works and returns 1', async () => {
+        it('addField works and returns 1', async function () {
             await expect(addField({ name: 'Lebensmittel' })).resolves.toEqual(
-                expect.any(Field) && expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Lebensmittel', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Lebensmittel', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
             )
         })
 
-        it('add second field with addField succeeds and returns 2', async () => {
+        it('add second field with addField succeeds and returns 2', async function () {
             await expect(addField({ name: 'Haushaltsgeräte' })).resolves.toEqual(
-                expect.any(Field) && expect.objectContaining({ dataValues: { 'id': 2, 'name': 'Haushaltsgeräte', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+                expect.objectContaining({ dataValues: { 'id': 2, 'name': 'Haushaltsgeräte', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
             )
         })
 
-        it('getAllFields returns 1 und 2 with names', async () => {
+        it('getAllFields returns 1 und 2 with names', async function () {
             await expect(getAllFields()).resolves.toEqual([
-                expect.any(Field) && expect.objectContaining({ dataValues: { 'id': 2, 'name': 'Haushaltsgeräte', updatedAt: expect.any(Date), createdAt: expect.any(Date) } }),
-                expect.any(Field) && expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Lebensmittel', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+                expect.objectContaining({ dataValues: { 'id': 2, 'name': 'Haushaltsgeräte', updatedAt: expect.any(Date), createdAt: expect.any(Date) } }),
+                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Lebensmittel', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
             ])
         })
     })
 
-    describe('Test getFieldById(id)', async function () {
-        it("getFieldById(1) returns {'id': 1, 'name': 'Lebensmittel'}", async () => {
+    describe('Test getFieldById(id)', function () {
+        it("getFieldById(1) returns {'id': 1, 'name': 'Lebensmittel'}", async function () {
             await expect(getFieldById(1)).resolves.toEqual(
-                expect.any(Field) && expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Lebensmittel', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Lebensmittel', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
             )
         })
 
-        it('getFieldById(17) returns error', async () => {
+        it('getFieldById(17) returns error', async function () {
             await expect(getFieldById(17)).resolves.toEqual(
-                expect.any(ErrorWithStatus) && expect.objectContaining({status:404, message: 'not found'})
+                expect.objectContaining({ status: 404, message: 'not found' })
             )
         })
     })
 
-    describe('Test putFieldById(id)', async function () {
-        it("putFieldById(1) change name to 'Spediteur'", async () => {
+    describe('Test putFieldById(id)', function () {
+        it("putFieldById(1) change name to 'Spediteur'", async function () {
             await expect(putFieldById(1, { 'name': 'Spediteur' })).resolves.toEqual(
-                expect.any(Field) && expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Spediteur', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Spediteur', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
             )
         })
 
-        it("getFieldById(1) returns {'id': 1, 'name': 'Spediteur'} after Name Change", async () => {
+        it("getFieldById(1) returns {'id': 1, 'name': 'Spediteur'} after Name Change", async function () {
             await expect(getFieldById(1)).resolves.toEqual(
-                expect.any(Field) && expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Spediteur', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Spediteur', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
             )
         })
 
-        it('putFieldId(1) remove name returns error', async () => {
-            // @ts-expect-error Provoke error by giving object without props
+        it('putFieldId(1) remove name returns unchanged field', async function () {
+            //@ts-expect-error -- provokes mistake to test reaction of db
             await expect(putFieldById(1, {})).resolves.toEqual(
-                expect.any(Field) && expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Spediteur', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Spediteur', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
             )
         })
 
-        it("getFieldById(1) returns {'id': 1, 'name': 'Spediteur'}", async () => {
+        it("getFieldById(1) returns {'id': 1, 'name': 'Spediteur'}", async function () {
             await expect(getFieldById(1)).resolves.toEqual(
-                expect.any(Field) && expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Spediteur', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Spediteur', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
             )
         })
 
-        it('putFieldById(17) returns error', async () => {
+        it('putFieldById(17) returns error', async function () {
             await expect(putFieldById(17, { 'name': 'Sonstiges' })).resolves.toEqual(
-                expect.any(ErrorWithStatus) && expect.objectContaining({status:404, message: 'not found'}
-
+                expect.objectContaining({ status: 404, message: 'not found' }
                 ))
         })
     })
 
-    describe('Test DeleteFieldById', async function () {
-        it('deleteFieldById succeeds', () => {
-            expect(deleteFieldById(1)).resolves.toBeUndefined()
+    describe('Test DeleteFieldById', function () {
+        it('deleteFieldById succeeds', async function () {
+            await expect(deleteFieldById(1)).resolves.toBeUndefined()
         })
 
-        it('subsequent deleteFieldById(1) resolves to Error', async () => {
+        it('subsequent deleteFieldById(1) resolves to Error', async function () {
             await expect(deleteFieldById(1)).resolves.toEqual(
-                expect.any(ErrorWithStatus) && expect.objectContaining({status:404, message: 'not found'})
+                expect.objectContaining({ status: 404, message: 'not found' })
             )
         })
 
-        it('getAllFields returns only /fields/2', async () => {
+        it('getAllFields returns only /fields/2', async function () {
             await expect(getAllFields()).resolves.toEqual([
-                expect.any(Field) && expect.objectContaining({ dataValues: { 'id': 2, 'name': 'Haushaltsgeräte', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+                expect.objectContaining({ dataValues: { 'id': 2, 'name': 'Haushaltsgeräte', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
             ])
         })
     })

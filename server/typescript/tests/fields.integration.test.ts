@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import './utils/env.test.js'
 import request from 'supertest'
 import { startingApp } from '../app.js'
@@ -11,10 +12,10 @@ const iat = Math.floor(Date.now() / 1000)
 const iatADayAgo = iat - 60 * 60 * 24
 const iatAWeekAgo = iat - 8 * 60 * 60 * 24
 
-const audience = process.env.AUDIENCE || 'www.example.com'
-const issuer = process.env.IDP_SERVER || 'www.example.com'
-const scope = process.env.SCOPE || 'openid email profile admin user'
-const secret = process.env.TEST_SECRET || 'secret'
+const audience = process.env.AUDIENCE ?? 'www.example.com'
+const issuer = process.env.IDP_SERVER ?? 'www.example.com'
+const scope = process.env.SCOPE ?? 'openid email profile admin user'
+const secret = process.env.TEST_SECRET ?? 'secret'
 const algorithms = ['HS256']
 
 const validTokenAdmin: string = jwt.sign(
@@ -72,7 +73,7 @@ const etagA = sha256(JSON.stringify(fieldA))
 const etagB = sha256(JSON.stringify(fieldB))
 const etagC = sha256(JSON.stringify(fieldC))
 
-describe('/fields/ HTTP integration Tests', async function () {
+describe('/fields/ HTTP integration Tests', function () {
     this.timeout(5000)
     let app: App
 
@@ -81,9 +82,9 @@ describe('/fields/ HTTP integration Tests', async function () {
         await sequelize.sync({ force: true })
     });
 
-    describe('GET /fields/ and POST /fields/', async function () {
+    describe('GET /fields/ and POST /fields/', function () {
 
-        it('GET /fields/ should fail with 401 for missing AuthN', async () => {
+        it('GET /fields/ should fail with 401 for missing AuthN', async function () {
             const response = await request(app)
                 .get('/fields/')
                 .set('Accept', 'application/json')
@@ -95,7 +96,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.message).toEqual('No authorization token was found')
         })
 
-        it('GET /fields/ should fail with 401 for expired AuthN', async () => {
+        it('GET /fields/ should fail with 401 for expired AuthN', async function () {
             const response = await request(app)
                 .get('/fields/')
                 .set('Accept', 'application/json')
@@ -108,7 +109,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.message).toEqual('jwt expired')
         })
 
-        it('GET /fields/ should succeed with 200 and return [] for a fresh and empty DB as Guest', async () => {
+        it('GET /fields/ should succeed with 200 and return [] for a fresh and empty DB as Guest', async function () {
             const response = await request(app)
                 .get('/fields/')
                 .set('Accept', 'application/json')
@@ -120,7 +121,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body).toEqual([])
         })
 
-        it('GET /fields/ should succeed with 200 and return [] for a fresh and empty DB as User', async () => {
+        it('GET /fields/ should succeed with 200 and return [] for a fresh and empty DB as User', async function () {
             const response = await request(app)
                 .get('/fields/')
                 .set('Accept', 'application/json')
@@ -132,7 +133,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body).toEqual([])
         })
 
-        it('GET /fields/ should succeed with 200 and return [] for a fresh and empty DB as Admin', async () => {
+        it('GET /fields/ should succeed with 200 and return [] for a fresh and empty DB as Admin', async function () {
             const response = await request(app)
                 .get('/fields/')
                 .set('Accept', 'application/json')
@@ -144,7 +145,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body).toEqual([])
         })
 
-        it('post /fields with name should fail with 401 because of missing authZ for User', async () => {
+        it('post /fields with name should fail with 401 because of missing authZ for User', async function () {
             const response = await request(app)
                 .post('/fields/')
                 .send(fieldA)
@@ -157,18 +158,18 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.message).toEqual('unauthorized')
         })
 
-        it('post /fields with name should succeed with 201 for Admin', async () => {
+        it('post /fields with name should succeed with 201 for Admin', async function () {
             const response = await request(app)
                 .post('/fields/')
                 .send(fieldA)
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .expect(201, '')
-            expect(response.headers['location']).toEqual('/fields/1')
-            expect(response.headers['etag']).toEqual(sha256(JSON.stringify(fieldA)))
+            expect(response.headers.location).toEqual('/fields/1')
+            expect(response.headers.etag).toEqual(sha256(JSON.stringify(fieldA)))
         })
 
-        it('Post /fields with name', async () => {
+        it('Post /fields with name', async function () {
             const response = await request(app)
                 .post('/fields/')
                 .send(fieldB)
@@ -176,11 +177,11 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .expect(201, '')
                 .expect('location', '/fields/2')
-            expect(response.headers['location']).toEqual('/fields/2')
-            expect(response.headers['etag']).toEqual(sha256(JSON.stringify(fieldB)))
+            expect(response.headers.location).toEqual('/fields/2')
+            expect(response.headers.etag).toEqual(sha256(JSON.stringify(fieldB)))
         })
 
-        it('Post /fields without name fails', async () => {
+        it('Post /fields without name fails', async function () {
             const response = await request(app)
                 .post('/fields/')
                 .send({})
@@ -194,7 +195,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Post /fields with extra attributes fails', async () => {
+        it('Post /fields with extra attributes fails', async function () {
             const response = await request(app)
                 .post('/fields/')
                 .send({ 'name': 'Sonstiges', 'extra': 'bla' })
@@ -207,7 +208,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Post /fields with invalid name type fails (array)', async () => {
+        it('Post /fields with invalid name type fails (array)', async function () {
             const response = await request(app)
                 .post('/fields/')
                 .send({ 'name': {} })
@@ -220,7 +221,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('GET /fields/ works with contents', async () => {
+        it('GET /fields/ works with contents', async function () {
             const response = await request(app)
                 .get('/fields/')
                 .set('Accept', 'application/json')
@@ -236,20 +237,20 @@ describe('/fields/ HTTP integration Tests', async function () {
         })
     })
 
-    describe('GET /fields/{id}', async function () {
+    describe('GET /fields/{id}', function () {
 
-        it('Get /field/{id} succeeds when existing', async () => {
+        it('Get /field/{id} succeeds when existing', async function () {
             const response = await request(app)
                 .get('/fields/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, fieldB)
-            expect(response.headers['location']).toEqual('/fields/2')
-            expect(response.headers['etag']).toEqual(etagB)
+            expect(response.headers.location).toEqual('/fields/2')
+            expect(response.headers.etag).toEqual(etagB)
         })
 
-        it('Get /field/{id} fails with 404 when not existing', async () => {
+        it('Get /field/{id} fails with 404 when not existing', async function () {
             const response = await request(app)
                 .get('/fields/17')
                 .set('Accept', 'application/json')
@@ -260,7 +261,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.message).toBe('not found')
         })
 
-        it('Get /field/{id} fails with 400 with negative id fails', async () => {
+        it('Get /field/{id} fails with 400 with negative id fails', async function () {
             const response = await request(app)
                 .get('/fields/-1')
                 .set('Accept', 'application/json')
@@ -271,7 +272,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.message).toMatch('must be >= 1')
         })
 
-        it('Get /field/{id} fails with 400 with strange id', async () => {
+        it('Get /field/{id} fails with 400 with strange id', async function () {
             const response = await request(app)
                 .get('/fields/foo')
                 .set('Accept', 'application/json')
@@ -284,20 +285,20 @@ describe('/fields/ HTTP integration Tests', async function () {
         })
     })
 
-    describe('PUT /fields/{id}', async function () {
+    describe('PUT /fields/{id}', function () {
 
-        it('Get /fields/{id} existing field succeeds', async () => {
+        it('Get /fields/{id} existing field succeeds', async function () {
             const response = await request(app)
                 .get('/fields/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, fieldB)
-            expect(response.headers['location']).toEqual('/fields/2')
-            expect(response.headers['etag']).toEqual(etagB)
+            expect(response.headers.location).toEqual('/fields/2')
+            expect(response.headers.etag).toEqual(etagB)
         })
 
-        it('Put /fields/{id} of existing field fails with 401 with Guest ', async () => {
+        it('Put /fields/{id} of existing field fails with 401 with Guest ', async function () {
             const response = await request(app)
                 .put('/fields/2')
                 .set('Accept', 'application/json')
@@ -311,7 +312,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Put /fields/{id} of existing field fails with 401 with User ', async () => {
+        it('Put /fields/{id} of existing field fails with 401 with User ', async function () {
             const response = await request(app)
                 .put('/fields/2')
                 .set('Accept', 'application/json')
@@ -326,7 +327,7 @@ describe('/fields/ HTTP integration Tests', async function () {
         })
 
 
-        it('Put /fields/{id} of existing field succeeds with correct name change with Admin', async () => {
+        it('Put /fields/{id} of existing field succeeds with correct name change with Admin', async function () {
             const response = await request(app)
                 .put('/fields/2')
                 .set('Accept', 'application/json')
@@ -335,22 +336,22 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .set('if-match', etagB)
                 .send(fieldC)
                 .expect(204, '')
-            expect(response.headers['location']).toEqual('/fields/2')
-            expect(response.headers['etag']).toEqual(etagC)
+            expect(response.headers.location).toEqual('/fields/2')
+            expect(response.headers.etag).toEqual(etagC)
         })
 
-        it('Get /fields/{id} succeeds after Name Change', async () => {
+        it('Get /fields/{id} succeeds after Name Change', async function () {
             const response = await request(app)
                 .get('/fields/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, fieldC)
-            expect(response.headers['location']).toBe('/fields/2')
-            expect(response.headers['etag']).toBe(etagC)
+            expect(response.headers.location).toBe('/fields/2')
+            expect(response.headers.etag).toBe(etagC)
         })
 
-        it('Put /fields/{id} on changed dataset fails with error 412', async () => {
+        it('Put /fields/{id} on changed dataset fails with error 412', async function () {
             const response = await request(app)
                 .put('/fields/2')
                 .set('Accept', 'application/json')
@@ -366,7 +367,7 @@ describe('/fields/ HTTP integration Tests', async function () {
 
     describe('DELETE /fields/{id}', function () {
 
-        it('DELETE /fields/{id} existing fields fails with 401 as Guest', async () => {
+        it('DELETE /fields/{id} existing fields fails with 401 as Guest', async function () {
             const response = await request(app)
                 .delete('/fields/1')
                 .set('Accept', 'application/json')
@@ -377,7 +378,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.message).toBe('unauthorized')
         })
         
-        it('DELETE /fields/{id} existing fields fails with 401 as User', async () => {
+        it('DELETE /fields/{id} existing fields fails with 401 as User', async function () {
             const response = await request(app)
                 .delete('/fields/1')
                 .set('Accept', 'application/json')
@@ -388,7 +389,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.message).toBe('unauthorized')
         })
 
-        it('DELETE /fields/{id} existing fields succeeds as Admin', async () => {
+        it('DELETE /fields/{id} existing fields succeeds as Admin', async function () {
             await request(app)
                 .delete('/fields/1')
                 .set('Accept', 'application/json')
@@ -396,7 +397,7 @@ describe('/fields/ HTTP integration Tests', async function () {
                 .expect(204, '')
         })
 
-        it('DELETE /fields/{id} fails with 404 with nonexisting field', async () => {
+        it('DELETE /fields/{id} fails with 404 with nonexisting field', async function () {
             const response = await request(app)
                 .delete('/fields/1')
                 .set('Accept', 'application/json')
@@ -407,7 +408,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.message).toBe('not found')
         })
 
-        it('DELETE /fields/{id} fails with 400 with negative id', async () => {
+        it('DELETE /fields/{id} fails with 400 with negative id', async function () {
             const response = await request(app)
                 .delete('/fields/-1')
                 .set('Accept', 'application/json')
@@ -419,7 +420,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('DELETE /fields/{id} fails with 400 with id 0', async () => {
+        it('DELETE /fields/{id} fails with 400 with id 0', async function () {
             const response = await request(app)
                 .delete('/fields/0')
                 .set('Accept', 'application/json')
@@ -431,7 +432,7 @@ describe('/fields/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('DELETE /fields/{id} fails with 400 with strange id', async () => {
+        it('DELETE /fields/{id} fails with 400 with strange id', async function () {
             const response = await request(app)
                 .delete('/fields/foo')
                 .set('Accept', 'application/json')
@@ -444,7 +445,3 @@ describe('/fields/ HTTP integration Tests', async function () {
         })
     })
 })
-
-after(async function () {
-    await sequelize.close()
-});

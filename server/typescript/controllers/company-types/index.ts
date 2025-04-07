@@ -4,11 +4,19 @@ import { CompanyType } from '../../models/companyTypes.js'
 import { getAllCompanyTypes, addCompanyType } from '../../services/companyTypes.js'
 import { Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
-import { ErrorWithStatus } from '../../services/error.js'
+import { createNewError, ErrorWithStatus } from '../../services/error.js'
+
 
 export interface CompanyTypeNorm {
     name: string
 }
+
+export const isCompanyTypeNorm = (value: unknown): value is CompanyTypeNorm => {
+    if (typeof value === 'object' && value !== null ) {
+        if (Object.keys(value).includes('name')) return true
+    }
+    return false
+} 
 
 export function normalizeCompanyType(companyType: CompanyType): CompanyTypeNorm {
     const result: CompanyTypeNorm = { name: companyType.name }
@@ -126,18 +134,26 @@ GET.apiSpec = {
     }
 }
 export const POST: Operation = async (req: Request, res: Response) => {
-    const newCompanyTypeSearchResult = await addCompanyType(req.body)
-    if (newCompanyTypeSearchResult instanceof ErrorWithStatus) {
-        res
-            .status(newCompanyTypeSearchResult.status)
-            .json({ status: newCompanyTypeSearchResult.status, message: newCompanyTypeSearchResult.message })
+    if (isCompanyTypeNorm(req.body)) {
+        const newCompanyTypeSearchResult = await addCompanyType(req.body)
+        if (newCompanyTypeSearchResult instanceof ErrorWithStatus) {
+            res
+                .status(newCompanyTypeSearchResult.status)
+                .json({ status: newCompanyTypeSearchResult.status, message: newCompanyTypeSearchResult.message })
+        } else {
+            const newCompanyTypeMeta = createCompanyTypeMeta(newCompanyTypeSearchResult)
+            res
+                .status(201)
+                .set(newCompanyTypeMeta)
+                .end()
+        }
     } else {
-        const newCompanyTypeMeta = createCompanyTypeMeta(newCompanyTypeSearchResult)
+        const newError = createNewError(400)
         res
-            .status(201)
-            .set(newCompanyTypeMeta)
-            .end()
+        .status(newError.status)
+        .json({status: newError.status, message: newError.message})
     }
+
 
 }
 POST.apiSpec = {

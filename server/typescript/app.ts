@@ -10,7 +10,7 @@ import swaggerUi from 'swagger-ui-express'
 import { baseLogger } from './logger.js'
 import { sequelize } from './models/index.js'
 import { apiSpec } from './openapi.js'
-import { loadControllers } from './utils/apiSpecAssembler.js'
+import { loadControllers, Operation } from './utils/apiSpecAssembler.js'
 import { jwtCheck } from './utils/auth.js'
 import { ErrorWithStatus } from './services/error.js'
 import { setDefaultValues } from './models/default-values.js'
@@ -64,15 +64,15 @@ const startApp = async () => {
     try {
         await database.sync({ alter: true })
         logger('Drop and re-sync db.')
-    } catch (error) {
-        logger('Failed to sync db: ' + error.message)
+    } catch (error: unknown) {
+        logger('Failed to sync db: ', error)
         throw error
     }
-    
+
     try {
         await setDefaultValues()
-    } catch (error) {
-        logger('Failed to set default values: ' + error.message)
+    } catch (error: unknown) {
+        logger('Failed to set default values: ', error)
     }
 
     // mitteilen, wo das OAS-Document ist
@@ -113,10 +113,10 @@ window.scope = '${jsesc(process.env.SCOPE)}';
                     url: '/api-docs',
                     oauth: {
                         // https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/oauth2.md
-                        clientId: process.env.CLIENT_ID_SWAGGER || process.env.CLIENT_ID,
+                        clientId: process.env.CLIENT_ID_SWAGGER ?? process.env.CLIENT_ID,
                         appName: 'ERPBarczok Swagger',
                         additionalQueryStringParams: { audience: process.env.AUDIENCE },
-                        scopes: process.env.SCOPE?.split(' ') || ['openid', 'email', 'profile', 'admin', 'user'],
+                        scopes: process.env.SCOPE?.split(' ') ?? ['openid', 'email', 'profile', 'admin', 'user'],
                         usePkceWithAuthorizationCodeGrant: true
                     }
                 }
@@ -129,10 +129,16 @@ window.scope = '${jsesc(process.env.SCOPE)}';
     app.use(jwtCheck)
 
     app.use((req: PermissionRequest, res, next) => {
-        const name = process.env.PERMISSION_CLAIM || 'roles'
+        const isArrayOfStrings = (array: unknown): array is string[] => {
+            if (Array.isArray(userPermissionsPrep)) {
+                return userPermissionsArray.every(value => typeof value === 'string')
+            }
+            return false
+        }
+        const name = process.env.PERMISSION_CLAIM ?? 'roles'
         const userPermissionsPrep: unknown = req.auth ? req.auth[name] : []
         const userPermissionsArray: string[] = []
-        if (Array.isArray(userPermissionsPrep)) {
+        if (isArrayOfStrings(userPermissionsPrep)) {
             userPermissionsArray.push(...userPermissionsPrep)
         } else if (typeof userPermissionsPrep === 'string') {
             userPermissionsArray.push(...userPermissionsPrep.split(' '))
@@ -159,11 +165,11 @@ window.scope = '${jsesc(process.env.SCOPE)}';
                 resolver: (basePath, apiRoute) => {
                     const apiPath = apiRoute.openApiRoute.substring(apiRoute.basePath.length)
                     const apiVerb = apiRoute.method
-                    const operationHandler = controllers[apiPath][apiVerb]
+                    const operationHandler: Operation = controllers[apiPath][apiVerb]
                     logger(`apiPath: ${apiPath}, apiVerb: ${apiVerb}`)
                     return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
                         try {
-                            return await operationHandler(req, res, next)
+                            await operationHandler(req, res, next)
                         } catch (error: unknown) {
                             next(error)
                         }
@@ -194,7 +200,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
                             return true
                         }
 
-                        permissionLogger('User has not the required scopes: User scopes: ' + req.userPermissions + ', Required Scopes: ' + requiredScopesArray)
+                        permissionLogger('User has not the required scopes: User scopes: ', req.userPermissions, ', Required Scopes: ', requiredScopesArray)
                         return false
                     }
                 }
@@ -207,59 +213,59 @@ window.scope = '${jsesc(process.env.SCOPE)}';
     app.set('json spaces', 2)
     app.use(
         (error: unknown, req: Request, res: Response, _next: NextFunction) => {
-        logger('Error %o.', error)
-        if (error instanceof ErrorWithStatus) {
-            res
-                .status(error.status)
-                .json({
-                    status: error.status,
-                    message: error.message,
-                    errors: []
-                })
-        } else {
-            if (typeof error === 'object') {
-                if ('status' in error && (typeof error.status === 'number')) {
-                    if ('message' in error && typeof error.message === 'string') {
-                        res
-                            .status(error.status)
-                            .json({
-                                status: error.status,
-                                message: error.message,
-                                errors: []
-                            })
+            logger('Error %o.', error)
+            if (error instanceof ErrorWithStatus) {
+                res
+                    .status(error.status)
+                    .json({
+                        status: error.status,
+                        message: error.message,
+                        errors: []
+                    })
+            } else {
+                if (typeof error === 'object' && error !== null) {
+                    if ('status' in error && (typeof error.status === 'number')) {
+                        if ('message' in error && typeof error.message === 'string') {
+                            res
+                                .status(error.status)
+                                .json({
+                                    status: error.status,
+                                    message: error.message,
+                                    errors: []
+                                })
+                        }
+                        else {
+                            res
+                                .status(error.status)
+                                .json({
+                                    status: error.status,
+                                    message: 'Unspecified ' + String(error.status) + " error.",
+                                    errors: []
+                                })
+                        }
                     }
                     else {
                         res
-                            .status(error.status)
+                            .status(500)
                             .json({
-                                status: error.status,
-                                message: 'Unspecified ' + String(error.status) + " error.",
+                                send: 500,
+                                message: 'Unspecified internal error.',
                                 errors: []
                             })
                     }
+
                 }
                 else {
                     res
                         .status(500)
                         .json({
-                            send: 500,
+                            status: 500,
                             message: 'Unspecified internal error.',
                             errors: []
                         })
                 }
-
             }
-            else {
-                res
-                    .status(500)
-                    .json({
-                        status: 500,
-                        message: 'Unspecified internal error.',
-                        errors: []
-                    })
-            }
-        }
-    })
+        })
 
     return app
 }

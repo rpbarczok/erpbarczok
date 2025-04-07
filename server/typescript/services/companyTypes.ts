@@ -13,20 +13,20 @@ export const getAllCompanyTypes = async () => {
         return companyTypes
     }
     catch (error) {
-        return createNewError(500, error.message)
+        return createNewError(500, error)
     }
 }
 
 export const addCompanyType = async (companyType: CompanyTypeNorm) => {
-    const newCompanyType = {
-        name: companyType.name
-    }
-    try {
-        const addedCompanyType = await CompanyType.create(newCompanyType)
-        return addedCompanyType
-    } catch (error) {
-        return createNewError(500, error.message)
-    }
+        const newCompanyType = {
+            name: companyType.name
+        }
+        try {
+            const addedCompanyType = await CompanyType.create(newCompanyType)
+            return addedCompanyType
+        } catch (error) {
+            return createNewError(500, error)
+        }
 }
 
 export const getCompanyTypeById = async (id: number) => {
@@ -39,7 +39,7 @@ export const getCompanyTypeById = async (id: number) => {
         }
     }
     catch (error) {
-        return createNewError(500, error.message)
+        return createNewError(500, error)
     }
 }
 
@@ -53,21 +53,21 @@ export const deleteCompanyTypeById = async (id: number) => {
         }
     }
     catch (error) {
-        return createNewError(500, error.message)
+        return createNewError(500, error)
     }
 }
 
 export const putCompanyTypeById = async (id: number, companyType: CompanyTypeNorm) => {
-    try {
-        const oldCompanyType = await CompanyType.findByPk(id)
-        if (oldCompanyType === null) {
-            return createNewError(404)
-        } else {
-            const updatedCompanyType = await oldCompanyType.update(companyType)
-            return updatedCompanyType
+        try {
+            const oldCompanyType = await CompanyType.findByPk(id)
+            if (oldCompanyType === null) {
+                return createNewError(404)
+            } else {
+                const updatedCompanyType = await oldCompanyType.update(companyType)
+                return updatedCompanyType
+            }
         }
-    }
-    catch (error) {
-        return createNewError(500, error.message)
-    }
+        catch (error) {
+            return createNewError(500, error)
+        }
 }

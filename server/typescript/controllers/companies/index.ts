@@ -5,7 +5,7 @@ import { Company } from '../../models/companies.js'
 import { sha256 } from '../../hasher.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { baseLogger } from '../../logger.js'
-import { ErrorWithStatus } from '../../services/error.js'
+import { createNewError, ErrorWithStatus } from '../../services/error.js'
 
 const logger = baseLogger.extend('controllers:companies')
 
@@ -16,6 +16,18 @@ export interface CompanyNorm {
     companyType: string
 }
 
+export const isCompanyNorm = (value: unknown): value is CompanyNorm => {
+    if (typeof value === 'object' && value !== null) {
+        const keys = Object.keys(value)
+        if (keys.includes('name') && keys.includes('companyType')) {
+            return (keys.every(key => ['name', 'abbr', 'www', 'companyType'].includes(key)))
+        }
+    }
+    return false
+}
+
+
+
 export interface CompanyFK {
     name: string
     abbr?: string | null
@@ -24,24 +36,28 @@ export interface CompanyFK {
 }
 
 export function normalizeCompany(company: Company) {
-    const result: CompanyNorm = { name: company.name, companyType: company.companyType.name}
-    if (company.abbr) {
-        result.abbr = company.abbr
+    if (company.companyType) {
+        const result: CompanyNorm = { name: company.name, companyType: company.companyType.name }
+        if (company.abbr) {
+            result.abbr = company.abbr
+        }
+        if (company.www) {
+            result.www = company.www
+        }
+        return result
+    } else {
+        throw createNewError(400)
     }
-    if (company.www) {
-        result.www = company.www
-    }
-    return result
 }
 
 export function combineCompanyWithMeta(company: Company): DataWithMeta<CompanyNorm> {
-    const data: CompanyNorm = normalizeCompany(company)
+    const data = normalizeCompany(company)
     const meta: Meta = createCompanyMeta(company)
     return { meta: meta, data: data }
 }
 
 export function createCompanyMeta(company: Company): Meta {
-    const companyNorm: CompanyNorm = normalizeCompany(company)
+    const companyNorm = normalizeCompany(company)
     return { 'location': '/companies/' + company.id, 'etag': sha256(JSON.stringify(companyNorm)) }
 }
 
@@ -50,10 +66,11 @@ export const GET: Operation = async (req: Request, res: Response) => {
     if (allCompaniesSearchResult instanceof ErrorWithStatus) {
         logger('Error when getting all companies: ', allCompaniesSearchResult.message)
         res
-        .status(allCompaniesSearchResult.status)
-        .json({status: allCompaniesSearchResult.status, message: allCompaniesSearchResult.message})
+            .status(allCompaniesSearchResult.status)
+            .json({ status: allCompaniesSearchResult.status, message: allCompaniesSearchResult.message })
     } else {
         logger('getAllCompanies: %j.', allCompaniesSearchResult)
+
         const allCompaniesWithMeta: DataWithMeta<CompanyNorm>[] = allCompaniesSearchResult.map((row) => (combineCompanyWithMeta(row)))
         res
             .status(200)
@@ -147,16 +164,24 @@ GET.apiSpec = {
 }
 
 export const POST: Operation = async (req: Request, res: Response) => {
-    const newCompanySearchResult = await addCompany(req.body)
-    if (newCompanySearchResult instanceof ErrorWithStatus) {
-        res
-        .status(newCompanySearchResult.status)
-        .json({status: newCompanySearchResult.status, message: newCompanySearchResult.message})
+    if (isCompanyNorm(req.body)) {
+        const newCompanySearchResult = await addCompany(req.body)
+        if (newCompanySearchResult instanceof ErrorWithStatus) {
+            res
+                .status(newCompanySearchResult.status)
+                .json({ status: newCompanySearchResult.status, message: newCompanySearchResult.message })
+        } else {
+            res.status(204)
+                .set(createCompanyMeta(newCompanySearchResult))
+                .end()
+        }
     } else {
-        res.status(204)
-        .set(createCompanyMeta(newCompanySearchResult))
-        .end()
+        const newError = createNewError(400)
+        res
+        .status(newError.status)
+        .json({status: newError.status, message: newError.message})
     }
+
 
 }
 POST.apiSpec = {
@@ -164,9 +189,11 @@ POST.apiSpec = {
     'description': 'POST request for a new company, response new id',
     'operationId': 'postCompany',
     'security': [
-        { 'openId': [
-            'user'
-        ] }
+        {
+            'openId': [
+                'user'
+            ]
+        }
     ],
     'tags': [
         'Company'

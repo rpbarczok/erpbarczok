@@ -1,7 +1,7 @@
 import { getFieldById, deleteFieldById, putFieldById } from '../../services/fields.js'
-import { ErrorWithStatus } from '../../services/error.js'
+import { createNewError, ErrorWithStatus } from '../../services/error.js'
 import type { Request, Response } from 'express'
-import { FieldNorm, normalizeField, createFieldMeta } from './index.js'
+import { FieldNorm, normalizeField, createFieldMeta, isFieldNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { Meta } from '../../app.js'
 
@@ -75,36 +75,24 @@ GET.apiSpec = {
 }
 
 export const DELETE: Operation = async (req: Request, res: Response) => {
-    try {
-        const result = await deleteFieldById(Number(req.params.id))
-        if (result instanceof ErrorWithStatus) {
-            res
-                .status(result.status)
-                .json(
-                    {
-                        status: result.status,
-                        message: result.message,
-                        'errors': []
-                    })
-        } else {
-            res
-                .status(204)
-                .end()
-        }
-
-    }
-    catch (error) {
-        console.log("Der fehlerhafte Fehler: ", error)
+    const result = await deleteFieldById(Number(req.params.id))
+    if (result instanceof ErrorWithStatus) {
         res
-            .status(error.status)
+            .status(result.status)
             .json(
                 {
-                    status: error.status,
-                    message: error.message,
+                    status: result.status,
+                    message: result.message,
                     'errors': []
                 })
+    } else {
+        res
+            .status(204)
+            .end()
     }
+
 }
+
 DELETE.apiSpec = {
     'summary': 'Remove a certain field',
     'description': 'DELETE request on field by id {id}',
@@ -150,25 +138,35 @@ export const PUT: Operation = async (req: Request, res: Response) => {
             .status(dbFieldSearchResult.status)
             .json({ status: dbFieldSearchResult.status, message: dbFieldSearchResult.message, 'errors': [] })
     } else {
-        const dbFieldMeta = createFieldMeta(dbFieldSearchResult)
-        if (dbFieldMeta.etag === req.headers['if-match']) {
-            const updatedField = await putFieldById(Number(req.params.id), req.body)
-            if (updatedField instanceof ErrorWithStatus) {
-                res
-                    .status(updatedField.status)
-                    .json({ status: updatedField.status, message: updatedField.message, 'errors': [] })
+        
+        if (isFieldNorm(req.body)) {
+            const dbFieldMeta = createFieldMeta(dbFieldSearchResult)
+            if (dbFieldMeta.etag === req.headers['if-match']) {
+                    const updatedField = await putFieldById(Number(req.params.id), req.body)
+                    if (updatedField instanceof ErrorWithStatus) {
+                        res
+                            .status(updatedField.status)
+                            .json({ status: updatedField.status, message: updatedField.message, 'errors': [] })
+                    } else {
+                        const fieldHeader = createFieldMeta(updatedField)
+                        res
+                            .status(204)
+                            .set(fieldHeader)
+                            .end()
+                    }
             } else {
-                const fieldHeader = createFieldMeta(updatedField)
+                const newError = createNewError(412)
                 res
-                    .status(204)
-                    .set(fieldHeader)
-                    .end()
+                    .status(newError.status)
+                    .json({status: newError.status, message: newError.message})
             }
         } else {
+            const newError = createNewError(400)
             res
-                .status(412)
-                .json({ status: 412, message: 'Precondition failed', 'errors': [] })
+                .status(newError.status)
+                .json({status: newError.status, message: newError.message})
         }
+        
     }
 }
 

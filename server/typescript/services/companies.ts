@@ -13,7 +13,7 @@ export const getAllCompanies = async () => {
     }
     catch (error) {
         logger(error)
-        return createNewError(500, error.message)
+        return createNewError(500, error)
     }
 }
 
@@ -30,7 +30,7 @@ export const addCompany = async (company: CompanyNorm) => {
                 return createNewError(500, 'Error when creating company type.')
             }
         } catch (error) {
-            return createNewError(500, error.message)
+            return createNewError(500, error)
         }
     } else {
         return createNewError(404)
@@ -47,7 +47,7 @@ export const getCompanyById = async (id: number) => {
         }
     }
     catch (error) {
-        return createNewError(500, error.message)
+        return createNewError(500, error)
     }
 }
 
@@ -61,7 +61,7 @@ export const deleteCompanyById = async (id: number) => {
         }
     }
     catch (error) {
-        return createNewError(500, error.message)
+        return createNewError(500, error)
     }
 }
 
@@ -72,25 +72,29 @@ export const putCompanyById = async (id: number, company: CompanyNorm) => {
             if (oldCompany === null) {
                 return createNewError(404)
             } else {
-                const companyType = await CompanyType.findOne({ where: { name: company.companyType } })
+                const companyType = await CompanyType.findOne({ where: { name: company.companyType } })            
                 if (companyType) {
                     const data: CompanyFK = { name: company.name, companyTypeId: companyType.id }
-                    data.abbr = company.abbr || null
-                    data.www = company.www || null
-                    const updatedRow = await Company.update(data, { returning: true, where: { id: id } })
-                    if (updatedRow.length === 2) {
+                    data.abbr = company.abbr ?? null
+                    data.www = company.www ?? null
+                    
+                    const updatedRow = await Company.update(data, { returning: true, where: { id: id } })            
+                    if (updatedRow[0] === 1) {
                         const updatedCompany = updatedRow[1]
                         const updatedCompanyInclude = await Company.findByPk(updatedCompany[0].id, {include: CompanyType})
                         if (updatedCompanyInclude) {
                             return updatedCompanyInclude
                         } else {
-                             return createNewError(500, 'Error when updating company type')
+                            return createNewError(500, 'Error when updating company type')
                         }
                     } else {
-                         return createNewError(500, 'Error when updating company type')
+                        return createNewError(500, 'Error when updating company type')
                     }
+            
                 } else {
+            
                     return createNewError(404)
+            
                 }
             }
         } else {
@@ -98,6 +102,6 @@ export const putCompanyById = async (id: number, company: CompanyNorm) => {
         }
     }
     catch (error) {
-        return createNewError(500, error.message)
+        return createNewError(500, error)
     }
 }

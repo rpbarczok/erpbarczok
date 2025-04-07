@@ -3,7 +3,7 @@ import { Company } from './companies.js'
 export const setDefaultValuesDev = async () => {
     const companies = await Company.findAll()
     if (companies.length === 0) {
-        Company.bulkCreate([
+        await Company.bulkCreate([
             {
                 name: 'Hannes Frischling Haselnusspalast',
                 abbr: 'HFH',

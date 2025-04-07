@@ -1,7 +1,7 @@
 import { getCompanyById, deleteCompanyById, putCompanyById } from '../../services/companies.js'
-import { ErrorWithStatus } from '../../services/error.js'
+import { createNewError, ErrorWithStatus } from '../../services/error.js'
 import type { Request, Response } from 'express'
-import { normalizeCompany, createCompanyMeta } from './index.js'
+import { normalizeCompany, createCompanyMeta, isCompanyNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { Meta } from '../../app.js'
 
@@ -22,8 +22,6 @@ export const GET: Operation = async (req: Request, res: Response) => {
             .json(companyNorm)
     }
 }
-
-
 
 GET.apiSpec = {
     'summary': 'Get a certain company',
@@ -128,34 +126,41 @@ DELETE.apiSpec = {
 }
 
 export const PUT: Operation = async (req: Request, res: Response) => {
-
-    const oldCompanySearchResult = await getCompanyById(Number(req.params.id))
+    if (isCompanyNorm(req.body)) {
+        const oldCompanySearchResult = await getCompanyById(Number(req.params.id))
     
-    if (oldCompanySearchResult instanceof ErrorWithStatus) {
-        res
-            .status(oldCompanySearchResult.status)
-            .json({ status: oldCompanySearchResult.status, message: oldCompanySearchResult.message })
-    } else {
-        const oldCompanyWithMeta = createCompanyMeta(oldCompanySearchResult)
-        if (oldCompanyWithMeta.etag === req.headers['if-match']) {
-            const updatedCompany = await putCompanyById(Number(req.params.id), req.body)
-            if (updatedCompany instanceof ErrorWithStatus) {
+        if (oldCompanySearchResult instanceof ErrorWithStatus) {
+            res
+                .status(oldCompanySearchResult.status)
+                .json({ status: oldCompanySearchResult.status, message: oldCompanySearchResult.message })
+        } else {
+            const oldCompanyWithMeta = createCompanyMeta(oldCompanySearchResult)
+            if (oldCompanyWithMeta.etag === req.headers['if-match']) {
+                const updatedCompany = await putCompanyById(Number(req.params.id), req.body)
+                if (updatedCompany instanceof ErrorWithStatus) {
+                    res
+                        .status(updatedCompany.status)
+                        .json({ status: updatedCompany.status, message: updatedCompany.message })
+                } else {
+                    const metaHeader = createCompanyMeta(updatedCompany)
+                    res.status(204)
+                        .set(metaHeader)
+                        .end()
+                }
+            }
+            else {
                 res
-                    .status(updatedCompany.status)
-                    .json({ status: updatedCompany.status, message: updatedCompany.message })
-            } else {
-                const metaHeader = createCompanyMeta(updatedCompany)
-                res.status(204)
-                    .set(metaHeader)
-                    .end()
+                    .status(412)
+                    .json({ status: 412, message: 'Precondition failed', 'errors': [] })
             }
         }
-        else {
-            res
-                .status(412)
-                .json({ status: 412, message: 'Precondition failed', 'errors': [] })
-        }
+    } else {
+        const newError = createNewError(400)
+        res
+        .status(newError.status)
+        .json({status: newError.status, message: newError.message})
     }
+    
 }
 
 

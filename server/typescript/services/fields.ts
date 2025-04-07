@@ -1,4 +1,4 @@
-import {  createNewError} from './error.js'
+import { createNewError, ErrorWithStatus } from './error.js'
 import { baseLogger } from '../logger.js'
 import { Field } from '../models/fields.js'
 import { FieldNorm } from '../controllers/fields/index.js'
@@ -12,9 +12,9 @@ export const getAllFields = async () => {
         logger('Got all fields')
         return fields
     }
-    catch (error) {
+    catch (error: unknown) {
         logger('Error while getting all fields')
-        return createNewError(500, error.message)
+        return createNewError(500, error)
     }
 }
 
@@ -26,7 +26,7 @@ export const addField = async (field: FieldNorm) => {
         const addedField = await Field.create(newField)
         return addedField
     } catch (error) {
-        return createNewError(500, error.message)
+        return createNewError(500, error)
     }
 }
 
@@ -40,7 +40,7 @@ export const getFieldById = async (id: number) => {
         }
     }
     catch (error) {
-        return createNewError(500, error.message)
+        return createNewError(500, error)
     }
 }
 
@@ -54,11 +54,11 @@ export const deleteFieldById = async (id: number) => {
         }
     }
     catch (error) {
-        return createNewError(500, error.message)
+        return createNewError(500, error)
     }
 }
 
-export const putFieldById = async (id: number, field: FieldNorm) => {
+export const putFieldById = async (id: number, field: FieldNorm): Promise<Field | ErrorWithStatus> => {
     try {
         const oldField = await Field.findByPk(id)
         if (oldField === null) {
@@ -69,6 +69,6 @@ export const putFieldById = async (id: number, field: FieldNorm) => {
         }
     }
     catch (error) {
-        return createNewError(500, error.message)
+        return createNewError(500, error)
     }
 }

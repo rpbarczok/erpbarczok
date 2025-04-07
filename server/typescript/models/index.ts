@@ -6,7 +6,7 @@ import { Field, initializeField } from './fields.js'
 
 const logger = baseLogger.extend('models:index')
 const loggerSequelize = logger.extend('sequelize')
-const sequelizeLogger = (sql: unknown) => loggerSequelize(sql)
+const sequelizeLogger = (sql: unknown) => {loggerSequelize(sql)}
 
 if (!process.env.DB_NAME || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.DB_HOST) {
     loggerSequelize('No database config found: ', process.env)

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "outDir": "../ecmascript",
     "module": "nodenext",
+    "strictNullChecks": true
   },
   "strict": true,
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import './utils/env.test.js'
 import request from 'supertest'
 import { startingApp } from '../app.js'
@@ -12,10 +13,10 @@ const iat = Math.floor(Date.now() / 1000)
 const iatADayAgo = iat - 60 * 60 * 24
 const iatAWeekAgo = iat - 8 * 60 * 60 * 24
 
-const audience = process.env.AUDIENCE || 'www.example.com'
-const issuer = process.env.IDP_SERVER || 'www.example.com'
-const scope = process.env.SCOPE || 'openid email profile admin user'
-const secret = process.env.TEST_SECRET || 'secret'
+const audience = process.env.AUDIENCE ?? 'www.example.com'
+const issuer = process.env.IDP_SERVER ?? 'www.example.com'
+const scope = process.env.SCOPE ?? 'openid email profile admin user'
+const secret = process.env.TEST_SECRET ?? 'secret'
 const algorithms = ['HS256']
 
 const validTokenAdmin: string = jwt.sign(
@@ -79,7 +80,7 @@ const etagBA3 = sha256(JSON.stringify(companyBA3))
 const companyBA4 = { 'name': 'Firma C', 'companyType': 'Kunde', 'abbr': 'FRC', 'www': 'www.example.de' }
 const etagBA4 = sha256(JSON.stringify(companyBA4))
 
-describe('/companies/ HTTP integration Tests', async function () {
+describe('/companies/ HTTP integration Tests', function () {
     this.timeout(5000)
     let app: App
 
@@ -96,9 +97,9 @@ describe('/companies/ HTTP integration Tests', async function () {
         ])
     });
 
-    describe('GET /companies/ and POST /companies/', async function () {
+    describe('GET /companies/ and POST /companies/', function () {
 
-        it('GET /companies/ should fail with 401 without AuthN', async () => {
+        it('GET /companies/ should fail with 401 without AuthN', async function () {
             const response = await request(app)
                 .get('/companies/')
                 .set('Accept', 'application/json')
@@ -110,7 +111,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.message).toMatch('No authorization token was found')
         })
 
-        it('GET /companies/ should succeed with 200 and return [] for a fresh and empty DB as Guest', async () => {
+        it('GET /companies/ should succeed with 200 and return [] for a fresh and empty DB as Guest', async function () {
             const response = await request(app)
                 .get('/companies/')
                 .set('Accept', 'application/json')
@@ -122,7 +123,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body).toEqual([])
         })
 
-        it('GET /companies/ should succeed with 200 and return [] for a fresh and empty DB as User', async () => {
+        it('GET /companies/ should succeed with 200 and return [] for a fresh and empty DB as User', async function () {
             const response = await request(app)
                 .get('/companies/')
                 .set('Accept', 'application/json')
@@ -134,7 +135,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body).toEqual([])
         })
 
-        it('GET /companies/ should succeed with 200 and return [] for a fresh and empty DB as Admin', async () => {
+        it('GET /companies/ should succeed with 200 and return [] for a fresh and empty DB as Admin', async function () {
             const response = await request(app)
                 .get('/companies/')
                 .set('Accept', 'application/json')
@@ -146,7 +147,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body).toEqual([])
         })
 
-        it('Post /companies/ with name, companyType and abbr fails as Guest', async () => {
+        it('Post /companies/ with name, companyType and abbr fails as Guest', async function () {
             const response = await request(app)
                 .post('/companies/')
                 .send(companyA)
@@ -159,7 +160,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Post /companies/ with name, companyType and abbr fails with expired token', async () => {
+        it('Post /companies/ with name, companyType and abbr fails with expired token', async function () {
             const response = await request(app)
                 .post('/companies/')
                 .send(companyA)
@@ -171,7 +172,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.message).toMatch('jwt expired')
         })
 
-        it('Post /company/ with name, companyType and abbr succeeds as User', async () => {
+        it('Post /company/ with name, companyType and abbr succeeds as User', async function () {
             await request(app)
                 .post('/companies/')
                 .send(companyA)
@@ -182,7 +183,7 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .expect('etag', etagA)
         })
 
-        it('Post /company/ with name only succeeds', async () => {
+        it('Post /company/ with name only succeeds', async function () {
             await request(app)
                 .post('/companies/')
                 .send(companyB)
@@ -192,7 +193,7 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .expect('location', '/companies/2')
         })
 
-        it('Post /company/ without name fails', async () => {
+        it('Post /company/ without name fails', async function () {
             const response = await request(app)
                 .post('/companies/')
                 .send({ 'abbr': 'FRC' })
@@ -206,7 +207,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Post /companies/ with to long abbr fails', async () => {
+        it('Post /companies/ with to long abbr fails', async function () {
             const response = await request(app)
                 .post('/companies/')
                 .send({ 'name': 'Firma D', 'abbr': 'Firma', 'companyType': 'Kunde' })
@@ -219,7 +220,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Post /companies/ with extra attributes fails', async () => {
+        it('Post /companies/ with extra attributes fails', async function () {
             const response = await request(app)
                 .post('/companies/')
                 .send({ 'name': 'Firma D', 'abbr': 'FRD', 'extra': 'bla', 'companyType': 'Kunde' })
@@ -232,7 +233,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Post /companies/ with invalid name type fails (array)', async () => {
+        it('Post /companies/ with invalid name type fails (array)', async function () {
             const response = await request(app)
                 .post('/companies/')
                 .send({ 'name': {}, 'companyType': 'Kunde' })
@@ -245,7 +246,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Post /companies/ with invalid abbr type fails (array)', async () => {
+        it('Post /companies/ with invalid abbr type fails (array)', async function () {
             const response = await request(app)
                 .post('/companies/')
                 .send({ 'name': 'Firma E', 'abbr': {}, 'companyType': 'Kunde' })
@@ -258,7 +259,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('Post /companies/ with invalid www type fails (array)', async () => {
+        it('Post /companies/ with invalid www type fails (array)', async function () {
             const response = await request(app)
                 .post('/companies/')
                 .send({ 'name': 'Firma E', 'www': {}, 'companyType': 'Kunde' })
@@ -272,9 +273,9 @@ describe('/companies/ HTTP integration Tests', async function () {
         })
     })
 
-    describe('GET /companies/{id}', async function () {
+    describe('GET /companies/{id}', function () {
 
-        it('GET /companies/{id} fails without authN', async () => {
+        it('GET /companies/{id} fails without authN', async function () {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
@@ -284,40 +285,40 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.message).toMatch('No authorization token was found')
         })
 
-        it('GET /companies/{id} existing company succeeds as Guest', async () => {
+        it('GET /companies/{id} existing company succeeds as Guest', async function () {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyB)
-            expect(response.headers['location']).toBe('/companies/2')
-            expect(response.headers['etag']).toBe(etagB)
+            expect(response.headers.location).toBe('/companies/2')
+            expect(response.headers.etag).toBe(etagB)
         })
 
-        it('GET /companies/{id} existing company succeeds as User', async () => {
+        it('GET /companies/{id} existing company succeeds as User', async function () {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenUser}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyB)
-            expect(response.headers['location']).toBe('/companies/2')
-            expect(response.headers['etag']).toBe(etagB)
+            expect(response.headers.location).toBe('/companies/2')
+            expect(response.headers.etag).toBe(etagB)
         })
 
-        it('GET /companies/{id} existing company succeeds as Admin', async () => {
+        it('GET /companies/{id} existing company succeeds as Admin', async function () {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyB)
-            expect(response.headers['location']).toBe('/companies/2')
-            expect(response.headers['etag']).toBe(etagB)
+            expect(response.headers.location).toBe('/companies/2')
+            expect(response.headers.etag).toBe(etagB)
         })
 
-        it('GET /companies/{id} non existing company fails', async () => {
+        it('GET /companies/{id} non existing company fails', async function () {
             const response = await request(app)
                 .get('/companies/17')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
@@ -328,7 +329,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.message).toBe('not found')
         })
 
-        it('GET /companies/{id} with negative id fails', async () => {
+        it('GET /companies/{id} with negative id fails', async function () {
             const response = await request(app)
                 .get('/companies/-1')
                 .set('Accept', 'application/json')
@@ -339,7 +340,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.message).toMatch('must be >= 1')
         })
 
-        it('GET /companies/{id} with strange id fails', async () => {
+        it('GET /companies/{id} with strange id fails', async function () {
             const response = await request(app)
                 .get('/companies/foo')
                 .set('Accept', 'application/json')
@@ -351,7 +352,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('GET /companies/ works with contents', async () => {
+        it('GET /companies/ works with contents', async function () {
             const response = await request(app)
                 .get('/companies/')
                 .set('Accept', 'application/json')
@@ -366,7 +367,7 @@ describe('/companies/ HTTP integration Tests', async function () {
                 ])
         })
 
-        it('GET /api-docs works', async () => {
+        it('GET /api-docs works', async function () {
             await request(app)
                 .get('/api-docs')
                 .set('Accept', 'application/json')
@@ -374,7 +375,7 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .expect(200)
         })
 
-        it('GET /docs/ works', async () => {
+        it('GET /docs/ works', async function () {
             await request(app)
                 .get('/docs/')
                 .set('Accept', 'text/html')
@@ -382,7 +383,7 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .expect(200, new RegExp('<title>Swagger UI</title>'))
         })
 
-        it('GET /something fails', async () => {
+        it('GET /something fails', async function () {
             await request(app)
                 .get('/something')
                 .set('Accept', 'application/json')
@@ -392,20 +393,20 @@ describe('/companies/ HTTP integration Tests', async function () {
         })
     })
 
-    describe('PUT /companies/{id}', async function () {
+    describe('PUT /companies/{id}', function () {
 
-        it('GET /companies/{id} existing company succeeds', async () => {
+        it('GET /companies/{id} existing company succeeds', async function () {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyB)
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagB)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagB)
         })
 
-        it('PUT /companies/{id} to change name of existing company', async () => {
+        it('PUT /companies/{id} to change name of existing company unsuccessful for guest', async function () {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
@@ -417,7 +418,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.message).toMatch('unauthorized')
         })
 
-        it('PUT /companies/{id} to change name of existing company', async () => {
+        it('PUT /companies/{id} to change name of existing company successful for user', async function () {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
@@ -425,22 +426,22 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .set('if-match', etagB)
                 .send(companyBA)
                 .expect(204, '')
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA)
         })
 
-        it('GET /companies/{id} existing company succeeds after Name Change', async () => {
+        it('GET /companies/{id} existing company succeeds after Name Change', async function () {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA)
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA)
         })
 
-        it('PUT /companies/{id}: add abbr to existing company succeeds', async () => {
+        it('PUT /companies/{id}: add abbr to existing company succeeds', async function () {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
@@ -448,22 +449,22 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .set('if-match', etagBA)
                 .send(companyBA2)
                 .expect(204, '')
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA2)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA2)
         })
 
-        it('GET /companies/{id} existing company succeeds after abbr added.', async () => {
+        it('GET /companies/{id} existing company succeeds after abbr added.', async function () {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA2)
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA2)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA2)
         })
 
-        it('PUT /companies/{id}: add www to existing company succeeds', async () => {
+        it('PUT /companies/{id}: add www to existing company succeeds', async function () {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
@@ -471,22 +472,22 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .set('if-match', etagBA2)
                 .send(companyBA3)
                 .expect(204, '')
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA3)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA3)
         })
 
-        it('GET /companies/{id} existing company succeeds after www added.', async () => {
+        it('GET /companies/{id} existing company succeeds after www added.', async function () {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA3)
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA3)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA3)
         })
 
-        it('PUT /companies/{id}: change companyType from existing company succeeds', async () => {
+        it('PUT /companies/{id}: change companyType from existing company succeeds', async function () {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
@@ -494,23 +495,23 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .set('if-match', etagBA3)
                 .send(companyBA4)
                 .expect(204, '')
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA4)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA4)
         })
 
-        it('GET /companies/{id} existing company succeeds after companyType changed.', async () => {
+        it('GET /companies/{id} existing company succeeds after companyType changed.', async function () {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA4)
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA4)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA4)
         })
 
 
-        it('PUT /companies/{id}: change companyType back from existing company succeeds', async () => {
+        it('PUT /companies/{id}: change companyType back from existing company succeeds', async function () {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
@@ -518,11 +519,11 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .set('if-match', etagBA4)
                 .send(companyBA3)
                 .expect(204, '')
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA3)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA3)
         })
 
-        it('PUT /companies/{id}: remove www from existing company succeeds', async () => {
+        it('PUT /companies/{id}: remove www from existing company succeeds', async function () {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
@@ -530,22 +531,22 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .set('if-match', etagBA3)
                 .send(companyBA2)
                 .expect(204, '')
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA2)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA2)
         })
 
-        it('GET /companies/{id} existing company succeeds after www removed', async () => {
+        it('GET /companies/{id} existing company succeeds after www removed', async function () {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA2)
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA2)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA2)
         })
 
-        it('PUT /companies/{id}: remove abbr from existing company succeeds', async () => {
+        it('PUT /companies/{id}: remove abbr from existing company succeeds', async function () {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
@@ -553,23 +554,23 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .set('if-match', etagBA2)
                 .send(companyBA)
                 .expect(204, '')
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA)
 
         })
 
-        it('GET /companies/{id} existing company succeeds after abbr removed', async () => {
+        it('GET /companies/{id} existing company succeeds after abbr removed', async function () {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA)
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA)
         })
 
-        it('PUT /companies/{id} on changed dataset fails with error 412', async () => {
+        it('PUT /companies/{id} on changed dataset fails with error 412', async function () {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
@@ -581,7 +582,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.message).toMatch('Precondition failed')
         })
 
-        it('PUT /companies/{id}: remove name form existing company fails', async () => {
+        it('PUT /companies/{id}: remove name form existing company fails', async function () {
             const response = await request(app)
                 .put('/companies/2')
                 .set('Accept', 'application/json')
@@ -594,21 +595,21 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('GET /companies/{id} existing company succeeds after name removal failed', async () => {
+        it('GET /companies/{id} existing company succeeds after name removal failed', async function () {
             const response = await request(app)
                 .get('/companies/2')
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
                 .expect(200, companyBA)
-            expect(response.headers['location']).toEqual('/companies/2')
-            expect(response.headers['etag']).toEqual(etagBA)
+            expect(response.headers.location).toEqual('/companies/2')
+            expect(response.headers.etag).toEqual(etagBA)
         })
     })
 
-    describe('DELETE /companies/{id}', async function () {
+    describe('DELETE /companies/{id}', function () {
 
-        it('DELETE /company-types/{id} with existing company fails when no etag', async () => {
+        it('DELETE /company-types/{id} with existing company fails when no etag', async function (): Promise<void> {
             const response = await request(app)
                 .delete('/company-types/1')
                 .set('Accept', 'application/json')
@@ -618,7 +619,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.message).toMatch('Conflict')
         })
 
-        it('DELETE /companies/{id} existing company fails as guest', async () => {
+        it('DELETE /companies/{id} existing company fails as guest', async function () {
             const response = await request(app)
                 .delete('/companies/1')
                 .set('Accept', 'application/json')
@@ -628,7 +629,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.message).toMatch('unauthorized')
         })
 
-        it('DELETE /companies/{id} existing company succeeds', async () => {
+        it('DELETE /companies/{id} existing company succeeds', async function () {
             await request(app)
                 .delete('/companies/1')
                 .set('Accept', 'application/json')
@@ -636,7 +637,7 @@ describe('/companies/ HTTP integration Tests', async function () {
                 .expect(204, '')
         })
 
-        it('DELETE /companies/{id} nonexisting item fails', async () => {
+        it('DELETE /companies/{id} nonexisting item fails', async function () {
             const response = await request(app)
                 .delete('/companies/1')
                 .set('Accept', 'application/json')
@@ -647,7 +648,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.message).toBe('not found')
         })
 
-        it('DELETE /companies/{id} with negative id fails', async () => {
+        it('DELETE /companies/{id} with negative id fails', async function () {
             const response = await request(app)
                 .delete('/companies/-1')
                 .set('Accept', 'application/json')
@@ -659,7 +660,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('DELETE /companies/{id} with id 0 fails', async () => {
+        it('DELETE /companies/{id} with id 0 fails', async function () {
             const response = await request(app)
                 .delete('/companies/0')
                 .set('Accept', 'application/json')
@@ -671,7 +672,7 @@ describe('/companies/ HTTP integration Tests', async function () {
             expect(response.body.errors).toBeInstanceOf(Array)
         })
 
-        it('DELETE /companies/{id} with strange id fails', async () => {
+        it('DELETE /companies/{id} with strange id fails', async function () {
             const response = await request(app)
                 .delete('/companies/foo')
                 .set('Accept', 'application/json')
