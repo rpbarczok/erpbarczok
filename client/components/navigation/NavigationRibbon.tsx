@@ -148,14 +148,14 @@ export function NavigationRibbon({ tabs, setTabs, setActiveForm, theme, setTheme
                 <Navbar key='navbar-lg' className='bg-body-secondary d-none d-xl-block'>
                     <Nav>
                         <Groups />
-                        <NavDropdown drop='start' className='ms-auto' key='account' title={auth.user?.profile?.email || auth.user?.profile?.name}>
+                        <NavDropdown drop='start' className='ms-auto' key='account' title={auth.user?.profile.email || auth.user?.profile.name}>
                             <NavDropdown.Item key='logout' onClick={logOutHandler}>Logout</NavDropdown.Item>
                             <NavDropdown.Divider />
                             <FormCheck
                                 className='ms-auto'
+                                checked={theme === 'dark'}
                                 reverse
                                 type='switch'
-                                id='toggleTheme'
                                 onChange={(e) => toggleTheme(e, theme, setTheme)}
                                 label='Toggle Theme'
                             />

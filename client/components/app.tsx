@@ -16,7 +16,7 @@ export function App() {
     const [activeForm, setActiveForm] = useState<FormTab>(startPage)
     const [tabs, setTabs] = useState<FormTab[]>([startPage])
     const auth = useAuth()
-    const [theme, setTheme] = useState<'light' | 'dark'>(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    const [theme, setTheme] = useState<'light' | 'dark'>(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
     const [permissions, setPermissions] = useState<string[]>([])
     const [isLoading, setIsLoading] = useState(false)
 
