@@ -19,7 +19,7 @@ export const CompaniesSMList = ({ filteredCompanies, activeCompany, changeActive
         } else {
             return filteredCompanies.map((element) => {
                 return (
-                    <ListGroup.Item className='standardDesign' key={element.meta.location} active={element.meta.location === activeCompany.meta.location} onClick={() => changeActive(element.meta.location)} >
+                    <ListGroup.Item  key={element.meta.location} active={element.meta.location === activeCompany.meta.location} onClick={() => changeActive(element.meta.location)} >
                         {element.data.name + (element.data.abbr ? ' (' + element.data.abbr + ')' : '')}
                     </ListGroup.Item>
                 )
@@ -30,7 +30,7 @@ export const CompaniesSMList = ({ filteredCompanies, activeCompany, changeActive
     }
 
     return (
-        <ListGroup className='scrollBox standardDesign d-none d-sm-block' style={{ marginTop: '10px' }} id='company-list' >
+        <ListGroup className='scrollBox d-none d-sm-block' style={{ marginTop: '10px' }} id='company-list' >
             <List />
         </ListGroup >)
 }

@@ -14,6 +14,9 @@ import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useEffect, useState } from 'react'
 import { useNotifier } from '../notifiers/useNotifier.js'
+import { is$200GetCompanyTypes, isSchemasError } from 'utils/typeguards.js'
+import { AxiosResponse } from 'openapi-client-axios'
+import { Components } from 'types/openapi.js'
 
 interface ResourcePageComponent {
     resource: Resource
@@ -35,31 +38,35 @@ export const ResourcePage = ({ resource, isResourceChanged, setIsResourceChanged
             setIsLoading(true)
 
             async function getResource() {
-                const client = await apiClient
-                client.paths[resource.paths.all].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
-                    .then(
-                        result => {
-                            setIsLoading(false)
-                            const newList = result.data.map(row => {
-                                const newRow: DataWithMeta<CompanyType | Field> = {
-                                    meta: {
-                                        location: Number(removeStringBeforeLastDigits(row.meta.location)),
-                                        etag: row.meta.etag
-                                    },
-                                    data: row.data
-                                }
-                                return newRow
-                            })
-                            setNewList(newList)
-                                                    if (typeof result.headers.permissions === 'string') {
+                if (token) {
+                    const client = await apiClient
+                    const result = await client.paths[resource.paths.all].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
+                    setIsLoading(false)
+                    if (is$200GetCompanyTypes(result)) {
+                        const newList = result.data.map(row => {
+                            const newRow: DataWithMeta<CompanyType | Field> = {
+                                meta: {
+                                    location: Number(removeStringBeforeLastDigits(row.meta.location)),
+                                    etag: row.meta.etag
+                                },
+                                data: row.data
+                            }
+                            return newRow
+                        })
+                        setNewList(newList)
+                        if (typeof result.headers.permissions === 'string') {
                             updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        } else {
+                            throw new Error ('No permissions header found')
                         }
-                        },
-                        error => {
-                            setIsLoading(false)
-                            throw new Error(`Error while loading resource: ${error.message}`)
-                        }
-                    )
+                    } else if (isSchemasError(result)) {
+                        setIsLoading(false)
+                        const errorMessage: string = String((result as AxiosResponse<Components.Schemas.Error>).status) + (result as AxiosResponse<Components.Schemas.Error>).data.message
+                        throw new Error(`Error while loading resource: ${errorMessage}`)
+                    }
+                } else {
+                    throw new Error('Bitte authentifizieren')
+                }
             }
             void getResource()
             if (isItemChanged) {
@@ -68,6 +75,8 @@ export const ResourcePage = ({ resource, isResourceChanged, setIsResourceChanged
             if (isResourceChanged) {
                 setIsResourceChanged(false)
             }
+
+
         }
     }, [isItemChanged, isResourceChanged])
 
@@ -95,7 +104,7 @@ export const ResourcePage = ({ resource, isResourceChanged, setIsResourceChanged
             </Row>
             <Notes notes={mainNotes} removeNote={removeMainNote} />
             <Row>
-                <ListGroup className='standardDesign' key={resource.name + '-list'} >
+                <ListGroup  key={resource.name + '-list'} >
                     {ListResources}
                 </ListGroup >
             </Row>

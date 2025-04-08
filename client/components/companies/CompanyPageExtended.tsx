@@ -77,8 +77,10 @@ export const CompanyPageExtended = (
                             setActiveCompany(company)
                             changedCompanyDispatch({ type: 'companyChange', newValue: company })
                         }
-                                                if (typeof result.headers.permissions === 'string') {
+                        if (typeof result.headers.permissions === 'string') {
                             updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        } else {
+                            throw new Error ('No permissions header found')
                         }
                         setIsLoading(false)
                     },

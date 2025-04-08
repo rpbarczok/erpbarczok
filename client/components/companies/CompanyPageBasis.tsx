@@ -48,9 +48,11 @@ export const CompanyPageBasis = () => {
                                 return (newRow)
                             })
                             setCompaniesList(newList)
-                                                    if (typeof result.headers.permissions === 'string') {
-                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                        }
+                            if (typeof result.headers.permissions === 'string') {
+                                updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                            } else {
+                                throw new Error ('No permissions header found')
+                            }
                         },
                         error => {
                             setIsLoading(false)

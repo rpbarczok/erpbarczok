@@ -15,8 +15,8 @@ export function CompanySMSearch({ search, setSearch }: CompanySMSearchInterface)
     return (
         <>
             <Form.Group controlId='searchField' className='d-none d-sm-block'  style={{padding:'10px 0 0 0'}}>
-                <Form.Label className='standardDesign'>Suche (Firma, Kürzel)</Form.Label>
-                <Form.Control type='text' className='standardDesign' value={search} onChange={handleSearch} />
+                <Form.Label className= 'labelPadding' >Suche (Firma, Kürzel)</Form.Label>
+                <Form.Control type='text'  value={search} onChange={handleSearch} />
             </Form.Group>
         </>
     )

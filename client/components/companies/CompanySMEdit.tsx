@@ -50,8 +50,10 @@ export const CompanySMEdit = ({ company, companyTypesList, setIsCompanyChanged, 
                         }
                         addEditNote(note)
                         setIsCompanyChanged(true)
-                                                if (typeof result.headers.permissions === 'string') {
+                        if (typeof result.headers.permissions === 'string') {
                             updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        } else {
+                            throw new Error ('No permissions header found')
                         }
                     },
                     error => {
@@ -72,7 +74,7 @@ export const CompanySMEdit = ({ company, companyTypesList, setIsCompanyChanged, 
             company.data.www === changedCompany.data.www &&
             company.data.companyType === changedCompany.data.companyType)
 
-        const handleUndo: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+        const handleUndo = (e: React.MouseEvent) => {
             e.preventDefault()
             setValidated(false)
             changedCompanyDispatch({ type: 'companyChange', newValue: company })
@@ -81,9 +83,9 @@ export const CompanySMEdit = ({ company, companyTypesList, setIsCompanyChanged, 
         return (
             <>
                 <Row className='d-none d-sm-block'>
-                    <ButtonGroup className='standardDesign float-end' >
-                        <Button type='submit' className='standardDesign' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
-                        <Button className='standardDesign' variant='outline-primary' disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
+                    <ButtonGroup className='float-end' >
+                        <Button type='submit'  variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
+                        <Button  variant='outline-primary' disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
                     </ButtonGroup>
                 </Row>
             </>

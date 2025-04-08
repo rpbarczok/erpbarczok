@@ -1,20 +1,4 @@
-.standardDesign {
-    padding: 1em 0 0 0;
-}
-
-.lineWithButton{
-    display: flex;
-    justify-content: space-between;
-}
-
-
 /* Scrollboxes */
-
-.scrollBoxXS {
-    font-size: small;
-    overflow-y: scroll;
-
-}
 
 .scrollBox {
     font-size: small;
@@ -54,7 +38,19 @@
     max-width: 700px;
 }
 
+/* to make the backdrop of the loading modal transparent */
 .transparent-backdrop {
     background-color: transparent !important;
     border: 0px !important;
+}
+
+/* created for dropdown menu in the small and xs view  */
+.startPadding10 {
+    padding-inline-start: 10px;
+}
+
+/* to correct that the input labels are to close to the paragraph above */
+
+.labelPadding {
+    padding-top: 8px;
 }

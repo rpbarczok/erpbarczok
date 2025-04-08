@@ -23,7 +23,7 @@ export const FieldsInput = ({ field, setField }: FieldsInputInterface) => {
     return (
         <>
             <Form.Group controlId='formFirma'>
-                <Form.Label>Branche</Form.Label>
+                <Form.Label className= 'labelPadding'>Branche</Form.Label>
                 <Form.Control required type='text' value={field.data.name} onChange={handleChangeName} />
                 <Form.Control.Feedback type='invalid'>
                     Bitte eine Branche eintragen.

@@ -38,10 +38,11 @@ export function useCompanyTypes(): [DataWithMeta<CompanyType>[], React.Dispatch<
                         })
                         setListCompanyTypes(newList)
                         if (typeof result.headers.permissions === 'string') {
-                                                    if (typeof result.headers.permissions === 'string') {
                             updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        } else {
+                            throw new Error('No permissions header found')
                         }
-                        }
+
                     }
                 } else {
                     throw new Error('unauthorized')
@@ -55,5 +56,5 @@ export function useCompanyTypes(): [DataWithMeta<CompanyType>[], React.Dispatch<
         }
     }, [isCompanyTypeChanged])
 
-return [listCompanyTypes, setIsCompanyTypeChanged]
+    return [listCompanyTypes, setIsCompanyTypeChanged]
 }

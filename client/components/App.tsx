@@ -42,11 +42,13 @@ export function App() {
                 <LoadingContext.Provider value={{ isLoading: isLoading, setIsLoading: setIsLoading }}>
                     <PermissionContext.Provider value={{ permissions: permissions, setPermissions: setPermissions }}>
                         <Container fluid className='d-flex flex-column vh-100'>
+                            <Row>
                             <Navigation
                                 openPages={openPages} setOpenPages={setOpenPages}
                                 activePage={activePage} setActivePage={setActivePage}
                                 theme={theme} setTheme={setTheme}
                             />
+                            </Row>
                             {isLoading ? <DataLoading /> : ''}
                             <Pages activePage={activePage} />
                             <Row className='bg-body-secondary' >

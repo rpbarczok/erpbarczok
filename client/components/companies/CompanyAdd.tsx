@@ -13,6 +13,7 @@ import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
 import { useReducer, useState } from 'react'
+import e from 'express'
 
 interface CompanyAddComponent {
     changeActive: (active: number) => void
@@ -27,14 +28,15 @@ export const CompanyAdd = ({ changeActive, addEditNote, setIsNew, setIsCompanyCh
     const [newCompanyClick, setNewCompanyClick] = useState(0)
     const [show, setShow] = useState(false)
 
-    const handleShow = () => {
+    const handleShow = (e: React.MouseEvent) => {
+        e.preventDefault()
         setNewCompanyClick(newCompanyClick - 1)
         changedCompanyDispatch({ type: 'companyChange', newValue: emptyCompany })
         setShow(true)
     }
     return (
         <>
-            <Button className='standardDesign' variant='outline-primary' onClick={handleShow}>Hinzufügen</Button>
+            <Button variant='outline-primary' onClick={handleShow}>Hinzufügen</Button>
             <AddCompanyModal
                 changedCompany={changedCompany}
                 changeActive={changeActive}
@@ -108,9 +110,11 @@ export const AddCompanyModal = ({
                     variant: 'success',
                 }
                 addEditNote(note)
-                                        if (typeof result.headers.permissions === 'string') {
-                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                        }
+                if (typeof result.headers.permissions === 'string') {
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                } else {
+                    throw new Error ('No permissions header found')
+                }
                 setIsCompanyChanged(true)
                 setIsNew(true)
                 setShow(false)
@@ -156,7 +160,7 @@ export const AddCompanyModal = ({
             <Modal.Footer>
                 <ButtonGroup className='w-100'>
                     <Button type='submit' variant='outline-primary'>Speichern</Button>
-                    <Button variant='outline-secondary' onClick={(e) => handleClose(e)}>Abbrechen</Button>
+                    <Button variant='outline-secondary' onClick={handleClose}>Abbrechen</Button>
                 </ButtonGroup>
             </Modal.Footer>
         </Form>

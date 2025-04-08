@@ -1,4 +1,5 @@
 import { OpenPage } from "components/App.jsx"
+import e from "express"
 import { CloseButton, Nav } from "react-bootstrap"
 import { insertInArray } from "utils/insertInArray.js"
 
@@ -16,7 +17,8 @@ export const NavbarTabs = ({
     activePage,
     setActivePage }: NavarTabsInterface) => {
 
-    const closePage = (open: OpenPage) => {
+    const closePage = (e: React.MouseEvent, open: OpenPage) => {
+        e.preventDefault()
         if (openPages.length === 1) {
             setOpenPages([{ name: 'Home', id: 'home' }])
             setActivePage({ name: 'Home', id: 'home' })
@@ -63,8 +65,8 @@ export const NavbarTabs = ({
         return openPages.map(open => {
             return (<Nav.Item id={open.id} key={open.id} draggable onDragStart={dragstartHandler} onDragOver={dragoverHandler} onDrop={enableDropping}>
                 <Nav.Link active={activePage.id === open.id}>
-                    <span onClick={() => { setActivePage({ name: open.name, id: open.id }) }}>{open.name}</span>
-                    <CloseButton onClick={() => { closePage(open) }} />
+                    <span onClick={() => setActivePage({ name: open.name, id: open.id })}>{open.name}</span>
+                    <CloseButton onClick={(e) => closePage(e, open)} />
 
                 </Nav.Link>
             </Nav.Item>)

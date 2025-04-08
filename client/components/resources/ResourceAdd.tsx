@@ -11,6 +11,9 @@ import { SetStateAction, useState } from 'react'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
+import { is$201, isSchemasError } from 'utils/typeguards.js'
+import { AxiosResponse } from 'openapi-client-axios'
+import { Components } from 'types/openapi.js'
 
 
 interface AddResourceComponent {
@@ -66,33 +69,37 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
         const form = e.currentTarget
         e.preventDefault()
         const token = auth.user?.access_token
-        if (!form.checkValidity()) {
-            setValidated(true)
-        }
-        else {
-            setIsLoading(true)
-            const client = await apiClient
-            client.paths[resource.paths.all].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
-                .then(
-                    result => {
-                        setIsLoading(false)
-                        const note: Note = {
-                            message: `Eine neue Beziehungsart wurde erfolgreich abgespeichert.`,
-                            variant: 'success'
-                        }
-                        addMainNote(note)
-                        setShow(false)
-                        setIsItemChanged(true)
+        if (token) {
+            if (!form.checkValidity()) {
+                setValidated(true)
+            }
+            else {
+                setIsLoading(true)
+                const client = await apiClient
+                const result = await client.paths[resource.paths.all].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
+                setIsLoading(false)
+                if (is$201(result)) {
+                    const note: Note = {
+                        message: `Eine neue Entität wurde erfolgreich abgespeichert.`,
+                        variant: 'success'
+                    }
+                    addMainNote(note)
+                    setShow(false)
+                    setIsItemChanged(true)
+                    if (typeof result.headers.permissions === 'string') {
                         updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                    },
-                    error => {
-                        setIsLoading(false)
-                        const note: Note = {
-                            message: `Fehler beim Speichern der neuen Beziehungsart: ${error.message}`,
-                            variant: 'danger',
-                        }
-                        addNote(note)
-                    })
+                    } else {
+                        throw new Error ('No permissions header found')
+                    }
+                } else if (isSchemasError(result)) {
+                    setIsLoading(false)
+                    const note: Note = {
+                        message: `Fehler beim Speichern der neuen Entität:  ${String((result as AxiosResponse<Components.Schemas.Error>).status)} ${String((result as AxiosResponse<Components.Schemas.Error>).data.message)}`,
+                        variant: 'danger',
+                    }
+                    addNote(note)
+                }
+            }
         }
     }
 

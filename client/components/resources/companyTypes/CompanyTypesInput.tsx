@@ -23,7 +23,7 @@ export const CompanyTypesInput = ({companyType, setCompanyType}: CompanyTypesInp
     }
     
     return <Form.Group controlId='formBeziehung'>
-        <Form.Label>Beziehung</Form.Label>
+        <Form.Label className= 'labelPadding'>Beziehung</Form.Label>
         <Form.Control required type='text' value={companyType.data.name} onChange={handleChangeName} />
         <Form.Control.Feedback type='invalid'>
             Bitte eine Art der Beziehung zu einem Unternehmen eintragen.

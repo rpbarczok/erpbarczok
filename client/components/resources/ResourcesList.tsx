@@ -12,6 +12,7 @@ import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
 import { useState } from 'react'
+import { is$204Success } from 'utils/typeguards.js'
 
 
 interface ResourceActiveInterface {
@@ -79,6 +80,7 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
                     changedItem.data,
                     { headers: { Authorization: `Bearer ${token}` } })
                 setIsLoading(false)
+                console.log(is$204Success(result))
                 if (result.status === 204) {
                     const note: Note = {
                         message: `Die Entität wurde erfolgreich geändert.`,
@@ -89,6 +91,8 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
                     setIsItemChanged(true)
                     if (typeof result.headers.permissions === 'string') {
                         updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                    } else {
+                        throw new Error ('No permissions header found')
                     }
                 } else {
                     const note: Note = {
@@ -126,15 +130,24 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
                     addMainNote(note)
                     if (typeof result.headers.permissions === 'string') {
                         updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                    } else {
+                        throw new Error ('No permissions header found')
                     }
                 } else {
                     const note: Note = {
                         variant: 'danger',
-                        message: `Löschen der ${resource.name} hat nicht geklappt: ${result.status} ${result.data.message}`,
+                        message: `Löschen der ${resource.name} hat nicht geklappt: ${String(result.status)} ${String(result.data.message)}`,
                     }
                     addNote(note)
                 }
             }
+        } else {
+            const note: Note = {
+                message: 'Nicht authentifiziert',
+                variant: 'danger'
+            }
+            addNote(note)
+
         }
 
     }
@@ -147,7 +160,7 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
 
     return (
         <>
-            <ListGroup.Item className='standardDesign' onClick={handleModal}>
+            <ListGroup.Item  onClick={handleModal}>
                 {item.data.name}
             </ListGroup.Item>
             <Modal show={show} onHide={() => handleClose()}>

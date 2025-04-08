@@ -9,14 +9,15 @@ interface LeftNavigationInterface {
 
 export const ResourceNavigation = ({ setActiveResource, activeResource, setIsResourceChanged }: LeftNavigationInterface) => {
 
-    const resourceHandler = (resource: Resource) => {
+    const resourceHandler = (e: React.MouseEvent, resource: Resource) => {
+        e.preventDefault()
         setActiveResource(resource)
         setIsResourceChanged(true)
     }
 
     const ButtonList = resourceList.map(resource => {
         return (
-            <Button className='link' id={resource.name} variant='outline-secondary' key={resource.name} onClick={() => resourceHandler(resource)} active={resource.name === activeResource.name}>
+            <Button className='link' id={resource.name} variant='outline-secondary' key={resource.name} onClick={(e) => resourceHandler(e, resource)} active={resource.name === activeResource.name}>
                 {resource.name}
             </Button>
         )

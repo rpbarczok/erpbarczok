@@ -1,4 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
+import './style.css'
 import { App } from './components/App.js'
 import { AuthProvider, AuthProviderProps } from 'react-oidc-context'
 import { Button } from 'react-bootstrap'

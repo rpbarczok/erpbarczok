@@ -41,8 +41,10 @@ export const CompanyDelete = ({ company, setIsCompanyChanged, addNote, setShow, 
                             setShow(false)
                         }
                         addNote(note)
-                                                if (typeof result.headers.permissions === 'string') {
+                        if (typeof result.headers.permissions === 'string') {
                             updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        } else {
+                            throw new Error ('No permissions header found')
                         }
                     },
                     error => {
@@ -56,5 +58,5 @@ export const CompanyDelete = ({ company, setIsCompanyChanged, addNote, setShow, 
                 )
         }
     }
-    return <Button size={size} className='standardDesign' variant='outline-danger' onClick={handleDelete}>Löschen</Button>
+    return <Button size={size}  variant='outline-danger' onClick={handleDelete}>Löschen</Button>
 }
