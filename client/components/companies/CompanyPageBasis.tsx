@@ -48,7 +48,9 @@ export const CompanyPageBasis = () => {
                                 return (newRow)
                             })
                             setCompaniesList(newList)
+                                                    if (typeof result.headers.permissions === 'string') {
                             updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        }
                         },
                         error => {
                             setIsLoading(false)
@@ -57,7 +59,7 @@ export const CompanyPageBasis = () => {
                     )
             }
 
-            getCompanies()
+            void getCompanies()
 
             setIsCompanyChanged(false)
         }

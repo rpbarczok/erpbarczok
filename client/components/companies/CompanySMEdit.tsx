@@ -33,7 +33,7 @@ export const CompanySMEdit = ({ company, companyTypesList, setIsCompanyChanged, 
         const form = e.currentTarget
         e.preventDefault()
         e.stopPropagation()
-        if (form.checkValidity() === false) {
+        if (!form.checkValidity()) {
             setValidated(true)
         } else {
             setIsLoading(true)
@@ -50,7 +50,9 @@ export const CompanySMEdit = ({ company, companyTypesList, setIsCompanyChanged, 
                         }
                         addEditNote(note)
                         setIsCompanyChanged(true)
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                                                if (typeof result.headers.permissions === 'string') {
+                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        }
                     },
                     error => {
                         setIsLoading(false)

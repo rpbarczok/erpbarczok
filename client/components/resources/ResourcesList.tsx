@@ -68,70 +68,75 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
         const form = e.currentTarget
         e.preventDefault()
         e.stopPropagation()
-        if (form.checkValidity() === false) {
-            setValidated(true)
-        } else {
-            setIsLoading(true)
-            const client = await apiClient
-            client.paths[resource.paths['single']].put(
-                { id: changedItem.meta.location, 'if-match': changedItem.meta.etag },
-                changedItem.data,
-                { headers: { Authorization: `Bearer ${token}` } })
-                .then(
-                    result => {
-                        setIsLoading(false)
-                        const note: Note = {
-                            message: `Die Beziehungsart wurde erfolgreich geändert.`,
-                            variant: 'success'
-                        }
-                        addMainNote(note)
-                        setShow(false)
-                        setIsItemChanged(true)
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                    },
-                    error => {
-                        setIsLoading(false)
-                        const note: Note = {
-                            message: `Fehler beim Ändern der Beziehung: ${error.message}`,
-                            variant: 'danger'
-                        }
-                        addNote(note)
+        if (token) {
+            if (!form.checkValidity()) {
+                setValidated(true)
+            } else {
+                setIsLoading(true)
+                const client = await apiClient
+                const result = await client.paths[resource.paths.single].put(
+                    { id: changedItem.meta.location, 'if-match': changedItem.meta.etag },
+                    changedItem.data,
+                    { headers: { Authorization: `Bearer ${token}` } })
+                setIsLoading(false)
+                if (result.status === 204) {
+                    const note: Note = {
+                        message: `Die Entität wurde erfolgreich geändert.`,
+                        variant: 'success'
                     }
-                )
+                    addMainNote(note)
+                    setShow(false)
+                    setIsItemChanged(true)
+                    if (typeof result.headers.permissions === 'string') {
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                    }
+                } else {
+                    const note: Note = {
+                        message: `Fehler beim Ändern der Entität: Error status ${String(result.status)} ${String(result.message)}`,
+                        variant: 'danger'
+                    }
+                    addNote(note)
+                }
+            }
+        } else {
+            const note: Note = {
+                message: 'Nicht authentifiziert',
+                variant: 'danger'
+            }
+            addNote(note)
+
         }
     }
 
-    const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault()
-        const userConfirmed = window.confirm(`Willst du die ${resource.name} '${item.data.name}' wirklich löschen?`)
-        if (userConfirmed) {
-            setIsLoading(true)
-            const client = await apiClient
-            client.paths[resource.paths['single']].delete(item.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
-                .then(
-                    result => {
-                        setIsLoading(false)
-                        setIsItemChanged(true)
-                        const note: Note = {
-                            variant: 'warning',
-                            message: `${resource.name} wurde gelöscht.`,
-                        }
-                        if (setShow) {
-                            setShow(false)
-                        }
-                        addMainNote(note)
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                    },
-                    error => {
-                        setIsLoading(false)
-                        const note: Note = {
-                            variant: 'danger',
-                            message: `Löschen der ${resource.name} hat nicht geklappt: ${error.message}`,
-                        }
-                        addNote(note)
+    const handleDelete = async () => {
+        if (token) {
+            const userConfirmed = window.confirm(`Willst du die ${resource.name} '${item.data.name}' wirklich löschen?`)
+            if (userConfirmed) {
+                setIsLoading(true)
+                const client = await apiClient
+                const result = await client.paths[resource.paths.single].delete(item.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
+                setIsLoading(false)
+                if (result.status === 204) {
+                    setIsItemChanged(true)
+                    const note: Note = {
+                        variant: 'warning',
+                        message: `${resource.name} wurde gelöscht.`,
                     }
-                )
+                    setShow(false)
+                    addMainNote(note)
+                    if (typeof result.headers.permissions === 'string') {
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                    }
+                } else {
+                    const note: Note = {
+                        variant: 'danger',
+                        message: `Löschen der ${resource.name} hat nicht geklappt: ${result.status} ${result.data.message}`,
+                    }
+                    addNote(note)
+                }
+            }
         }
+
     }
 
     const handleUndo: React.MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -170,3 +175,4 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
         </>
     )
 }
+

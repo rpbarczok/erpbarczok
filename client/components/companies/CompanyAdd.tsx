@@ -35,17 +35,17 @@ export const CompanyAdd = ({ changeActive, addEditNote, setIsNew, setIsCompanyCh
     return (
         <>
             <Button className='standardDesign' variant='outline-primary' onClick={handleShow}>Hinzufügen</Button>
-            <AddCompanyModal 
-            changedCompany={changedCompany}
-            changeActive={changeActive}
-            addEditNote = {addEditNote}
-            setIsCompanyChanged={setIsCompanyChanged}
-            setIsNew={setIsNew}
-            show={show}
-            setShow={setShow}
-            newCompanyClick={newCompanyClick}
-            changedCompanyDispatch={changedCompanyDispatch}
-            companyTypesList={companyTypesList}
+            <AddCompanyModal
+                changedCompany={changedCompany}
+                changeActive={changeActive}
+                addEditNote={addEditNote}
+                setIsCompanyChanged={setIsCompanyChanged}
+                setIsNew={setIsNew}
+                show={show}
+                setShow={setShow}
+                newCompanyClick={newCompanyClick}
+                changedCompanyDispatch={changedCompanyDispatch}
+                companyTypesList={companyTypesList}
             />
         </>
     )
@@ -65,16 +65,16 @@ interface AddCompanyModalComponent {
 }
 
 export const AddCompanyModal = ({
-    changedCompany, 
-    changeActive, 
-    addEditNote, 
-    setIsCompanyChanged, 
-    setIsNew, 
+    changedCompany,
+    changeActive,
+    addEditNote,
+    setIsCompanyChanged,
+    setIsNew,
     show,
     setShow,
     newCompanyClick,
     companyTypesList,
-    changedCompanyDispatch}: AddCompanyModalComponent) => {
+    changedCompanyDispatch }: AddCompanyModalComponent) => {
     const [validated, setValidated] = useState<boolean>(false)
     const [addNotes, addAddNote, removeAddNote] = useNotifier()
     const { setIsLoading } = useContextThrowUndefined(LoadingContext)
@@ -82,20 +82,18 @@ export const AddCompanyModal = ({
     const auth = useAuth()
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const token = auth.user?.access_token
-    
+
     const handleClose: React.MouseEventHandler<HTMLButtonElement> = (e) => {
         e.preventDefault()
-        if (setShow) {
-            setValidated(false)
-            setShow(false)
-        }
+        setValidated(false)
+        setShow(false)
     }
 
-    const handleSubmitAdd: React.PageEventHandler<HTMLPageElement> = async (e: React.PageEvent<HTMLPageElement>) => {
+    const handleSubmitAdd = async (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget
         e.preventDefault()
         e.stopPropagation()
-        if (form.checkValidity() === false) {
+        if (!form.checkValidity()) {
             setValidated(true)
         } else {
             setIsLoading(true)
@@ -110,7 +108,9 @@ export const AddCompanyModal = ({
                     variant: 'success',
                 }
                 addEditNote(note)
-                updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                                        if (typeof result.headers.permissions === 'string') {
+                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        }
                 setIsCompanyChanged(true)
                 setIsNew(true)
                 setShow(false)

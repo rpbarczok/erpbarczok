@@ -1,5 +1,5 @@
 import { AddCompanyModal } from "../components/companies/CompanyAdd.js"
-import { cleanup, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { CompaniesSMList } from "../components/companies/CompaniesSMList.js";
 import { CompaniesXSList } from "../components/companies/CompaniesXSList.js";
 import { CompanySMEdit } from "../components/companies/CompanySMEdit.js";
@@ -14,15 +14,15 @@ import { noop, asyncNoop, companyTestList, companyTestTypesList, emptyList } fro
 import { PermissionContext } from "../utils/permissionContext.js"
 import { render } from "./utils/contextWrapper.js"
 
-afterEach(cleanup)
 
-describe('Company Page Test', (): void => {
+describe('Company Page Test', function () {
+
     const inputLabelList = ['Firma', 'Kürzel (max 3 Zeichen)', 'Art der Beziehung zum Unternehmen', 'Homepage']
 
-    describe('Company Edit', (): void => {
-        describe('company edit modal SM', (): void => {
+    describe('Company Edit', function () {
+        describe('company edit modal SM', function () {
 
-            it('displays correctly all labels', (): void => {
+            it('displays correctly all labels', function () {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                         <CompanySMEdit
@@ -42,7 +42,7 @@ describe('Company Page Test', (): void => {
 
             })
 
-            it('displays correctly all inputs when active company exists', (): void => {
+            it('displays correctly all inputs when active company exists', function () {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                         <CompanySMEdit
@@ -57,14 +57,14 @@ describe('Company Page Test', (): void => {
                 )
 
                 for (const value of Object.values(companyTestList[0].data)) {
-                    expect(screen.getByDisplayValue(value)).not.toBeNull()
+                    expect(screen.getByDisplayValue(value as string)).not.toBeNull()
                 }
 
             })
         })
 
-        describe('company edit modal XS', (): void => {
-            it('displays correctly the title of the company edit modal ', (): void => {
+        describe('company edit modal XS', function () {
+            it('displays correctly the title of the company edit modal ', function () {
 
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
@@ -84,7 +84,7 @@ describe('Company Page Test', (): void => {
                 expect(screen.getByText('Unternehmen bearbeiten'))
             })
 
-            it('displays correctly the labels of the company edit modal', (): void => {
+            it('displays correctly the labels of the company edit modal', function () {
 
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
@@ -106,7 +106,7 @@ describe('Company Page Test', (): void => {
                 }
             })
 
-            it('displays correctly input values of the company edit modal', (): void => {
+            it('displays correctly input values of the company edit modal', function () {
 
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
@@ -124,11 +124,11 @@ describe('Company Page Test', (): void => {
 
                 // Assert
                 for (const value of Object.values(companyTestList[0].data)) {
-                    expect(screen.queryByDisplayValue(value)).not.toBeNull()
+                    expect(screen.queryByDisplayValue(value as string)).not.toBeNull()
                 }
             })
 
-            it('displays only "Schließen" with permission public', (): void => {
+            it('displays only "Schließen" with permission public', function () {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
                         <CompanyXSEdit
@@ -146,7 +146,7 @@ describe('Company Page Test', (): void => {
                 expect(screen.queryByText('Schließen')).not.toBeNull()
             })
 
-            it('displays all buttons with permission public user', (): void => {
+            it('displays all buttons with permission public user', function () {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                         <CompanyXSEdit
@@ -169,9 +169,9 @@ describe('Company Page Test', (): void => {
         })
     })
 
-    describe('Company List', (): void => {
-        describe('Company List SM', (): void => {
-            it('displays correctly the test list', (): void => {
+    describe('Company List', function () {
+        describe('Company List SM', function () {
+            it('displays correctly the test list', function () {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
                         <CompaniesSMList
@@ -191,7 +191,7 @@ describe('Company Page Test', (): void => {
 
             })
 
-            it('displays correctly the empty list', (): void => {
+            it('displays correctly the empty list', function () {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
                         <CompaniesSMList
@@ -206,8 +206,8 @@ describe('Company Page Test', (): void => {
             })
         })
 
-        describe('company list XS', (): void => {
-            it('displays correctly the test list', (): void => {
+        describe('company list XS', function () {
+            it('displays correctly the test list', function () {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
                         <CompaniesXSList
@@ -222,14 +222,15 @@ describe('Company Page Test', (): void => {
                 )
 
                 for (const company of companyTestList) {
-                    if(company.data.abbr)  {
+                    if (company.data.abbr) {
                         expect(screen.getByText(company.data.name + ' (' + company.data.abbr + ')')).not.toBeNull()
-                     } else {
-                        expect(screen.getByText(company.data.name)).not.toBeNull()}
-                     } 
+                    } else {
+                        expect(screen.getByText(company.data.name)).not.toBeNull()
+                    }
+                }
             })
 
-            it('displays correctly the empty list', (): void => {
+            it('displays correctly the empty list', function () {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
                         <CompaniesXSList
@@ -249,8 +250,8 @@ describe('Company Page Test', (): void => {
         })
     })
 
-    describe('Company Search', (): void => {
-        it('displays correctly the search input SM', (): void => {
+    describe('Company Search', function () {
+        it('displays correctly the search input SM', function () {
             render(
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                     <CompanySMSearch search={'test'} setSearch={noop} />
@@ -261,7 +262,7 @@ describe('Company Page Test', (): void => {
             expect(screen.getByDisplayValue('test')).not.toBeNull()
         })
 
-        it('displays correctly the search input XS', (): void => {
+        it('displays correctly the search input XS', function () {
             render(
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                     <CompanyXSSearch search={'test'} setSearch={noop} />
@@ -271,7 +272,7 @@ describe('Company Page Test', (): void => {
             expect(screen.getByDisplayValue('test')).not.toBeNull()
         })
 
-        it('displays correctly the placeholder', (): void => {
+        it('displays correctly the placeholder', function () {
             render(
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                     <CompanyXSSearch search={''} setSearch={noop} />
@@ -282,9 +283,9 @@ describe('Company Page Test', (): void => {
         })
     })
 
-    describe('Company Add Modal', (): void => {
+    describe('Company Add Modal', function () {
 
-        it('displays correctly the title', async (): Promise<void> => {
+        it('displays correctly the title', function () {
 
             render(
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
@@ -306,7 +307,7 @@ describe('Company Page Test', (): void => {
             expect(screen.getByText('Neues Unternehmen hinzufügen'))
         })
 
-        it('displays correctly the input label', async (): Promise<void> => {
+        it('displays correctly the input label', function () {
 
             render(
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
@@ -330,7 +331,7 @@ describe('Company Page Test', (): void => {
             }
         })
 
-        it('displays correctly the Buttons', async (): Promise<void> => {
+        it('displays correctly the Buttons', function () {
 
             render(
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
@@ -355,9 +356,9 @@ describe('Company Page Test', (): void => {
         })
     })
 
-    describe('Company Page Buttons', (): void => {
-        describe('Company Page Buttons SM', (): void => {
-            it('displays no buttons with permission public', (): void => {
+    describe('Company Page Buttons', function () {
+        describe('Company Page Buttons SM', function () {
+            it('displays no buttons with permission public', function () {
                 render(
 
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
@@ -380,7 +381,7 @@ describe('Company Page Test', (): void => {
                 expect(screen.queryByText('Rückgängig')).toBeNull()
             })
 
-            it('displays all buttons with permission user', (): void => {
+            it('displays all buttons with permission user', function () {
                 render(
 
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
@@ -405,8 +406,8 @@ describe('Company Page Test', (): void => {
             })
         })
 
-        describe('Company Page Buttons XS', (): void => {
-            it('displays no buttons with permission public', (): void => {
+        describe('Company Page Buttons XS', function () {
+            it('displays no buttons with permission public', function () {
                 render(
 
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
@@ -426,7 +427,7 @@ describe('Company Page Test', (): void => {
                 expect(screen.queryByText('Hinzufügen')).toBeNull()
             })
 
-            it('displays all buttons with permission user', (): void => {
+            it('displays all buttons with permission user', function () {
                 render(
 
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>

@@ -1,13 +1,13 @@
 import { expect } from 'expect';
-import { PageTab } from '../components/navigation_alt/ribbon.js';
-import { NavigationRibbon } from '../components/navigation_alt/NavigationRibbon.js';
-import { NavigationTabs } from 'components/navigation_alt/NavigationTabs.js';
 import { PermissionContext } from '../utils/permissionContext.js';
 import { render } from './utils/contextWrapper.js';
 import { screen } from '@testing-library/react';
+import { OpenPage } from 'components/App.js';
+import { NavbarMenue } from 'components/navigation/NavbarMenue.js';
+import { NavbarTabs } from 'components/navigation/NavbarTabs.js';
 
-const startPage: PageTab = { name: 'Stammdaten', id: 'stammPage' }
-const anfPage: PageTab = { name: 'Anfragen', id: 'anfPage' }
+const startPage: OpenPage = { name: 'Stammdaten', id: 'stammPage' }
+const anfPage: OpenPage = { name: 'Anfragen', id: 'anfPage' }
 
 const groupsListPublic = [
     "Startseite",
@@ -43,23 +43,23 @@ const forbiddenGroups = {
 // eslint-disable-next-line
 const noop = () => { }
 
-describe('Navigation Component Test', (): void => {
+describe('Navigation Component Test', function() {
 
-    describe('Navigation Ribbon Test with permissions"', (): void => {
+    describe('Navigation Ribbon Test with permissions"', function() {
 
         // Arrange
-        const tabs = [startPage]
+        const openPages = [startPage]
         const theme = 'light'
 
         for (const permission in permissionGroups) {
 
-            it(`displays the ribbon navigation for ${permission}`, async (): Promise<void> => {
+            it(`displays the ribbon navigation for ${permission}`, function() {
                 // Act
                 render(
                     <PermissionContext.Provider value={{ permissions: [permission], setPermissions: noop }}>
-                        <NavigationRibbon
-                            tabs={tabs} setTabs={noop}
-                            setActivePage={noop}
+                        <NavbarMenue
+                            openPages={openPages} setOpenPages={noop}
+                            activePage={openPages[0]} setActivePage={noop}
                             theme={theme} setTheme={noop}
                         />
                     </PermissionContext.Provider>
@@ -67,32 +67,32 @@ describe('Navigation Component Test', (): void => {
 
                 // Assert
                 for (const group of permissionGroups[permission]) {
-                    expect(screen.getByText(group)).not.toBeNull()
+                    expect(screen.getByText(group as string)).not.toBeNull()
                 }
 
                 for (const group of forbiddenGroups[permission]) {
-                    expect(screen.queryByText(group)).toBeNull()
+                    expect(screen.queryByText(group as string)).toBeNull()
                 }
             })
         }
     })
 
-    describe('displays the tab navigation', (): void => {
-        it('displays the tab navigation', async (): Promise<void> => {
+    describe('displays the tab navigation', function() {
+        it('displays the tab navigation', function() {
             // Arrange
-            const tabs = [startPage, anfPage]
+            const openPages = [startPage, anfPage]
             const activePage = anfPage
             // Act
             render( 
-                <NavigationTabs
-                    tabs={tabs} setTabs={noop}
+                <NavbarTabs
+                    openPages={openPages} setOpenPages={noop}
                     activePage={activePage} setActivePage={noop}
             />
             )
             // Assert 
             expect(screen.getByText('Anfragen')).not.toBeNull()
             expect(screen.getByText('Stammdaten')).not.toBeNull()
-            expect(document.getElementsByClassName('active')[0].textContent).toBe('Anfragen ')
+            expect(document.getElementsByClassName('active')[0].textContent).toBe('Anfragen')
         })
 
     })

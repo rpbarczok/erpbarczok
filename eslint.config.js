@@ -1,7 +1,6 @@
 // @ts-check
 
 import eslint from '@eslint/js';
-import globals from "globals";
 import tseslint from 'typescript-eslint'
 import mochaPlugin from 'eslint-plugin-mocha'
 
@@ -29,14 +28,15 @@ export default tseslint.config(
     rules: {
       '@typescript-eslint/consistent-indexed-object-style': ['error', 'index-signature'],
       "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-      "@typescript-eslint/no-misused-promises": [
-        "error",
+      '@typescript-eslint/no-misused-promises': [
+        'error',
         {
           checksConditionals: true,
           checksSpreads: true,
           checksVoidReturn: false,
-        },
+        }
       ],
+      '@typescript-eslint/no-confusing-void-expression': ['error', {'ignoreArrowShorthand': true}]
     },
     languageOptions: {
       parserOptions: {
@@ -45,4 +45,4 @@ export default tseslint.config(
       }
     }
   }
-);
+)

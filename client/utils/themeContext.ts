@@ -1,3 +1,5 @@
 import { createContext } from 'react'
 
-export const ThemeContext = createContext(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+const startTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+export const ThemeContext = createContext(startTheme)

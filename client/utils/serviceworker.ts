@@ -4,7 +4,7 @@ export function serviceWorkerRegistry() {
             navigator.serviceWorker.register('/service-worker.js')
             .then(registration => {
                 console.log('SW registered: ', registration)
-            }).catch(registrationError => {
+            }).catch((registrationError: unknown) => {
                 console.log('SW registration failed: ', registrationError)
             })
         })

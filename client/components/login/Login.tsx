@@ -4,8 +4,8 @@ import { useAuth } from 'react-oidc-context'
 export const Login = () => {
     const auth = useAuth()
 
-    const signInHandler = () => {
-        auth.signinRedirect()
+    const signInHandler = async() => {
+        await auth.signinRedirect()
     }
 
     return (

@@ -44,7 +44,7 @@ export const CompanyXSEdit = ({ show, setShow, companyTypesList, addEditNote, se
         const form = e.currentTarget
         e.preventDefault()
         e.stopPropagation()
-        if (form.checkValidity() === false) {
+        if (!form.checkValidity()) {
             setValidated(true)
         } else {
             setIsLoading(true)
@@ -62,7 +62,9 @@ export const CompanyXSEdit = ({ show, setShow, companyTypesList, addEditNote, se
                     addEditNote(note)
                     setIsCompanyChanged(true)
                     setShow(false)
-                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                                            if (typeof result.headers.permissions === 'string') {
+                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        }
                 },
                 error => {
                     setIsLoading(false)

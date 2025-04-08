@@ -4,7 +4,7 @@ import { Context, useContext } from 'react';
  export const useContextThrowUndefined  = <T>(context: Context<T | undefined>): T => {
     const value = useContext(context)
     if (value === undefined) {
-        const name = context.displayName || 'Unnamed' 
+        const name = context.displayName ?? 'Unnamed' 
         throw new Error(
             `${name} context was used outside of a context provider.`
         )

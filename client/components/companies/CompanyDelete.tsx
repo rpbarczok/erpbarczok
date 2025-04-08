@@ -41,7 +41,9 @@ export const CompanyDelete = ({ company, setIsCompanyChanged, addNote, setShow, 
                             setShow(false)
                         }
                         addNote(note)
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                                                if (typeof result.headers.permissions === 'string') {
+                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        }
                     },
                     error => {
                         setIsLoading(false)

@@ -1,8 +1,8 @@
 export function removeStringBeforeLastDigits(str: string): number {
     // Regex to find the last sequence of digits
-    const regex = /\d+$/;
+    const regex = RegExp(/\d+$/)
     // Find the match
-    const match = str.match(regex);
+    const match = regex.exec(str);
     // If there's a match, return the substring starting from the match
     if (match) {
         return Number(str.slice(str.lastIndexOf(match[0])));

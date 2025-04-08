@@ -18,14 +18,15 @@ export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetSta
 
     useEffect(() => {
         if (isFieldChanged) {
-            setIsLoading(true)
-            
+
             async function getFields() {
-                const client = await apiClient
-                client.getFields(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
-                .then(
-                    result => {
-                        const newList = result?.data.map(row => {
+                if (token) {
+                    setIsLoading(true)
+                    const client = await apiClient
+                    const result = await client.getFields(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
+                    setIsLoading(false)
+                    if (result.status === 200) {
+                        const newList = result.data.map(row => {
                             const newRow: DataWithMeta<Field> = {
                                 meta: {
                                     location: Number(removeStringBeforeLastDigits(row.meta.location)),
@@ -36,21 +37,22 @@ export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetSta
                             return (newRow)
                         })
                         setListFields(newList)
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                        setIsLoading(false)
-                    },
-                    error => {
-                        setIsLoading(false)
-                        throw new Error(`Error while loading fields: ${error.message}`)
+                        if (typeof result.headers.permissions === 'string') {
+                                                    if (typeof result.headers.permissions === 'string') {
+                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        }
+                        }
                     }
+                } else {
+                    throw new Error('Unauthorized')
+                }
 
-                )
             }
 
-            getFields()
+            void getFields()
 
             setIsFieldChanged(false)
-            
+
         }
     }, [isFieldChanged])
 

@@ -66,13 +66,13 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
         const form = e.currentTarget
         e.preventDefault()
         const token = auth.user?.access_token
-        if (form.checkValidity() === false) {
+        if (!form.checkValidity()) {
             setValidated(true)
         }
         else {
             setIsLoading(true)
             const client = await apiClient
-            client.paths[resource.paths['all']].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
+            client.paths[resource.paths.all].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
                 .then(
                     result => {
                         setIsLoading(false)

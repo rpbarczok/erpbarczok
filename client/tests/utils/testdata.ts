@@ -1,3 +1,4 @@
+import { CompanyType } from "components/resources/companyTypes/CompanyTypesInput.js"
 import { Company } from "../../components/companies/CompanyPageBasis.js"
 import { DataWithMeta } from "../../components/Pages.js"
 
@@ -7,7 +8,7 @@ export const noop = () => { }
 // eslint-disable-next-line
 export const asyncNoop = async () => {}
 
-export const companyTestTypesList = [
+export const companyTestTypesList: DataWithMeta<CompanyType>[] = [
     { meta: { etag: 'abc', location: 1 }, data: { name: 'Kunde' } },
     { meta: { etag: 'dce', location: 2 }, data: { name: 'Spediteur' } },
     { meta: { etag: 'afg', location: 3 }, data: { name: 'Lieferant' } },

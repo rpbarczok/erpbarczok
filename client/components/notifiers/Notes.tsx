@@ -12,7 +12,7 @@ interface NotesComponent {
 
 export const Notes = ({ notes, removeNote }: NotesComponent) => {
 
-    const handleClose = (e: CloseEvent, note: Note) => {
+    const handleClose = (note: Note) => {
         removeNote(note)
     }
 
@@ -20,7 +20,7 @@ export const Notes = ({ notes, removeNote }: NotesComponent) => {
     return notes.map(note => {
         i += 1
         return (
-            <Alert key={i} variant={note.variant} onClose={(e) => handleClose(e, note)} dismissible>{note.message}</Alert>
+            <Alert key={i} variant={note.variant} onClose={() => handleClose(note)} dismissible>{note.message}</Alert>
         )
     }
     )

@@ -36,11 +36,11 @@ export const ResourcePage = ({ resource, isResourceChanged, setIsResourceChanged
 
             async function getResource() {
                 const client = await apiClient
-                client.paths[resource.paths['all']].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
+                client.paths[resource.paths.all].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
                     .then(
                         result => {
                             setIsLoading(false)
-                            const newList = result?.data.map(row => {
+                            const newList = result.data.map(row => {
                                 const newRow: DataWithMeta<CompanyType | Field> = {
                                     meta: {
                                         location: Number(removeStringBeforeLastDigits(row.meta.location)),
@@ -51,7 +51,9 @@ export const ResourcePage = ({ resource, isResourceChanged, setIsResourceChanged
                                 return newRow
                             })
                             setNewList(newList)
+                                                    if (typeof result.headers.permissions === 'string') {
                             updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        }
                         },
                         error => {
                             setIsLoading(false)
@@ -59,11 +61,11 @@ export const ResourcePage = ({ resource, isResourceChanged, setIsResourceChanged
                         }
                     )
             }
-            getResource()
-            if (isItemChanged === true) {
+            void getResource()
+            if (isItemChanged) {
                 setIsItemChanged(false)
             }
-            if (isResourceChanged === true) {
+            if (isResourceChanged) {
                 setIsResourceChanged(false)
             }
         }

@@ -20,7 +20,8 @@ export function App() {
     const [activePage, setActivePage] = useState<OpenPage>(startPage)
     const [openPages, setOpenPages] = useState<OpenPage[]>([startPage])
     const auth = useAuth()
-    const [theme, setTheme] = useState<'light' | 'dark'>(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const [theme, setTheme] = useState<'light' | 'dark'>(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
     const [permissions, setPermissions] = useState<string[]>([])
     const [isLoading, setIsLoading] = useState(false)
 

@@ -64,7 +64,7 @@ export const CompanyPageExtended = (
     }, [search, companiesList])
 
     async function changeActive(active: number) {
-        if (active === 0 || active === undefined) {
+        if (!active) {
             setActiveCompany(emptyCompany)
         } else {
             setIsLoading(true)
@@ -77,7 +77,9 @@ export const CompanyPageExtended = (
                             setActiveCompany(company)
                             changedCompanyDispatch({ type: 'companyChange', newValue: company })
                         }
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                                                if (typeof result.headers.permissions === 'string') {
+                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        }
                         setIsLoading(false)
                     },
                     error => {

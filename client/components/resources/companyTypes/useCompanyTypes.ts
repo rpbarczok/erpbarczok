@@ -21,35 +21,39 @@ export function useCompanyTypes(): [DataWithMeta<CompanyType>[], React.Dispatch<
             setIsLoading(true)
 
             async function getCompanyTypes() {
-                const client = await apiClient
-                client.getCompanyTypes(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
-                    .then(
-                        result => {
-                            setIsLoading(false)
-                            const newList = result?.data.map(row => {
-                                const newRow: DataWithMeta<CompanyType> = {
-                                    meta: {
-                                        location: Number(removeStringBeforeLastDigits(row.meta.location)),
-                                        etag: row.meta.etag
-                                    },
-                                    data: row.data
-                                }
-                                return (newRow)
-                            })
-                            setListCompanyTypes(newList)
+                if (token) {
+                    const client = await apiClient
+                    const result = await client.getCompanyTypes(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
+                    setIsLoading(false)
+                    if (result.status === 200) {
+                        const newList = result.data.map(row => {
+                            const newRow: DataWithMeta<CompanyType> = {
+                                meta: {
+                                    location: Number(removeStringBeforeLastDigits(row.meta.location)),
+                                    etag: row.meta.etag
+                                },
+                                data: row.data
+                            }
+                            return (newRow)
+                        })
+                        setListCompanyTypes(newList)
+                        if (typeof result.headers.permissions === 'string') {
+                                                    if (typeof result.headers.permissions === 'string') {
                             updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                        }, error => {
-                            setIsLoading(false)
-                            throw new Error(`Error while loading company types: ${error.message}`)
                         }
-                    )
+                        }
+                    }
+                } else {
+                    throw new Error('unauthorized')
                 }
-
-                getCompanyTypes()
-                
-                setIsCompanyTypeChanged(false)
             }
-        }, [isCompanyTypeChanged])
 
-    return [listCompanyTypes, setIsCompanyTypeChanged]
+            void getCompanyTypes()
+
+            setIsCompanyTypeChanged(false)
+
+        }
+    }, [isCompanyTypeChanged])
+
+return [listCompanyTypes, setIsCompanyTypeChanged]
 }

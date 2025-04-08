@@ -1,5 +1,5 @@
-import { CompanyPageBasis } from './companies/CompanyPageBasis.js'
-import { PageTab } from './navigation_alt/ribbon.js'
+import { OpenPage } from './App.jsx'
+import { CompanyPageBasis } from './companies/CompanyPageBasis.jsx'
 import { ResourcesPageBasis } from './resources/ResourcesPageBasis.jsx'
 
 interface Meta {
@@ -12,7 +12,7 @@ export interface DataWithMeta<T> {
     'data': T
 }
 
-export const Pages = ({ activePage }: { activePage: PageTab }) => {
+export const Pages = ({ activePage }: { activePage: OpenPage }) => {
 
     switch (activePage.id) {
         case 'stamm':
