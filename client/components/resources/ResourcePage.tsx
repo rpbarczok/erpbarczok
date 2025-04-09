@@ -14,9 +14,6 @@ import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useEffect, useState } from 'react'
 import { useNotifier } from '../notifiers/useNotifier.js'
-import { is$200GetCompanyTypes, isSchemasError } from 'utils/typeguards.js'
-import { AxiosResponse } from 'openapi-client-axios'
-import { Components } from 'types/openapi.js'
 
 interface ResourcePageComponent {
     resource: Resource
@@ -39,36 +36,37 @@ export const ResourcePage = ({ resource, isResourceChanged, setIsResourceChanged
 
             async function getResource() {
                 if (token) {
-                    const client = await apiClient
-                    const result = await client.paths[resource.paths.all].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
-                    setIsLoading(false)
-                    if (is$200GetCompanyTypes(result)) {
-                        const newList = result.data.map(row => {
-                            const newRow: DataWithMeta<CompanyType | Field> = {
-                                meta: {
-                                    location: Number(removeStringBeforeLastDigits(row.meta.location)),
-                                    etag: row.meta.etag
-                                },
-                                data: row.data
-                            }
-                            return newRow
-                        })
-                        setNewList(newList)
-                        if (typeof result.headers.permissions === 'string') {
-                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                        } else {
-                            throw new Error ('No permissions header found')
-                        }
-                    } else if (isSchemasError(result)) {
+                    try {
+                        const client = await apiClient
+                        const result = await client.paths[resource.paths.all].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
                         setIsLoading(false)
-                        const errorMessage: string = String((result as AxiosResponse<Components.Schemas.Error>).status) + (result as AxiosResponse<Components.Schemas.Error>).data.message
-                        throw new Error(`Error while loading resource: ${errorMessage}`)
+                            const newList = result.data.map(row => {
+                                const newRow: DataWithMeta<CompanyType | Field> = {
+                                    meta: {
+                                        location: Number(removeStringBeforeLastDigits(row.meta.location)),
+                                        etag: row.meta.etag
+                                    },
+                                    data: row.data
+                                }
+                                return newRow
+                            })
+                            setNewList(newList)
+                            if (typeof result.headers.permissions === 'string') {
+                                updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                            } else {
+                                throw Error('Permissions header should be type string.')
+                            }    
+                    } catch (error) {
+                        setIsLoading(false)
+                        throw Error(`Error while loading resource: ${error instanceof Error ? error.message : String(error)}`)
                     }
                 } else {
-                    throw new Error('Bitte authentifizieren')
+                    throw Error('Bitte authentifizieren')
                 }
             }
+
             void getResource()
+            
             if (isItemChanged) {
                 setIsItemChanged(false)
             }

@@ -25,28 +25,26 @@ export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetSta
                     const client = await apiClient
                     const result = await client.getFields(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
                     setIsLoading(false)
-                    if (result.status === 200) {
-                        const newList = result.data.map(row => {
-                            const newRow: DataWithMeta<Field> = {
-                                meta: {
-                                    location: Number(removeStringBeforeLastDigits(row.meta.location)),
-                                    etag: row.meta.etag
-                                },
-                                data: row.data
-                            }
-                            return (newRow)
-                        })
-                        setListFields(newList)
+                    const newList = result.data.map(row => {
+                        const newRow: DataWithMeta<Field> = {
+                            meta: {
+                                location: Number(removeStringBeforeLastDigits(row.meta.location)),
+                                etag: row.meta.etag
+                            },
+                            data: row.data
+                        }
+                        return (newRow)
+                    })
+                    setListFields(newList)
+                    if (typeof result.headers.permissions === 'string') {
                         if (typeof result.headers.permissions === 'string') {
-                            if (typeof result.headers.permissions === 'string') {
-                                updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                            } else {
-                                throw new Error('No permissions header found')
-                            }
+                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        } else {
+                            throw Error('Permissions header should be type string.')
                         }
                     }
                 } else {
-                    throw new Error('Unauthorized')
+                    throw Error('Unauthorized')
                 }
 
             }

@@ -16,6 +16,6 @@ export const updateUserPermissions = (
         const permissionsHeadersArray: string[] = userPermissions.split(' ')
         if (permissionsHeadersArray !== permissions) setPermissions(permissionsHeadersArray)
     } else {
-        throw new Error('No Permission Header found')
+        throw Error('Permissions header should be type string.')
     }
 }

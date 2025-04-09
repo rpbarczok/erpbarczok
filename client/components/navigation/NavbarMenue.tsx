@@ -26,9 +26,9 @@ export const NavbarMenue = ({
 
     const auth = useAuth()
     const { permissions } = useContextThrowUndefined(PermissionContext)
-    const authGroupList = ribbonList.filter(group => permissions.includes(group.auth))
+    const authGroupList = ribbonList.filter(group => group.auth.split(' ').some(scope => permissions.includes(scope)))
     const authRibbonList = authGroupList.map(group => {
-        const authPageList = group.pages.filter(form => permissions.includes(form.auth))
+        const authPageList = group.pages.filter(form => form.auth.split(' ').some(scope => permissions.includes(scope)))
         return { ...group, pages: authPageList }
     })
 

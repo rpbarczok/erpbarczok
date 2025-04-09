@@ -11,9 +11,6 @@ import { SetStateAction, useState } from 'react'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
-import { is$201, isSchemasError } from 'utils/typeguards.js'
-import { AxiosResponse } from 'openapi-client-axios'
-import { Components } from 'types/openapi.js'
 
 
 interface AddResourceComponent {
@@ -75,10 +72,10 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
             }
             else {
                 setIsLoading(true)
-                const client = await apiClient
-                const result = await client.paths[resource.paths.all].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
-                setIsLoading(false)
-                if (is$201(result)) {
+                try {
+                    const client = await apiClient
+                    const result = await client.paths[resource.paths.all].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
+                    setIsLoading(false)
                     const note: Note = {
                         message: `Eine neue Entität wurde erfolgreich abgespeichert.`,
                         variant: 'success'
@@ -89,12 +86,12 @@ export const AddResources = ({ resource, addMainNote, setIsItemChanged }: AddRes
                     if (typeof result.headers.permissions === 'string') {
                         updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                     } else {
-                        throw new Error ('No permissions header found')
+                        throw Error('Permissions header should be type string.')
                     }
-                } else if (isSchemasError(result)) {
+                } catch (error) {
                     setIsLoading(false)
                     const note: Note = {
-                        message: `Fehler beim Speichern der neuen Entität:  ${String((result as AxiosResponse<Components.Schemas.Error>).status)} ${String((result as AxiosResponse<Components.Schemas.Error>).data.message)}`,
+                        message: `Fehler beim Speichern der neuen Entität:  ${error instanceof Error ? error.message : String(error)}`,
                         variant: 'danger',
                     }
                     addNote(note)

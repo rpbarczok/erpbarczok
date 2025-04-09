@@ -12,7 +12,6 @@ import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
 import { useState } from 'react'
-import { is$204Success } from 'utils/typeguards.js'
 
 
 interface ResourceActiveInterface {
@@ -74,14 +73,13 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
                 setValidated(true)
             } else {
                 setIsLoading(true)
-                const client = await apiClient
-                const result = await client.paths[resource.paths.single].put(
-                    { id: changedItem.meta.location, 'if-match': changedItem.meta.etag },
-                    changedItem.data,
-                    { headers: { Authorization: `Bearer ${token}` } })
-                setIsLoading(false)
-                console.log(is$204Success(result))
-                if (result.status === 204) {
+                try {
+                    const client = await apiClient
+                    const result = await client.paths[resource.paths.single].put(
+                        { id: changedItem.meta.location, 'if-match': changedItem.meta.etag },
+                        changedItem.data,
+                        { headers: { Authorization: `Bearer ${token}` } })
+                    setIsLoading(false)
                     const note: Note = {
                         message: `Die Entität wurde erfolgreich geändert.`,
                         variant: 'success'
@@ -92,11 +90,12 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
                     if (typeof result.headers.permissions === 'string') {
                         updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                     } else {
-                        throw new Error ('No permissions header found')
+                        throw Error('Permissions header should be type string.')
                     }
-                } else {
+                } catch (error) {
+                    setIsLoading(false)
                     const note: Note = {
-                        message: `Fehler beim Ändern der Entität: Error status ${String(result.status)} ${String(result.message)}`,
+                        message: `Fehler beim Ändern der Entität:  ${error instanceof Error ? error.message : String(error)}`,
                         variant: 'danger'
                     }
                     addNote(note)
@@ -117,10 +116,10 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
             const userConfirmed = window.confirm(`Willst du die ${resource.name} '${item.data.name}' wirklich löschen?`)
             if (userConfirmed) {
                 setIsLoading(true)
-                const client = await apiClient
-                const result = await client.paths[resource.paths.single].delete(item.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
-                setIsLoading(false)
-                if (result.status === 204) {
+                try {
+                    const client = await apiClient
+                    const result = await client.paths[resource.paths.single].delete(item.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
+                    setIsLoading(false)
                     setIsItemChanged(true)
                     const note: Note = {
                         variant: 'warning',
@@ -131,15 +130,18 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
                     if (typeof result.headers.permissions === 'string') {
                         updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                     } else {
-                        throw new Error ('No permissions header found')
+                        throw Error('Permissions header should be type string.')
                     }
-                } else {
+                } catch (error) {
+                    setIsLoading(false)
                     const note: Note = {
                         variant: 'danger',
-                        message: `Löschen der ${resource.name} hat nicht geklappt: ${String(result.status)} ${String(result.data.message)}`,
+                        message: `Löschen der ${resource.name} hat nicht geklappt: ${error instanceof Error ? error.message : String(error)}`,
                     }
                     addNote(note)
                 }
+
+
             }
         } else {
             const note: Note = {
@@ -160,7 +162,7 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
 
     return (
         <>
-            <ListGroup.Item  onClick={handleModal}>
+            <ListGroup.Item onClick={handleModal}>
                 {item.data.name}
             </ListGroup.Item>
             <Modal show={show} onHide={() => handleClose()}>

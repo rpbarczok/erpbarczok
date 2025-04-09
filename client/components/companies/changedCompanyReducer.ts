@@ -56,5 +56,5 @@ export function changedCompanyReducer(changedCompany: DataWithMeta<Company>, act
             return action.newValue
         }
     }
-    throw new Error('Unknown action: ' + action.type)
+    throw Error('Unknown action: ' + action.type)
 }

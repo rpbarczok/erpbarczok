@@ -25,27 +25,24 @@ export function useCompanyTypes(): [DataWithMeta<CompanyType>[], React.Dispatch<
                     const client = await apiClient
                     const result = await client.getCompanyTypes(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
                     setIsLoading(false)
-                    if (result.status === 200) {
-                        const newList = result.data.map(row => {
-                            const newRow: DataWithMeta<CompanyType> = {
-                                meta: {
-                                    location: Number(removeStringBeforeLastDigits(row.meta.location)),
-                                    etag: row.meta.etag
-                                },
-                                data: row.data
-                            }
-                            return (newRow)
-                        })
-                        setListCompanyTypes(newList)
-                        if (typeof result.headers.permissions === 'string') {
-                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                        } else {
-                            throw new Error('No permissions header found')
+                    const newList = result.data.map(row => {
+                        const newRow: DataWithMeta<CompanyType> = {
+                            meta: {
+                                location: Number(removeStringBeforeLastDigits(row.meta.location)),
+                                etag: row.meta.etag
+                            },
+                            data: row.data
                         }
-
+                        return (newRow)
+                    })
+                    setListCompanyTypes(newList)
+                    if (typeof result.headers.permissions === 'string') {
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                    } else {
+                        throw Error('Permissions header should be type string.')
                     }
                 } else {
-                    throw new Error('unauthorized')
+                    throw Error('unauthorized')
                 }
             }
 

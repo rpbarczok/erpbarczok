@@ -32,39 +32,37 @@ export const CompanySMEdit = ({ company, companyTypesList, setIsCompanyChanged, 
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget
         e.preventDefault()
-        e.stopPropagation()
-        if (!form.checkValidity()) {
-            setValidated(true)
-        } else {
-            setIsLoading(true)
-            const client = await apiClient
-            client.putCompanyById({ id: changedCompany.meta.location, 'if-match': changedCompany.meta.etag },
-                changedCompany.data,
-                { headers: { Authorization: `Bearer ${token}` } })
-                .then(
-                    result => {
-                        setIsLoading(false)
-                        const note: Note = {
-                            variant: 'success',
-                            message: `Unternehmen erfolgreich überarbeitet.`,
-                        }
-                        addEditNote(note)
-                        setIsCompanyChanged(true)
-                        if (typeof result.headers.permissions === 'string') {
-                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                        } else {
-                            throw new Error ('No permissions header found')
-                        }
-                    },
-                    error => {
-                        setIsLoading(false)
-                        const note: Note = {
-                            variant: 'danger',
-                            message: `Fehler beim Speichern der Unternehmensdaten: ${error.message}`,
-                        }
-                        addEditNote(note)
+        if (token) {
+            if (!form.checkValidity()) {
+                setValidated(true)
+            } else {
+                setIsLoading(true)
+                try {
+                    const client = await apiClient
+                    const result = await client.putCompanyById({ id: changedCompany.meta.location, 'if-match': changedCompany.meta.etag },
+                        changedCompany.data,
+                        { headers: { Authorization: `Bearer ${token}` } })
+                    setIsLoading(false)
+                    const note: Note = {
+                        variant: 'success',
+                        message: `Unternehmen erfolgreich überarbeitet.`,
                     }
-                )
+                    addEditNote(note)
+                    setIsCompanyChanged(true)
+                    if (typeof result.headers.permissions === 'string') {
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                    } else {
+                        throw Error('Permissions header should be type string.')
+                    }
+                } catch (error) {
+                    setIsLoading(false)
+                    const note: Note = {
+                        variant: 'danger',
+                        message: `Fehler beim Speichern der Unternehmensdaten: ${error instanceof Error ? error.message : String(error)}`,
+                    }
+                    addEditNote(note)
+                }
+            }
         }
     }
 
@@ -84,8 +82,8 @@ export const CompanySMEdit = ({ company, companyTypesList, setIsCompanyChanged, 
             <>
                 <Row className='d-none d-sm-block'>
                     <ButtonGroup className='float-end' >
-                        <Button type='submit'  variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
-                        <Button  variant='outline-primary' disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
+                        <Button type='submit' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
+                        <Button variant='outline-primary' disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
                     </ButtonGroup>
                 </Row>
             </>

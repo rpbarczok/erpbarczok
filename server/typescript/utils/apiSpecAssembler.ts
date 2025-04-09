@@ -54,7 +54,7 @@ export const getControllerFiles = async () => {
             controllerFiles[apiPath] = result
         } else {
             logger(`Controller at path ${controllerPath} does not match VerbMap interface.`)
-            throw new ErrorWithStatus(500, 'Invalid controller format at path: ' + controllerPath)
+            throw ErrorWithStatus(500, 'Invalid controller format at path: ' + controllerPath)
         }
     }
     logger('Controllers imported')

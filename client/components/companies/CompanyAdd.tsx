@@ -13,7 +13,6 @@ import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
 import { useReducer, useState } from 'react'
-import e from 'express'
 
 interface CompanyAddComponent {
     changeActive: (active: number) => void
@@ -24,6 +23,7 @@ interface CompanyAddComponent {
 }
 
 export const CompanyAdd = ({ changeActive, addEditNote, setIsNew, setIsCompanyChanged, companyTypesList }: CompanyAddComponent) => {
+    
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
     const [newCompanyClick, setNewCompanyClick] = useState(0)
     const [show, setShow] = useState(false)
@@ -34,6 +34,7 @@ export const CompanyAdd = ({ changeActive, addEditNote, setIsNew, setIsCompanyCh
         changedCompanyDispatch({ type: 'companyChange', newValue: emptyCompany })
         setShow(true)
     }
+
     return (
         <>
             <Button variant='outline-primary' onClick={handleShow}>Hinzufügen</Button>
@@ -94,43 +95,39 @@ export const AddCompanyModal = ({
     const handleSubmitAdd = async (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget
         e.preventDefault()
-        e.stopPropagation()
-        if (!form.checkValidity()) {
-            setValidated(true)
-        } else {
-            setIsLoading(true)
-
-            try {
-                const client = await apiClient
-                const result = await client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
-                setIsLoading(false)
-                changeActive(Number(removeStringBeforeLastDigits(result.headers.location)))
-                const note: Note = {
-                    message: `Neues Unternehmen erfolgreich erstellt.`,
-                    variant: 'success',
-                }
-                addEditNote(note)
-                if (typeof result.headers.permissions === 'string') {
-                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                } else {
-                    throw new Error ('No permissions header found')
-                }
-                setIsCompanyChanged(true)
-                setIsNew(true)
-                setShow(false)
-            }
-            catch (error) {
-                setIsLoading(false)
-                if (error instanceof Error) {
-                    const note: Note = {
-                        variant: 'danger',
-                        message: `Fehler bei Erstellung des neuen Unternehmens: ${error.message}`,
+        if (token) {
+            if (!form.checkValidity()) {
+                setValidated(true)
+            } else {
+                setIsLoading(true)
+                try {
+                    const client = await apiClient
+                    const result = await client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
+                    setIsLoading(false)
+                    if (typeof result.headers.location === 'string') {
+                        changeActive(Number(removeStringBeforeLastDigits(result.headers.location)))
+                    } else {
+                        throw Error('Location header should be type string.')
                     }
-                    addAddNote(note)
-                } else {
+                    const note: Note = {
+                        message: `Neues Unternehmen erfolgreich erstellt.`,
+                        variant: 'success',
+                    }
+                    addEditNote(note)
+                    if (typeof result.headers.permissions === 'string') {
+                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                    } else {
+                        throw Error('Permission header should be type string.')
+                    }
+                    setIsCompanyChanged(true)
+                    setIsNew(true)
+                    setShow(false)
+                }
+                catch (error) {
+                    setIsLoading(false)
                     const note: Note = {
                         variant: 'danger',
-                        message: `Fehler bei Erstellung des neuen Unternehmens: ${error}`,
+                        message: `Fehler bei Erstellung des neuen Unternehmens: ${error instanceof Error ? error.message : String(error)}`,
                     }
                     addAddNote(note)
                 }

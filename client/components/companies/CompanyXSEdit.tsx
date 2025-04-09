@@ -43,17 +43,16 @@ export const CompanyXSEdit = ({ show, setShow, companyTypesList, addEditNote, se
     const handleSubmitEdit: React.FormEventHandler<HTMLFormElement> = async (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget
         e.preventDefault()
-        e.stopPropagation()
-        if (!form.checkValidity()) {
-            setValidated(true)
-        } else {
-            setIsLoading(true)
-            const client = await apiClient
-            client.putCompanyById({ id: changedCompany.meta.location, 'if-match': changedCompany.meta.etag },
-                changedCompany.data,
-                { headers: { Authorization: `Bearer ${token}` } })
-                .then(
-                    result => {
+        if (token) {
+            if (!form.checkValidity()) {
+                setValidated(true)
+            } else {
+                setIsLoading(true)
+                try {
+                    const client = await apiClient
+                    const result = await client.putCompanyById({ id: changedCompany.meta.location, 'if-match': changedCompany.meta.etag },
+                        changedCompany.data,
+                        { headers: { Authorization: `Bearer ${token}` } })
                     setIsLoading(false)
                     const note: Note = {
                         variant: 'success',
@@ -65,20 +64,27 @@ export const CompanyXSEdit = ({ show, setShow, companyTypesList, addEditNote, se
                     if (typeof result.headers.permissions === 'string') {
                         updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                     } else {
-                        throw new Error ('No permissions header found')
+                        throw Error('Permissions header should be type string.')
                     }
-                },
-                error => {
+                } catch (error) {
                     setIsLoading(false)
                     const note: Note = {
                         variant: 'danger',
-                        message: `Fehler beim Speichern der Unternehmensdaten: ${error.message}`,
+                        message: `Fehler beim Speichern der Unternehmensdaten: ${error instanceof Error ? error.message : String(error)}`,
                     }
                     addErrorNote(note)
                 }
-            )
+            }
+        } else {
+            const note: Note = {
+                variant: 'danger',
+                message: `Nicht angemeldet.`,
+            }
+            addErrorNote(note)
         }
     }
+
+
 
     const handleUndo: React.MouseEventHandler<HTMLButtonElement> = (e) => {
         e.preventDefault()

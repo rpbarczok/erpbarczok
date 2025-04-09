@@ -6,23 +6,20 @@ import { OpenPage } from 'components/App.js';
 import { NavbarMenue } from 'components/navigation/NavbarMenue.js';
 import { NavbarTabs } from 'components/navigation/NavbarTabs.js';
 
-const startPage: OpenPage = { name: 'Stammdaten', id: 'stammPage' }
-const anfPage: OpenPage = { name: 'Anfragen', id: 'anfPage' }
+const startPage: OpenPage = { name: 'Stammdaten', id: 'stamm' }
+const anfPage: OpenPage = { name: 'Anfragen', id: 'anf' }
 
 const groupsListPublic = [
-    "Startseite",
+    "Home",
     "Stammdaten",
-    "Artikel",
+    "Produkte",
     "Aufträge",
-    "Reklamationen",
-    "Lieferungen",
-    "Spedition/ER",
     "Rechnungen"
 ]
 
 const groupsListUser = [...groupsListPublic]
 
-const groupsListAdmin = [...groupsListUser, "Resources"]
+const groupsListAdmin = [...groupsListUser, "Admin"]
 
 const permissionGroups = {
     public: groupsListPublic,
@@ -45,7 +42,7 @@ const noop = () => { }
 
 describe('Navigation Component Test', function() {
 
-    describe('Navigation Ribbon Test with permissions"', function() {
+    describe('Navigation Menu Test with permissions"', function() {
 
         // Arrange
         const openPages = [startPage]
@@ -53,7 +50,7 @@ describe('Navigation Component Test', function() {
 
         for (const permission in permissionGroups) {
 
-            it(`displays the ribbon navigation for ${permission}`, function() {
+            it(`displays the navigation menu for ${permission}`, function() {
                 // Act
                 render(
                     <PermissionContext.Provider value={{ permissions: [permission], setPermissions: noop }}>

@@ -32,33 +32,33 @@ export const CompanyPageBasis = () => {
             setIsLoading(true)
 
             async function getCompanies() {
-                const client = await apiClient
-                client.getCompanies(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
-                    .then(
-                        result => {
-                            setIsLoading(false)
-                            const newList = result?.data.map(row => {
-                                const newRow: DataWithMeta<Company> = {
-                                    meta: {
-                                        location: Number(removeStringBeforeLastDigits(row.meta.location)),
-                                        etag: row.meta.etag
-                                    },
-                                    data: row.data
-                                }
-                                return (newRow)
-                            })
-                            setCompaniesList(newList)
-                            if (typeof result.headers.permissions === 'string') {
-                                updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                            } else {
-                                throw new Error ('No permissions header found')
+                if (token) {
+                    try {
+                        const client = await apiClient
+                        const result = await client.getCompanies(null, null, { headers: { 'Authorization': `Bearer ${token}` } })
+                        setIsLoading(false)
+                        const newList = result.data.map(row => {
+                            const newRow: DataWithMeta<Company> = {
+                                meta: {
+                                    location: Number(removeStringBeforeLastDigits(row.meta.location)),
+                                    etag: row.meta.etag
+                                },
+                                data: row.data
                             }
-                        },
-                        error => {
-                            setIsLoading(false)
-                            throw new Error(`Error while loading companies: ${error.message}`)
+                            return (newRow)
+                        })
+                        setCompaniesList(newList)
+                        if (typeof result.headers.permissions === 'string') {
+                            updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                        } else {
+                            throw Error('Permissions header should be type string.')
                         }
-                    )
+                    } catch (error) {
+                        setIsLoading(false)
+                        throw Error(`Error while loading companies: ${error instanceof Error ? error.message : String(error)}`)
+                    }
+                }
+
             }
 
             void getCompanies()
