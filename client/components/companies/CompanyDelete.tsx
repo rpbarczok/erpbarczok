@@ -7,8 +7,9 @@ import { Note } from '../notifiers/Notes.jsx'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { FunctionComponent } from 'react'
 
-interface CompanyDeleteInterface {
+interface CompanyDeleteProps {
     company: DataWithMeta<Company>
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     addNote: (note: Note) => void
@@ -16,7 +17,7 @@ interface CompanyDeleteInterface {
     size?: 'sm' | 'lg'
 }
 
-export const CompanyDelete = ({ company, setIsCompanyChanged, addNote, setShow, size }: CompanyDeleteInterface) => {
+export const CompanyDelete: FunctionComponent<CompanyDeleteProps> = ({ company, setIsCompanyChanged, addNote, setShow, size }) => {
     const auth = useAuth()
     const token = auth.user?.access_token
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)

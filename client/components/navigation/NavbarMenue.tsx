@@ -1,13 +1,14 @@
 import { Dropdown, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 import { OpenPage } from '../App.jsx'
-import { Page, ribbonList } from './groups.js'
+import { Page, ribbonList } from './utils/groups.js'
 import { PermissionContext } from 'utils/permissionContext.js'
 import { useContextThrowUndefined } from 'utils/contextUndefined.js'
 import { useAuth } from 'react-oidc-context'
 import { List, MoonStarsFill, SunFill } from 'react-bootstrap-icons'
-import { toggleTheme } from 'components/navigation/toggleTheme.js'
+import { toggleTheme } from 'components/navigation/utils/toggleTheme.js'
+import { FunctionComponent } from 'react'
 
-interface NavbarMenueInterface {
+interface NavbarMenueProps {
     openPages: OpenPage[]
     setOpenPages: React.Dispatch<React.SetStateAction<OpenPage[]>>
     activePage: OpenPage
@@ -16,13 +17,13 @@ interface NavbarMenueInterface {
     setTheme: React.Dispatch<React.SetStateAction<'light' | 'dark'>>
 }
 
-export const NavbarMenue = ({
+export const NavbarMenue: FunctionComponent<NavbarMenueProps> = ({
     openPages,
     setOpenPages,
     activePage,
     setActivePage,
     theme,
-    setTheme }: NavbarMenueInterface) => {
+    setTheme }) => {
 
     const auth = useAuth()
     const { permissions } = useContextThrowUndefined(PermissionContext)
