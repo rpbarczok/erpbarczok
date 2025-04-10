@@ -1,5 +1,5 @@
-import { Company } from './CompanyPageBasis.jsx'
-import { DataWithMeta } from '../Pages.jsx'
+import { Company } from '../CompanyPageBasis.js'
+import { DataWithMeta } from '../../Pages.js'
 import { ListGroup } from 'react-bootstrap'
 import { FunctionComponent } from 'react'
 
