@@ -1,10 +1,10 @@
-import { ChangedCompanyAction } from './utils/changedCompanyReducer.js'
-import { Company } from './CompanyPageBasis.jsx'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
-import { CompanyXSEdit } from './CompanyXSEdit.jsx'
-import { DataWithMeta } from '../Pages.jsx'
+import { ChangedCompanyAction } from '../utils/changedCompanyReducer.js'
+import { Company } from '../CompanyPageBasis.js'
+import { CompanyType } from '../../resources/companyTypes/CompanyTypesInput.js'
+import { CompanyXSEdit } from './CompanyXSEdit.js'
+import { DataWithMeta } from '../../Pages.js'
 import { ListGroup} from 'react-bootstrap'
-import { Note } from '../notifiers/Notes.jsx'
+import { Note } from '../../notifiers/Notes.js'
 import { FunctionComponent, useState } from 'react'
 
 interface CompanyXSListProps {
