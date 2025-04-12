@@ -2,7 +2,7 @@ import { OpenPage } from './App.jsx'
 import { CompanyPageBasis } from './companies/CompanyPageBasis.jsx'
 import { ResourcesPageBasis } from './resources/ResourcesPageBasis.jsx'
 
-interface Meta {
+export interface Meta {
     location: number
     etag: string
 }

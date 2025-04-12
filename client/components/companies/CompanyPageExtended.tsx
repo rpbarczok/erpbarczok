@@ -1,5 +1,5 @@
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { changedCompanyReducer } from './changedCompanyReducer.js'
+import { changedCompanyReducer } from './utils/changedCompanyReducer.js'
 import { Company, emptyCompany } from './CompanyPageBasis.js'
 import { CompanySMPage } from './CompanySMPage.jsx'
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
@@ -11,18 +11,18 @@ import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLast
 import { Row } from 'react-bootstrap'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { useEffect, useReducer, useState } from 'react'
+import { FunctionComponent, useEffect, useReducer, useState } from 'react'
 
-interface CompanyPageExtendedInterface {
+interface CompanyPageExtendedProps {
     companiesList: DataWithMeta<Company>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     companyTypesList: DataWithMeta<CompanyType>[]
 }
 
-export const CompanyPageExtended = (
+export const CompanyPageExtended: FunctionComponent<CompanyPageExtendedProps> = (
     { companiesList,
         companyTypesList,
-        setIsCompanyChanged }: CompanyPageExtendedInterface) => {
+        setIsCompanyChanged }) => {
 
     const [search, setSearch] = useState<string>('') // Content of the search input field
     const [listFiltered, setListFiltered] = useState(companiesList)

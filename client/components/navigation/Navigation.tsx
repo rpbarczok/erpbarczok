@@ -1,8 +1,9 @@
+import { FunctionComponent } from 'react'
 import { OpenPage } from '../App.js'
 import { NavbarMenue } from './NavbarMenue.jsx'
 import { NavbarTabs } from './NavbarTabs.jsx'
 
-interface NavigationInterface {
+interface NavigationProps {
     openPages: OpenPage[]
     setOpenPages: React.Dispatch<React.SetStateAction<OpenPage[]>>
     activePage: OpenPage
@@ -11,7 +12,7 @@ interface NavigationInterface {
     setTheme: React.Dispatch<React.SetStateAction<'light' | 'dark'>>
 }
 
-export const Navigation = ({ openPages, setOpenPages, activePage, setActivePage, theme, setTheme }: NavigationInterface) => {
+export const Navigation: FunctionComponent<NavigationProps> = ({ openPages, setOpenPages, activePage, setActivePage, theme, setTheme }) => {
     return <>
         <NavbarMenue
             openPages={openPages} setOpenPages={setOpenPages}

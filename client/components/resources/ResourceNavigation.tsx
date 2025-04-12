@@ -1,13 +1,14 @@
 import { Button, ButtonGroup } from 'react-bootstrap'
 import { Resource, resourceList } from './resourceList.js'
+import { FunctionComponent } from 'react'
 
-interface LeftNavigationInterface {
+interface LeftNavigationProps {
     setActiveResource: React.Dispatch<React.SetStateAction<Resource>>
     activeResource: Resource
     setIsResourceChanged: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const ResourceNavigation = ({ setActiveResource, activeResource, setIsResourceChanged }: LeftNavigationInterface) => {
+export const ResourceNavigation: FunctionComponent<LeftNavigationProps> = ({ setActiveResource, activeResource, setIsResourceChanged }) => {
 
     const resourceHandler = (e: React.MouseEvent, resource: Resource) => {
         e.preventDefault()

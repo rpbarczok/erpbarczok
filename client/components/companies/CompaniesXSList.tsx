@@ -1,13 +1,13 @@
-import { ChangedCompanyAction } from './changedCompanyReducer.js'
+import { ChangedCompanyAction } from './utils/changedCompanyReducer.js'
 import { Company } from './CompanyPageBasis.jsx'
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { CompanyXSEdit } from './CompanyXSEdit.jsx'
 import { DataWithMeta } from '../Pages.jsx'
 import { ListGroup} from 'react-bootstrap'
 import { Note } from '../notifiers/Notes.jsx'
-import { useState } from 'react'
+import { FunctionComponent, useState } from 'react'
 
-interface CompanyXSListInterface {
+interface CompanyXSListProps {
     filteredCompanies: DataWithMeta<Company>[]
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
@@ -18,7 +18,7 @@ interface CompanyXSListInterface {
     addEditNote: (note: Note) => void
 }
 
-export const CompaniesXSList = (
+export const CompaniesXSList: FunctionComponent<CompanyXSListProps> = (
     { filteredCompanies, 
         changedCompany, 
         changedCompanyDispatch, 
@@ -26,7 +26,7 @@ export const CompaniesXSList = (
         companyTypesList, 
         setIsCompanyChanged, 
         changeActive, 
-        addEditNote }: CompanyXSListInterface) => {
+        addEditNote }) => {
 
     const [show, setShow] = useState(false)
 

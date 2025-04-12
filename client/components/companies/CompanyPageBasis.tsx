@@ -1,13 +1,13 @@
-import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { CompanyPageExtended } from './CompanyPageExtended.jsx'
-import { DataWithMeta } from '../Pages.jsx'
+import { useEffect, useState } from 'react'
+import { useAuth } from 'react-oidc-context'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { LoadingContext } from '../../utils/loadingContext.js'
+import { apiClient } from '../../utils/openAPIClientAxios.js'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLastDigits.js'
-import { useAuth } from 'react-oidc-context'
+import { DataWithMeta } from '../Pages.jsx'
 import { useCompanyTypes } from '../resources/companyTypes/useCompanyTypes.js'
-import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { useEffect, useState } from 'react'
+import { CompanyPageExtended } from './CompanyPageExtended.jsx'
 
 export interface Company {
     'name': string

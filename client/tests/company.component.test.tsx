@@ -10,14 +10,17 @@ import { CompanyXSPage } from "../components/companies/CompanyXSPage.js";
 import { CompanyXSSearch } from "../components/companies/CompanyXSSearch.js";
 import { emptyCompany } from "components/companies/CompanyPageBasis.js";
 import { expect } from "expect"
-import { noop, asyncNoop, companyTestList, companyTestTypesList, emptyList } from "./utils/testdata.js";
+import { noop, asyncNoop,  companyTypesTestList, emptyList, createCompanyList } from "./utils/testdata.js";
 import { PermissionContext } from "../utils/permissionContext.js"
 import { render } from "./utils/contextWrapper.js"
+import {userEvent} from '@testing-library/user-event'
 
+const companyTestList = createCompanyList(5)
 
 describe('Company Page Test', function () {
 
     const inputLabelList = ['Firma', 'Kürzel (max 3 Zeichen)', 'Art der Beziehung zum Unternehmen', 'Homepage']
+    
 
     describe('Company Edit', function () {
         describe('company edit modal SM', function () {
@@ -28,7 +31,7 @@ describe('Company Page Test', function () {
                         <CompanySMEdit
                             key={companyTestList[0].meta.location}
                             company={companyTestList[0]}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             setIsCompanyChanged={noop}
                             addEditNote={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
@@ -48,7 +51,7 @@ describe('Company Page Test', function () {
                         <CompanySMEdit
                             key={companyTestList[0].meta.location}
                             company={companyTestList[0]}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             setIsCompanyChanged={noop}
                             addEditNote={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
@@ -61,6 +64,46 @@ describe('Company Page Test', function () {
                 }
 
             })
+
+            it('calls correctly the onClick callback when clicking on "Speichern" button', async function() {
+
+                const user = userEvent.setup()
+                
+                render(
+                    <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
+                        <CompanySMEdit
+                            key={companyTestList[0].meta.location}
+                            company={companyTestList[0]}
+                            companyTypesList={companyTypesTestList}
+                            setIsCompanyChanged={noop}
+                            addEditNote={noop}
+                            changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
+                        />
+                    </PermissionContext.Provider >
+                )
+
+                await user.click(await screen.findByLabelText('Änderung der Firmendaten abspeichern'))
+            })
+
+            it('calls correctly the onClick callback when clicking on "Rückgängig" button', async function() {
+                
+                const user = userEvent.setup()
+
+                render(
+                    <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
+                        <CompanySMEdit
+                            key={companyTestList[0].meta.location}
+                            company={companyTestList[0]}
+                            companyTypesList={companyTypesTestList}
+                            setIsCompanyChanged={noop}
+                            addEditNote={noop}
+                            changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
+                        />
+                    </PermissionContext.Provider >
+                )
+
+                await user.click(await screen.findByLabelText('Änderung der Firmendaten rückgängig machen'))
+            })
         })
 
         describe('company edit modal XS', function () {
@@ -71,7 +114,7 @@ describe('Company Page Test', function () {
                         <CompanyXSEdit
                             key={companyTestList[0].meta.location}
                             show={true} setShow={noop}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             addEditNote={noop}
                             setIsCompanyChanged={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
@@ -91,7 +134,7 @@ describe('Company Page Test', function () {
                         <CompanyXSEdit
                             key={companyTestList[0].meta.location}
                             show={true} setShow={noop}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             addEditNote={noop}
                             setIsCompanyChanged={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
@@ -113,7 +156,7 @@ describe('Company Page Test', function () {
                         <CompanyXSEdit
                             key={companyTestList[0].meta.location}
                             show={true} setShow={noop}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             addEditNote={noop}
                             setIsCompanyChanged={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
@@ -134,7 +177,7 @@ describe('Company Page Test', function () {
                         <CompanyXSEdit
                             key={companyTestList[0].meta.location}
                             show={true} setShow={noop}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             addEditNote={noop}
                             setIsCompanyChanged={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
@@ -152,7 +195,7 @@ describe('Company Page Test', function () {
                         <CompanyXSEdit
                             key={companyTestList[0].meta.location}
                             show={true} setShow={noop}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             addEditNote={noop}
                             setIsCompanyChanged={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
@@ -214,7 +257,7 @@ describe('Company Page Test', function () {
                             filteredCompanies={companyTestList}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
                             changeActive={asyncNoop} activeCompany={companyTestList[0]}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             setIsCompanyChanged={noop}
                             addEditNote={noop}
                         />
@@ -237,7 +280,7 @@ describe('Company Page Test', function () {
                             filteredCompanies={emptyList}
                             changedCompany={emptyCompany} changedCompanyDispatch={noop}
                             changeActive={asyncNoop} activeCompany={emptyCompany}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             setIsCompanyChanged={noop}
                             addEditNote={noop}
                         />
@@ -299,7 +342,7 @@ describe('Company Page Test', function () {
                         setShow={noop}
                         newCompanyClick={0}
                         changedCompanyDispatch={noop}
-                        companyTypesList={companyTestTypesList} />
+                        companyTypesList={companyTypesTestList} />
                 </PermissionContext.Provider>
             )
 
@@ -321,7 +364,7 @@ describe('Company Page Test', function () {
                         setShow={noop}
                         newCompanyClick={0}
                         changedCompanyDispatch={noop}
-                        companyTypesList={companyTestTypesList} />
+                        companyTypesList={companyTypesTestList} />
                 </PermissionContext.Provider>
             )
 
@@ -345,7 +388,7 @@ describe('Company Page Test', function () {
                         setShow={noop}
                         newCompanyClick={0}
                         changedCompanyDispatch={noop}
-                        companyTypesList={companyTestTypesList} />
+                        companyTypesList={companyTypesTestList} />
                 </PermissionContext.Provider>
             )
 
@@ -367,7 +410,7 @@ describe('Company Page Test', function () {
                             filteredCompanies={companyTestList}
                             activeCompany={companyTestList[0]}
                             changeActive={noop}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             setIsCompanyChanged={noop}
                             setIsNew={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
@@ -390,7 +433,7 @@ describe('Company Page Test', function () {
                             filteredCompanies={companyTestList}
                             activeCompany={companyTestList[0]}
                             changeActive={noop}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             setIsCompanyChanged={noop}
                             setIsNew={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
@@ -416,7 +459,7 @@ describe('Company Page Test', function () {
                             filteredCompanies={companyTestList}
                             activeCompany={companyTestList[0]}
                             changeActive={asyncNoop}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             setIsCompanyChanged={noop}
                             setIsNew={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
@@ -436,7 +479,7 @@ describe('Company Page Test', function () {
                             filteredCompanies={companyTestList}
                             activeCompany={companyTestList[0]}
                             changeActive={asyncNoop}
-                            companyTypesList={companyTestTypesList}
+                            companyTypesList={companyTypesTestList}
                             setIsCompanyChanged={noop}
                             setIsNew={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}

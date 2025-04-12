@@ -1,4 +1,4 @@
-import { ChangedCompanyAction } from './changedCompanyReducer.js'
+import { ChangedCompanyAction } from './utils/changedCompanyReducer.js'
 import { Col, Row } from 'react-bootstrap'
 import { CompaniesXSList } from './CompaniesXSList.js'
 import { Company } from './CompanyPageBasis.js'
@@ -12,8 +12,9 @@ import { Notes } from '../notifiers/Notes.js'
 import { PermissionContext } from '../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
+import { FunctionComponent } from 'react'
 
-interface CompanyXSPageInterface {
+interface CompanyXSPageProps {
     search: string
     setSearch: React.Dispatch<React.SetStateAction<string>>
     filteredCompanies: DataWithMeta<Company>[]
@@ -26,7 +27,7 @@ interface CompanyXSPageInterface {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const CompanyXSPage = ({
+export const CompanyXSPage: FunctionComponent<CompanyXSPageProps> = ({
     search,
     setSearch,
     filteredCompanies,
@@ -36,7 +37,7 @@ export const CompanyXSPage = ({
     setIsCompanyChanged,
     setIsNew,
     changedCompany,
-    changedCompanyDispatch }: CompanyXSPageInterface) => {
+    changedCompanyDispatch }) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
     const {permissions} = useContextThrowUndefined(PermissionContext)

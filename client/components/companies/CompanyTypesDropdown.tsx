@@ -1,11 +1,12 @@
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../Pages.jsx'
+import { FunctionComponent } from 'react'
 
-interface CompanyTypesInterface {
+interface CompanyTypesProps {
     companyTypesList: DataWithMeta<CompanyType>[]
 }
 
-export const CompanyTypesDropdown = ({ companyTypesList }: CompanyTypesInterface) => {
+export const CompanyTypesDropdown: FunctionComponent<CompanyTypesProps> = ({ companyTypesList } ) => {
     const optionsDefault = [<option key='default' value=''>Rolle auswählen</option>]
     const options = companyTypesList.map((role: DataWithMeta<CompanyType>) => {
         return (

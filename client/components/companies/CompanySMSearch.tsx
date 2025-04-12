@@ -6,15 +6,16 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { ChangeEvent } from 'react'
+import { ChangeEvent, FunctionComponent } from 'react'
+
 import { Form} from 'react-bootstrap'
 
-interface CompanySMSearchInterface {
+interface CompanySMSearchProps {
     search: string
     setSearch: React.Dispatch<React.SetStateAction<string>>
 }
 
-export function CompanySMSearch({ search, setSearch }: CompanySMSearchInterface) {
+export const CompanySMSearch: FunctionComponent<CompanySMSearchProps> = ({ search, setSearch }) => {
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value)

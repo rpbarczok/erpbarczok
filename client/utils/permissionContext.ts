@@ -1,11 +1,11 @@
 import { createContext } from 'react'
 
-export interface PermissionContextInterface {
+export interface PermissionContextProps {
     permissions: string[],
     setPermissions: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-export const PermissionContext = createContext<PermissionContextInterface | undefined>(undefined)
+export const PermissionContext = createContext<PermissionContextProps | undefined>(undefined)
 
 
 export const updateUserPermissions = (
