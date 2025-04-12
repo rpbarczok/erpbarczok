@@ -28,7 +28,7 @@
     "docker": "docker compose up"
   },
   "author": "Ralph Barczok",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
