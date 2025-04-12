@@ -1,5 +1,5 @@
 import { ButtonGroup, Col, Row } from 'react-bootstrap'
-import { ChangedCompanyAction } from './utils/changedCompanyReducer.js'
+import { ChangedCompanyAction } from './changedCompanyReducer.js'
 import { CompaniesSMList } from './CompaniesSMList.js'
 import { Company } from './CompanyPageBasis.js'
 import { CompanyAdd } from './CompanyAdd.js'
@@ -14,9 +14,8 @@ import { Notes } from '../notifiers/Notes.js'
 import { PermissionContext } from '../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
-import { FunctionComponent } from 'react'
 
-interface CompaniesSMPageProps {
+interface CompaniesSMPageInterface {
     search: string
     setSearch: React.Dispatch<React.SetStateAction<string>>
     filteredCompanies: DataWithMeta<Company>[]
@@ -29,7 +28,7 @@ interface CompaniesSMPageProps {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const CompanySMPage: FunctionComponent<CompaniesSMPageProps>  = ({ search,
+export const CompanySMPage = ({ search,
     setSearch,
     filteredCompanies,
     activeCompany,
@@ -38,7 +37,7 @@ export const CompanySMPage: FunctionComponent<CompaniesSMPageProps>  = ({ search
     setIsCompanyChanged,
     setIsNew,
     changedCompany,
-    changedCompanyDispatch }) => {
+    changedCompanyDispatch }: CompaniesSMPageInterface) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
     const { permissions } = useContextThrowUndefined(PermissionContext)

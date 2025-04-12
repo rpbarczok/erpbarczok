@@ -1,4 +1,4 @@
-import { ChangeEvent, FunctionComponent } from 'react'
+import { ChangeEvent } from 'react'
 import { DataWithMeta } from '../../Pages.jsx'
 import { Form } from 'react-bootstrap'
 
@@ -6,11 +6,11 @@ export interface Field {
     'name': string
 }
 
-interface FieldsInputProps {
+interface FieldsInputInterface {
     field: DataWithMeta<Field>
     setField: React.Dispatch<React.SetStateAction<DataWithMeta<Field>>>
 }
-export const FieldsInput: FunctionComponent<FieldsInputProps> = ({ field, setField }) => {
+export const FieldsInput = ({ field, setField }: FieldsInputInterface) => {
     
     const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()

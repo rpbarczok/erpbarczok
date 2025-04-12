@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from 'react'
+import { useState } from 'react'
 import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
@@ -10,12 +10,12 @@ import { DataWithMeta } from '../Pages.jsx'
 import { Note, Notes } from '../notifiers/Notes.jsx'
 import { useNotifier } from '../notifiers/useNotifier.js'
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
-import { ChangedCompanyAction } from './utils/changedCompanyReducer.js'
+import { ChangedCompanyAction } from './changedCompanyReducer.js'
 import { CompanyDelete } from './CompanyDelete.jsx'
 import { Company } from './CompanyPageBasis.js'
 import { CompanyInput } from './CompanyInput.js'
 
-interface CompanyXSEditProps {
+interface CompanyXSEditInterface {
     show: boolean
     setShow: React.Dispatch<React.SetStateAction<boolean>>
     companyTypesList: DataWithMeta<CompanyType>[]
@@ -26,15 +26,7 @@ interface CompanyXSEditProps {
     activeCompany: DataWithMeta<Company>
 }
 
-export const CompanyXSEdit: FunctionComponent<CompanyXSEditProps> = (
-    { show, 
-        setShow, 
-        companyTypesList, 
-        addEditNote, 
-        setIsCompanyChanged, 
-        changedCompany, 
-        changedCompanyDispatch, 
-        activeCompany }) => {
+export const CompanyXSEdit = ({ show, setShow, companyTypesList, addEditNote, setIsCompanyChanged, changedCompany, changedCompanyDispatch, activeCompany }: CompanyXSEditInterface) => {
 
     const [validated, setValidated] = useState(false)
     const [errorNotes, addErrorNote, removeErrorNote] = useNotifier()
@@ -91,6 +83,8 @@ export const CompanyXSEdit: FunctionComponent<CompanyXSEditProps> = (
             addErrorNote(note)
         }
     }
+
+
 
     const handleUndo: React.MouseEventHandler<HTMLButtonElement> = (e) => {
         e.preventDefault()

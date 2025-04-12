@@ -11,16 +11,16 @@ import { Resource } from './resourceList.js'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
-import { FunctionComponent, useState } from 'react'
+import { useState } from 'react'
 
 
-interface ResourceActiveProps {
+interface ResourceActiveInterface {
     resource: Resource
     changedItem: DataWithMeta<Field | CompanyType>
     setChangedItem: React.Dispatch<React.SetStateAction<DataWithMeta<Field | CompanyType>>>
 }
 
-const ResourceActive: FunctionComponent<ResourceActiveProps> = ({ resource, changedItem, setChangedItem }) => {
+const ResourceActive = ({ resource, changedItem, setChangedItem }: ResourceActiveInterface) => {
     switch (resource.name) {
         case 'Beziehung':
             return <CompanyTypesInput
@@ -37,14 +37,14 @@ const ResourceActive: FunctionComponent<ResourceActiveProps> = ({ resource, chan
 
 }
 
-interface ResourcesListProps {
+interface ResourcesListInterface {
     item: DataWithMeta<Field | CompanyType>
     setIsItemChanged: React.Dispatch<React.SetStateAction<boolean>>
     addMainNote: (note: Note) => void
     resource: Resource
 }
 
-export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }: ResourcesListProps) => {
+export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }: ResourcesListInterface) => {
     const [show, setShow] = useState(false)
     const [validated, setValidated] = useState<boolean>(false)
     const [changedItem, setChangedItem] = useState<DataWithMeta<CompanyType | Field>>(item)

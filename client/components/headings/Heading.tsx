@@ -1,14 +1,14 @@
 import {Col, Row} from 'react-bootstrap'
 import { ThemeContext } from '../../utils/themeContext.js'
-import { FunctionComponent, useContext } from 'react'
+import { useContext } from 'react'
 
 
-interface HeadingProps {
+interface HeadingInterface {
     title: string
     cssClass: string
 }
 
-export const Heading: FunctionComponent<HeadingProps> = ({title, cssClass }) => {
+export function Heading({title, cssClass }: HeadingInterface) {
 
     const theme = useContext(ThemeContext)
     

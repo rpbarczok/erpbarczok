@@ -1,9 +1,8 @@
 import { OpenPage } from "components/App.jsx"
-import { FunctionComponent } from "react"
 import { CloseButton, Nav } from "react-bootstrap"
 import { insertInArray } from "utils/insertInArray.js"
 
-interface NavarTabsProps {
+interface NavarTabsInterface {
     openPages: OpenPage[]
     setOpenPages: React.Dispatch<React.SetStateAction<OpenPage[]>>
     activePage: OpenPage
@@ -11,11 +10,11 @@ interface NavarTabsProps {
 }
 
 
-export const NavbarTabs: FunctionComponent<NavarTabsProps> = ({
+export const NavbarTabs = ({
     openPages,
     setOpenPages,
     activePage,
-    setActivePage }) => {
+    setActivePage }: NavarTabsInterface) => {
 
     const closePage = (e: React.MouseEvent, open: OpenPage) => {
         e.preventDefault()

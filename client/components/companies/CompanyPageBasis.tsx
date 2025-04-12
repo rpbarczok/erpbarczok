@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react'
-import { useAuth } from 'react-oidc-context'
-import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { LoadingContext } from '../../utils/loadingContext.js'
 import { apiClient } from '../../utils/openAPIClientAxios.js'
+import { CompanyPageExtended } from './CompanyPageExtended.jsx'
+import { DataWithMeta } from '../Pages.jsx'
+import { LoadingContext } from '../../utils/loadingContext.js'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLastDigits.js'
-import { DataWithMeta } from '../Pages.jsx'
+import { useAuth } from 'react-oidc-context'
 import { useCompanyTypes } from '../resources/companyTypes/useCompanyTypes.js'
-import { CompanyPageExtended } from './CompanyPageExtended.jsx'
+import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { useEffect, useState } from 'react'
 
 export interface Company {
     'name': string

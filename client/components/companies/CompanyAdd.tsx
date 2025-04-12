@@ -1,6 +1,6 @@
 import { apiClient } from '../../utils/openAPIClientAxios.js'
 import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
-import { ChangedCompanyAction, changedCompanyReducer } from './utils/changedCompanyReducer.js'
+import { ChangedCompanyAction, changedCompanyReducer } from './changedCompanyReducer.js'
 import { Company, emptyCompany } from './CompanyPageBasis.jsx'
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../Pages.jsx'

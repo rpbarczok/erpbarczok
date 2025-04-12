@@ -1,12 +1,12 @@
-import { ChangeEvent, FunctionComponent } from 'react'
+import { ChangeEvent } from 'react'
 import { Form} from 'react-bootstrap'
 
-interface CompanySMSearchProps {
+interface CompanySMSearchInterface {
     search: string
     setSearch: React.Dispatch<React.SetStateAction<string>>
 }
 
-export const CompanySMSearch: FunctionComponent<CompanySMSearchProps> = ({ search, setSearch }) => {
+export function CompanySMSearch({ search, setSearch }: CompanySMSearchInterface) {
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value)

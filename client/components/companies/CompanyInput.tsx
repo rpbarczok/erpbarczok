@@ -1,5 +1,5 @@
 import { Col, Form, Row } from 'react-bootstrap'
-import { ChangedCompanyAction } from './utils/changedCompanyReducer.js'
+import { ChangedCompanyAction } from './changedCompanyReducer.js'
 import { Company } from './CompanyPageBasis.jsx'
 import { DataWithMeta } from '../Pages.jsx'
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
@@ -7,15 +7,14 @@ import { CompanyTypesDropdown } from './CompanyTypesDropdown.jsx'
 import { hasPermission } from '../../utils/hasPermission.js'
 import { PermissionContext } from '../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { FunctionComponent } from 'react'
 
-interface CompanyInputProps {
+interface CompanyInputInterface {
     companyTypesList: DataWithMeta<CompanyType>[]
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const CompanyInput: FunctionComponent<CompanyInputProps> = ({ companyTypesList, changedCompanyDispatch, changedCompany }) => {
+export const CompanyInput = ({ companyTypesList, changedCompanyDispatch, changedCompany }: CompanyInputInterface) => {
 
     const { permissions } = useContextThrowUndefined(PermissionContext)
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {

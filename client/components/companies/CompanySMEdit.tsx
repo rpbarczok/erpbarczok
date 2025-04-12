@@ -1,6 +1,6 @@
 import { apiClient } from '../../utils/openAPIClientAxios.js'
 import { Button, ButtonGroup, Col, Form, Row } from 'react-bootstrap'
-import { ChangedCompanyAction } from './utils/changedCompanyReducer.js'
+import { ChangedCompanyAction } from './changedCompanyReducer.js'
 import { Company } from './CompanyPageBasis.js'
 import { CompanyInput } from './CompanyInput.jsx'
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
@@ -11,9 +11,9 @@ import { Note } from '../notifiers/Notes.jsx'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { FunctionComponent, useState } from 'react'
+import { useState } from 'react'
 
-interface CompanySMEditProps {
+interface CompanySMEditInterface {
     company: DataWithMeta<Company>
     companyTypesList: DataWithMeta<CompanyType>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
@@ -22,7 +22,7 @@ interface CompanySMEditProps {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({ company, companyTypesList, setIsCompanyChanged, addEditNote, changedCompany, changedCompanyDispatch }) => {
+export const CompanySMEdit = ({ company, companyTypesList, setIsCompanyChanged, addEditNote, changedCompany, changedCompanyDispatch }: CompanySMEditInterface) => {
     const [validated, setValidated] = useState<boolean>(false)
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const { setIsLoading } = useContextThrowUndefined(LoadingContext)
@@ -82,8 +82,8 @@ export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({ company, 
             <>
                 <Row className='d-none d-sm-block'>
                     <ButtonGroup className='float-end' >
-                        <Button type='submit' variant='outline-primary' disabled={isNotChanged} aria-label='Änderung der Firmendaten abspeichern'>Speichern</Button>
-                        <Button variant='outline-primary' disabled={isNotChanged} onClick={handleUndo} aria-label='Änderung der Firmendaten rückgängig machen' >Rückgängig</Button>
+                        <Button type='submit' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
+                        <Button variant='outline-primary' disabled={isNotChanged} onClick={handleUndo} >Rückgängig</Button>
                     </ButtonGroup>
                 </Row>
             </>

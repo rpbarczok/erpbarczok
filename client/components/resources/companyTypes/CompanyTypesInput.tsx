@@ -1,4 +1,4 @@
-import { ChangeEvent, FunctionComponent } from 'react'
+import { ChangeEvent } from 'react'
 import { DataWithMeta } from '../../Pages.jsx'
 import { Form } from 'react-bootstrap'
 
@@ -7,12 +7,12 @@ export interface CompanyType {
     'name': string
 }
 
-interface CompanyTypesInputProps {
+interface CompanyTypesInputInterface {
     companyType: DataWithMeta<CompanyType>
     setCompanyType: React.Dispatch<React.SetStateAction<DataWithMeta<CompanyType>>>
 }
 
-export const CompanyTypesInput: FunctionComponent<CompanyTypesInputProps> = ({companyType, setCompanyType}) => {
+export const CompanyTypesInput = ({companyType, setCompanyType}: CompanyTypesInputInterface) => {
 
     const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()

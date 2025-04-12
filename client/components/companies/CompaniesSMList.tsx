@@ -1,19 +1,15 @@
 import { Company } from './CompanyPageBasis.jsx'
 import { DataWithMeta } from '../Pages.jsx'
 import { ListGroup } from 'react-bootstrap'
-import { FunctionComponent } from 'react'
 
 
-interface CompaniesSMListProps {
+interface CompaniesSMListInterface {
     filteredCompanies: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>
     changeActive: (active: number) => void
 }
 
-export const CompaniesSMList: FunctionComponent<CompaniesSMListProps> = (
-    { filteredCompanies, 
-        activeCompany, 
-        changeActive }) => {
+export const CompaniesSMList = ({ filteredCompanies, activeCompany, changeActive }: CompaniesSMListInterface) => {
 
     const List = () => {
         if (filteredCompanies.length === 0) {
