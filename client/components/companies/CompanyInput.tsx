@@ -18,24 +18,24 @@ interface CompanyInputProps {
 export const CompanyInput: FunctionComponent<CompanyInputProps> = ({ companyTypesList, changedCompanyDispatch, changedCompany }) => {
 
     const { permissions } = useContextThrowUndefined(PermissionContext)
-    const handleChangeName = (e: React.ChangeEvent, change: string) => {
+    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
-        changedCompanyDispatch({ type: 'nameChange', newValue: change })
+        changedCompanyDispatch({ type: 'nameChange', newValue: e.target.value })
     }
 
-    const handleChangeAbbr = (e: React.ChangeEvent, change: string) => {
+    const handleChangeAbbr = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
-        changedCompanyDispatch({ type: 'abbrChange', newValue: change })
+        changedCompanyDispatch({ type: 'abbrChange', newValue: e.target.value })
     }
 
-    const handleChangeWWW = (e: React.ChangeEvent, change: string) => {
+    const handleChangeWWW = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
-        changedCompanyDispatch({ type: 'wwwChange', newValue: change })
+        changedCompanyDispatch({ type: 'wwwChange', newValue: e.target.value })
     }
 
-    const handleChangeCompanyType = (e: React.ChangeEvent, change: string) => {
+    const handleChangeCompanyType = (e: React.ChangeEvent<HTMLSelectElement>) => {
         e.preventDefault()
-        changedCompanyDispatch({ type: 'companyTypeChange', newValue: change })
+        changedCompanyDispatch({ type: 'companyTypeChange', newValue: e.target.value })
     }
 
     return (
@@ -44,14 +44,14 @@ export const CompanyInput: FunctionComponent<CompanyInputProps> = ({ companyType
                 <Col xs={12} sm={8} lg={12} xxl={8}>
                     <Form.Group controlId='companyName'>
                         <Form.Label className= 'labelPadding'>Firma</Form.Label>
-                        <Form.Control required  type='text' value={changedCompany.data.name} onChange={(e) => handleChangeName(e, e.target.value)} disabled={!hasPermission(['user'], permissions) } />
+                        <Form.Control required  type='text' value={changedCompany.data.name} onChange={handleChangeName} disabled={!hasPermission(['user'], permissions) } />
                         <Form.Control.Feedback type='invalid'>Bitte eine Firma eingeben!</Form.Control.Feedback>
                     </Form.Group>
                 </Col>
                 <Col xs={12} sm={4} lg={12} xxl={4}>
                     <Form.Group controlId='companyAbbr'>
                         <Form.Label className= 'labelPadding'>Kürzel (max 3 Zeichen)</Form.Label >
-                        <Form.Control maxLength={3} type='text'  value={changedCompany.data.abbr} onChange={(e) => handleChangeAbbr(e, e.target.value)} disabled={!hasPermission(['user'], permissions)} />
+                        <Form.Control maxLength={3} type='text'  value={changedCompany.data.abbr} onChange={handleChangeAbbr} disabled={!hasPermission(['user'], permissions)} />
                     </Form.Group>
                 </Col>
             </Row>
@@ -59,13 +59,13 @@ export const CompanyInput: FunctionComponent<CompanyInputProps> = ({ companyType
                 <Col xs={12} sm={6} lg={12} xxl={6}>
                     <Form.Group controlId='companyWWW'>
                         <Form.Label className= 'labelPadding' >Homepage</Form.Label >
-                        <Form.Control type='text'  value={changedCompany.data.www} onChange={(e) => handleChangeWWW(e, e.target.value)} disabled={!hasPermission(['user'], permissions)} />
+                        <Form.Control type='text'  value={changedCompany.data.www} onChange={handleChangeWWW} disabled={!hasPermission(['user'], permissions)} />
                     </Form.Group>
                 </Col>
                 <Col xs={12} sm={6} lg={12} xxl={6}>
                     <Form.Group controlId='companyCompanyType'>
                         <Form.Label className= 'labelPadding' >Art der Beziehung zum Unternehmen</Form.Label>
-                        <Form.Select  key='companyCompanyType' required value={changedCompany.data.companyType} onChange={(e) => handleChangeCompanyType(e, e.target.value)} disabled={!hasPermission(['user'], permissions)}>
+                        <Form.Select  key='companyCompanyType' required value={changedCompany.data.companyType} onChange={handleChangeCompanyType} disabled={!hasPermission(['user'], permissions)}>
                             <CompanyTypesDropdown companyTypesList={companyTypesList} />
                         </Form.Select>
                     </Form.Group>

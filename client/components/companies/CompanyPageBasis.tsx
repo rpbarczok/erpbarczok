@@ -68,9 +68,11 @@ export const CompanyPageBasis = () => {
     }, [isCompanyChanged])
 
     return (
-        <CompanyPageExtended
-            companiesList={companiesList}
-            companyTypesList={companyTypesList}
-            setIsCompanyChanged={setIsCompanyChanged} />
+        <>
+            <CompanyPageExtended
+                companiesList={companiesList}
+                companyTypesList={companyTypesList}
+                setIsCompanyChanged={setIsCompanyChanged} />
+        </>
     )
 }

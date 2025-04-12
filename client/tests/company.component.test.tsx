@@ -1,13 +1,13 @@
 import { AddCompanyModal } from "../components/companies/CompanyAdd.js"
 import { screen } from '@testing-library/react';
-import { CompaniesSMList } from "../components/companies/companiesSM/CompaniesSMList.js";
-import { CompaniesXSList } from "../components/companies/companiesXS/CompaniesXSList.js";
-import { CompanySMEdit } from "../components/companies/companiesSM/CompanySMEdit.js";
-import { CompanySMPage } from "../components/companies/companiesSM/CompanySMPage.js";
-import { CompanySMSearch } from "../components/companies/companiesSM/CompanySMSearch.js";
-import { CompanyXSEdit } from "../components/companies/companiesXS/CompanyXSEdit.js";
-import { CompanyXSPage } from "../components/companies/companiesXS/CompanyXSPage.js";
-import { CompanyXSSearch } from "../components/companies/companiesXS/CompanyXSSearch.js";
+import { CompaniesSMList } from "../components/companies/CompaniesSMList.js";
+import { CompaniesXSList } from "../components/companies/CompaniesXSList.js";
+import { CompanySMEdit } from "../components/companies/CompanySMEdit.js";
+import { CompanySMPage } from "../components/companies/CompanySMPage.js";
+import { CompanySMSearch } from "../components/companies/CompanySMSearch.js";
+import { CompanyXSEdit } from "../components/companies/CompanyXSEdit.js";
+import { CompanyXSPage } from "../components/companies/CompanyXSPage.js";
+import { CompanyXSSearch } from "../components/companies/CompanyXSSearch.js";
 import { emptyCompany } from "components/companies/CompanyPageBasis.js";
 import { expect } from "expect"
 import { noop, asyncNoop,  companyTypesTestList, emptyList, createCompanyList } from "./utils/testdata.js";
