@@ -10,7 +10,8 @@
     "moduleResolution": "nodenext",
     "module": "NodeNext",
     "jsx": "react-jsxdev",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "removeComments": true
   },
   "strict": true
 }
