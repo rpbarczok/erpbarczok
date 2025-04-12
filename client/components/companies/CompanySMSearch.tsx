@@ -7,7 +7,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 import { ChangeEvent, FunctionComponent } from 'react'
-
 import { Form} from 'react-bootstrap'
 
 interface CompanySMSearchProps {
