@@ -66,36 +66,32 @@ export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({ company, 
         }
     }
 
-    const ButtonEdit = () => {
-        const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
-            company.data.abbr === changedCompany.data.abbr &&
-            company.data.www === changedCompany.data.www &&
-            company.data.companyType === changedCompany.data.companyType)
+    const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
+        company.data.abbr === changedCompany.data.abbr &&
+        company.data.www === changedCompany.data.www &&
+        company.data.companyType === changedCompany.data.companyType)
 
-        const handleUndo = (e: React.MouseEvent) => {
-            e.preventDefault()
-            setValidated(false)
-            changedCompanyDispatch({ type: 'companyChange', newValue: company })
-        }
-
-        return (
-            <>
-                <Row className='d-none d-sm-block'>
-                    <ButtonGroup className='float-end' >
-                        <Button type='submit' variant='outline-primary' disabled={isNotChanged} aria-label='Änderung der Firmendaten abspeichern'>Speichern</Button>
-                        <Button variant='outline-primary' disabled={isNotChanged} onClick={handleUndo} aria-label='Änderung der Firmendaten rückgängig machen' >Rückgängig</Button>
-                    </ButtonGroup>
-                </Row>
-            </>
-        )
+    const handleUndo = (e: React.MouseEvent) => {
+        e.preventDefault()
+        setValidated(false)
+        changedCompanyDispatch({ type: 'companyChange', newValue: company })
     }
+
 
     return (
         <Col>
             <Row>
                 <Col id='company' sm={12} lg={6} xl={5} >
                     <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
-                        {hasPermission(['user'], permissions) ? <ButtonEdit /> : ''}
+                        {hasPermission(['user'], permissions)
+                            ?
+                            <Row className='d-none d-sm-block'>
+                                <ButtonGroup className='float-end' >
+                                    <Button type='submit' variant='outline-primary' disabled={isNotChanged} aria-label='Änderung der Firmendaten abspeichern'>Speichern</Button>
+                                    <Button variant='outline-primary' disabled={isNotChanged} onClick={handleUndo} aria-label='Änderung der Firmendaten rückgängig machen' >Rückgängig</Button>
+                                </ButtonGroup>
+                            </Row>
+                            : ''}
                         <CompanyInput
                             companyTypesList={companyTypesList}
                             changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch} />

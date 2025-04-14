@@ -48,8 +48,8 @@ In my GitHub image repository you will find following images:
 
 2. Clone the repository:
    ```bash
-   git clone https://github.com/rpbarczok/panda2.git
-   cd panda2
+   git clone https://github.com/rpbarczok/erpbarczok.git
+   cd erpbarczok
    ```
 3. Install dependencies
    ```bash
