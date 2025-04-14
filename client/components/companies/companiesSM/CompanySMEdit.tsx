@@ -20,6 +20,7 @@ interface CompanySMEditProps {
     addEditNote: (note: Note) => void
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
+    changeActive: (active: number) => Promise<void>
 }
 
 

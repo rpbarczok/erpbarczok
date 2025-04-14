@@ -23,7 +23,7 @@ import { useNotifier } from '../notifiers/useNotifier.js'
 import { useReducer, useState } from 'react'
 
 interface CompanyAddComponent {
-    changeActive: (active: number) => void
+    changeActive: (active: number) => Promise<void>
     addEditNote: (note: Note) => void
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
     companyTypesList: DataWithMeta<CompanyType>[]
@@ -64,7 +64,7 @@ export const CompanyAdd = ({ changeActive, addEditNote, setIsNew, setIsCompanyCh
 
 interface AddCompanyModalComponent {
     changedCompany: DataWithMeta<Company>
-    changeActive: (active: number) => void
+    changeActive: (active: number) => Promise<void>
     addEditNote: (note: Note) => void
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
@@ -113,7 +113,7 @@ export const AddCompanyModal = ({
                     const result = await client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
                     setIsLoading(false)
                     if (typeof result.headers.location === 'string') {
-                        changeActive(Number(removeStringBeforeLastDigits(result.headers.location)))
+                        await changeActive(Number(removeStringBeforeLastDigits(result.headers.location)))
                     } else {
                         throw Error('Location header should be type string.')
                     }

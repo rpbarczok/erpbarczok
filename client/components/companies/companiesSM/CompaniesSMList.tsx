@@ -15,7 +15,7 @@ import { FunctionComponent } from 'react'
 interface CompaniesSMListProps {
     filteredCompaniesList: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>
-    changeActive: (active: number) => void
+    changeActive: (active: number) => Promise<void>
 }
 
 export const CompaniesSMList: FunctionComponent<CompaniesSMListProps> = (

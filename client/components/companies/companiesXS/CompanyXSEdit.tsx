@@ -24,6 +24,7 @@ interface CompanyXSEditProps {
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
     activeCompany: DataWithMeta<Company>
+    changeActive: (active: number) => Promise<void>
 }
 
 export const CompanyXSEdit: FunctionComponent<CompanyXSEditProps> = (
@@ -34,7 +35,7 @@ export const CompanyXSEdit: FunctionComponent<CompanyXSEditProps> = (
         setIsCompanyChanged, 
         changedCompany, 
         changedCompanyDispatch, 
-        activeCompany }) => {
+        activeCompany, changeActive }) => {
 
     const [validated, setValidated] = useState(false)
     const [errorNotes, addErrorNote, removeErrorNote] = useNotifier()
@@ -68,7 +69,9 @@ export const CompanyXSEdit: FunctionComponent<CompanyXSEditProps> = (
                     }
                     addEditNote(note)
                     setIsCompanyChanged(true)
+                    await changeActive(changedCompany.meta.location)
                     setShow(false)
+                    
                     if (typeof result.headers.permissions === 'string') {
                         updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                     } else {

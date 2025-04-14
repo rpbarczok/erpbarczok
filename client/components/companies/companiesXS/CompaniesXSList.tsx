@@ -64,7 +64,7 @@ export const CompaniesXSList: FunctionComponent<CompanyXSListProps> = (
                     addEditNote={addEditNote}
                     setIsCompanyChanged={setIsCompanyChanged}
                     changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-                    activeCompany={activeCompany}
+                    activeCompany={activeCompany} changeActive={changeActive}
                 />
             </div>
         </>

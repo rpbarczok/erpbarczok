@@ -21,7 +21,7 @@ interface CompaniesSMPageProps {
     setSearch: React.Dispatch<React.SetStateAction<string>>
     filteredCompaniesList: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>
-    changeActive: (active: number) => void
+    changeActive: (active: number) => Promise<void>
     companyTypesList: DataWithMeta<CompanyType>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     setIsNew: React.Dispatch<React.SetStateAction<boolean>>
@@ -90,6 +90,7 @@ export const CompanySMPage: FunctionComponent<CompaniesSMPageProps> = ({ search,
                             setIsCompanyChanged={setIsCompanyChanged}
                             addEditNote={addEditNote}
                             changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
+                            changeActive={changeActive}
                         />
                     </Row>
                 </>
