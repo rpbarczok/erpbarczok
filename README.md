@@ -58,6 +58,7 @@ From a _developer perspective_, these choices have the following advantages:
    * Node.js (v20 or higher)
    * PostgreSQL (v16 or higher)
    * Typescript (v5 or higher)
+   * EntraID or Auth0 Tenant (or any other OIDC IDP)
    * Docker (optional, for containerized deployment)
 
 2. Clone the repository:
