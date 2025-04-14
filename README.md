@@ -42,8 +42,9 @@ In my GitHub image repository you will find following images:
 ## Getting Started
 
 1. Prerequisites
-- Node.js (v16 or higher)
-- PostgreSQL (v13 or higher)
+- Node.js (v20 or higher)
+- PostgreSQL (v16 or higher)
+- TypeScript (5.7 or Higher)
 - Docker (optional, for containerized deployment)
 
 2. Clone the repository:
@@ -118,7 +119,7 @@ Variable | Where to find at EntraID
 -- | --  
 CLIENT_ID='\<your-client-id>' |  in the App registration area: 'Client ID' in the table
 IDP_SERVER='\<your-idp-server>' | in the endpoints offcanvas as 'Authority URL (Accounts in this organizational directory only)' 
-AUDIENCE='<\your-audience>'  | in the App registration area, the 'Application (client) ID' in the Table
+AUDIENCE='\<your-audience>'  | in the App registration area, the 'Application (client) ID' in the Table
 SCOPE='openid email profile api://erpbarczok/use' |
 JWKS_URI='\<your-jwks_uri>' | URI of the JWKS key if different from the standard |  open the URI of the 'OpenID Connect metadata document' (found in the endpoints offcanvas) and look in the JSON for the value of 'jwks-uri'. 
 CLIENT_ID_SWAGGER='\<your-client-id-for-swagger>' | Only if you have registered the Swagger UI as its own application, otherwise it works with the client_id

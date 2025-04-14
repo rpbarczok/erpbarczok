@@ -22,13 +22,19 @@ interface CompanySMEditProps {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({ company, companyTypesList, setIsCompanyChanged, addEditNote, changedCompany, changedCompanyDispatch }) => {
+
+
+    export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({ company, companyTypesList, setIsCompanyChanged, addEditNote, changedCompany, changedCompanyDispatch }) => {
     const [validated, setValidated] = useState<boolean>(false)
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const { setIsLoading } = useContextThrowUndefined(LoadingContext)
     const auth = useAuth()
     const token = auth.user?.access_token
-
+    const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
+        company.data.abbr === changedCompany.data.abbr &&
+        company.data.www === changedCompany.data.www &&
+        company.data.companyType === changedCompany.data.companyType)
+        
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget
         e.preventDefault()
@@ -65,11 +71,6 @@ export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({ company, 
             }
         }
     }
-
-    const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
-        company.data.abbr === changedCompany.data.abbr &&
-        company.data.www === changedCompany.data.www &&
-        company.data.companyType === changedCompany.data.companyType)
 
     const handleUndo = (e: React.MouseEvent) => {
         e.preventDefault()

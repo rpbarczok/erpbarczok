@@ -1,5 +1,5 @@
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { changedCompanyReducer } from './utils/changedCompanyReducer.js'
+
 import { Company, emptyCompany } from './CompanyPageBasis.js'
 import { CompanySMPage } from './companiesSM/CompanySMPage.js'
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.js'
@@ -11,24 +11,27 @@ import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLast
 import { Row } from 'react-bootstrap'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { FunctionComponent, useEffect, useReducer, useState } from 'react'
+import { FunctionComponent, useEffect, useState } from 'react'
+import { ChangedCompanyAction } from './utils/changedCompanyReducer.js'
 
 interface CompanyPageExtendedProps {
     companiesList: DataWithMeta<Company>[]
     setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     companyTypesList: DataWithMeta<CompanyType>[]
+    changedCompany: DataWithMeta<Company>
+    changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
 export const CompanyPageExtended: FunctionComponent<CompanyPageExtendedProps> = (
     { companiesList,
         companyTypesList,
-        setIsCompanyChanged }) => {
+        setIsCompanyChanged,
+        changedCompany, changedCompanyDispatch }) => {
 
     const [search, setSearch] = useState<string>('') // Content of the search input field
     const [listFiltered, setListFiltered] = useState(companiesList)
     const [activeCompany, setActiveCompany] = useState<DataWithMeta<Company>>(emptyCompany)
     const [isNew, setIsNew] = useState<boolean>(false) // Flag: triggers an clearance of the search input
-    const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const { setIsLoading } = useContextThrowUndefined(LoadingContext)
     const auth = useAuth()

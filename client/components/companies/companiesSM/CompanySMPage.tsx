@@ -29,7 +29,7 @@ interface CompaniesSMPageProps {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }
 
-export const CompanySMPage: FunctionComponent<CompaniesSMPageProps>  = ({ search,
+export const CompanySMPage: FunctionComponent<CompaniesSMPageProps> = ({ search,
     setSearch,
     filteredCompanies,
     activeCompany,
@@ -43,47 +43,6 @@ export const CompanySMPage: FunctionComponent<CompaniesSMPageProps>  = ({ search
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
     const { permissions } = useContextThrowUndefined(PermissionContext)
 
-    const buttonGroupAddDelete = <>
-        <CompanyAdd
-            changeActive={changeActive}
-            addEditNote={addEditNote}
-            setIsNew={setIsNew}
-            setIsCompanyChanged={setIsCompanyChanged}
-            companyTypesList={companyTypesList}
-        />
-        <CompanyDelete
-            company={activeCompany}
-            setIsCompanyChanged={setIsCompanyChanged}
-            addNote={addEditNote}
-        />
-    </>
-
-    const Edit = () => {
-        if (filteredCompanies.length === 0) {
-            return (
-                <p>Kein Unternehmen gefunden!</p>
-            )
-        } else {
-            return (
-                <>
-                    <Row className='d-none d-sm-block d-md-none'>
-                        {hasPermission(['user'], permissions) ? <ButtonGroup>{buttonGroupAddDelete}</ButtonGroup> : ''}
-                    </Row>
-                    <Notes notes={editNotes} removeNote={removeEditNote} ></Notes>
-                    <Row>
-                        <CompanySMEdit
-                            key={activeCompany.meta.location}
-                            company={activeCompany}
-                            companyTypesList={companyTypesList}
-                            setIsCompanyChanged={setIsCompanyChanged}
-                            addEditNote={addEditNote}
-                            changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-                        />
-                    </Row>
-                </>
-            )
-        }
-    }
     return (
         <div className='flex-grow-1' >
             <Heading title='Stammdaten: Kunden, Lieferanten, Spediteure' cssClass='stamm' />
@@ -98,11 +57,43 @@ export const CompanySMPage: FunctionComponent<CompaniesSMPageProps>  = ({ search
                     />
                 </Col>
                 <Col className='d-none d-md-block' md={3}>
-                    {hasPermission(['user'], permissions) ? <ButtonGroup vertical style={{ padding: '10px 0 0' }}>{buttonGroupAddDelete}</ButtonGroup > : ''}
+                    {hasPermission(['user'], permissions)
+                        ?
+                        <ButtonGroup vertical style={{ padding: '10px 0 0' }}>
+                            <CompanyAdd
+                                changeActive={changeActive}
+                                addEditNote={addEditNote}
+                                setIsNew={setIsNew}
+                                setIsCompanyChanged={setIsCompanyChanged}
+                                companyTypesList={companyTypesList}
+                            />
+                            <CompanyDelete
+                                company={activeCompany}
+                                setIsCompanyChanged={setIsCompanyChanged}
+                                addNote={addEditNote}
+                            />
+                        </ButtonGroup >
+                        :
+                        ''}
                 </Col>
             </Row >
             <hr />
-            <Edit />
+            {filteredCompanies.length === 0
+                ? <p>Kein Unternehmen gefunden!</p>
+                : <>
+                    <Notes notes={editNotes} removeNote={removeEditNote} ></Notes>
+                    <Row>
+                        <CompanySMEdit
+                            key={activeCompany.meta.location}
+                            company={activeCompany}
+                            companyTypesList={companyTypesList}
+                            setIsCompanyChanged={setIsCompanyChanged}
+                            addEditNote={addEditNote}
+                            changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
+                        />
+                    </Row>
+                </>
+            }
         </div>
     )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { LoadingContext } from '../../utils/loadingContext.js'
@@ -8,6 +8,7 @@ import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLast
 import { DataWithMeta } from '../Pages.jsx'
 import { useCompanyTypes } from '../resources/companyTypes/useCompanyTypes.js'
 import { CompanyPageExtended } from './CompanyPageExtended.jsx'
+import { changedCompanyReducer } from './utils/changedCompanyReducer.js'
 
 export interface Company {
     'name': string
@@ -26,6 +27,7 @@ export const CompanyPageBasis = () => {
     const token = auth.user?.access_token
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const { setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
 
     useEffect(() => {
         if (isCompanyChanged) {
@@ -71,6 +73,9 @@ export const CompanyPageBasis = () => {
         <CompanyPageExtended
             companiesList={companiesList}
             companyTypesList={companyTypesList}
-            setIsCompanyChanged={setIsCompanyChanged} />
+            setIsCompanyChanged={setIsCompanyChanged} 
+            changedCompany={changedCompany}
+            changedCompanyDispatch={changedCompanyDispatch}
+            />
     )
 }
