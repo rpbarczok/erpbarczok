@@ -45,4 +45,4 @@ export const CompaniesSMList: FunctionComponent<CompaniesSMListProps> = (
         <ListGroup className='scrollBox d-none d-sm-block' style={{ marginTop: '10px' }} id='company-list' >
             <List />
         </ListGroup >)
-}
+        }
