@@ -23,9 +23,14 @@ interface CompanySMEditProps {
     changeActive: (active: number) => Promise<void>
 }
 
-
-
-    export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({ company, companyTypesList, setIsCompanyChanged, addEditNote, changedCompany, changedCompanyDispatch }) => {
+    export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({ 
+        company, 
+        companyTypesList, 
+        setIsCompanyChanged, 
+        addEditNote, 
+        changedCompany, 
+        changedCompanyDispatch, 
+        changeActive }) => {
     const [validated, setValidated] = useState<boolean>(false)
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const { setIsLoading } = useContextThrowUndefined(LoadingContext)
@@ -55,6 +60,7 @@ interface CompanySMEditProps {
                         message: `Unternehmen erfolgreich überarbeitet.`,
                     }
                     addEditNote(note)
+                    await changeActive(changedCompany.meta.location)
                     setIsCompanyChanged(true)
                     if (typeof result.headers.permissions === 'string') {
                         updateUserPermissions(result.headers.permissions, permissions, setPermissions)
