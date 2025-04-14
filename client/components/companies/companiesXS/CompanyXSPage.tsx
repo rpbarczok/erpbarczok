@@ -17,7 +17,7 @@ import { FunctionComponent } from 'react'
 interface CompanyXSPageProps {
     search: string
     setSearch: React.Dispatch<React.SetStateAction<string>>
-    filteredCompanies: DataWithMeta<Company>[]
+    filteredCompaniesList: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>
     changeActive: (active: number) => Promise<void>
     companyTypesList: DataWithMeta<CompanyType>[]
@@ -30,7 +30,7 @@ interface CompanyXSPageProps {
 export const CompanyXSPage: FunctionComponent<CompanyXSPageProps> = ({
     search,
     setSearch,
-    filteredCompanies,
+    filteredCompaniesList,
     activeCompany,
     changeActive,
     companyTypesList,
@@ -58,7 +58,7 @@ export const CompanyXSPage: FunctionComponent<CompanyXSPageProps> = ({
             <Notes notes={editNotes} removeNote={removeEditNote}/>
             <CompanyXSSearch search={search} setSearch={setSearch} />
             <CompaniesXSList
-                filteredCompanies={filteredCompanies}
+                filteredCompaniesList={filteredCompaniesList}
                 changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 changeActive={changeActive} activeCompany={activeCompany}
                 companyTypesList={companyTypesList}

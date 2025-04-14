@@ -13,23 +13,23 @@ import { FunctionComponent } from 'react'
 
 
 interface CompaniesSMListProps {
-    filteredCompanies: DataWithMeta<Company>[]
+    filteredCompaniesList: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>
     changeActive: (active: number) => void
 }
 
 export const CompaniesSMList: FunctionComponent<CompaniesSMListProps> = (
-    { filteredCompanies, 
+    { filteredCompaniesList, 
         activeCompany, 
         changeActive }) => {
 
     const List = () => {
-        if (filteredCompanies.length === 0) {
+        if (filteredCompaniesList.length === 0) {
             return (
                 <p>Keine Unternehmen gefunden!</p>
             )
         } else {
-            return filteredCompanies.map((element) => {
+            return filteredCompaniesList.map((element) => {
                 return (
                     <ListGroup.Item  key={element.meta.location} active={element.meta.location === activeCompany.meta.location} onClick={() => changeActive(element.meta.location)} >
                         {element.data.name + (element.data.abbr ? ' (' + element.data.abbr + ')' : '')}

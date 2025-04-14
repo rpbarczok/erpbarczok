@@ -8,7 +8,7 @@ import { Note } from '../../notifiers/Notes.js'
 import { FunctionComponent, useState } from 'react'
 
 interface CompanyXSListProps {
-    filteredCompanies: DataWithMeta<Company>[]
+    filteredCompaniesList: DataWithMeta<Company>[]
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
     activeCompany: DataWithMeta<Company>
@@ -19,7 +19,7 @@ interface CompanyXSListProps {
 }
 
 export const CompaniesXSList: FunctionComponent<CompanyXSListProps> = (
-    { filteredCompanies, 
+    { filteredCompaniesList, 
         changedCompany, 
         changedCompanyDispatch, 
         activeCompany, 
@@ -39,7 +39,7 @@ export const CompaniesXSList: FunctionComponent<CompanyXSListProps> = (
 
     const List = () => {
 
-        return filteredCompanies.map((element) => {
+        return filteredCompaniesList.map((element) => {
             return (
                 <ListGroup.Item key={element.meta.location} onClick={(e) => handleOpenModal(e, element.meta.location)}>
                     {element.data.name + (element.data.abbr ? ' (' + element.data.abbr + ')' : '')}
@@ -55,7 +55,7 @@ export const CompaniesXSList: FunctionComponent<CompanyXSListProps> = (
         <>
             <div className='flex-grow-1 d-flex flex-column' style={{ overflowY: 'hidden', marginTop: '10px' }}>
                 <ListGroup key='company-list-xs' id='company-list-xs' style={{ overflowY: 'scroll' }}>
-                    {filteredCompanies.length > 0 ? <List /> : <span>Keine Unternehmen gefunden</span>}
+                    {filteredCompaniesList.length > 0 ? <List /> : <span>Keine Unternehmen gefunden</span>}
                 </ListGroup >
                 <CompanyXSEdit
                     key={activeCompany.meta.location}

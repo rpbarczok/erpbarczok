@@ -1,0 +1,271 @@
+diff --git a/README.md b/README.md
+index b87f8c7..e69b130 100644
+--- a/README.md
++++ b/README.md
+@@ -1,124 +1,187 @@
++<!-- markdownlint-disable MD033 -->
+ # ERPBarczok
+ 
+-ERPBarczok is a small training app I implemented to exercise the areas of full stack development. It is the proof of concept of ERP software for a small enterprise.
+-
+-## Requirements
+-
+-* Daily use in the office
+-* Daily use from China (with restrictions due to the Golden Shield Project), i.e., high packet loss
+-* Remote use from areas with slow internet connection
+-* Responsive Design (Mobile and Desktop)
+-* automated rollout process
+-* platform independent
+-* transferable to other developers
+-* user roles
+-
+-## Architecture and Technology
+-
+-I decided to use the following architecture:
+-* Frontend as Single Page App (SPA) installable as Progressive Web App (PWA)
+-* Backend API
+-This architecture has the following advantages:
+-* Minimal communication between server and client
+-* Feasible responsive design
+-* Platform independence
+-* Automatic rollout
+-
+-I used the following technologies for development:
+-* Express Backend (TypeScript, OpenApi, Swagger-UI, Mocha)
+-* React Frontend (TypeScript)
+-These architectures have the following advantages:
+-* A single framework for both frontend and backend
+-* modern, sustainable, and widely used technologies
++ERPBarczok is a proof of concept I implemented to validate an architectural decision for an ERP software of a small enterprise.
+ 
+-The user role concept is achieved by OpenId Connect
++It implements the scaffold for this type of application, but lacks any business logic.
++My aim was to validate the scaffold, and the contents of this repo fulfill this purpose.
+ 
+-## Releases
++So running this software will presumably be not very useful.
++But feel free to use it as a scaffold for your architecture or to copy pieces into your project.
++MIT license applies. 
++
++## Considered Requirements
++
++The architecture should be able to consider the following requirements:
++
++1. Daily use in the office
++2. Daily use from China (capability to handle limitations by the Golden Shield Project, i.e. packet loss)
++3. Remote use from areas with slow internet connection
++4. Desktop design mimicking an existing 90's Access UI
++5. Modern mobile design
++6. User roles
++7. Platform independent client
++8. Automated rollout process for the client
++9. Use of modern frameworks, IDEs, and programming languages, so knowledge is available on the market
++10. As few programming languages and frameworks as possible
++
++## Architectural Decisions
++
++Based on the _requirements_ I decided to use the following architecture:
+ 
+-In my GitHub image repository you will find following images:
+-- **main**: This image is a stable version of the project
+-- **dev**: This image is version I'm currently working on
++* 10: Server and client need to use the same programming language: ECMAScript/TypeScript.
++* 2/3: Classical web application excluded, API approach with application installed and running on client:
++  * 7: Frontend as Single Page App (SPA)
++  * 2/3: Installable as Progressive Web App (PWA), running purely on the client  
++    Minimal communication between server and client, maximal perceived responsiveness
++  * 9: Backend API based on OAS/OpenAPI
++* 4/5: Bootstrap responsive design
++* 8: Automated rollout through PWA and service worker
++* 6: Roles via OIDC
++* 10: Server backend using postgres because of available knowledge
++* 1: no additional constraints
++
++Based on these decisions, I use the following technologies for development:
++
++* Express Backend (TypeScript, OpenAPI, Swagger-UI, Mocha)
++* React Frontend (TypeScript, OpenAPI, axios, TODO TESTING FRAMEWORK)
++* Authentication and Authorization via OpenID Connect
++  
++From a _developer perspective_, these choices have the following advantages:
++
++* A single framework for both frontend and backend
++* modern, sustainable, and widely used technologies
+ 
+ ## Getting Started
+ 
+ 1. Prerequisites
+-- Node.js (v16 or higher)
+-- PostgreSQL (v13 or higher)
+-- Docker (optional, for containerized deployment)
++   * Node.js (v20 or higher)
++   * PostgreSQL (v16 or higher)
++   * Typescript (v5 or higher)
++   * Docker (optional, for containerized deployment)
+ 
+ 2. Clone the repository:
++
+    ```bash
+    git clone https://github.com/rpbarczok/erpbarczok.git
+    cd erpbarczok
+    ```
++
+ 3. Install dependencies
++
+    ```bash
+     npm install
+    ```
++
+ 4. Set up environment variables
+-Create a .env file in the root directory and add the required variables, (see also Database Configuration, Auth0 Configuration and EntraID Configuration).
++
++   Create a `.env` file in the root directory of the project and add the required variables, (see below: Database Configuration, Auth0 Configuration and EntraID Configuration).
++
++   <details>
++      <summary>Example</summary>
++      &nbsp;
++
++      `.env` file example - this won't work verbatim, please replace the example values by your real values.
++
++      ```bash
++      NODE_ENV=development
++      DB_NAME=erpbarczok_db
++      DB_USER=erpbarczok_app
++      DB_PASSWORD='test123!'
++      DB_HOST=localhost
++      DB_PORT=5432
++      CLIENT_ID=erpbarczok
++      IDP_SERVER=http://localhost:8080/realms/erpbarczok/
++      AUDIENCE=erpbarczok-api
++      PERMISSION_CLAIM=roles
++      CLIENT_ID_SWAGGER=erpbarczok-swagger
++      ```
++
++   </details>
++   &nbsp;
+ 
+ 5. Start the application:
++
+    ```bash
+     npm start
+    ```
+ 
+ 6. Access the application 
+-Open your browser and navigate to your URI
+ 
++   Open your browser and navigate to <http://localhost:3000>
++
++## Configuration
+ 
+-## General Configuration
++### General Configuration
+ 
+-NODE_ENV='production' or NODE_ENV='development'
++`NODE_ENV=production` or `NODE_ENV=development`
++
++### Database Configuration
+ 
+-## Database Configuration
+ The application needs a PostgreSQL database to work.
+ 
+ Required Environment Variables for the PostgreSQL-Database
+ 
+-Variable | Example
+--- | -- 
+-DB_NAME='\<your-db-name>' | 'erpbarczok_db'
+-DB_USER='\<your-db-user>' | 'erpbarczok_app'
+-DB_PASSWORD='\<your-db-password>' | Password of the database user for the database | 'test123!'
+-DB_HOST='\<your-db-host>' | Host of the database | 'localhost'
+-DB_PORT=\<your-db-port> |  5432
++| Variable      | Value              | Example                  |                                                |
++| ------------- | ------------------ | ------------------------ | ---------------------------------------------- |
++| `DB_NAME`     | _your-db-name_     | `DB_NAME=erpbarczok_db`  |                                                |
++| `DB_USER`     | _your-db-user_     | `DB_USER=erpbarczok_app` |                                                |
++| `DB_PASSWORD` | _your-db-password_ | `DB_PASSWORD='test123!'` | Password of the database user for the database |
++| `DB_HOST`     | _your-db-host_     | `DB_HOST=localhost`      | Host of the database                           |
++| `DB_PORT`     | _your-db-port_     | `DB_PORT=5432`           |                                                |
++
++### Authentication and Authorization
++
++The implementation of Auth works with Auth0 and EntraID. Depending on which service you use, you need to set different environment variables.
++
++<details>
++   <summary>Auth 0 Example</summary>
++   &nbsp;
+ 
+-## Authentication and Authorization
++   For Auth0, you need to register the API and the Application at the _Applications_ tab. Please follow the official Auth0 instructions to register them. For the application, be sure to choose _Single Page Application_ during the registration.
++   Enter the URI `http://localhost:3000` of your application in the _Allowed Callback URLs_ field. If you want to use the Swagger UI, you also need to add its URI `http://localhost:3000/docs/` to this field.
+ 
+-The implementation of Auth works with Auth0 and EntraID. Depending on which service you use, you must set different environment variables.
++   Additionally, you need to create the roles `admin` and `user` at the _roles_ tab in the _User Management_. You can assign these roles to the users. The `admin` has read and write rights to all objects in the application and can access all areas of the user interface. The `user` has read rights to all objects of the application and write rights to certain objects. Users do not have access to all areas. A guest without any roles has read-only rights and limited access.
+ 
+-### Auth0 Configuration
+-For Auth0, you need to register the API and the Application at the 'Applications' tab. Please follow the official Auth0 instructions to register them. For the application, be sure to choose Single Page Application during the registration.
+-Enter the URI of your application in the 'Allowed Callback URLs' field. If you want to use the Swagger UI, you must also add its URI to this field.
++   Required Environment Variables for Auth0
+ 
+-Additionally, you have to create the roles __admin__ and __user__ at the 'roles' tab in the 'User Management'. You can assign these roles to the users. The admin has read and write rights to all objects in the database and can access all areas of the application. The user has read rights to all objects of the database and write rights to certain objects. They do not have access to all areas. A guest without any roles has read-only rights and limited access.
++   | Variable            | Value                        | Example              | Where to find at Auth0                                                                                                                  |
++   | ------------------- | ---------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
++   | `CLIENT_ID`         | _your-client-id_             | `CLIENT_ID=`         | in the settings of the Application settings                                                                                             |
++   | `IDP_SERVER`        | _your-idp-server_            | `IDP_SERVER=`        | at the _Tenant Settings_ in the tab _Custom Domains_. Use the domain prefixed with `https://` for the `IDP_SERVER` environment variable |
++   | `AUDIENCE`          | _your-audience_              | `AUDIENCE=`          | in the settings of the API entry you created earlier as the _Identifier_                                                                |
++   | `PERMISSION_CLAIM`  | _permissions_                | `PERMISSION_CLAIM=`  |                                                                                                                                         |
++   | `CLIENT_ID_SWAGGER` | _your-client-id-for-swagger_ | `CLIENT_ID_SWAGGER=` | Only if you have registered the Swagger UI as its own application, otherwise it works with the client_id                                |
+ 
+-Required Environment Variables for Auth0
++</details>
++<details>
++   <summary>EntraID Example</summary>
++   &nbsp;
+ 
+-Variable | Where to find at Auth0 
+- -- | -- 
+- CLIENT_ID='\<your-client-id>' |  in the settings of the Application settings 
+-IDP_SERVER='\<your-idp-server>' | at the 'Tenant Settings' in the tab 'Custom Domains'. Use the domain prefixed with 'https://' for the IDP_SERVER environment variable 
+- AUDIENCE='\<your-audience>' | in the settings of the API entry you created earlier as the 'Identifier' 
+- PERMISSION_CLAIM='permissions' | 
+- CLIENT_ID_SWAGGER='\<your-client-id-for-swagger>' | Only if you have registered the Swagger UI as its own application, otherwise it works with the client_id 
++   For EntraID, you need to register the API and the Application separately, too. Follow the official EntraID documentation to register the API and Application. For the application, be sure to set _Single Page Application_ during the registration.
+ 
+-### EntraID Configuration
+-For EntraID, you need to register the API and the Application separately, too. Follow the official EntraID documentation to register the API and Application.. For the application, be sure to set Single Page Application during the registration.
++   ERPBarczok needs a JWT (JSON Web Token) that is not opaque. Therefore, you must navigate to the registry of the API. Open the tab _manifest_ and set in the JSON file in the `api` object the property `requestedAccessTokenVersion` to `2`.
+ 
+-ERPBarczok needs a JWT (JSON Web Token) that is not opaque. Therefore, you must navigate to the registry of the API. Open the tab 'manifest' and set in the JSON file in the 'api' object the property 'requestedAccessTokenVersion' to 2.
++   Then navigate to _Expose an API_ and add the scope `use`. It is then shown as `api://erpbarczok/use`.
++   At the next tab _App roles_ create two new roles: `admin` and `user`. You can later add these roles to the users of your application.
+ 
+-Then navigate to 'Expose an API' and add the scope 'use'. It is then shown as 'api://erpbarczok/use'.
+-At the next tab 'App roles' create two new roles: admin and user. You can later add these roles to the users of your application.
++   Required Environment Variables for EntraID
++
++   | Variable            | Value                                         | Example                                             | Where to find at EntraID                                                                                                                                                                         |
++   | ------------------- | --------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
++   | `CLIENT_ID`         | _your-client-id_                              | `CLIENT_ID=`                                        | in the App registration area: 'Client ID' in the table                                                                                                                                           |
++   | `IDP_SERVER`        | _your-idp-server_                             | `IDP_SERVER=`                                       | in the endpoints offcanvas as 'Authority URL (Accounts in this organizational directory only)'                                                                                                   |
++   | `AUDIENCE`          | _your-audience_                               | `AUDIENCE=`                                         | in the App registration area, the 'Application (client) ID' in the Table                                                                                                                         |
++   | `SCOPE`             | `"api://erpbarczok/use openid email profile"` | `SCOPE="api://erpbarczok/use openid email profile"` |
++   | `JWKS_URI`          | _your-jwks_uri_                               | `JWKS_URI=`                                         | URI of the JWKS key if different from the standard - open the URI of the _OpenID Connect metadata document_ (found in the endpoints offcanvas) and look in the JSON for the value of `jwks-uri`. |
++   | `CLIENT_ID_SWAGGER` | _your-client-id-for-swagger_                  | `CLIENT_ID_SWAGGER=`                                | Only if you have registered the Swagger UI as its own application, otherwise it works with the client_id                                                                                         |
++
++</details>
++&nbsp;
++
++## Releases
+ 
+-Required Environment Variables for EntraID
++In the [GitHub Container Registry](https://github.com/rpbarczok/erpbarczok/pkgs/container/erpbarczok) you will find the following container images:
+ 
+-Variable | Where to find at EntraID
+--- | --  
+-CLIENT_ID='\<your-client-id>' |  in the App registration area: 'Client ID' in the table
+-IDP_SERVER='\<your-idp-server>' | in the endpoints offcanvas as 'Authority URL (Accounts in this organizational directory only)' 
+-AUDIENCE='<\your-audience>'  | in the App registration area, the 'Application (client) ID' in the Table
+-SCOPE='openid email profile api://erpbarczok/use' |
+-JWKS_URI='\<your-jwks_uri>' | URI of the JWKS key if different from the standard |  open the URI of the 'OpenID Connect metadata document' (found in the endpoints offcanvas) and look in the JSON for the value of 'jwks-uri'. 
+-CLIENT_ID_SWAGGER='\<your-client-id-for-swagger>' | Only if you have registered the Swagger UI as its own application, otherwise it works with the client_id
+\ No newline at end of file
++* **main**: This image is a stable version of the project
++* **dev**: This image is the version I'm currently working on

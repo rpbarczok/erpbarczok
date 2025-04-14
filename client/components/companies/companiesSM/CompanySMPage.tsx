@@ -19,7 +19,7 @@ import { FunctionComponent } from 'react'
 interface CompaniesSMPageProps {
     search: string
     setSearch: React.Dispatch<React.SetStateAction<string>>
-    filteredCompanies: DataWithMeta<Company>[]
+    filteredCompaniesList: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>
     changeActive: (active: number) => void
     companyTypesList: DataWithMeta<CompanyType>[]
@@ -31,7 +31,7 @@ interface CompaniesSMPageProps {
 
 export const CompanySMPage: FunctionComponent<CompaniesSMPageProps> = ({ search,
     setSearch,
-    filteredCompanies,
+    filteredCompaniesList,
     activeCompany,
     changeActive,
     companyTypesList,
@@ -52,7 +52,7 @@ export const CompanySMPage: FunctionComponent<CompaniesSMPageProps> = ({ search,
                 </Col>
                 <Col sm={7} md={5}>
                     <CompaniesSMList
-                        filteredCompanies={filteredCompanies}
+                        filteredCompaniesList={filteredCompaniesList}
                         activeCompany={activeCompany} changeActive={changeActive}
                     />
                 </Col>
@@ -78,7 +78,7 @@ export const CompanySMPage: FunctionComponent<CompaniesSMPageProps> = ({ search,
                 </Col>
             </Row >
             <hr />
-            {filteredCompanies.length === 0
+            {filteredCompaniesList.length === 0
                 ? <p>Kein Unternehmen gefunden!</p>
                 : <>
                     <Notes notes={editNotes} removeNote={removeEditNote} ></Notes>
