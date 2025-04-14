@@ -44,7 +44,7 @@ Based on the _requirements_ I decided to use the following architecture:
 Based on these decisions, I use the following technologies for development:
 
 * Express Backend (TypeScript, OpenAPI, Swagger-UI, Mocha)
-* React Frontend (TypeScript, OpenAPI, axios, TODO TESTING FRAMEWORK)
+* React Frontend (TypeScript, OpenAPI, axios, React testing library)
 * Authentication and Authorization via OpenID Connect
   
 From a _developer perspective_, these choices have the following advantages:
