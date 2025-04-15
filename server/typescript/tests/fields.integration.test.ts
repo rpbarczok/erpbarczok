@@ -5,7 +5,7 @@ import { startingApp } from '../app.js'
 import { sequelize } from '../models/index.js'
 import { expect } from 'expect'
 import { App } from 'supertest/types.js'
-import { sha256 } from '../hasher.js'
+import { sha256 } from './utils/hasher.js'
 import jwt from 'jsonwebtoken'
 
 const iat = Math.floor(Date.now() / 1000)

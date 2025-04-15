@@ -2,7 +2,7 @@ import { expect } from 'expect'
 import './utils/env.test.js'
 import { getAllCompanyTypes, getCompanyTypeById, deleteCompanyTypeById, putCompanyTypeById, addCompanyType, } from '../services/companyTypes.js'
 import { sequelize } from '../models/index.js'
-import { ErrorWithStatus } from '../services/error.js'
+import { ApiError } from '../services/error.js'
 
 
 describe('CompanyType Unit Tests', function () {
@@ -78,7 +78,7 @@ describe('CompanyType Unit Tests', function () {
         })
 
         it('putCompanyTypeById(17) returns error', async function () {
-            await expect(putCompanyTypeById(17, { 'name': 'Sonstiges' })).resolves.toBeInstanceOf(ErrorWithStatus)
+            await expect(putCompanyTypeById(17, { 'name': 'Sonstiges' })).resolves.toBeInstanceOf(ApiError)
         })
     })
 

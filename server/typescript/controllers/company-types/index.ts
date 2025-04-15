@@ -1,10 +1,10 @@
 import { DataWithMeta, Meta } from '../../app.js'
-import { sha256 } from '../../hasher.js'
+import { sha256 } from '../../tests/utils/hasher.js'
 import { CompanyType } from '../../models/companyTypes.js'
 import { getAllCompanyTypes, addCompanyType } from '../../services/companyTypes.js'
 import { Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
-import { createNewError, ErrorWithStatus } from '../../services/error.js'
+import { createNewError, ApiError } from '../../services/error.js'
 
 
 export interface CompanyTypeNorm {
@@ -36,7 +36,7 @@ export function combineCompanyTypeWithMeta(companyType: CompanyType): DataWithMe
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const allCompanyTypesSearchResult = await getAllCompanyTypes()
-    if (allCompanyTypesSearchResult instanceof ErrorWithStatus) {
+    if (allCompanyTypesSearchResult instanceof ApiError) {
         res
             .status(allCompanyTypesSearchResult.status)
             .json({ status: allCompanyTypesSearchResult.status, message: allCompanyTypesSearchResult.message })
@@ -136,7 +136,7 @@ GET.apiSpec = {
 export const POST: Operation = async (req: Request, res: Response) => {
     if (isCompanyTypeNorm(req.body)) {
         const newCompanyTypeSearchResult = await addCompanyType(req.body)
-        if (newCompanyTypeSearchResult instanceof ErrorWithStatus) {
+        if (newCompanyTypeSearchResult instanceof ApiError) {
             res
                 .status(newCompanyTypeSearchResult.status)
                 .json({ status: newCompanyTypeSearchResult.status, message: newCompanyTypeSearchResult.message })

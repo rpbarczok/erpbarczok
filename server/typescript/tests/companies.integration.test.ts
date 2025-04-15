@@ -15,7 +15,7 @@ import { sequelize } from '../models/index.js'
 import { expect } from 'expect'
 import { App } from 'supertest/types.js'
 import { CompanyType } from '../models/companyTypes.js'
-import { sha256 } from '../hasher.js'
+import { sha256 } from './utils/hasher.js'
 import jwt from 'jsonwebtoken'
 
 const iat = Math.floor(Date.now() / 1000)
@@ -398,7 +398,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
-                .expect(404, { status: 404, message: 'not found', errors: [] })
+                .expect(404, { status: 404, message: 'not found', errors: [{"message": "not found", "path": "/something"}]})
         })
     })
 

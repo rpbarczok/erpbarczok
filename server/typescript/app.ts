@@ -21,8 +21,8 @@ import { sequelize } from './models/index.js'
 import { apiSpec } from './openapi.js'
 import { loadControllers, Operation } from './utils/apiSpecAssembler.js'
 import { jwtCheck } from './utils/auth.js'
-import { ErrorWithStatus } from './services/error.js'
 import { setDefaultValues } from './models/default-values.js'
+import { ErrorWithStatus } from './services/error.js'
 
 export interface Meta {
     location: string
@@ -218,62 +218,33 @@ window.scope = '${jsesc(process.env.SCOPE)}';
         )
     )
 
+
     // add API error handler
     app.set('json spaces', 2)
     app.use(
-        (error: unknown, req: Request, res: Response, _next: NextFunction) => {
+        (error: Partial<ErrorWithStatus>, req: Request, res: Response, _next: NextFunction) => {
             logger('Error %o.', error)
-            if (error instanceof ErrorWithStatus) {
-                res
-                    .status(error.status)
+            if (error.status) {
+                res.status(error.status)
                     .json({
                         status: error.status,
                         message: error.message,
-                        errors: []
+                        errors: error.errors
                     })
             } else {
-                if (typeof error === 'object' && error !== null) {
-                    if ('status' in error && (typeof error.status === 'number')) {
-                        if ('message' in error && typeof error.message === 'string') {
-                            res
-                                .status(error.status)
-                                .json({
-                                    status: error.status,
-                                    message: error.message,
-                                    errors: []
-                                })
-                        }
-                        else {
-                            res
-                                .status(error.status)
-                                .json({
-                                    status: error.status,
-                                    message: 'Unspecified ' + String(error.status) + " error.",
-                                    errors: []
-                                })
-                        }
-                    }
-                    else {
-                        res
-                            .status(500)
-                            .json({
-                                send: 500,
-                                message: 'Unspecified internal error.',
-                                errors: []
-                            })
-                    }
 
-                }
-                else {
-                    res
-                        .status(500)
-                        .json({
-                            status: 500,
-                            message: 'Unspecified internal error.',
-                            errors: []
-                        })
-                }
+                const message = process.env.NODE_ENV === "production"
+                    ? "internal error"
+                    : error instanceof Error ? error.message : JSON.stringify(error)
+
+                res.status(500)
+                    .json({
+                        status: 500,
+                        message,
+                        errors: []
+                    })
             }
+
         })
 
     return app

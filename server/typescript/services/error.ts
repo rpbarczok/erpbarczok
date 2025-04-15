@@ -1,4 +1,4 @@
-export function createNewError(status: number, error?: unknown): ErrorWithStatus {
+export function createNewError(status: number, error?: unknown): ApiError {
   if (!error) {
     let messageText = 'Error'
     switch (status) {
@@ -24,27 +24,33 @@ export function createNewError(status: number, error?: unknown): ErrorWithStatus
         messageText = 'Unspecified internal error.'
         break
     }
-    return new ErrorWithStatus(status, messageText)
+    return new ApiError(status, messageText)
   } else if (typeof error === 'string') {
     if ((error && status !== 500) || (status === 500 && process.env.NODE_ENV !== 'production')) {
-      return new ErrorWithStatus(status, error)
+      return new ApiError(status, error)
     } else {
-      return new ErrorWithStatus(500, 'Unspecified internal error.')
+      return new ApiError(500, 'Unspecified internal error.')
     }
   } else if (typeof error === 'object') {
     for (const key in error) {
       if (key === 'message') {
         if (typeof error[key] === 'string') {
-          const newError = new ErrorWithStatus(status, error[key])
+          const newError = new ApiError(status, error[key])
           return newError
         }
       }
     }
   }
-  return new ErrorWithStatus(500, 'Unspecified internal error.')
+  return new ApiError(500, 'Unspecified internal error.')
 }
 
-export class ErrorWithStatus extends Error {
+export interface ErrorWithStatus {
+  status: number
+  message: string
+  errors?: unknown[]
+}
+
+export class ApiError extends Error implements ErrorWithStatus {
 
   constructor(status: number, message: string, ...args: ErrorOptions[]) {
     super(message, ...args)

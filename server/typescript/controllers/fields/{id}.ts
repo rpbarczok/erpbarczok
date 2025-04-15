@@ -1,5 +1,5 @@
 import { getFieldById, deleteFieldById, putFieldById } from '../../services/fields.js'
-import { createNewError, ErrorWithStatus } from '../../services/error.js'
+import { createNewError, ApiError } from '../../services/error.js'
 import type { Request, Response } from 'express'
 import { FieldNorm, normalizeField, createFieldMeta, isFieldNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
@@ -7,7 +7,7 @@ import { Meta } from '../../app.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const fieldSearchResult = await getFieldById(Number(req.params.id))
-    if (fieldSearchResult instanceof ErrorWithStatus) {
+    if (fieldSearchResult instanceof ApiError) {
         res
             .status(fieldSearchResult.status)
             .json({ status: fieldSearchResult.status, message: fieldSearchResult.message })
@@ -76,7 +76,7 @@ GET.apiSpec = {
 
 export const DELETE: Operation = async (req: Request, res: Response) => {
     const result = await deleteFieldById(Number(req.params.id))
-    if (result instanceof ErrorWithStatus) {
+    if (result instanceof ApiError) {
         res
             .status(result.status)
             .json(
@@ -133,7 +133,7 @@ DELETE.apiSpec = {
 
 export const PUT: Operation = async (req: Request, res: Response) => {
     const dbFieldSearchResult = await getFieldById(Number(req.params.id))
-    if (dbFieldSearchResult instanceof ErrorWithStatus) {
+    if (dbFieldSearchResult instanceof ApiError) {
         res
             .status(dbFieldSearchResult.status)
             .json({ status: dbFieldSearchResult.status, message: dbFieldSearchResult.message, 'errors': [] })
@@ -143,7 +143,7 @@ export const PUT: Operation = async (req: Request, res: Response) => {
             const dbFieldMeta = createFieldMeta(dbFieldSearchResult)
             if (dbFieldMeta.etag === req.headers['if-match']) {
                     const updatedField = await putFieldById(Number(req.params.id), req.body)
-                    if (updatedField instanceof ErrorWithStatus) {
+                    if (updatedField instanceof ApiError) {
                         res
                             .status(updatedField.status)
                             .json({ status: updatedField.status, message: updatedField.message, 'errors': [] })

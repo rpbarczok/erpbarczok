@@ -1,10 +1,10 @@
 import { DataWithMeta, Meta } from '../../app.js'
-import { sha256 } from '../../hasher.js'
+import { sha256 } from '../../tests/utils/hasher.js'
 import { Field } from '../../models/fields.js'
 import { getAllFields, addField } from '../../services/fields.js'
 import { Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
-import { createNewError, ErrorWithStatus } from '../../services/error.js'
+import { createNewError, ApiError } from '../../services/error.js'
 
 export interface FieldNorm {
     name: string
@@ -38,7 +38,7 @@ export function combineFieldWithMeta(field: Field): DataWithMeta<FieldNorm> {
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const allFieldsSearchResult = await getAllFields()
-    if (allFieldsSearchResult instanceof ErrorWithStatus) {
+    if (allFieldsSearchResult instanceof ApiError) {
         res
         .status(allFieldsSearchResult.status)
         .send({status: allFieldsSearchResult.status, message: allFieldsSearchResult.message})
@@ -139,7 +139,7 @@ GET.apiSpec = {
 export const POST: Operation = async (req: Request, res: Response) => {
     if (isFieldNorm(req.body)) {
         const newFieldAddResult = await addField(req.body)
-        if (newFieldAddResult instanceof ErrorWithStatus) {
+        if (newFieldAddResult instanceof ApiError) {
             res
             .status(newFieldAddResult.status)
             .json({status: newFieldAddResult.status, message: newFieldAddResult.message})

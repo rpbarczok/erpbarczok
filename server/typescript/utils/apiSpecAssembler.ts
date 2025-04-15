@@ -11,7 +11,7 @@ import { baseLogger } from '../logger.js'
 import { apiSpec as apiSpecBase } from '../openapi.js'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { Request, Response, NextFunction } from 'express'
-import { ErrorWithStatus } from '../services/error.js'
+import { createNewError } from '../services/error.js'
 
 export interface Operation {
     (req: Request, res: Response, next: NextFunction): Promise<void>
@@ -62,7 +62,7 @@ export const getControllerFiles = async () => {
             controllerFiles[apiPath] = result
         } else {
             logger(`Controller at path ${controllerPath} does not match VerbMap interface.`)
-            throw new ErrorWithStatus(500, 'Invalid controller format at path: ' + controllerPath)
+            throw createNewError(500, 'Invalid controller format at path: ' + controllerPath)
         }
     }
     logger('Controllers imported')

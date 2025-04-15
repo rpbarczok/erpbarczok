@@ -1,5 +1,5 @@
 import { getCompanyTypeById, deleteCompanyTypeById, putCompanyTypeById } from '../../services/companyTypes.js'
-import { createNewError, ErrorWithStatus } from '../../services/error.js'
+import { createNewError, ApiError } from '../../services/error.js'
 import type { Request, Response } from 'express'
 import { CompanyTypeNorm, normalizeCompanyType, createCompanyTypeMeta, isCompanyTypeNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
@@ -9,7 +9,7 @@ import { Company } from '../../models/companies.js'
 export const GET: Operation = async (req: Request, res: Response) => {
 
     const companyTypeSearchResult = await getCompanyTypeById(Number(req.params.id))
-    if (companyTypeSearchResult instanceof ErrorWithStatus) {
+    if (companyTypeSearchResult instanceof ApiError) {
         res
             .status(companyTypeSearchResult.status)
             .json({ status: companyTypeSearchResult.status, message: companyTypeSearchResult.message })
@@ -80,7 +80,7 @@ export const DELETE: Operation = async (req: Request, res: Response) => {
     })
     if (count === 0) {
         const result = await deleteCompanyTypeById(Number(req.params.id))
-        if (result instanceof ErrorWithStatus) {
+        if (result instanceof ApiError) {
             res.status(result.status).json({ status: result.status, message: result.message })
         }
         res.status(204).end()
@@ -132,7 +132,7 @@ export const PUT: Operation = async (req: Request, res: Response) => {
     if (isCompanyTypeNorm(req.body)) {
         const dbCompanyTypeSearchResult = await getCompanyTypeById(Number(req.params.id))
 
-        if (dbCompanyTypeSearchResult instanceof ErrorWithStatus) {
+        if (dbCompanyTypeSearchResult instanceof ApiError) {
 
             res
                 .status(dbCompanyTypeSearchResult.status)
@@ -145,7 +145,7 @@ export const PUT: Operation = async (req: Request, res: Response) => {
 
                 const updatedCompanyType = await putCompanyTypeById(Number(req.params.id), req.body)
 
-                if (updatedCompanyType instanceof ErrorWithStatus) {
+                if (updatedCompanyType instanceof ApiError) {
 
                     res
                         .status(updatedCompanyType.status)

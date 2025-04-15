@@ -346,7 +346,7 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
             'error404': {
                 'value': {
                     'status': 404,
-                    'message': 'not found'
+                    'message': 'Not found'
                 }
             },
             'error409': {

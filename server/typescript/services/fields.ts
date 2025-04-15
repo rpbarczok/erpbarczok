@@ -1,4 +1,4 @@
-import { createNewError, ErrorWithStatus } from './error.js'
+import { createNewError, ApiError } from './error.js'
 import { baseLogger } from '../logger.js'
 import { Field } from '../models/fields.js'
 import { FieldNorm } from '../controllers/fields/index.js'
@@ -58,7 +58,7 @@ export const deleteFieldById = async (id: number) => {
     }
 }
 
-export const putFieldById = async (id: number, field: FieldNorm): Promise<Field | ErrorWithStatus> => {
+export const putFieldById = async (id: number, field: FieldNorm): Promise<Field | ApiError> => {
     try {
         const oldField = await Field.findByPk(id)
         if (oldField === null) {

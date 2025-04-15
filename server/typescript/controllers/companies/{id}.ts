@@ -1,5 +1,5 @@
 import { getCompanyById, deleteCompanyById, putCompanyById } from '../../services/companies.js'
-import { createNewError, ErrorWithStatus } from '../../services/error.js'
+import { createNewError, ApiError } from '../../services/error.js'
 import type { Request, Response } from 'express'
 import { normalizeCompany, createCompanyMeta, isCompanyNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
@@ -9,7 +9,7 @@ import { Meta } from '../../app.js'
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const result = await getCompanyById(Number(req.params.id))
-    if (result instanceof ErrorWithStatus) {
+    if (result instanceof ApiError) {
         res
         .status(result.status)
         .json({ 'status': result.status, 'message': result.message, 'errors': [] })
@@ -76,7 +76,7 @@ GET.apiSpec = {
 
 export const DELETE: Operation = async (req: Request, res: Response) => {
     const result = await deleteCompanyById(Number(req.params.id))
-    if (result instanceof ErrorWithStatus) {
+    if (result instanceof ApiError) {
         res
             .status(result.status)
             .json({ status: result.status, message: result.message, 'errors': [] })
@@ -129,7 +129,7 @@ export const PUT: Operation = async (req: Request, res: Response) => {
     if (isCompanyNorm(req.body)) {
         const oldCompanySearchResult = await getCompanyById(Number(req.params.id))
     
-        if (oldCompanySearchResult instanceof ErrorWithStatus) {
+        if (oldCompanySearchResult instanceof ApiError) {
             res
                 .status(oldCompanySearchResult.status)
                 .json({ status: oldCompanySearchResult.status, message: oldCompanySearchResult.message })
@@ -137,7 +137,7 @@ export const PUT: Operation = async (req: Request, res: Response) => {
             const oldCompanyWithMeta = createCompanyMeta(oldCompanySearchResult)
             if (oldCompanyWithMeta.etag === req.headers['if-match']) {
                 const updatedCompany = await putCompanyById(Number(req.params.id), req.body)
-                if (updatedCompany instanceof ErrorWithStatus) {
+                if (updatedCompany instanceof ApiError) {
                     res
                         .status(updatedCompany.status)
                         .json({ status: updatedCompany.status, message: updatedCompany.message })

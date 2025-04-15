@@ -2,10 +2,10 @@ import type { Request, Response } from 'express'
 import { getAllCompanies, addCompany } from '../../services/companies.js'
 import { DataWithMeta, Meta } from '../../app.js'
 import { Company } from '../../models/companies.js'
-import { sha256 } from '../../hasher.js'
+import { sha256 } from '../../tests/utils/hasher.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { baseLogger } from '../../logger.js'
-import { createNewError, ErrorWithStatus } from '../../services/error.js'
+import { ApiError, createNewError } from '../../services/error.js'
 
 const logger = baseLogger.extend('controllers:companies')
 
@@ -63,7 +63,7 @@ export function createCompanyMeta(company: Company): Meta {
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const allCompaniesSearchResult = await getAllCompanies()
-    if (allCompaniesSearchResult instanceof ErrorWithStatus) {
+    if (allCompaniesSearchResult instanceof ApiError) {
         logger('Error when getting all companies: ', allCompaniesSearchResult.message)
         res
             .status(allCompaniesSearchResult.status)
@@ -166,7 +166,7 @@ GET.apiSpec = {
 export const POST: Operation = async (req: Request, res: Response) => {
     if (isCompanyNorm(req.body)) {
         const newCompanySearchResult = await addCompany(req.body)
-        if (newCompanySearchResult instanceof ErrorWithStatus) {
+        if (newCompanySearchResult instanceof ApiError) {
             res
                 .status(newCompanySearchResult.status)
                 .json({ status: newCompanySearchResult.status, message: newCompanySearchResult.message })
