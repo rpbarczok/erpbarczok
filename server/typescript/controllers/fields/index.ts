@@ -4,7 +4,7 @@ import { Field } from '../../models/fields.js'
 import { getAllFields, addField } from '../../services/fields.js'
 import { Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
-import { createNewError, ApiError } from '../../services/error.js'
+import { ApiError } from '../../services/error.js'
 
 export interface FieldNorm {
     name: string
@@ -152,9 +152,10 @@ export const POST: Operation = async (req: Request, res: Response) => {
                 .end()
         }
     } else {
+        const newError = new ApiError(400)
         res
-        .status(400)
-        .json(createNewError(400))
+        .status(newError.status)
+        .json({status: newError.status, message: newError.status})
     }
 
 }

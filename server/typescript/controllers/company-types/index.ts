@@ -4,7 +4,7 @@ import { CompanyType } from '../../models/companyTypes.js'
 import { getAllCompanyTypes, addCompanyType } from '../../services/companyTypes.js'
 import { Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
-import { createNewError, ApiError } from '../../services/error.js'
+import { ApiError } from '../../services/error.js'
 
 
 export interface CompanyTypeNorm {
@@ -40,7 +40,7 @@ export const GET: Operation = async (req: Request, res: Response) => {
         res
             .status(allCompanyTypesSearchResult.status)
             .json({ status: allCompanyTypesSearchResult.status, message: allCompanyTypesSearchResult.message })
-    } else {
+    } else  {
         const allCompanyTypesWithMeta: DataWithMeta<CompanyTypeNorm>[] = allCompanyTypesSearchResult.map(row => combineCompanyTypeWithMeta(row))
         res
             .status(200)
@@ -148,10 +148,10 @@ export const POST: Operation = async (req: Request, res: Response) => {
                 .end()
         }
     } else {
-        const newError = createNewError(400)
+        const newError = new ApiError(400)
         res
         .status(newError.status)
-        .json({status: newError.status, message: newError.message})
+        .json({status: newError.status, message: newError.status})
     }
 
 

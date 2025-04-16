@@ -361,7 +361,7 @@ describe('/fields/ HTTP integration Tests', function () {
                 .send(fieldC)
                 .expect(412)
             expect(response.body.status).toBe(412)
-            expect(response.body.message).toMatch('Precondition failed')
+            expect(response.body.message).toMatch('precondition failed')
         })
     })
 

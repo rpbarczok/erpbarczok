@@ -5,7 +5,7 @@ import { Company } from '../../models/companies.js'
 import { sha256 } from '../../tests/utils/hasher.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { baseLogger } from '../../logger.js'
-import { ApiError, createNewError } from '../../services/error.js'
+import { ApiError } from '../../services/error.js'
 
 const logger = baseLogger.extend('controllers:companies')
 
@@ -34,7 +34,6 @@ export interface CompanyFK {
     www?: string | null
     companyTypeId: number
 }
-
 export function normalizeCompany(company: Company) {
     if (company.companyType) {
         const result: CompanyNorm = { name: company.name, companyType: company.companyType.name }
@@ -46,7 +45,7 @@ export function normalizeCompany(company: Company) {
         }
         return result
     } else {
-        throw createNewError(400)
+        throw new ApiError(400)
     }
 }
 
@@ -176,7 +175,7 @@ export const POST: Operation = async (req: Request, res: Response) => {
                 .end()
         }
     } else {
-        const newError = createNewError(400)
+        const newError = new ApiError(400)
         res
         .status(newError.status)
         .json({status: newError.status, message: newError.message})

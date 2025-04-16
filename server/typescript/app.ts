@@ -22,7 +22,7 @@ import { apiSpec } from './openapi.js'
 import { loadControllers, Operation } from './utils/apiSpecAssembler.js'
 import { jwtCheck } from './utils/auth.js'
 import { setDefaultValues } from './models/default-values.js'
-import { ErrorWithStatus } from './services/error.js'
+import { ApiErrorLike } from './services/error.js'
 
 export interface Meta {
     location: string
@@ -222,7 +222,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
     // add API error handler
     app.set('json spaces', 2)
     app.use(
-        (error: Partial<ErrorWithStatus>, req: Request, res: Response, _next: NextFunction) => {
+        (error: Partial<ApiErrorLike>, req: Request, res: Response, _next: NextFunction) => {
             logger('Error %o.', error)
             if (error.status) {
                 res.status(error.status)

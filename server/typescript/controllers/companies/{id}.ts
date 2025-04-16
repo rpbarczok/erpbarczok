@@ -1,5 +1,5 @@
 import { getCompanyById, deleteCompanyById, putCompanyById } from '../../services/companies.js'
-import { createNewError, ApiError } from '../../services/error.js'
+import { ApiError, isApiErrorLike } from '../../services/error.js'
 import type { Request, Response } from 'express'
 import { normalizeCompany, createCompanyMeta, isCompanyNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
@@ -11,8 +11,8 @@ export const GET: Operation = async (req: Request, res: Response) => {
     const result = await getCompanyById(Number(req.params.id))
     if (result instanceof ApiError) {
         res
-        .status(result.status)
-        .json({ 'status': result.status, 'message': result.message, 'errors': [] })
+            .status(result.status)
+            .json({ 'status': result.status, 'message': result.message, 'errors': [] })
     } else {
         const companyNorm = normalizeCompany(result)
         const metaHeader: Meta = createCompanyMeta(result)
@@ -75,15 +75,19 @@ GET.apiSpec = {
 }
 
 export const DELETE: Operation = async (req: Request, res: Response) => {
-    const result = await deleteCompanyById(Number(req.params.id))
-    if (result instanceof ApiError) {
-        res
-            .status(result.status)
-            .json({ status: result.status, message: result.message, 'errors': [] })
-    } else {
+    try {
+        await deleteCompanyById(Number(req.params.id))
         res
             .status(204)
             .end()
+    } catch (error) {
+        if (isApiErrorLike(error)) {
+            res
+                .status(error.status)
+                .json({ status: error.status, message: error.message })
+        } else {
+            throw error
+        }
     }
 }
 
@@ -128,7 +132,7 @@ DELETE.apiSpec = {
 export const PUT: Operation = async (req: Request, res: Response) => {
     if (isCompanyNorm(req.body)) {
         const oldCompanySearchResult = await getCompanyById(Number(req.params.id))
-    
+
         if (oldCompanySearchResult instanceof ApiError) {
             res
                 .status(oldCompanySearchResult.status)
@@ -149,18 +153,19 @@ export const PUT: Operation = async (req: Request, res: Response) => {
                 }
             }
             else {
+                const newError = new ApiError(412)
                 res
-                    .status(412)
-                    .json({ status: 412, message: 'Precondition failed', 'errors': [] })
+                    .status(newError.status)
+                    .json({ status: newError.status, message: newError.message })
             }
         }
     } else {
-        const newError = createNewError(400)
+        const newError = new ApiError(400)
         res
-        .status(newError.status)
-        .json({status: newError.status, message: newError.message})
+            .status(newError.status)
+            .json({ status: newError.status, message: newError.message })
     }
-    
+
 }
 
 

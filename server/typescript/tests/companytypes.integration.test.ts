@@ -361,7 +361,7 @@ describe('/company-types/ HTTP integration Tests', function () {
                 .send(companyTypeC)
                 .expect(412)
             expect(response.body.status).toBe(412)
-            expect(response.body.message).toMatch('Precondition failed')
+            expect(response.body.message).toMatch('precondition failed')
         })
     })
 

@@ -1,74 +1,110 @@
-import { createNewError, ApiError } from './error.js'
+import { ApiError, isApiErrorLike } from './error.js'
 import { baseLogger } from '../logger.js'
 import { Field } from '../models/fields.js'
 import { FieldNorm } from '../controllers/fields/index.js'
 
-const logger = baseLogger.extend('services:fields')
-
 export const getAllFields = async () => {
-    logger('Get all fields')
+    const logger = baseLogger.extend('getAllFields')
     try {
         const fields = await Field.findAll({ order: [['name', 'ASC']] })
         logger('Got all fields')
         return fields
     }
-    catch (error: unknown) {
-        logger('Error while getting all fields')
-        return createNewError(500, error)
+    catch (error) {
+        logger(error)
+        if (isApiErrorLike(error)) {
+            throw new ApiError(error.status, error.message)
+        } else {
+            throw error
+        }
     }
 }
 
 export const addField = async (field: FieldNorm) => {
+    const logger = baseLogger.extend('addField')
     const newField = {
         name: field.name
     }
     try {
         const addedField = await Field.create(newField)
+        logger('Added field.')
         return addedField
     } catch (error) {
-        return createNewError(500, error)
+        logger(error)
+        if (isApiErrorLike(error)) {
+            throw new ApiError(error.status, error.message)
+        } else {
+            throw error
+        }
     }
 }
 
 export const getFieldById = async (id: number) => {
+    const logger = baseLogger.extend('getFieldById')
     try {
         const field = await Field.findByPk(id)
         if (field === null) {
-            return createNewError(404)
+            const newError =new ApiError(404)
+            logger(newError)
+            throw newError
         } else {
+            logger(`Got field with id ${String(id)}`)
             return field
         }
     }
     catch (error) {
-        return createNewError(500, error)
+        logger(error)
+        if (isApiErrorLike(error)) {
+            throw new ApiError(error.status, error.message)
+        } else {
+            throw error
+        }
     }
 }
 
 export const deleteFieldById = async (id: number) => {
+    const logger = baseLogger.extend('deleteFieldById')
     try {
         const deletedRowsCount = await Field.destroy({ where: { id: id } })
         if (deletedRowsCount === 0) {
-            return createNewError(404)
+            const newError =new ApiError(404)
+            logger(newError)
+            throw newError
         } else {
+            logger(`Deleted field with ${String(id)}`)
             return
         }
     }
     catch (error) {
-        return createNewError(500, error)
+        logger(error)
+        if (isApiErrorLike(error)) {
+            throw new ApiError(error.status, error.message)
+        } else {
+            throw error
+        }
     }
 }
 
 export const putFieldById = async (id: number, field: FieldNorm): Promise<Field | ApiError> => {
+    const logger = baseLogger.extend('putFieldById')
     try {
         const oldField = await Field.findByPk(id)
         if (oldField === null) {
-            return createNewError(404)
+            const newError =new ApiError(404)
+            logger(newError)
+            throw newError
         } else {
             const updatedField = await oldField.update(field)
+            logger(`Updated field with id ${String(id)}`)
             return updatedField
         }
     }
     catch (error) {
-        return createNewError(500, error)
+        logger(error)
+        if (isApiErrorLike(error)) {
+            throw new ApiError(error.status, error.message)
+        } else {
+            throw error
+        }
     }
 }

@@ -588,7 +588,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .send(companyBA2)
                 .expect(412)
             expect(response.body.status).toBe(412)
-            expect(response.body.message).toMatch('Precondition failed')
+            expect(response.body.message).toMatch('precondition failed')
         })
 
         it('PUT /companies/{id}: remove name form existing company fails', async function () {
@@ -625,7 +625,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .expect(409)
             expect(response.body.status).toBe(409)
-            expect(response.body.message).toMatch('Conflict')
+            expect(response.body.message).toMatch('conflict')
         })
 
         it('DELETE /companies/{id} existing company fails as guest', async function () {

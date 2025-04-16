@@ -43,7 +43,7 @@ describe('Field Unit Tests', function () {
         })
 
         it('getFieldById(17) returns error', async function () {
-            await expect(getFieldById(17)).resolves.toEqual(
+            await expect(getFieldById(17)).rejects.toEqual(
                 expect.objectContaining({ status: 404, message: 'not found' })
             )
         })
@@ -76,7 +76,7 @@ describe('Field Unit Tests', function () {
         })
 
         it('putFieldById(17) returns error', async function () {
-            await expect(putFieldById(17, { 'name': 'Sonstiges' })).resolves.toEqual(
+            await expect(putFieldById(17, { 'name': 'Sonstiges' })).rejects.toEqual(
                 expect.objectContaining({ status: 404, message: 'not found' }
                 ))
         })
@@ -87,8 +87,8 @@ describe('Field Unit Tests', function () {
             await expect(deleteFieldById(1)).resolves.toBeUndefined()
         })
 
-        it('subsequent deleteFieldById(1) resolves to Error', async function () {
-            await expect(deleteFieldById(1)).resolves.toEqual(
+        it('subsequent deleteFieldById(1) rejects to Error', async function () {
+            await expect(deleteFieldById(1)).rejects.toEqual(
                 expect.objectContaining({ status: 404, message: 'not found' })
             )
         })

@@ -1,5 +1,5 @@
 import { getFieldById, deleteFieldById, putFieldById } from '../../services/fields.js'
-import { createNewError, ApiError } from '../../services/error.js'
+import { ApiError, isApiErrorLike } from '../../services/error.js'
 import type { Request, Response } from 'express'
 import { FieldNorm, normalizeField, createFieldMeta, isFieldNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
@@ -75,20 +75,24 @@ GET.apiSpec = {
 }
 
 export const DELETE: Operation = async (req: Request, res: Response) => {
-    const result = await deleteFieldById(Number(req.params.id))
-    if (result instanceof ApiError) {
-        res
-            .status(result.status)
-            .json(
-                {
-                    status: result.status,
-                    message: result.message,
-                    'errors': []
-                })
-    } else {
+    try {
+        await deleteFieldById(Number(req.params.id))
         res
             .status(204)
             .end()
+    } catch (error) {
+        if (isApiErrorLike(error)) {
+            res
+            .status(error.status)
+            .json(
+                {
+                    status: error.status,
+                    message: error.message,
+                })
+        } else {
+            throw error
+        }
+
     }
 
 }
@@ -138,35 +142,35 @@ export const PUT: Operation = async (req: Request, res: Response) => {
             .status(dbFieldSearchResult.status)
             .json({ status: dbFieldSearchResult.status, message: dbFieldSearchResult.message, 'errors': [] })
     } else {
-        
+
         if (isFieldNorm(req.body)) {
             const dbFieldMeta = createFieldMeta(dbFieldSearchResult)
             if (dbFieldMeta.etag === req.headers['if-match']) {
-                    const updatedField = await putFieldById(Number(req.params.id), req.body)
-                    if (updatedField instanceof ApiError) {
-                        res
-                            .status(updatedField.status)
-                            .json({ status: updatedField.status, message: updatedField.message, 'errors': [] })
-                    } else {
-                        const fieldHeader = createFieldMeta(updatedField)
-                        res
-                            .status(204)
-                            .set(fieldHeader)
-                            .end()
-                    }
+                const updatedField = await putFieldById(Number(req.params.id), req.body)
+                if (updatedField instanceof ApiError) {
+                    res
+                        .status(updatedField.status)
+                        .json({ status: updatedField.status, message: updatedField.message, 'errors': [] })
+                } else {
+                    const fieldHeader = createFieldMeta(updatedField)
+                    res
+                        .status(204)
+                        .set(fieldHeader)
+                        .end()
+                }
             } else {
-                const newError = createNewError(412)
+                const newError = new ApiError(412)
                 res
                     .status(newError.status)
-                    .json({status: newError.status, message: newError.message})
+                    .json({ status: newError.status, message: newError.message })
             }
         } else {
-            const newError = createNewError(400)
+            const newError = new ApiError(412)
             res
                 .status(newError.status)
-                .json({status: newError.status, message: newError.message})
+                .json({ status: newError.status, message: newError.message })
         }
-        
+
     }
 }
 

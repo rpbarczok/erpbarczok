@@ -1,5 +1,5 @@
 import { getCompanyTypeById, deleteCompanyTypeById, putCompanyTypeById } from '../../services/companyTypes.js'
-import { createNewError, ApiError } from '../../services/error.js'
+import { ApiError, isApiErrorLike } from '../../services/error.js'
 import type { Request, Response } from 'express'
 import { CompanyTypeNorm, normalizeCompanyType, createCompanyTypeMeta, isCompanyTypeNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
@@ -79,13 +79,24 @@ export const DELETE: Operation = async (req: Request, res: Response) => {
         }
     })
     if (count === 0) {
-        const result = await deleteCompanyTypeById(Number(req.params.id))
-        if (result instanceof ApiError) {
-            res.status(result.status).json({ status: result.status, message: result.message })
+        try {
+            await deleteCompanyTypeById(Number(req.params.id))
+            res.status(204).end()
+        } catch (error) {
+            if (isApiErrorLike(error)) {
+                res
+                .status(error.status)
+                .json({ status: error.status, message: error.message })
+            } else {
+                throw error
+            }
+
         }
-        res.status(204).end()
     } else {
-        res.status(409).json({ status: 409, message: 'Conflict' })
+        const newError = new ApiError(409)
+        res.
+        status(newError.status).
+        json({ status: newError.status, message: newError.message })
     }
 
 }
@@ -162,7 +173,7 @@ export const PUT: Operation = async (req: Request, res: Response) => {
                 }
 
             } else {
-                const newError = createNewError(412)
+                const newError = new ApiError(412)
                 res
                     .status(newError.status)
                     .json({ status: newError.status, message: newError.message })
@@ -170,7 +181,7 @@ export const PUT: Operation = async (req: Request, res: Response) => {
         }
 
     } else {
-        const newError = createNewError(400)
+        const newError = new ApiError(400)
         res
             .status(newError.status)
             .json({ status: newError.status, message: newError.message })
