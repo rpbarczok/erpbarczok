@@ -23,7 +23,7 @@ export const CompaniesSMList: FunctionComponent<CompaniesSMListProps> = (
         activeCompany, 
         changeActive }) => {
 
-    const List = () => {
+    const list = () => {
         if (filteredCompaniesList.length === 0) {
             return (
                 <p>Keine Unternehmen gefunden!</p>
@@ -43,6 +43,6 @@ export const CompaniesSMList: FunctionComponent<CompaniesSMListProps> = (
 
     return (
         <ListGroup className='scrollBox d-none d-sm-block' style={{ marginTop: '10px' }} id='company-list' >
-            <List />
+            {list()}
         </ListGroup >)
         }

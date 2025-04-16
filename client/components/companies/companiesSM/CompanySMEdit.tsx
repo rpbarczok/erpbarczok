@@ -1,4 +1,3 @@
-import { apiClient } from '../../../utils/openAPIClientAxios.js'
 import { Button, ButtonGroup, Col, Form, Row } from 'react-bootstrap'
 import { ChangedCompanyAction } from '../utils/changedCompanyReducer.js'
 import { Company } from '../CompanyPageBasis.js'
@@ -6,10 +5,8 @@ import { CompanyInput } from '../CompanyInput.js'
 import { CompanyType } from '../../resources/companyTypes/CompanyTypesInput.js'
 import { DataWithMeta } from '../../Pages.js'
 import { hasPermission } from '../../../utils/hasPermission.js'
-import { LoadingContext } from '../../../utils/loadingContext.js'
 import { Note } from '../../notifiers/Notes.js'
-import { PermissionContext, updateUserPermissions } from '../../../utils/permissionContext.js'
-import { useAuth } from 'react-oidc-context'
+import { PermissionContext } from '../../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../../utils/contextUndefined.js'
 import { FunctionComponent, useState } from 'react'
 
@@ -21,61 +18,31 @@ interface CompanySMEditProps {
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
     changeActive: (active: number) => Promise<void>
+    submitChangedCompany: () => Promise<Note>
 }
 
-    export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({ 
-        company, 
-        companyTypesList, 
-        setIsCompanyChanged, 
-        addEditNote, 
-        changedCompany, 
-        changedCompanyDispatch, 
-        changeActive }) => {
+export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({
+    company,
+    companyTypesList,
+    addEditNote,
+    changedCompany,
+    changedCompanyDispatch,
+    submitChangedCompany }) => {
     const [validated, setValidated] = useState<boolean>(false)
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
-    const auth = useAuth()
-    const token = auth.user?.access_token
+    const { permissions } = useContextThrowUndefined(PermissionContext)
     const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
         company.data.abbr === changedCompany.data.abbr &&
         company.data.www === changedCompany.data.www &&
         company.data.companyType === changedCompany.data.companyType)
-        
-    const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e: React.FormEvent<HTMLFormElement>) => {
-        const form = e.currentTarget
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, form: HTMLFormElement) => {
         e.preventDefault()
-        if (token) {
-            if (!form.checkValidity()) {
-                setValidated(true)
-            } else {
-                setIsLoading(true)
-                try {
-                    const client = await apiClient
-                    const result = await client.putCompanyById({ id: changedCompany.meta.location, 'if-match': changedCompany.meta.etag },
-                        changedCompany.data,
-                        { headers: { Authorization: `Bearer ${token}` } })
-                    setIsLoading(false)
-                    const note: Note = {
-                        variant: 'success',
-                        message: `Unternehmen erfolgreich überarbeitet.`,
-                    }
-                    addEditNote(note)
-                    await changeActive(changedCompany.meta.location)
-                    setIsCompanyChanged(true)
-                    if (typeof result.headers.permissions === 'string') {
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                    } else {
-                        throw Error('Permissions header should be type string.')
-                    }
-                } catch (error) {
-                    setIsLoading(false)
-                    const note: Note = {
-                        variant: 'danger',
-                        message: `Fehler beim Speichern der Unternehmensdaten: ${error instanceof Error ? error.message : String(error)}`,
-                    }
-                    addEditNote(note)
-                }
-            }
+
+        if (!form.checkValidity()) {
+            setValidated(true)
+        } else {            
+            const newNote = await submitChangedCompany()
+            addEditNote(newNote)
         }
     }
 
@@ -90,7 +57,7 @@ interface CompanySMEditProps {
         <Col>
             <Row>
                 <Col id='company' sm={12} lg={6} xl={5} >
-                    <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e)}>
+                    <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, e.currentTarget)}>
                         {hasPermission(['user'], permissions)
                             ?
                             <Row className='d-none d-sm-block'>

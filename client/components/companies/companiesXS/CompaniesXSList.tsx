@@ -3,7 +3,7 @@ import { Company } from '../CompanyPageBasis.js'
 import { CompanyType } from '../../resources/companyTypes/CompanyTypesInput.js'
 import { CompanyXSEdit } from './CompanyXSEdit.js'
 import { DataWithMeta } from '../../Pages.js'
-import { ListGroup} from 'react-bootstrap'
+import { ListGroup } from 'react-bootstrap'
 import { Note } from '../../notifiers/Notes.js'
 import { FunctionComponent, useState } from 'react'
 
@@ -14,19 +14,21 @@ interface CompanyXSListProps {
     activeCompany: DataWithMeta<Company>
     changeActive: (active: number) => Promise<void>
     companyTypesList: DataWithMeta<CompanyType>[]
-    setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     addEditNote: (note: Note) => void
+    submitChangedCompany: () => Promise<Note>
+    deleteCompany: () => Promise<Note | undefined>
 }
 
 export const CompaniesXSList: FunctionComponent<CompanyXSListProps> = (
-    { filteredCompaniesList, 
-        changedCompany, 
-        changedCompanyDispatch, 
-        activeCompany, 
-        companyTypesList, 
-        setIsCompanyChanged, 
-        changeActive, 
-        addEditNote }) => {
+    { filteredCompaniesList,
+        changedCompany,
+        changedCompanyDispatch,
+        activeCompany,
+        companyTypesList,
+        changeActive,
+        addEditNote,
+        submitChangedCompany,
+        deleteCompany }) => {
 
     const [show, setShow] = useState(false)
 
@@ -35,10 +37,8 @@ export const CompaniesXSList: FunctionComponent<CompanyXSListProps> = (
         await changeActive(location)
         setShow(true)
     }
-
-
+    
     const List = () => {
-
         return filteredCompaniesList.map((element) => {
             return (
                 <ListGroup.Item key={element.meta.location} onClick={(e) => handleOpenModal(e, element.meta.location)}>
@@ -48,8 +48,6 @@ export const CompaniesXSList: FunctionComponent<CompanyXSListProps> = (
         }
         )
     }
-
-
 
     return (
         <>
@@ -62,9 +60,9 @@ export const CompaniesXSList: FunctionComponent<CompanyXSListProps> = (
                     show={show} setShow={setShow}
                     companyTypesList={companyTypesList}
                     addEditNote={addEditNote}
-                    setIsCompanyChanged={setIsCompanyChanged}
                     changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-                    activeCompany={activeCompany} changeActive={changeActive}
+                    activeCompany={activeCompany}
+                    submitChangedCompany={submitChangedCompany} deleteCompany={deleteCompany}
                 />
             </div>
         </>

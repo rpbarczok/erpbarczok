@@ -9,7 +9,7 @@ import { removeStringBeforeLastDigits } from "utils/removeStringBeforeLastDigits
 import { DataWithMeta } from "components/Pages.js"
 import { ChangedCompanyAction } from "./changedCompanyReducer.js"
 
-export function useActiveCompany(changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>): [DataWithMeta<Company>, (active?: number) => Promise<void> ] {
+export function useActiveCompany(changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>): [DataWithMeta<Company>, (active?: number) => Promise<void>] {
     const [activeCompany, setActiveCompany] = useState(emptyCompany)
     const auth = useAuth()
     const token = auth.user?.access_token
@@ -34,11 +34,11 @@ export function useActiveCompany(changedCompanyDispatch: React.ActionDispatch<[a
                     }
                     const company = { 'meta': { 'location': Number(removeStringBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
                     setActiveCompany(company)
-                    changedCompanyDispatch({type: 'companyChange', newValue: company})
+                    changedCompanyDispatch({ type: 'companyChange', newValue: company })
                     if (typeof result.headers.permissions === 'string') {
                         updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                     } else {
-                        throw Error('Permissions header should be type string.')
+                        throw new Error("Permission header must be type 'string'")
                     }
                 } catch (error) {
                     setIsLoading(false)
@@ -48,7 +48,7 @@ export function useActiveCompany(changedCompanyDispatch: React.ActionDispatch<[a
         } else {
             throw Error('Bitte authentifizieren.')
         }
-        
+
 
     }
 

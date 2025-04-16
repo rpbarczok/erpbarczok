@@ -54,7 +54,9 @@ export const addCompany = async (company: CompanyNorm) => {
             }
         }
     } else {
-        throw new ApiError(404)
+        const newError = new ApiError(404)
+        logger(newError)
+        throw newError
     }
 }
 

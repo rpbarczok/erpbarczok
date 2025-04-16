@@ -35,6 +35,7 @@ describe('Company Page Test', function () {
                             setIsCompanyChanged={noop}
                             addEditNote={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
+                            changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
                 )
@@ -55,6 +56,7 @@ describe('Company Page Test', function () {
                             setIsCompanyChanged={noop}
                             addEditNote={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
+                            changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
                 )
@@ -78,6 +80,7 @@ describe('Company Page Test', function () {
                             setIsCompanyChanged={noop}
                             addEditNote={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
+                            changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
                 )
@@ -98,6 +101,7 @@ describe('Company Page Test', function () {
                             setIsCompanyChanged={noop}
                             addEditNote={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
+                            changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
                 )
@@ -119,6 +123,7 @@ describe('Company Page Test', function () {
                             setIsCompanyChanged={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
                             activeCompany={companyTestList[0]}
+                            changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
                 )
@@ -139,6 +144,7 @@ describe('Company Page Test', function () {
                             setIsCompanyChanged={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
                             activeCompany={companyTestList[0]}
+                            changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
                 )
@@ -160,7 +166,7 @@ describe('Company Page Test', function () {
                             addEditNote={noop}
                             setIsCompanyChanged={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
-                            activeCompany={companyTestList[0]}
+                            activeCompany={companyTestList[0]} changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
                 )
@@ -181,7 +187,7 @@ describe('Company Page Test', function () {
                             addEditNote={noop}
                             setIsCompanyChanged={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
-                            activeCompany={companyTestList[0]}
+                            activeCompany={companyTestList[0]} changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
                 )
@@ -199,7 +205,7 @@ describe('Company Page Test', function () {
                             addEditNote={noop}
                             setIsCompanyChanged={noop}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
-                            activeCompany={companyTestList[0]}
+                            activeCompany={companyTestList[0]} changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
                 )
@@ -218,7 +224,7 @@ describe('Company Page Test', function () {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
                         <CompaniesSMList
-                            filteredCompanies={companyTestList}
+                            filteredCompaniesList={companyTestList}
                             activeCompany={companyTestList[0]} changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
@@ -238,7 +244,7 @@ describe('Company Page Test', function () {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
                         <CompaniesSMList
-                            filteredCompanies={companyTestList}
+                            filteredCompaniesList={companyTestList}
                             activeCompany={companyTestList[0]} changeActive={asyncNoop}
                         />
                     </PermissionContext.Provider >
@@ -254,7 +260,7 @@ describe('Company Page Test', function () {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
                         <CompaniesXSList
-                            filteredCompanies={companyTestList}
+                            filteredCompaniesList={companyTestList}
                             changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
                             changeActive={asyncNoop} activeCompany={companyTestList[0]}
                             companyTypesList={companyTypesTestList}
@@ -277,7 +283,7 @@ describe('Company Page Test', function () {
                 render(
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
                         <CompaniesXSList
-                            filteredCompanies={emptyList}
+                            filteredCompaniesList={emptyList}
                             changedCompany={emptyCompany} changedCompanyDispatch={noop}
                             changeActive={asyncNoop} activeCompany={emptyCompany}
                             companyTypesList={companyTypesTestList}
@@ -334,7 +340,7 @@ describe('Company Page Test', function () {
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                     <AddCompanyModal
                         changedCompany={emptyCompany}
-                        changeActive={noop}
+                        changeActive={asyncNoop}
                         addEditNote={noop}
                         setIsCompanyChanged={noop}
                         setIsNew={noop}
@@ -356,7 +362,7 @@ describe('Company Page Test', function () {
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                     <AddCompanyModal
                         changedCompany={emptyCompany}
-                        changeActive={noop}
+                        changeActive={asyncNoop}
                         addEditNote={noop}
                         setIsCompanyChanged={noop}
                         setIsNew={noop}
@@ -380,7 +386,7 @@ describe('Company Page Test', function () {
                 <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                     <AddCompanyModal
                         changedCompany={emptyCompany}
-                        changeActive={noop}
+                        changeActive={asyncNoop}
                         addEditNote={noop}
                         setIsCompanyChanged={noop}
                         setIsNew={noop}
@@ -407,9 +413,9 @@ describe('Company Page Test', function () {
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
                         <CompanySMPage
                             search={''} setSearch={noop}
-                            filteredCompanies={companyTestList}
+                            filteredCompaniesList={companyTestList}
                             activeCompany={companyTestList[0]}
-                            changeActive={noop}
+                            changeActive={asyncNoop}
                             companyTypesList={companyTypesTestList}
                             setIsCompanyChanged={noop}
                             setIsNew={noop}
@@ -430,9 +436,9 @@ describe('Company Page Test', function () {
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                         <CompanySMPage
                             search={''} setSearch={noop}
-                            filteredCompanies={companyTestList}
+                            filteredCompaniesList={companyTestList}
                             activeCompany={companyTestList[0]}
-                            changeActive={noop}
+                            changeActive={asyncNoop}
                             companyTypesList={companyTypesTestList}
                             setIsCompanyChanged={noop}
                             setIsNew={noop}
@@ -456,7 +462,7 @@ describe('Company Page Test', function () {
                     <PermissionContext.Provider value={{ permissions: ['public'], setPermissions: noop }}>
                         <CompanyXSPage
                             search={''} setSearch={noop}
-                            filteredCompanies={companyTestList}
+                            filteredCompaniesList={companyTestList}
                             activeCompany={companyTestList[0]}
                             changeActive={asyncNoop}
                             companyTypesList={companyTypesTestList}
@@ -476,7 +482,7 @@ describe('Company Page Test', function () {
                     <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                         <CompanyXSPage
                             search={''} setSearch={noop}
-                            filteredCompanies={companyTestList}
+                            filteredCompaniesList={companyTestList}
                             activeCompany={companyTestList[0]}
                             changeActive={asyncNoop}
                             companyTypesList={companyTypesTestList}

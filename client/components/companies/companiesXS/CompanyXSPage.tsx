@@ -8,7 +8,7 @@ import { CompanyXSSearch } from './CompanyXSSearch.js'
 import { DataWithMeta } from '../../Pages.js'
 import { hasPermission } from '../../../utils/hasPermission.js'
 import { Heading } from '../../headings/Heading.js'
-import { Notes } from '../../notifiers/Notes.js'
+import { Note, Notes } from '../../notifiers/Notes.js'
 import { PermissionContext } from '../../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../../utils/contextUndefined.js'
 import { useNotifier } from '../../notifiers/useNotifier.js'
@@ -21,26 +21,27 @@ interface CompanyXSPageProps {
     activeCompany: DataWithMeta<Company>
     changeActive: (active: number) => Promise<void>
     companyTypesList: DataWithMeta<CompanyType>[]
-    setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
-    setIsNew: React.Dispatch<React.SetStateAction<boolean>>
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
+    submitChangedCompany: () => Promise<Note>
+    submitNewCompany: () => Promise<Note>
+    deleteCompany: () => Promise<Note | undefined>
 }
 
 export const CompanyXSPage: FunctionComponent<CompanyXSPageProps> = ({
-    search,
-    setSearch,
+    search, setSearch,
     filteredCompaniesList,
     activeCompany,
     changeActive,
     companyTypesList,
-    setIsCompanyChanged,
-    setIsNew,
     changedCompany,
-    changedCompanyDispatch }) => {
+    changedCompanyDispatch,
+    submitChangedCompany,
+    submitNewCompany,
+    deleteCompany }) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
-    const {permissions} = useContextThrowUndefined(PermissionContext)
+    const { permissions } = useContextThrowUndefined(PermissionContext)
 
     return (
 
@@ -48,22 +49,21 @@ export const CompanyXSPage: FunctionComponent<CompanyXSPageProps> = ({
             <Heading title='Stammdaten: Kunden, Lieferanten, Spediteure' cssClass='stamm' />
             <Row style={{ margin: '10px 3px 0 3px' }}>
                 {hasPermission(['user'], permissions) ? <CompanyAdd
-                    changeActive={changeActive}
                     addEditNote={addEditNote}
-                    setIsNew={setIsNew}
                     companyTypesList={companyTypesList}
-                    setIsCompanyChanged={setIsCompanyChanged}
-                /> : '' }
+                    submitNewCompany={submitNewCompany}
+                /> : ''}
             </Row>
-            <Notes notes={editNotes} removeNote={removeEditNote}/>
+            <Notes notes={editNotes} removeNote={removeEditNote} />
             <CompanyXSSearch search={search} setSearch={setSearch} />
             <CompaniesXSList
                 filteredCompaniesList={filteredCompaniesList}
                 changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                 changeActive={changeActive} activeCompany={activeCompany}
                 companyTypesList={companyTypesList}
-                setIsCompanyChanged={setIsCompanyChanged}
                 addEditNote={addEditNote}
+                submitChangedCompany={submitChangedCompany}
+                deleteCompany={deleteCompany}
             />
         </Col>
     )

@@ -6,32 +6,25 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { apiClient } from '../../utils/openAPIClientAxios.js'
+
 import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
 import { ChangedCompanyAction, changedCompanyReducer } from './utils/changedCompanyReducer.js'
 import { Company, emptyCompany } from './CompanyPageBasis.jsx'
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../Pages.jsx'
 import { CompanyInput } from './CompanyInput.jsx'
-import { LoadingContext } from '../../utils/loadingContext.js'
 import { Note, Notes } from '../notifiers/Notes.jsx'
-import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
-import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLastDigits.js'
-import { useAuth } from 'react-oidc-context'
-import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
-import { useReducer, useState } from 'react'
+import { FunctionComponent, useReducer, useState } from 'react'
 
-interface CompanyAddComponent {
-    changeActive: (active: number) => Promise<void>
+interface CompanyAddProps {
     addEditNote: (note: Note) => void
-    setIsNew: React.Dispatch<React.SetStateAction<boolean>>
     companyTypesList: DataWithMeta<CompanyType>[]
-    setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
+    submitNewCompany: () => Promise<Note>
 }
 
-export const CompanyAdd = ({ changeActive, addEditNote, setIsNew, setIsCompanyChanged, companyTypesList }: CompanyAddComponent) => {
-    
+export const CompanyAdd: FunctionComponent<CompanyAddProps> = ({  addEditNote,companyTypesList, submitNewCompany }) => {
+
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
     const [newCompanyClick, setNewCompanyClick] = useState(0)
     const [show, setShow] = useState(false)
@@ -48,51 +41,41 @@ export const CompanyAdd = ({ changeActive, addEditNote, setIsNew, setIsCompanyCh
             <Button variant='outline-primary' onClick={handleShow}>Hinzufügen</Button>
             <AddCompanyModal
                 changedCompany={changedCompany}
-                changeActive={changeActive}
                 addEditNote={addEditNote}
-                setIsCompanyChanged={setIsCompanyChanged}
-                setIsNew={setIsNew}
                 show={show}
                 setShow={setShow}
                 newCompanyClick={newCompanyClick}
                 changedCompanyDispatch={changedCompanyDispatch}
                 companyTypesList={companyTypesList}
+                submitNewCompany={submitNewCompany}
             />
         </>
     )
 }
 
-interface AddCompanyModalComponent {
+interface AddCompanyModalProps {
     changedCompany: DataWithMeta<Company>
-    changeActive: (active: number) => Promise<void>
     addEditNote: (note: Note) => void
-    setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
-    setIsNew: React.Dispatch<React.SetStateAction<boolean>>
     show: boolean
     setShow: React.Dispatch<React.SetStateAction<boolean>>
     newCompanyClick: number
     companyTypesList: DataWithMeta<CompanyType>[]
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
+    submitNewCompany: () => Promise<Note>
 }
 
-export const AddCompanyModal = ({
+export const AddCompanyModal: FunctionComponent<AddCompanyModalProps> = ({
     changedCompany,
-    changeActive,
     addEditNote,
-    setIsCompanyChanged,
-    setIsNew,
     show,
     setShow,
     newCompanyClick,
     companyTypesList,
-    changedCompanyDispatch }: AddCompanyModalComponent) => {
+    changedCompanyDispatch,
+    submitNewCompany }) => {
     const [validated, setValidated] = useState<boolean>(false)
     const [addNotes, addAddNote, removeAddNote] = useNotifier()
-    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
 
-    const auth = useAuth()
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-    const token = auth.user?.access_token
 
     const handleClose: React.MouseEventHandler<HTMLButtonElement> = (e) => {
         e.preventDefault()
@@ -100,46 +83,22 @@ export const AddCompanyModal = ({
         setShow(false)
     }
 
-    const handleSubmitAdd = async (e: React.FormEvent<HTMLFormElement>) => {
-        const form = e.currentTarget
+    const handleSubmitAdd = async (e: React.FormEvent<HTMLFormElement>, form: HTMLFormElement) => {
         e.preventDefault()
-        if (token) {
-            if (!form.checkValidity()) {
-                setValidated(true)
+
+        if (!form.checkValidity()) {
+            setValidated(true)
+        } else {
+
+            const newNote = await submitNewCompany()
+
+            if (newNote.variant === 'success') {
+                setShow(false)
+                addAddNote(newNote)
             } else {
-                setIsLoading(true)
-                try {
-                    const client = await apiClient
-                    const result = await client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
-                    setIsLoading(false)
-                    if (typeof result.headers.location === 'string') {
-                        await changeActive(Number(removeStringBeforeLastDigits(result.headers.location)))
-                    } else {
-                        throw Error('Location header should be type string.')
-                    }
-                    const note: Note = {
-                        message: `Neues Unternehmen erfolgreich erstellt.`,
-                        variant: 'success',
-                    }
-                    addEditNote(note)
-                    if (typeof result.headers.permissions === 'string') {
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                    } else {
-                        throw Error('Permission header should be type string.')
-                    }
-                    setIsCompanyChanged(true)
-                    setIsNew(true)
-                    setShow(false)
-                }
-                catch (error) {
-                    setIsLoading(false)
-                    const note: Note = {
-                        variant: 'danger',
-                        message: `Fehler bei Erstellung des neuen Unternehmens: ${error instanceof Error ? error.message : String(error)}`,
-                    }
-                    addAddNote(note)
-                }
+                addEditNote(newNote)
             }
+
         }
     }
 
@@ -149,7 +108,7 @@ export const AddCompanyModal = ({
         onHide={() => setShow(false)}
         backdrop='static'
         size='lg'>
-        <Form noValidate validated={validated} onSubmit={(e) => handleSubmitAdd(e)}>
+        <Form noValidate validated={validated} onSubmit={(e) => handleSubmitAdd(e, e.currentTarget)}>
             <Modal.Header closeButton>
                 <Modal.Title>Neues Unternehmen hinzufügen</Modal.Title>
             </Modal.Header>

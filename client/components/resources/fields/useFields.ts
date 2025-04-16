@@ -40,7 +40,7 @@ export function useFields(): [DataWithMeta<Field>[], React.Dispatch<React.SetSta
                         if (typeof result.headers.permissions === 'string') {
                             updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                         } else {
-                            throw Error('Permissions header should be type string.')
+                            throw new Error("Permission header must be type 'string'")
                         }
                     }
                 } else {
