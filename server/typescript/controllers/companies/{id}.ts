@@ -1,26 +1,29 @@
 import { getCompanyById, deleteCompanyById, putCompanyById } from '../../services/companies.js'
-import { ApiError, isApiErrorLike } from '../../services/error.js'
-import type { Request, Response } from 'express'
+import { ApiError } from '../controllersError.js'
+import type { NextFunction, Request, Response } from 'express'
 import { normalizeCompany, createCompanyMeta, isCompanyNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { Meta } from '../../app.js'
+import { AssociationNotFoundError, NotFoundError } from '../../services/servicesError.js'
 
-
-
-export const GET: Operation = async (req: Request, res: Response) => {
-    const result = await getCompanyById(Number(req.params.id))
-    if (result instanceof ApiError) {
-        res
-            .status(result.status)
-            .json({ 'status': result.status, 'message': result.message, 'errors': [] })
-    } else {
+export const GET: Operation = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await getCompanyById(Number(req.params.id))
         const companyNorm = normalizeCompany(result)
         const metaHeader: Meta = createCompanyMeta(result)
         res
             .status(200)
             .set(metaHeader)
             .json(companyNorm)
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            next(new ApiError(404, error.message))
+            return
+        } else {
+            throw error
+        }
     }
+
 }
 
 GET.apiSpec = {
@@ -74,17 +77,16 @@ GET.apiSpec = {
     }
 }
 
-export const DELETE: Operation = async (req: Request, res: Response) => {
+export const DELETE: Operation = async (req: Request, res: Response, next: NextFunction) => {
     try {
         await deleteCompanyById(Number(req.params.id))
         res
             .status(204)
             .end()
     } catch (error) {
-        if (isApiErrorLike(error)) {
-            res
-                .status(error.status)
-                .json({ status: error.status, message: error.message })
+        if (error instanceof NotFoundError) {
+            next(new ApiError(404, error.message))
+            return
         } else {
             throw error
         }
@@ -129,43 +131,33 @@ DELETE.apiSpec = {
     }
 }
 
-export const PUT: Operation = async (req: Request, res: Response) => {
+export const PUT: Operation = async (req: Request, res: Response, next: NextFunction) => {
     if (isCompanyNorm(req.body)) {
-        const oldCompanySearchResult = await getCompanyById(Number(req.params.id))
-
-        if (oldCompanySearchResult instanceof ApiError) {
-            res
-                .status(oldCompanySearchResult.status)
-                .json({ status: oldCompanySearchResult.status, message: oldCompanySearchResult.message })
-        } else {
+        try {
+            const oldCompanySearchResult = await getCompanyById(Number(req.params.id))
             const oldCompanyWithMeta = createCompanyMeta(oldCompanySearchResult)
+
             if (oldCompanyWithMeta.etag === req.headers['if-match']) {
                 const updatedCompany = await putCompanyById(Number(req.params.id), req.body)
-                if (updatedCompany instanceof ApiError) {
-                    res
-                        .status(updatedCompany.status)
-                        .json({ status: updatedCompany.status, message: updatedCompany.message })
-                } else {
-                    const metaHeader = createCompanyMeta(updatedCompany)
-                    res.status(204)
-                        .set(metaHeader)
-                        .end()
-                }
+                const metaHeader = createCompanyMeta(updatedCompany)
+                res.status(204)
+                    .set(metaHeader)
+                    .end()
             }
             else {
-                const newError = new ApiError(412)
-                res
-                    .status(newError.status)
-                    .json({ status: newError.status, message: newError.message })
+                next(new ApiError(412))
+                return
             }
+        } catch (error) {
+            if (error instanceof NotFoundError || error instanceof AssociationNotFoundError ) {
+                next(new ApiError(404, error.message))
+                return
+            }
+            throw error
         }
     } else {
-        const newError = new ApiError(400)
-        res
-            .status(newError.status)
-            .json({ status: newError.status, message: newError.message })
+        next(new ApiError(400))
     }
-
 }
 
 

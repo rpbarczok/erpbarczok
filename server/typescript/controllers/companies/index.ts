@@ -1,11 +1,12 @@
-import type { Request, Response } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 import { getAllCompanies, addCompany } from '../../services/companies.js'
 import { DataWithMeta, Meta } from '../../app.js'
 import { Company } from '../../models/companies.js'
 import { sha256 } from '../../tests/utils/hasher.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { baseLogger } from '../../logger.js'
-import { ApiError } from '../../services/error.js'
+import { ApiError } from '../controllersError.js'
+import { AssociationNotFoundError } from '../../services/servicesError.js'
 
 const logger = baseLogger.extend('controllers:companies')
 
@@ -45,7 +46,7 @@ export function normalizeCompany(company: Company) {
         }
         return result
     } else {
-        throw new ApiError(400)
+        throw new Error('Company.companyType must not be empty.')
     }
 }
 
@@ -62,19 +63,11 @@ export function createCompanyMeta(company: Company): Meta {
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const allCompaniesSearchResult = await getAllCompanies()
-    if (allCompaniesSearchResult instanceof ApiError) {
-        logger('Error when getting all companies: ', allCompaniesSearchResult.message)
-        res
-            .status(allCompaniesSearchResult.status)
-            .json({ status: allCompaniesSearchResult.status, message: allCompaniesSearchResult.message })
-    } else {
-        logger('getAllCompanies: %j.', allCompaniesSearchResult)
-
-        const allCompaniesWithMeta: DataWithMeta<CompanyNorm>[] = allCompaniesSearchResult.map((row) => (combineCompanyWithMeta(row)))
-        res
-            .status(200)
-            .json(allCompaniesWithMeta)
-    }
+    logger('getAllCompanies: %j.', allCompaniesSearchResult)
+    const allCompaniesWithMeta: DataWithMeta<CompanyNorm>[] = allCompaniesSearchResult.map((row) => (combineCompanyWithMeta(row)))
+    res
+        .status(200)
+        .json(allCompaniesWithMeta)
 }
 
 GET.apiSpec = {
@@ -162,27 +155,27 @@ GET.apiSpec = {
     }
 }
 
-export const POST: Operation = async (req: Request, res: Response) => {
+export const POST: Operation = async (req: Request, res: Response, next: NextFunction) => {
     if (isCompanyNorm(req.body)) {
-        const newCompanySearchResult = await addCompany(req.body)
-        if (newCompanySearchResult instanceof ApiError) {
-            res
-                .status(newCompanySearchResult.status)
-                .json({ status: newCompanySearchResult.status, message: newCompanySearchResult.message })
-        } else {
+        try {
+            const newCompanySearchResult = await addCompany(req.body)
             res.status(204)
                 .set(createCompanyMeta(newCompanySearchResult))
                 .end()
+        } catch (error) {
+            if (error instanceof AssociationNotFoundError) {
+                next(new ApiError(400, error.message))
+                return
+            } else {
+                throw error
+            }
         }
     } else {
-        const newError = new ApiError(400)
-        res
-        .status(newError.status)
-        .json({status: newError.status, message: newError.message})
+        next(new ApiError(400))
+        return
     }
-
-
 }
+
 POST.apiSpec = {
     'summary': 'Create new company',
     'description': 'POST request for a new company, response new id',

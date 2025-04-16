@@ -9,7 +9,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import { baseLogger } from '../logger.js'
 import { CompanyType } from '../models/companyTypes.js'
 import { CompanyTypeNorm } from '../controllers/company-types/index.js'
-import { ApiError, isApiErrorLike } from './error.js'
+import { ApiError, isApiErrorLike } from '../controllers/controllersError.js'
 
 export const getAllCompanyTypes = async () => {
     const logger = baseLogger.extend('getAllCompanyTypes')

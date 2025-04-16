@@ -1,4 +1,4 @@
-import { ApiError, isApiErrorLike } from './error.js'
+import { ApiError, isApiErrorLike } from '../controllers/controllersError.js'
 import { baseLogger } from '../logger.js'
 import { Field } from '../models/fields.js'
 import { FieldNorm } from '../controllers/fields/index.js'

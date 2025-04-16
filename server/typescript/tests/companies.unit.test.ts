@@ -68,7 +68,7 @@ describe('Company Unit Tests', function () {
 
         it('getCompanyById(17) returns error', async function () {
             await expect(getCompanyById(17)).rejects.toEqual(
-                expect.objectContaining({status: 404, message: 'not found'})
+                expect.objectContaining({message: 'Not found: Company with id 17.'})
             )
         })
     })
@@ -176,7 +176,7 @@ describe('Company Unit Tests', function () {
         it('putCompanyById(1) remove name returns error', async function () {
             // @ts-expect-error Provoke error by giving company without required name prop
             await expect(putCompanyById(1, { 'abbr': 'FRA', 'companyType': 'Kunde' })).rejects.toEqual(
-                expect.objectContaining({status: 400, message: 'bad request'})
+                expect.objectContaining({message: 'Bad request.'})
             )
         })
 
@@ -197,14 +197,14 @@ describe('Company Unit Tests', function () {
 
         it('putCompanyById(17) returns error', async function () {
             await expect(putCompanyById(17, { 'name': 'Firma D', 'abbr': 'FRD', 'companyType': 'Kunde' })).rejects.toEqual(
-                expect.objectContaining({status: 404, message: 'not found'})
+                expect.objectContaining({message: 'Not found: company 17.'})
             )
         })
 
         it('putCompanyById(1) remove companyType returns error', async function () {
             // @ts-expect-error Provoke error by giving company without required company type
             await expect(putCompanyById(1, { 'name': 'Firma C', 'abbr': 'FRC' })).rejects.toEqual(
-                expect.objectContaining({status: 400, message: 'bad request'})
+                expect.objectContaining({message: 'Bad request.'})
             )
         })
 
@@ -253,7 +253,7 @@ describe('Company Unit Tests', function () {
 
         it('subsequent deleteCompanyById(1) resolves to Error', async function () {
             await expect(deleteCompanyById(1)).rejects.toEqual(
-                expect.objectContaining({status: 404, message: 'not found'})
+                expect.objectContaining({message: 'Not found: Company with id 1.'})
             )
         })
 

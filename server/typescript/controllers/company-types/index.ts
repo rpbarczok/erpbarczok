@@ -4,7 +4,7 @@ import { CompanyType } from '../../models/companyTypes.js'
 import { getAllCompanyTypes, addCompanyType } from '../../services/companyTypes.js'
 import { Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
-import { ApiError } from '../../services/error.js'
+import { ApiError } from '../controllersError.js'
 
 
 export interface CompanyTypeNorm {

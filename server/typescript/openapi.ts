@@ -334,37 +334,37 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
             'error400': {
                 'value': {
                     'status': 400,
-                    'message': 'bad request'
+                    'message': 'Bad request.'
                 }
             },
             'error401': {
                 'value': {
                     'status': 401,
-                    'message': 'unauthorized'
+                    'message': 'Unauthorized.'
                 }
             },
             'error404': {
                 'value': {
                     'status': 404,
-                    'message': 'not found'
+                    'message': 'Not found.'
                 }
             },
             'error409': {
                 'value': {
                     'status': 409,
-                    'message': 'conflict'
+                    'message': 'Conflict.'
                 }
             },
             'error412': {
                 'value': {
                     'status': 412,
-                    'message': 'precondition failed'
+                    'message': 'Precondition failed.'
                 }
             },
             'error500': {
                 'value': {
                     'status': 500,
-                    'message': 'internal server error'
+                    'message': 'Internal server error.'
                 }
             }
         }

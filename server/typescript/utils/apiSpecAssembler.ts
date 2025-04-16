@@ -11,7 +11,7 @@ import { baseLogger } from '../logger.js'
 import { apiSpec as apiSpecBase } from '../openapi.js'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { Request, Response, NextFunction } from 'express'
-import { ApiError } from '../services/error.js'
+import { ApiError } from '../controllers/controllersError.js'
 
 export interface Operation {
     (req: Request, res: Response, next: NextFunction): Promise<void>

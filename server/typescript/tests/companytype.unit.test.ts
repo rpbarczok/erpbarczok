@@ -45,7 +45,7 @@ describe('CompanyType Unit Tests', function () {
 
         it('getCompanyTypeById(17) returns error', async function () {
             await expect(getCompanyTypeById(17)).rejects.toEqual(
-                expect.objectContaining({status: 404, message: 'not found'})
+                expect.objectContaining({status: 404, message: 'Not found.'})
             )
         })
     })
@@ -78,7 +78,7 @@ describe('CompanyType Unit Tests', function () {
 
         it('putCompanyTypeById(17) returns error', async function () {
             await expect(putCompanyTypeById(17, { 'name': 'Sonstiges' })).rejects.toEqual(
-                expect.objectContaining({status: 404, message: 'not found'})
+                expect.objectContaining({status: 404, message: 'Not found.'})
             )
         })
     })
@@ -90,7 +90,7 @@ describe('CompanyType Unit Tests', function () {
 
         it('subsequent deleteCompanyTypeById(1) throws 404 error', async function () {
             await expect(deleteCompanyTypeById(1)).rejects.toEqual(
-                expect.objectContaining({status: 404, message: 'not found'})
+                expect.objectContaining({status: 404, message: 'Not found.'})
             )
         })
 

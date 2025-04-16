@@ -22,7 +22,7 @@ import { apiSpec } from './openapi.js'
 import { loadControllers, Operation } from './utils/apiSpecAssembler.js'
 import { jwtCheck } from './utils/auth.js'
 import { setDefaultValues } from './models/default-values.js'
-import { ApiErrorLike } from './services/error.js'
+import { ApiErrorLike } from './controllers/controllersError.js'
 
 export interface Meta {
     location: string

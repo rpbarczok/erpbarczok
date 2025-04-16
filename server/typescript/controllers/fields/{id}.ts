@@ -1,5 +1,5 @@
 import { getFieldById, deleteFieldById, putFieldById } from '../../services/fields.js'
-import { ApiError, isApiErrorLike } from '../../services/error.js'
+import { ApiError, isApiErrorLike } from '../controllersError.js'
 import type { Request, Response } from 'express'
 import { FieldNorm, normalizeField, createFieldMeta, isFieldNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'

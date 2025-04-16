@@ -258,7 +258,7 @@ describe('/company-types/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe('not found')
+            expect(response.body.message).toBe('Not found.')
         })
 
         it('Get /company-type/{id} fails with 400 with negative id fails', async function () {
@@ -361,7 +361,7 @@ describe('/company-types/ HTTP integration Tests', function () {
                 .send(companyTypeC)
                 .expect(412)
             expect(response.body.status).toBe(412)
-            expect(response.body.message).toMatch('precondition failed')
+            expect(response.body.message).toMatch('Precondition failed.')
         })
     })
 
@@ -405,7 +405,7 @@ describe('/company-types/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe('not found')
+            expect(response.body.message).toBe('Not found.')
         })
 
         it('DELETE /company-types/{id} fails with 400 with negative id', async function () {

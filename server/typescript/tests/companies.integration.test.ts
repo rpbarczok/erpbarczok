@@ -335,7 +335,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe('not found')
+            expect(response.body.message).toBe('Not found: Company with id 17.')
         })
 
         it('GET /companies/{id} with negative id fails', async function () {
@@ -588,7 +588,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .send(companyBA2)
                 .expect(412)
             expect(response.body.status).toBe(412)
-            expect(response.body.message).toMatch('precondition failed')
+            expect(response.body.message).toMatch('Precondition failed.')
         })
 
         it('PUT /companies/{id}: remove name form existing company fails', async function () {
@@ -625,7 +625,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .expect(409)
             expect(response.body.status).toBe(409)
-            expect(response.body.message).toMatch('conflict')
+            expect(response.body.message).toMatch('Conflict.')
         })
 
         it('DELETE /companies/{id} existing company fails as guest', async function () {
@@ -654,7 +654,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe('not found')
+            expect(response.body.message).toBe('Not found: Company with id 1.')
         })
 
         it('DELETE /companies/{id} with negative id fails', async function () {

@@ -1,7 +1,8 @@
 import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 import { apiSpec } from '../openapi.js'
+import { baseLogger } from '../logger.js'
 
-
+const logger = baseLogger.extend('error')
 export interface ApiErrorLike {
   status: number
   message: string
@@ -15,13 +16,14 @@ export function isApiErrorLike(value: unknown): value is ApiErrorLike {
 
   const keys = Object.keys(value)
 
-  if (keys.includes('status') && keys.includes('message')) {
-    return true
-  }
-  return false
+  return keys.includes('status') && keys.includes('message')
 }
 
+
+
 export class ApiError extends Error implements ApiErrorLike {
+
+  status: number
 
   constructor(status: number, message?: string, ...args: ErrorOptions[]) {
     super(message, ...args)
@@ -39,7 +41,7 @@ export class ApiError extends Error implements ApiErrorLike {
       }
     }
 
-    let errorMessage = `Unexpected internal error with unknown status ${String(status)}`
+    let errorMessage = `${String(status)} Error`
     for (const defaultErrorStatus of errorStatusDefaultMessages) {
       if (status === defaultErrorStatus.status) {
         errorMessage = defaultErrorStatus.message
@@ -47,9 +49,8 @@ export class ApiError extends Error implements ApiErrorLike {
     }
 
     this.message = message ?? errorMessage
+
+    logger(this)
   }
 
-  status: number
 }
-
-

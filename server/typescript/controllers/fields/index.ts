@@ -4,7 +4,7 @@ import { Field } from '../../models/fields.js'
 import { getAllFields, addField } from '../../services/fields.js'
 import { Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
-import { ApiError } from '../../services/error.js'
+import { ApiError } from '../controllersError.js'
 
 export interface FieldNorm {
     name: string

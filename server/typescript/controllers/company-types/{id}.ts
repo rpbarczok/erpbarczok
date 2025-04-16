@@ -1,5 +1,5 @@
 import { getCompanyTypeById, deleteCompanyTypeById, putCompanyTypeById } from '../../services/companyTypes.js'
-import { ApiError, isApiErrorLike } from '../../services/error.js'
+import { ApiError, isApiErrorLike } from '../controllersError.js'
 import type { Request, Response } from 'express'
 import { CompanyTypeNorm, normalizeCompanyType, createCompanyTypeMeta, isCompanyTypeNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
