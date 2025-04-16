@@ -2,13 +2,9 @@ import {apiSpec} from './server/typescript/openapi.js'
 import path from 'node:path'
 import fs from 'node:fs'
 import {openapiSpecAssembler, getControllerFiles} from './server/typescript/utils/apiSpecAssembler.js'
-import { ApiError } from './server/typescript/services/error.js'
 
 const writeOpenApiSpec = async () => {
     const controllerFiles = await getControllerFiles()
-    if (controllerFiles instanceof ApiError) {
-        throw controllerFiles
-    }
     openapiSpecAssembler(controllerFiles)
     const target = path.join(import.meta.dirname, 'client/utils/openapi.ts')
     const content = `
