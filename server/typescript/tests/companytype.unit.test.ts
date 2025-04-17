@@ -45,7 +45,7 @@ describe('CompanyType Unit Tests', function () {
 
         it('getCompanyTypeById(17) returns error', async function () {
             await expect(getCompanyTypeById(17)).rejects.toEqual(
-                expect.objectContaining({status: 404, message: 'Not found.'})
+                expect.objectContaining({ message: 'Not found: Company type with id 17.'})
             )
         })
     })
@@ -65,8 +65,8 @@ describe('CompanyType Unit Tests', function () {
 
         it('putCompanyTypeId(1) remove name returns error', async function () {
             // @ts-expect-error Provoke error by giving object without props.
-            await expect(putCompanyTypeById(1, {})).resolves.toEqual(
-                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Spediteur', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+            await expect(putCompanyTypeById(1, {})).rejects.toEqual(
+                expect.objectContaining({ message: 'Bad request.' })
             )
         })
 
@@ -78,7 +78,7 @@ describe('CompanyType Unit Tests', function () {
 
         it('putCompanyTypeById(17) returns error', async function () {
             await expect(putCompanyTypeById(17, { 'name': 'Sonstiges' })).rejects.toEqual(
-                expect.objectContaining({status: 404, message: 'Not found.'})
+                expect.objectContaining({ message: 'Not found: Company type with id 17.' })
             )
         })
     })
@@ -90,7 +90,7 @@ describe('CompanyType Unit Tests', function () {
 
         it('subsequent deleteCompanyTypeById(1) throws 404 error', async function () {
             await expect(deleteCompanyTypeById(1)).rejects.toEqual(
-                expect.objectContaining({status: 404, message: 'Not found.'})
+                expect.objectContaining({ message: 'Not found: Company type with id 1.' })
             )
         })
 

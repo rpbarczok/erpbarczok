@@ -9,110 +9,55 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import { baseLogger } from '../logger.js'
 import { CompanyType } from '../models/companyTypes.js'
 import { CompanyTypeNorm } from '../controllers/company-types/index.js'
-import { ApiError, isApiErrorLike } from '../controllers/controllersError.js'
+import { NotFoundError, ValidationError } from './servicesError.js'
 
 export const getAllCompanyTypes = async () => {
     const logger = baseLogger.extend('getAllCompanyTypes')
-    try {
-        const companyTypes = await CompanyType.findAll({ order: [['name', 'ASC']] })
-        logger('Got all company types.')
-        return companyTypes
-    }
-    catch (error) {
-        logger(error)
-        if (isApiErrorLike(error)) {
-            throw new ApiError(error.status, error.message)
-        } else {
-            throw error
-        }
-    }
+    const companyTypes = await CompanyType.findAll({ order: [['name', 'ASC']] })
+    logger('Got all company types.')
+    return companyTypes
 }
 
 export const addCompanyType = async (companyType: CompanyTypeNorm) => {
-    const logger = baseLogger.extend('addCompanyType')
-        const newCompanyType = {
-            name: companyType.name
-        }
-        try {
-            const addedCompanyType = await CompanyType.create(newCompanyType)
-            logger('Added new company type.')
-            return addedCompanyType
-        } catch (error) {
-            logger(error)
-            if (isApiErrorLike(error)) {
-                throw new ApiError(error.status, error.message)
-            } else {
-                throw error
-            }
-        }
+    if (companyType.name) {
+        const logger = baseLogger.extend('addCompanyType')
+        const newCompanyType = { name: companyType.name }
+        const addedCompanyType = await CompanyType.create(newCompanyType)
+        logger('Added new company type.')
+        return addedCompanyType
+    } else throw new ValidationError()
 }
 
 export const getCompanyTypeById = async (id: number) => {
     const logger = baseLogger.extend('getCompanyTypeById')
-    try {
-        const companyType = await CompanyType.findByPk(id)
-        if (companyType === null) {
-            const newError =new ApiError(404)
-            logger(newError)
-            throw newError
-        } else {
-            logger(`Got company type with id ${String(id)}`)
-            return companyType
-        }
-    }
-    catch (error) {
-        logger(error)
-        if (isApiErrorLike(error)) {
-            throw new ApiError(error.status, error.message)
-        } else {
-            throw error
-        }
+    const companyType = await CompanyType.findByPk(id)
+    if (companyType === null) {
+        throw new NotFoundError(`Not found: Company type with id ${String(id)}.`)
+    } else {
+        logger(`Got company type with id ${String(id)}`)
+        return companyType
     }
 }
 
 export const deleteCompanyTypeById = async (id: number) => {
     const logger = baseLogger.extend('deleteCompanyTypeById')
-    try {
-        const deletedRowsCount = await CompanyType.destroy({ where: { id: id } })
-        if (deletedRowsCount === 0) {
-            const newError =new ApiError(404)
-            logger(newError)
-            throw newError
-        } else {
-            logger(`Deleted company type with id ${String(id)}.`)
-            return
-        }
-    }
-    catch (error) {
-        logger(error)
-        if (isApiErrorLike(error)) {
-            throw new ApiError(error.status, error.message)
-        } else {
-            throw error
-        }
+    const deletedRowsCount = await CompanyType.destroy({ where: { id: id } })
+    if (deletedRowsCount === 0) {
+        throw new NotFoundError(`Not found: Company type with id ${String(id)}.`)
+    } else {
+        logger(`Deleted company type with id ${String(id)}.`)
+        return
     }
 }
 
 export const putCompanyTypeById = async (id: number, companyType: CompanyTypeNorm) => {
     const logger = baseLogger.extend('puCompanyTypeById')
-        try {
-            const oldCompanyType = await CompanyType.findByPk(id)
-            if (oldCompanyType === null) {
-                const newError =new ApiError(404)
-                logger(newError)
-                throw newError
-            } else {
-                const updatedCompanyType = await oldCompanyType.update(companyType)
-                logger(`Updated company type with id ${String(id)}.`)
-                return updatedCompanyType
-            }
-        }
-        catch (error) {
-            logger(error)
-            if (isApiErrorLike(error)) {
-                throw new ApiError(error.status, error.message)
-            } else {
-                throw error
-            }
-        }
+    if (companyType.name) {
+        const oldCompanyType = await CompanyType.findByPk(id)
+        if (oldCompanyType !== null) {
+            const updatedCompanyType = await oldCompanyType.update(companyType)
+            logger(`Updated company type with id ${String(id)}.`)
+            return updatedCompanyType
+        } else throw new NotFoundError(`Not found: Company type with id ${String(id)}.`)
+    } else throw new ValidationError()
 }

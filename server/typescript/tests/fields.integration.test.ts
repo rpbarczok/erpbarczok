@@ -258,7 +258,7 @@ describe('/fields/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe('Not found.')
+            expect(response.body.message).toBe('Not found: Field with id 17.')
         })
 
         it('Get /field/{id} fails with 400 with negative id fails', async function () {
@@ -405,7 +405,7 @@ describe('/fields/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe('Not found.')
+            expect(response.body.message).toBe('Not found: Field with id 1.')
         })
 
         it('DELETE /fields/{id} fails with 400 with negative id', async function () {

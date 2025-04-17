@@ -57,7 +57,7 @@ export const deleteCompanyById = async (id: number) => {
     }
 }
 
-export const putCompanyById = async (id: number, company: CompanyNorm) => {
+export const putCompanyById = async (id: number, company: CompanyNorm): Promise<Company> => {
     const logger = baseLogger.extend('putCompanyById')
     if (company.name && company.companyType) {
         const oldCompany = await Company.findByPk(id, { include: CompanyType })
@@ -67,16 +67,12 @@ export const putCompanyById = async (id: number, company: CompanyNorm) => {
                 const data: CompanyFK = { name: company.name, companyTypeId: companyType.id }
                 data.abbr = company.abbr ?? null
                 data.www = company.www ?? null
-                const updatedRow = await Company.update(data, { returning: true, where: { id: id } })
-                if (updatedRow[0] === 1) {
-                    const updatedCompany = updatedRow[1]
-                    const updatedCompanyInclude = await Company.findByPk(updatedCompany[0].id, { include: CompanyType })
-                    if (updatedCompanyInclude) {
-                        logger(`Updated company with id ${String(id)}.`)
-                        return updatedCompanyInclude
-                    } else throw new Error('company.findByPK did not return freshly updated company.')
-                } else if (updatedRow[0] === 0) throw new NotFoundError(`Not found: company ${String(id)}.`)
-                else throw new Error(`Update returned ${String(updatedRow[0])} expected 1.`)
+                const updatedCompany = await oldCompany.update(data)
+                const updatedCompanyInclude = await Company.findByPk(updatedCompany.id, { include: CompanyType })
+                if (updatedCompanyInclude) {
+                    logger(`Updated company with id ${String(id)}.`)
+                    return updatedCompanyInclude
+                } else throw new NotFoundError(`Not found: freshly updated company was not found.`)
             } else throw new AssociationNotFoundError(`company type ${company.companyType}`)
         } else throw new NotFoundError(`Not found: company ${String(id)}.`)
     } else throw new ValidationError()

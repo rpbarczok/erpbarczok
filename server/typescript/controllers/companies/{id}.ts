@@ -4,7 +4,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { normalizeCompany, createCompanyMeta, isCompanyNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { Meta } from '../../app.js'
-import { AssociationNotFoundError, NotFoundError } from '../../services/servicesError.js'
+import { AssociationNotFoundError, NotFoundError, ValidationError } from '../../services/servicesError.js'
 
 export const GET: Operation = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -149,8 +149,11 @@ export const PUT: Operation = async (req: Request, res: Response, next: NextFunc
                 return
             }
         } catch (error) {
-            if (error instanceof NotFoundError || error instanceof AssociationNotFoundError ) {
+            if (error instanceof NotFoundError || error instanceof AssociationNotFoundError) {
                 next(new ApiError(404, error.message))
+                return
+            } else if (error instanceof ValidationError) {
+                next(new ApiError(400, error.message))
                 return
             }
             throw error

@@ -258,7 +258,7 @@ describe('/company-types/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe('Not found.')
+            expect(response.body.message).toBe('Not found: Company type with id 17.')
         })
 
         it('Get /company-type/{id} fails with 400 with negative id fails', async function () {
@@ -405,7 +405,7 @@ describe('/company-types/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe('Not found.')
+            expect(response.body.message).toBe('Not found: Company type with id 1.')
         })
 
         it('DELETE /company-types/{id} fails with 400 with negative id', async function () {

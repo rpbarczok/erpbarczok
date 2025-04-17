@@ -6,7 +6,7 @@ import { sha256 } from '../../tests/utils/hasher.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { baseLogger } from '../../logger.js'
 import { ApiError } from '../controllersError.js'
-import { AssociationNotFoundError } from '../../services/servicesError.js'
+import { AssociationNotFoundError, ValidationError } from '../../services/servicesError.js'
 
 const logger = baseLogger.extend('controllers:companies')
 
@@ -164,6 +164,9 @@ export const POST: Operation = async (req: Request, res: Response, next: NextFun
                 .end()
         } catch (error) {
             if (error instanceof AssociationNotFoundError) {
+                next(new ApiError(400, error.message))
+                return
+            } else if (error instanceof ValidationError) {
                 next(new ApiError(400, error.message))
                 return
             } else {
