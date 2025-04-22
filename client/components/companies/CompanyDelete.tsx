@@ -13,9 +13,7 @@ export const CompanyDelete: FunctionComponent<CompanyDeleteProps> = ({ addNote, 
 
     const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-
         const newNote: Note | undefined = await deleteCompany()
-
         if (newNote) {
             if (newNote.variant === "warning") {
                 addNote(newNote)

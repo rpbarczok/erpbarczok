@@ -66,25 +66,6 @@ export const CompanyXSEdit: FunctionComponent<CompanyXSEditProps> = (
         changedCompanyDispatch({ type: 'companyChange', newValue: activeCompany })
     }
 
-    const UserButtons = () => {
-        if (hasPermission(['user'], permissions)) {
-            return (<ButtonGroup className='w-100'>
-                <Button size='sm' variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Rückgängig</Button>
-                <Button size='sm' type='submit' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
-                <CompanyDelete
-                    addNote={addEditNote}
-                    setShow={setShow}
-                    size='sm'
-                    deleteCompany={deleteCompany}
-                />
-                <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Abbrechen</Button>
-            </ButtonGroup>)
-        } else {
-            return <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Schließen</Button>
-        }
-
-    }
-
     return (
         <Modal
             key={changedCompany.meta.location}
@@ -105,7 +86,19 @@ export const CompanyXSEdit: FunctionComponent<CompanyXSEditProps> = (
                     />
                 </Modal.Body>
                 <Modal.Footer>
-                    <UserButtons />
+                    {hasPermission(['user'], permissions)
+                        ? <ButtonGroup className='w-100'>
+                            <Button size='sm' variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Rückgängig</Button>
+                            <Button size='sm' type='submit' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
+                            <CompanyDelete
+                                addNote={addEditNote}
+                                setShow={setShow}
+                                size='sm'
+                                deleteCompany={deleteCompany}
+                            />
+                            <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Abbrechen</Button>
+                        </ButtonGroup>
+                        : <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Schließen</Button>}
                 </Modal.Footer>
             </Form>
         </Modal >

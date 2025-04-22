@@ -23,9 +23,8 @@ export const CompaniesXSList: FunctionComponent<CompanyXSListProps> = (
     { filteredCompaniesList,
         changedCompany,
         changedCompanyDispatch,
-        activeCompany,
+        changeActive, activeCompany,
         companyTypesList,
-        changeActive,
         addEditNote,
         submitChangedCompany,
         deleteCompany }) => {
@@ -37,7 +36,7 @@ export const CompaniesXSList: FunctionComponent<CompanyXSListProps> = (
         await changeActive(location)
         setShow(true)
     }
-    
+
     const List = () => {
         return filteredCompaniesList.map((element) => {
             return (

@@ -7,7 +7,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 import { ChangeEvent, FunctionComponent } from 'react'
-import { Form} from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
 
 interface CompanySMSearchProps {
     search: string
@@ -22,9 +22,9 @@ export const CompanySMSearch: FunctionComponent<CompanySMSearchProps> = ({ searc
 
     return (
         <>
-            <Form.Group controlId='searchField' className='d-none d-sm-block'  style={{padding:'10px 0 0 0'}}>
-                <Form.Label className= 'labelPadding' >Suche (Firma, Kürzel)</Form.Label>
-                <Form.Control type='text'  value={search} onChange={handleSearch} />
+            <Form.Group controlId='searchField' className='d-none d-sm-block' style={{ padding: '10px 0 0 0' }}>
+                <Form.Label className='labelPadding' >Suche (Firma, Kürzel)</Form.Label>
+                <Form.Control type='text' value={search} onChange={handleSearch} />
             </Form.Group>
         </>
     )

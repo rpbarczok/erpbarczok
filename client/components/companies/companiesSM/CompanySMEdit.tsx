@@ -13,11 +13,9 @@ import { FunctionComponent, useState } from 'react'
 interface CompanySMEditProps {
     company: DataWithMeta<Company>
     companyTypesList: DataWithMeta<CompanyType>[]
-    setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     addEditNote: (note: Note) => void
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
-    changeActive: (active: number) => Promise<void>
     submitChangedCompany: () => Promise<Note>
 }
 
@@ -27,9 +25,13 @@ export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({
     addEditNote,
     changedCompany,
     changedCompanyDispatch,
-    submitChangedCompany }) => {
+    submitChangedCompany 
+}) => {
+
     const [validated, setValidated] = useState<boolean>(false)
+    
     const { permissions } = useContextThrowUndefined(PermissionContext)
+
     const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
         company.data.abbr === changedCompany.data.abbr &&
         company.data.www === changedCompany.data.www &&

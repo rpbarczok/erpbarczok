@@ -23,7 +23,6 @@ interface CompaniesSMPageProps {
     activeCompany: DataWithMeta<Company>
     changeActive: (active: number) => Promise<void>
     companyTypesList: DataWithMeta<CompanyType>[]
-    setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
     submitChangedCompany: () => Promise<Note>
@@ -37,7 +36,6 @@ export const CompanySMPage: FunctionComponent<CompaniesSMPageProps> = ({ search,
     activeCompany,
     changeActive,
     companyTypesList,
-    setIsCompanyChanged,
     changedCompany,
     changedCompanyDispatch,
     submitChangedCompany,
@@ -108,10 +106,8 @@ export const CompanySMPage: FunctionComponent<CompaniesSMPageProps> = ({ search,
                             key={activeCompany.meta.location}
                             company={activeCompany}
                             companyTypesList={companyTypesList}
-                            setIsCompanyChanged={setIsCompanyChanged}
                             addEditNote={addEditNote}
                             changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-                            changeActive={changeActive}
                             submitChangedCompany={submitChangedCompany}
                         />
                     </Row>
