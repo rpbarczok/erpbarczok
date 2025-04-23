@@ -7,7 +7,7 @@ const config = merge(common, {
     mode: 'development',
     devtool: 'inline-source-map',
     plugins: [
-        new BundleAnalyzerPlugin()
+        new BundleAnalyzerPlugin({openAnalyzer: false})
     ],
     devServer: {
         port: 3000,

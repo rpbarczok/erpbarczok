@@ -94,9 +94,9 @@ export const AddCompanyModal: FunctionComponent<AddCompanyModalProps> = ({
 
             if (newNote.variant === 'success') {
                 setShow(false)
-                addAddNote(newNote)
-            } else {
                 addEditNote(newNote)
+            } else {
+                addAddNote(newNote)
             }
 
         }

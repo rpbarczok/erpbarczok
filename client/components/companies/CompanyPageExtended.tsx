@@ -89,10 +89,7 @@ export const CompanyPageExtended: FunctionComponent<CompanyPageExtendedProps> = 
                 if (typeof result.headers.location === 'string') {
                     await changeActive(Number(removeStringBeforeLastDigits(result.headers.location)))
                 } else {
-                    return {
-                        variant: 'danger',
-                        message: `Fehler im HTTP Header: Location header muss vom Type String sein.`,
-                    }
+                    throw new Error("Permission header must be type 'string'")
                 }
                 if (typeof result.headers.permissions === 'string') {
                     updateUserPermissions(result.headers.permissions, permissions, setPermissions)
@@ -166,7 +163,6 @@ export const CompanyPageExtended: FunctionComponent<CompanyPageExtendedProps> = 
                     activeCompany={activeCompany}
                     changeActive={changeActive}
                     companyTypesList={companyTypesList}
-                    setIsCompanyChanged={setIsCompanyChanged}
                     changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
                     submitChangedCompany={submitChangedCompany} submitNewCompany={submitNewCompany} deleteCompany={deleteCompany}
                 />

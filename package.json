@@ -7,23 +7,31 @@
   "scripts": {
     "server": "dotenvx run -f .env -- tsx server/typescript/start.ts",
     "client": "webpack serve --config webpack.dev.js",
+    
     "stop_dev_db": "docker kill devdb; sleep 2",
     "start_dev_db": "npm run stop_dev_db ; docker run --name devdb -e POSTGRES_PASSWORD='blablubber' -p 8082:5432 -d --rm postgres:17.2-alpine3.20",
+    
     "start": "dotenvx run -f .env -- npm run create_types && npm run start_dev_db && concurrently \"npm run server\" \"npm run client\"",
+    
     "create_openapi_spec": "tsx create-openapi-spec.ts",
     "create_types": "npm run create_openapi_spec && mkdir -p client/types && npx openapicmd typegen client/utils/openapi.json > client/types/openapi.d.ts",
+    
     "build_client": "npm run create_types && webpack --config webpack.prod.js",
     "build_server": "rm -fR server/ecmascript && npx tsc --project server/typescript",
+    
     "start_test_db": "npm run stop_test_db ; docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",
     "stop_test_db": "docker kill testdb",
-    "ecma_test": "cd server && npx mocha --config mocha-ecmascript-rc.cjs",
-    "ts_test": "cd server && npx mocha  --config mocha-typescript-rc.cjs",
+    
+    "ecma_test": "cd server && npx mocha --config mocha-ecmascript-rc.cjs --exit",
+    "ts_test": "cd server && npx mocha  --config mocha-typescript-rc.cjs --exit",
+    "test_e2e": "cd client && npx mocha ./puppeteer/**/*.e2e.test.ts --exit",
+    "posttest_e2e": "npm run start_test_db",
     "test_frontend": "cd client && npx mocha --config ./mocha-typescript-rc.cjs './**/*.test.{ts,tsx}'",
     "test_backend": "npm run ts_test",
-    "pretest": "npm run start_test_db",
-    "posttest": "npm run stop_test_db",
-    "test": "npm run ts_test && npm run test_frontend",
+    "test": "npm run ts_test && npm run test_frontend ",
+    
     "lint": "eslint .",
+    
     "pure_build": "npm run build_client && npm run build_server && npm run ecma_test",
     "build": "npm run start_test_db && npm run pure_build && npm run stop_test_db",
     "docker_build": "npm run start_test_db && docker buildx build --load -t erpbarczok:latest --network host . && npm run stop_test_db",
@@ -89,6 +97,8 @@
     "jsdom": "^26.0.0",
     "mocha": "^11.0.1",
     "openapi-client-axios": "^7.5.5",
+    "pptr-testing-library": "^0.8.0",
+    "puppeteer": "^24.7.0",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.7",
     "react-bootstrap-icons": "^1.11.5",
