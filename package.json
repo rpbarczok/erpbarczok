@@ -28,6 +28,8 @@
     "posttest_e2e": "npm run start_test_db",
     "test_frontend": "cd client && npx mocha --config ./mocha-typescript-rc.cjs './**/*.test.{ts,tsx}'",
     "test_backend": "npm run ts_test",
+    "pretest": "npm run start_test_db",
+    "posttest": "npm run stop_test_db",
     "test": "npm run ts_test && npm run test_frontend ",
     
     "lint": "eslint .",
