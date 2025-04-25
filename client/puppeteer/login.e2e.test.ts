@@ -4,6 +4,7 @@ import { expect } from 'expect'
 
 const browser = await puppeteer.launch()
 const page = await browser.newPage()
+const uri = window.location.href
 
 describe('start functions', function () {
 
@@ -13,17 +14,15 @@ describe('start functions', function () {
 
     after(async function () { await browser.close() })
 
-    it('logins', async function () {
+    it('login', async function () {
         this.timeout(10000)
-        console.log(0)
-        await page.goto('http://localhost:3000')
-        console.log(1)
+        
+        await page.goto(uri)
         const $document = await getDocument(page)
-        console.log(2)
         const $login = await queries.getByText($document, "Login")
-        console.log(3)
+
         expect($login).not.toBeNull()
-        console.log(4)
         await $login.click()
+        await page.waitForNavigation({ waitUntil: 'networkidle0' })
     })
 })

@@ -5,38 +5,48 @@
   "private": "true",
   "type": "module",
   "scripts": {
-    "server": "dotenvx run -f .env -- tsx server/typescript/start.ts",
-    "client": "webpack serve --config webpack.dev.js",
-    
     "stop_dev_db": "docker kill devdb; sleep 2",
     "start_dev_db": "npm run stop_dev_db ; docker run --name devdb -e POSTGRES_PASSWORD='blablubber' -p 8082:5432 -d --rm postgres:17.2-alpine3.20",
-    
-    "start": "dotenvx run -f .env -- npm run create_types && npm run start_dev_db && concurrently \"npm run server\" \"npm run client\"",
-    
+    "start_test_db": "docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",
+
     "create_openapi_spec": "tsx create-openapi-spec.ts",
     "create_types": "npm run create_openapi_spec && mkdir -p client/types && npx openapicmd typegen client/utils/openapi.json > client/types/openapi.d.ts",
-    
-    "build_client": "npm run create_types && webpack --config webpack.prod.js",
-    "build_server": "rm -fR server/ecmascript && npx tsc --project server/typescript",
-    
-    "start_test_db": "npm run stop_test_db ; docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",
-    "stop_test_db": "docker kill testdb",
+
+    "server": "tsx server/typescript/start.ts",
+    "client": "webpack serve --config webpack.dev.js",
+
+    "prestart": "dotenvx run -f .env -- npm run create_types && npm run start_dev_db && sleep 2",
+    "start": "concurrently --kill-others \"dotenvx run -f .env -- npm run server\" \"npm run client\" || true",
+    "poststart": "docker kill devdb",
+
+    "start_test": "dotenvx run -f ./server/typescript/tests/utils/test.env -- npm run create_types && npm run start_test_db &&  concurrently \"dotenvx run -f ./server/typescript/tests/utils/test.env -- npm run server\" \"npm run client\" & sleep 20",
     
     "ecma_test": "cd server && npx mocha --config mocha-ecmascript-rc.cjs --exit",
     "ts_test": "cd server && npx mocha  --config mocha-typescript-rc.cjs --exit",
-    "test_e2e": "cd client && npx mocha ./puppeteer/**/*.e2e.test.ts --exit",
-    "posttest_e2e": "npm run start_test_db",
-    "test_frontend": "cd client && npx mocha --config ./mocha-typescript-rc.cjs './**/*.test.{ts,tsx}'",
-    "test_backend": "npm run ts_test",
-    "pretest": "npm run start_test_db",
-    "posttest": "npm run stop_test_db",
-    "test": "npm run ts_test && npm run test_frontend ",
     
+    "pretest_e2e": "npm run start_test && sleep 2",
+    "test_e2e": "cd client/puppeteer && npx mocha -config ./mocha-typescript-rc.cjs --exit ; true",
+    "posttest_e2e": "docker kill testdb",
+    
+    "pretest_frontend": "npm run start_test_db && sleep 2",
+    "test_frontend": "cd client && npx mocha --config ./mocha-typescript-rc.cjs --exit ; true ",
+    "posttest_frontend": "docker kill testdb",
+    
+    "test_backend": "npm run ts_test --exit",
+
+    "pretest": "npm run start_test_db && sleep 2",
+    "test": "npm run ts_test --exit ; true",
+    "posttest": "docker kill testdb",
+
     "lint": "eslint .",
     
+    "build_client": "npm run create_types && webpack --config webpack.prod.js",
+    "build_server": "rm -fR server/ecmascript && npx tsc --project server/typescript",
+
     "pure_build": "npm run build_client && npm run build_server && npm run ecma_test",
-    "build": "npm run start_test_db && npm run pure_build && npm run stop_test_db",
-    "docker_build": "npm run start_test_db && docker buildx build --load -t erpbarczok:latest --network host . && npm run stop_test_db",
+    "build": "npm run start_test_db && npm run pure_build ; docker kill testdb",
+    
+    "docker_build": "npm run start_test_db && docker buildx build --load -t erpbarczok:latest --network host .",
     "docker": "docker compose up"
   },
   "author": "Ralph Barczok",

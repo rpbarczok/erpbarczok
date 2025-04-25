@@ -145,7 +145,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             return false
         }
         const name = process.env.PERMISSION_CLAIM ?? 'roles'
-        const userPermissionsPrep: unknown = req.auth ? req.auth[name] : []
+        const userPermissionsPrep: unknown = name.split('.').reduce((o, k) => o && o[k], req.auth)
         const userPermissionsArray: string[] = []
         if (isArrayOfStrings(userPermissionsPrep)) {
             userPermissionsArray.push(...userPermissionsPrep)
