@@ -1,28 +1,24 @@
-// import puppeteer from 'puppeteer'
-// import { getDocument, queries } from 'pptr-testing-library'
-// import { expect } from 'expect'
+import puppeteer from 'puppeteer'
+import { getDocument, queries, wait } from 'pptr-testing-library'
+import { expect } from 'expect'
 
+const { getByText } = queries
 
-// const browser = await puppeteer.launch()
-// const page = await browser.newPage()
+const uri = window.location.href
 
-// describe('config page', function () {
+describe('config page', function () {
 
-//     before(async function () {
-//         await page.setViewport({ width: 1920, height: 1080 })
-//         await page.goto('http://localhost:3000/config.js')
-
-//     })
-
-//     after(async function () { await browser.close() })
-
-//     it('displays config page', async function () {
-//         console.log('1')
-//         const $document = await getDocument(page)
-//         console.log('2')
-//         const config = await queries.getByText($document,"window.client_id", {exact: false})
-//         console.log('3')
-//         expect(config).not.toBeNull()
-//         console.log('4')
-//     })
-// })
+    it('displays config page', async function () {
+        this.timeout(60000)
+        // setup)
+        const browser = await puppeteer.launch()
+        const page = await browser.newPage()
+        await page.setViewport({ width: 1920, height: 1080 })
+        await page.goto(uri + 'config.js', { waitUntil: 'networkidle0' })
+        console.log(page)
+        const $document = await getDocument(page)
+        const $config = await queries.getByText($document, "window.client_id", { exact: false })
+        expect($config).not.toBeNull()
+        await browser.close()
+    })
+})

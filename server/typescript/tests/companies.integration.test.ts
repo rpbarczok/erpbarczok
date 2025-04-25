@@ -90,7 +90,6 @@ const companyBA4 = { 'name': 'Firma C', 'companyType': 'Kunde', 'abbr': 'FRC', '
 const etagBA4 = sha256(JSON.stringify(companyBA4))
 
 describe('/companies/ HTTP integration Tests', function () {
-    this.timeout(5000)
     let app: App
 
     before(async function () {
