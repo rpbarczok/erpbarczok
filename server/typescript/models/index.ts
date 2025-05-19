@@ -24,7 +24,6 @@ initializeCompanyType(sequelize)
 initializeField(sequelize)
 initializeCompany(sequelize)
 
-
 Company.belongsTo(CompanyType, {
     onDelete: 'NO ACTION'
 })

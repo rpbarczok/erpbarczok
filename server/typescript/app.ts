@@ -144,8 +144,9 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             }
             return false
         }
-        const name = process.env.PERMISSION_CLAIM ?? 'roles'
-        const userPermissionsPrep: unknown = name.split('.').reduce((o, k) => o && o[k], req.auth)
+        const name: string = process.env.PERMISSION_CLAIM ?? 'roles'
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return , @typescript-eslint/no-unsafe-member-access
+        const userPermissionsPrep: unknown = name.split('.').reduce((o, k) => o?.o[k], req.auth)
         const userPermissionsArray: string[] = []
         if (isArrayOfStrings(userPermissionsPrep)) {
             userPermissionsArray.push(...userPermissionsPrep)

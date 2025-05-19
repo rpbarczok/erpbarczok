@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "stop_dev_db": "docker kill devdb; sleep 2",
-    "start_dev_db": "npm run stop_dev_db ; docker run --name devdb -e POSTGRES_PASSWORD='blablubber' -p 8082:5432 -d --rm postgres:17.2-alpine3.20",
+    "start_dev_db": "npm run stop_dev_db ; docker run --name devdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm erpbarczok_db:latest",
     "start_test_db": "docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",
 
     "create_openapi_spec": "tsx create-openapi-spec.ts",
