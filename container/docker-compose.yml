@@ -30,7 +30,7 @@ services:
   erpbarczok_db:
     image: erpbarczok_db:latest
     container_name: erpbarczok_db
-    build: ./postgres
+    build: ../postgres
     environment:
       POSTGRES_PASSWORD: 'blablubber'
     healthcheck:
