@@ -54,6 +54,48 @@ From a _developer perspective_, these choices have the following advantages:
 
 ## Getting Started
 
+### With Docker
+
+1. Prerequisites:
+* Node.js (v20 or higher)
+* Docker
+
+2. Clone the repository:
+
+   ```bash
+   git clone https://github.com/rpbarczok/erpbarczok.git
+   cd erpbarczok
+   ```
+
+3. Install dependencies
+
+   ```bash
+    npm install
+   ```
+4: run docker
+
+   ```bash
+   cd container
+   cd docker compose up
+   ```
+
+5: Access the application 
+
+Go to http://localhost:8080
+
+Click on lockin
+
+Enter ``test_user`` pw: ``test``
+
+To make changes in keycloak:
+
+Go to http://localhost:8081
+
+Enter ``admin`` pw: ``admin``
+
+
+### With node.js
+
 1. Prerequisites
    * Node.js (v20 or higher)
    * PostgreSQL (v16 or higher)

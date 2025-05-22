@@ -2,23 +2,18 @@
   "name": "erpbarczok",
   "version": "1.0.0",
   "description": "An ERP System with Client and Server in one Repo",
-  "private": "true",
+  "private": true,
   "type": "module",
   "scripts": {
     "create_openapi_spec": "tsx create-openapi-spec.ts",
     "create_types": "npm run create_openapi_spec && mkdir -p client/types && npx openapicmd typegen client/utils/openapi.json > client/types/openapi.d.ts",
-    
     "start_dev_db": "cd container/dev_db && docker compose up -d",
     "start_dev_kc": "cd container/keycloak/keycloak_init && docker compose up -d",
-    
     "server": "tsx server/typescript/start.ts",
     "client": "webpack serve --config webpack.dev.js",
-    
     "prestart": "dotenvx run -f .env -- npm run create_types && npm run start_dev_db && npm run start_dev_kc",
     "start": "concurrently --kill-others \"dotenvx run -f .env -- npm run server\" \"npm run client\" || true",
-    
     "start_test_db": "cd container/test_db && docker compose up -d",
-    
     "test_be_ts": "cd server && npx mocha  --config mocha-typescript-rc.cjs --exit",
     "test_be_es": "cd server && npx mocha --config mocha-ecmascript-rc.cjs --exit",
     "test_fe": "cd client && npx mocha --config ./mocha-typescript-rc.cjs --exit",
@@ -27,16 +22,14 @@
     "pretest_frontend": "npm run start_test_db",
     "test_frontend": "npm run test_fe_ts",
     "pretest_all": "npm run start_test_db",
-    "test_all": "npm run start_test_db"
-
+    "test_all": "npm run start_test_db",
     "docker_build_kc": "cd container/keycloak && docker buildx build --load -t erpbarczok_kc:latest --network host .",
     "docker_build_db": "cd container/postgres && docker buildx build --load -t erpbarczok_db:latest --network host .",
     "prebuild_client": "npm run start_test_db && npm run test_be_ts && npm run test_fe",
     "build_client": "npm run create_types && webpack --config webpack.prod.js",
     "build_server": "rm -fR server/ecmascript && npx tsc --project server/typescript",
     "pure_build": "npm run build_client && npm run build_server",
-    "build": "npm run pure_build",  
-
+    "build": "npm run pure_build",
     "predocker_compose": "npm run build",
     "docker_compose": "cd container && docker compose up",
     "docker_compose_down": "cd container && docker compose down"
