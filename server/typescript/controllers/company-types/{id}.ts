@@ -1,26 +1,31 @@
 import { getCompanyTypeById, deleteCompanyTypeById, putCompanyTypeById } from '../../services/companyTypes.js'
-import { createNewError, ErrorWithStatus } from '../../services/error.js'
-import type { Request, Response } from 'express'
+import { ApiError } from '../controllersError.js'
+import type { NextFunction, Request, Response } from 'express'
 import { CompanyTypeNorm, normalizeCompanyType, createCompanyTypeMeta, isCompanyTypeNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { Meta } from '../../app.js'
 import { Company } from '../../models/companies.js'
+import { NotFoundError } from '../../services/servicesError.js'
+import { ValidationError } from 'sequelize'
 
-export const GET: Operation = async (req: Request, res: Response) => {
-
-    const companyTypeSearchResult = await getCompanyTypeById(Number(req.params.id))
-    if (companyTypeSearchResult instanceof ErrorWithStatus) {
-        res
-            .status(companyTypeSearchResult.status)
-            .json({ status: companyTypeSearchResult.status, message: companyTypeSearchResult.message })
-    } else {
+export const GET: Operation = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const companyTypeSearchResult = await getCompanyTypeById(Number(req.params.id))
         const companyTypeNorm: CompanyTypeNorm = normalizeCompanyType(companyTypeSearchResult)
         const companyTypeNormMeta: Meta = createCompanyTypeMeta(companyTypeSearchResult)
         res
             .status(200)
             .set(companyTypeNormMeta)
             .json(companyTypeNorm)
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            next(new ApiError(404, error.message))
+            return
+        } else {
+            throw error
+        }
     }
+
 }
 
 GET.apiSpec = {
@@ -72,20 +77,28 @@ GET.apiSpec = {
     }
 }
 
-export const DELETE: Operation = async (req: Request, res: Response) => {
+export const DELETE: Operation = async (req: Request, res: Response, next: NextFunction) => {
     const { count } = await Company.findAndCountAll({
         where: {
             companyTypeId: Number(req.params.id)
         }
     })
     if (count === 0) {
-        const result = await deleteCompanyTypeById(Number(req.params.id))
-        if (result instanceof ErrorWithStatus) {
-            res.status(result.status).json({ status: result.status, message: result.message })
+        try {
+            await deleteCompanyTypeById(Number(req.params.id))
+            res
+                .status(204)
+                .end()
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                next(new ApiError(404, error.message))
+                return
+            } else {
+                throw error
+            }
         }
-        res.status(204).end()
     } else {
-        res.status(409).json({ status: 409, message: 'Conflict' })
+        throw new ApiError(409)
     }
 
 }
@@ -128,52 +141,36 @@ DELETE.apiSpec = {
     }
 }
 
-export const PUT: Operation = async (req: Request, res: Response) => {
+export const PUT: Operation = async (req: Request, res: Response, next: NextFunction) => {
     if (isCompanyTypeNorm(req.body)) {
-        const dbCompanyTypeSearchResult = await getCompanyTypeById(Number(req.params.id))
-
-        if (dbCompanyTypeSearchResult instanceof ErrorWithStatus) {
-
-            res
-                .status(dbCompanyTypeSearchResult.status)
-                .json({ status: dbCompanyTypeSearchResult.status, message: dbCompanyTypeSearchResult.message })
-        } else {
-
+        try {
+            const dbCompanyTypeSearchResult = await getCompanyTypeById(Number(req.params.id))
             const dbCompanyTypeMeta = createCompanyTypeMeta(dbCompanyTypeSearchResult)
-
             if (dbCompanyTypeMeta.etag === req.headers['if-match']) {
-
                 const updatedCompanyType = await putCompanyTypeById(Number(req.params.id), req.body)
-
-                if (updatedCompanyType instanceof ErrorWithStatus) {
-
-                    res
-                        .status(updatedCompanyType.status)
-                        .json({ status: updatedCompanyType.status, message: updatedCompanyType.message })
-
-                } else {
-
-                    const companyTypeHeader = createCompanyTypeMeta(updatedCompanyType)
-
-                    res
-                        .status(204)
-                        .set(companyTypeHeader)
-                        .end()
-                }
-
-            } else {
-                const newError = createNewError(412)
+                const companyTypeHeader = createCompanyTypeMeta(updatedCompanyType)
                 res
-                    .status(newError.status)
-                    .json({ status: newError.status, message: newError.message })
+                    .status(204)
+                    .set(companyTypeHeader)
+                    .end()
+            } else {
+                next(new ApiError(412))
+                return
+            }
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                next(new ApiError(404, error.message))
+                return
+            } else if (error instanceof ValidationError) {
+                next(new ApiError(400, error.message))
+                return
+            } else {
+                throw error
             }
         }
-
     } else {
-        const newError = createNewError(400)
-        res
-            .status(newError.status)
-            .json({ status: newError.status, message: newError.message })
+        next(new ApiError(400))
+        return
     }
 }
 

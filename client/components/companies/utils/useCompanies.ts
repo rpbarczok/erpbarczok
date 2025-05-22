@@ -41,7 +41,7 @@ export function useCompanies(): [DataWithMeta<Company>[], React.Dispatch<React.S
                         if (typeof result.headers.permissions === 'string') {
                             updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                         } else {
-                            throw Error('Permissions header should be type string.')
+                            throw new Error("Permission header must be type 'string'")
                         }
                     } catch (error) {
                         setIsLoading(false)

@@ -1,23 +1,17 @@
-import { apiClient } from '../../utils/openAPIClientAxios.js'
 import { Button, ButtonGroup, Form, ListGroup, Modal } from 'react-bootstrap'
-import { CompanyType } from './companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../Pages.jsx'
-import { Field, FieldsInput } from './fields/Fields.jsx'
+import { FieldsInput } from './fields/Fields.jsx'
 import { CompanyTypesInput } from './companyTypes/CompanyTypesInput.jsx'
-import { LoadingContext } from '../../utils/loadingContext.js'
 import { Note, Notes } from '../notifiers/Notes.jsx'
-import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
-import { Resource } from './resourceList.js'
-import { useAuth } from 'react-oidc-context'
-import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
+import { Resource, ResourceCollection } from './resourceList.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
 import { FunctionComponent, useState } from 'react'
 
 
 interface ResourceActiveProps {
     resource: Resource
-    changedItem: DataWithMeta<Field | CompanyType>
-    setChangedItem: React.Dispatch<React.SetStateAction<DataWithMeta<Field | CompanyType>>>
+    changedItem: DataWithMeta<ResourceCollection>
+    setChangedItem: React.Dispatch<React.SetStateAction<DataWithMeta<ResourceCollection>>>
 }
 
 const ResourceActive: FunctionComponent<ResourceActiveProps> = ({ resource, changedItem, setChangedItem }) => {
@@ -38,22 +32,19 @@ const ResourceActive: FunctionComponent<ResourceActiveProps> = ({ resource, chan
 }
 
 interface ResourcesListProps {
-    item: DataWithMeta<Field | CompanyType>
-    setIsItemChanged: React.Dispatch<React.SetStateAction<boolean>>
+    item: DataWithMeta<ResourceCollection>
     addMainNote: (note: Note) => void
     resource: Resource
+    submitChangedResource: (changedItem: DataWithMeta<ResourceCollection>) => Promise<Note>
+    deleteResource: (item: DataWithMeta<ResourceCollection>) => Promise<Note>
 }
 
-export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }: ResourcesListProps) => {
+export const ResourcesList = ({ resource, addMainNote, item, submitChangedResource, deleteResource }: ResourcesListProps) => {
     const [show, setShow] = useState(false)
     const [validated, setValidated] = useState<boolean>(false)
-    const [changedItem, setChangedItem] = useState<DataWithMeta<CompanyType | Field>>(item)
+    const [changedItem, setChangedItem] = useState<DataWithMeta<ResourceCollection>>(item)
     const [notes, addNote, removeNote] = useNotifier()
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const isNotChanged = changedItem.data === item.data
-    const auth = useAuth()
-    const token = auth.user?.access_token
-    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
     const handleModal = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         setShow(true)
@@ -64,94 +55,38 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
         setShow(false)
     }
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, changedItem: DataWithMeta<CompanyType | Field>) => {
-        const form = e.currentTarget
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, form: HTMLFormElement) => {
         e.preventDefault()
-        e.stopPropagation()
-        if (token) {
-            if (!form.checkValidity()) {
-                setValidated(true)
-            } else {
-                setIsLoading(true)
-                try {
-                    const client = await apiClient
-                    const result = await client.paths[resource.paths.single].put(
-                        { id: changedItem.meta.location, 'if-match': changedItem.meta.etag },
-                        changedItem.data,
-                        { headers: { Authorization: `Bearer ${token}` } })
-                    setIsLoading(false)
-                    const note: Note = {
-                        message: `Die Entität wurde erfolgreich geändert.`,
-                        variant: 'success'
-                    }
-                    addMainNote(note)
-                    setShow(false)
-                    setIsItemChanged(true)
-                    if (typeof result.headers.permissions === 'string') {
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                    } else {
-                        throw Error('Permissions header should be type string.')
-                    }
-                } catch (error) {
-                    setIsLoading(false)
-                    const note: Note = {
-                        message: `Fehler beim Ändern der Entität:  ${error instanceof Error ? error.message : String(error)}`,
-                        variant: 'danger'
-                    }
-                    addNote(note)
-                }
-            }
+
+        if (!form.checkValidity()) {
+            setValidated(true)
         } else {
-            const note: Note = {
-                message: 'Nicht authentifiziert',
-                variant: 'danger'
+
+            const newNote = await submitChangedResource(changedItem)
+
+            if (newNote.variant === 'success') {
+                addMainNote(newNote)
+                setShow(false)
+            } else {
+                addNote(newNote)
             }
-            addNote(note)
 
         }
+
     }
 
     const handleDelete = async () => {
-        if (token) {
-            const userConfirmed = window.confirm(`Willst du die ${resource.name} '${item.data.name}' wirklich löschen?`)
-            if (userConfirmed) {
-                setIsLoading(true)
-                try {
-                    const client = await apiClient
-                    const result = await client.paths[resource.paths.single].delete(item.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
-                    setIsLoading(false)
-                    setIsItemChanged(true)
-                    const note: Note = {
-                        variant: 'warning',
-                        message: `${resource.name} wurde gelöscht.`,
-                    }
-                    setShow(false)
-                    addMainNote(note)
-                    if (typeof result.headers.permissions === 'string') {
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                    } else {
-                        throw Error('Permissions header should be type string.')
-                    }
-                } catch (error) {
-                    setIsLoading(false)
-                    const note: Note = {
-                        variant: 'danger',
-                        message: `Löschen der ${resource.name} hat nicht geklappt: ${error instanceof Error ? error.message : String(error)}`,
-                    }
-                    addNote(note)
-                }
-
-
+        const userConfirmed = window.confirm(`Willst du die ${resource.name} '${item.data.name}' wirklich löschen?`)
+        if (userConfirmed) {
+            const newNote = await deleteResource(item)
+            if (newNote.variant === 'warning') {
+                setShow(false)
+                addMainNote(newNote)
+            } else {
+                addNote(newNote)
             }
-        } else {
-            const note: Note = {
-                message: 'Nicht authentifiziert',
-                variant: 'danger'
-            }
-            addNote(note)
 
         }
-
     }
 
     const handleUndo: React.MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -159,14 +94,13 @@ export const ResourcesList = ({ resource, setIsItemChanged, addMainNote, item }:
         setValidated(false)
         setChangedItem(item)
     }
-
     return (
         <>
             <ListGroup.Item onClick={handleModal}>
                 {item.data.name}
             </ListGroup.Item>
             <Modal show={show} onHide={() => handleClose()}>
-                <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, changedItem)}>
+                <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, e.currentTarget)}>
                     <Modal.Header closeButton>
                         <Modal.Title>{resource.name} {item.data.name}</Modal.Title>
                     </Modal.Header>

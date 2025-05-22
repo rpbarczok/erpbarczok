@@ -5,15 +5,15 @@ import { FunctionComponent } from 'react'
 interface LeftNavigationProps {
     setActiveResource: React.Dispatch<React.SetStateAction<Resource>>
     activeResource: Resource
-    setIsResourceChanged: React.Dispatch<React.SetStateAction<boolean>>
+    setIsActiveResourceChanged: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const ResourceNavigation: FunctionComponent<LeftNavigationProps> = ({ setActiveResource, activeResource, setIsResourceChanged }) => {
+export const ResourceNavigation: FunctionComponent<LeftNavigationProps> = ({ setActiveResource, activeResource, setIsActiveResourceChanged }) => {
 
     const resourceHandler = (e: React.MouseEvent, resource: Resource) => {
         e.preventDefault()
         setActiveResource(resource)
-        setIsResourceChanged(true)
+        setIsActiveResourceChanged(true)
     }
 
     const ButtonList = resourceList.map(resource => {

@@ -15,7 +15,7 @@ import { sequelize } from '../models/index.js'
 import { expect } from 'expect'
 import { App } from 'supertest/types.js'
 import { CompanyType } from '../models/companyTypes.js'
-import { sha256 } from '../hasher.js'
+import { sha256 } from './utils/hasher.js'
 import jwt from 'jsonwebtoken'
 
 const iat = Math.floor(Date.now() / 1000)
@@ -90,7 +90,6 @@ const companyBA4 = { 'name': 'Firma C', 'companyType': 'Kunde', 'abbr': 'FRC', '
 const etagBA4 = sha256(JSON.stringify(companyBA4))
 
 describe('/companies/ HTTP integration Tests', function () {
-    this.timeout(5000)
     let app: App
 
     before(async function () {
@@ -335,7 +334,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe('not found')
+            expect(response.body.message).toBe('Not found: Company with id 17.')
         })
 
         it('GET /companies/{id} with negative id fails', async function () {
@@ -398,7 +397,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${validTokenGuest}`)
                 .expect('Content-Type', /json/)
-                .expect(404, { status: 404, message: 'not found', errors: [] })
+                .expect(404, { status: 404, message: 'not found', errors: [{"message": "not found", "path": "/something"}]})
         })
     })
 
@@ -588,7 +587,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .send(companyBA2)
                 .expect(412)
             expect(response.body.status).toBe(412)
-            expect(response.body.message).toMatch('Precondition failed')
+            expect(response.body.message).toMatch('Precondition failed.')
         })
 
         it('PUT /companies/{id}: remove name form existing company fails', async function () {
@@ -625,7 +624,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .set('Authorization', `Bearer ${validTokenAdmin}`)
                 .expect(409)
             expect(response.body.status).toBe(409)
-            expect(response.body.message).toMatch('Conflict')
+            expect(response.body.message).toMatch('Conflict.')
         })
 
         it('DELETE /companies/{id} existing company fails as guest', async function () {
@@ -654,7 +653,7 @@ describe('/companies/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe('not found')
+            expect(response.body.message).toBe('Not found: Company with id 1.')
         })
 
         it('DELETE /companies/{id} with negative id fails', async function () {

@@ -1,24 +1,24 @@
 import { DataWithMeta, Meta } from '../../app.js'
-import { sha256 } from '../../hasher.js'
+import { sha256 } from '../../tests/utils/hasher.js'
 import { Field } from '../../models/fields.js'
 import { getAllFields, addField } from '../../services/fields.js'
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
-import { createNewError, ErrorWithStatus } from '../../services/error.js'
+import { ApiError } from '../controllersError.js'
 
 export interface FieldNorm {
     name: string
 }
 
 export const isFieldNorm = (value: unknown): value is FieldNorm => {
-    if (typeof value === 'object' && value !== null ) {
+    if (typeof value === 'object' && value !== null) {
         const keys = Object.keys(value)
         if (keys.includes('name')) {
             return (keys.every(key => ['name'].includes(key)))
         }
     }
     return false
-} 
+}
 
 export function normalizeField(field: Field): FieldNorm {
     const result: FieldNorm = { name: field.name }
@@ -38,18 +38,11 @@ export function combineFieldWithMeta(field: Field): DataWithMeta<FieldNorm> {
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const allFieldsSearchResult = await getAllFields()
-    if (allFieldsSearchResult instanceof ErrorWithStatus) {
-        res
-        .status(allFieldsSearchResult.status)
-        .send({status: allFieldsSearchResult.status, message: allFieldsSearchResult.message})
+    const allFieldsWithMeta: DataWithMeta<FieldNorm>[] = allFieldsSearchResult.map(row => combineFieldWithMeta(row))
+    res
+        .status(200)
+        .send(allFieldsWithMeta)
         .end()
-    } else {
-        const allFieldsWithMeta: DataWithMeta<FieldNorm>[] = allFieldsSearchResult.map(row => combineFieldWithMeta(row))
-        res
-            .status(200)
-            .send(allFieldsWithMeta)
-            .end()
-    }
 }
 
 GET.apiSpec = {
@@ -136,25 +129,17 @@ GET.apiSpec = {
         }
     }
 }
-export const POST: Operation = async (req: Request, res: Response) => {
+export const POST: Operation = async (req: Request, res: Response, next: NextFunction) => {
     if (isFieldNorm(req.body)) {
         const newFieldAddResult = await addField(req.body)
-        if (newFieldAddResult instanceof ErrorWithStatus) {
-            res
-            .status(newFieldAddResult.status)
-            .json({status: newFieldAddResult.status, message: newFieldAddResult.message})
-            .end()
-        } else {
-            const newFieldMeta = createFieldMeta(newFieldAddResult)
-            res
-                .status(201)
-                .set(newFieldMeta)
-                .end()
-        }
-    } else {
+        const newFieldMeta = createFieldMeta(newFieldAddResult)
         res
-        .status(400)
-        .json(createNewError(400))
+            .status(201)
+            .set(newFieldMeta)
+            .end()
+    } else {
+        next(new ApiError(400))
+        return
     }
 
 }

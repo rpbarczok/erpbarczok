@@ -1,89 +1,145 @@
-import { AddResources } from './ResourceAdd.js'
+import { ResourcesAdd } from './ResourcesAdd.js'
 import { apiClient } from '../../utils/openAPIClientAxios.js'
-import { CompanyType } from './companyTypes/CompanyTypesInput.js'
 import { DataWithMeta } from '../Pages.jsx'
-import { Field } from './fields/Fields.js'
 import { ListGroup, Row } from 'react-bootstrap'
 import { LoadingContext } from '../../utils/loadingContext.js'
-import { Notes } from '../notifiers/Notes.js'
+import { Note, Notes } from '../notifiers/Notes.js'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
-import { removeStringBeforeLastDigits } from '../../utils/removeStringBeforeLastDigits.js'
-import { Resource } from './resourceList.js'
+import { Resource, ResourceCollection } from './resourceList.js'
 import { ResourcesList } from './ResourcesList.js'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
-import { useEffect, useState } from 'react'
 import { useNotifier } from '../notifiers/useNotifier.js'
 
 interface ResourcePageComponent {
     resource: Resource
-    isResourceChanged: boolean
+    resourceList: DataWithMeta<ResourceCollection>[]
     setIsResourceChanged: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const ResourcePage = ({ resource, isResourceChanged, setIsResourceChanged }: ResourcePageComponent) => {
-    const [isItemChanged, setIsItemChanged] = useState(true)
+export const ResourcePage = ({ resource, resourceList, setIsResourceChanged }: ResourcePageComponent) => {
     const [mainNotes, addMainNote, removeMainNote] = useNotifier()
-    const [newList, setNewList] = useState<DataWithMeta<CompanyType | Field>[]>([])
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
     const auth = useAuth()
     const token = auth.user?.access_token
     const { setIsLoading } = useContextThrowUndefined(LoadingContext)
 
-    useEffect(() => {
-        if (isItemChanged || isResourceChanged) {
+    async function submitNewResource(newItem: DataWithMeta<ResourceCollection>): Promise<Note> {
+        const auth = useAuth()
+        const token = auth.user?.access_token
+        if (token) {
             setIsLoading(true)
+            try {
+                const client = await apiClient
+                const result = await client.paths[resource.paths.all].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
+                setIsLoading(false)
 
-            async function getResource() {
-                if (token) {
-                    try {
-                        const client = await apiClient
-                        const result = await client.paths[resource.paths.all].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
-                        setIsLoading(false)
-                            const newList = result.data.map(row => {
-                                const newRow: DataWithMeta<CompanyType | Field> = {
-                                    meta: {
-                                        location: Number(removeStringBeforeLastDigits(row.meta.location)),
-                                        etag: row.meta.etag
-                                    },
-                                    data: row.data
-                                }
-                                return newRow
-                            })
-                            setNewList(newList)
-                            if (typeof result.headers.permissions === 'string') {
-                                updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                            } else {
-                                throw Error('Permissions header should be type string.')
-                            }    
-                    } catch (error) {
-                        setIsLoading(false)
-                        throw Error(`Error while loading resource: ${error instanceof Error ? error.message : String(error)}`)
-                    }
+                setIsResourceChanged(true)
+                if (typeof result.headers.permissions === 'string') {
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
                 } else {
-                    throw Error('Bitte authentifizieren')
+                    throw new Error("Permission header must be type 'string'")
+                }
+                return {
+                    message: `Eine neue Entität wurde erfolgreich abgespeichert.`,
+                    variant: 'success'
+                }
+
+            } catch (error) {
+                setIsLoading(false)
+                return {
+                    message: `Fehler beim Speichern der neuen Entität:  ${error instanceof Error ? error.message : String(error)}`,
+                    variant: 'danger',
                 }
             }
 
-            void getResource()
-            
-            if (isItemChanged) {
-                setIsItemChanged(false)
+        } else {
+            return {
+                message: `Bitte anmelden`,
+                variant: 'danger',
             }
-            if (isResourceChanged) {
-                setIsResourceChanged(false)
+        }
+
+    }
+
+    async function submitChangedResource(changedItem: DataWithMeta<ResourceCollection>): Promise<Note> {
+        if (token) {
+            setIsLoading(true)
+            try {
+                const client = await apiClient
+                const result = await client.paths[resource.paths.single].put(
+                    { id: changedItem.meta.location, 'if-match': changedItem.meta.etag },
+                    changedItem.data,
+                    { headers: { Authorization: `Bearer ${token}` } })
+                setIsLoading(false)
+                setIsResourceChanged(true)
+                if (typeof result.headers.permissions === 'string') {
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                } else {
+                    throw new Error("Permission header must be type 'string'")
+                }
+                return {
+                    message: `Die Entität wurde erfolgreich geändert.`,
+                    variant: 'success'
+                }
+            } catch (error) {
+                setIsLoading(false)
+                return {
+                    message: `Fehler beim Ändern der Entität:  ${error instanceof Error ? error.message : String(error)}`,
+                    variant: 'danger'
+                }
+            }
+        } else {
+            return {
+                message: 'Nicht authentifiziert',
+                variant: 'danger'
+            }
+        }
+    }
+
+    async function deleteResource(item: DataWithMeta<ResourceCollection>): Promise<Note> {
+        if (token) {
+
+            setIsLoading(true)
+            try {
+                const client = await apiClient
+                const result = await client.paths[resource.paths.single].delete(item.meta.location, null, { headers: { Authorization: `Bearer ${token}` } })
+                setIsLoading(false)
+                setIsResourceChanged(true)
+                if (typeof result.headers.permissions === 'string') {
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                } else {
+                    throw new Error("Permission header must be type 'string'")
+                }
+                return {
+                    variant: 'warning',
+                    message: `${resource.name} wurde gelöscht.`,
+                }
+            } catch (error) {
+                setIsLoading(false)
+                return {
+                    variant: 'danger',
+                    message: `Löschen der ${resource.name} hat nicht geklappt: ${error instanceof Error ? error.message : String(error)}`,
+                }
             }
 
+
+        } else {
+            return {
+                message: 'Nicht authentifiziert',
+                variant: 'danger'
+            }
 
         }
-    }, [isItemChanged, isResourceChanged])
+    }
 
-    const ListResources = newList.map(item => {
+    const listResources = resourceList.map(item => {
         return <ResourcesList
             key={item.data.name + String(item.meta.location)}
             resource={resource}
-            setIsItemChanged={setIsItemChanged}
             addMainNote={addMainNote}
+            submitChangedResource={submitChangedResource}
+            deleteResource={deleteResource}
             item={item} />
     })
 
@@ -94,16 +150,16 @@ export const ResourcePage = ({ resource, isResourceChanged, setIsResourceChanged
                 <h1>{resource.name}</h1>
             </Row>
             <Row>
-                <AddResources
+                <ResourcesAdd
                     resource={resource}
                     addMainNote={addMainNote}
-                    setIsItemChanged={setIsItemChanged}
+                    submitNewResource={submitNewResource}
                 />
             </Row>
             <Notes notes={mainNotes} removeNote={removeMainNote} />
             <Row>
-                <ListGroup  key={resource.name + '-list'} >
-                    {ListResources}
+                <ListGroup key={resource.name + '-list'} >
+                    {listResources}
                 </ListGroup >
             </Row>
         </>

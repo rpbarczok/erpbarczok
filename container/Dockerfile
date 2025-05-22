@@ -3,10 +3,10 @@ FROM --platform=$BUILDPLATFORM node:23-alpine3.20 AS build
 USER node
 WORKDIR /home/node
 
-ADD --chown=node:node package.json .
+COPY --chown=node:node package.json .
 RUN npm install
 
-ADD --chown=node:node . .
+COPY --chown=node:node . .
 
 RUN npx webpack --config webpack.prod.js && rm -fR server/ecmascript && npx tsc --project server/typescript
 

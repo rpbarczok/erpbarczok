@@ -1,0 +1,12 @@
+services:
+  erpbarczok_db:
+    image: erpbarczok_db:latest
+    ports: 
+      - 8082:5432
+    container_name: dev_db
+    build: ../postgres
+    environment:
+      POSTGRES_PASSWORD: 'blablubber'
+    healthcheck:
+      test: psql -lqt -U postgres | cut -d | -f 1 | grep erpbarczok_db | echo $?
+      start_period: 20s

@@ -5,7 +5,7 @@ import { startingApp } from '../app.js'
 import { sequelize } from '../models/index.js'
 import { expect } from 'expect'
 import { App } from 'supertest/types.js'
-import { sha256 } from '../hasher.js'
+import { sha256 } from './utils/hasher.js'
 import jwt from 'jsonwebtoken'
 
 const iat = Math.floor(Date.now() / 1000)
@@ -258,7 +258,7 @@ describe('/fields/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe('not found')
+            expect(response.body.message).toBe('Not found: Field with id 17.')
         })
 
         it('Get /field/{id} fails with 400 with negative id fails', async function () {
@@ -361,7 +361,7 @@ describe('/fields/ HTTP integration Tests', function () {
                 .send(fieldC)
                 .expect(412)
             expect(response.body.status).toBe(412)
-            expect(response.body.message).toMatch('Precondition failed')
+            expect(response.body.message).toMatch('Precondition failed.')
         })
     })
 
@@ -405,7 +405,7 @@ describe('/fields/ HTTP integration Tests', function () {
                 .expect('Content-Type', /json/)
                 .expect(404)
             expect(response.body.status).toBe(404)
-            expect(response.body.message).toBe('not found')
+            expect(response.body.message).toBe('Not found: Field with id 1.')
         })
 
         it('DELETE /fields/{id} fails with 400 with negative id', async function () {

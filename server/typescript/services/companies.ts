@@ -6,110 +6,74 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { createNewError } from './error.js'
 import { Company } from '../models/companies.js'
 import { CompanyType } from '../models/companyTypes.js'
 import { CompanyNorm, CompanyFK } from '../controllers/companies/index.js'
 import { baseLogger } from '../logger.js'
+import { AssociationNotFoundError, NotFoundError, ValidationError } from './servicesError.js'
 
 export const getAllCompanies = async () => {
     const logger = baseLogger.extend('getAllCompanies')
-    try {
-        const companies = await Company.findAll({ include: CompanyType, order: [['name', 'ASC']] })
-        logger(companies)
-        return companies
-    }
-    catch (error) {
-        logger(error)
-        return createNewError(500, error)
-    }
+    const companies = await Company.findAll({ include: CompanyType, order: [['name', 'ASC']] })
+    logger('Got all Companies.')
+    return companies
 }
 
 export const addCompany = async (company: CompanyNorm) => {
-    const companyType = await CompanyType.findOne({ where: { name: company.companyType } })
-    if (companyType) {
-        const newCompany = { name: company.name, companyTypeId: companyType.id, abbr: company.abbr, www: company.www }
-        try {
+    const logger = baseLogger.extend('addCompanies')
+    if (company.name && company.companyType) {
+        const companyType = await CompanyType.findOne({ where: { name: company.companyType } })
+        if (companyType) {
+            const newCompany = { name: company.name, companyTypeId: companyType.id, abbr: company.abbr, www: company.www }
             const addedCompany = await Company.create(newCompany)
-            const addedCompanyInclude = await Company.findByPk(addedCompany.id, {include: CompanyType})
+            const addedCompanyInclude = await Company.findByPk(addedCompany.id, { include: CompanyType })
             if (addedCompanyInclude) {
+                logger('Added company.')
                 return addedCompanyInclude
-            } else {
-                return createNewError(500, 'Error when creating company type.')
-            }
-        } catch (error) {
-            return createNewError(500, error)
-        }
-    } else {
-        return createNewError(404)
-    }
+            } else throw new Error('company.findByPK did not return freshly created company.')
+        } else throw new AssociationNotFoundError(`company type ${company.companyType}`)
+    } else throw new ValidationError()
 }
 
 export const getCompanyById = async (id: number) => {
-    try {
-        const company = await Company.findByPk(id, { include: CompanyType })
-        if (company === null) {
-            return createNewError(404)
-        } else {
-            return company
-        }
-    }
-    catch (error) {
-        return createNewError(500, error)
+    const logger = baseLogger.extend('getCompanyById')
+    const company = await Company.findByPk(id, { include: CompanyType })
+    if (company === null) {
+        throw new NotFoundError(`Not found: Company with id ${String(id)}.`)
+    } else {
+        logger(`Got company with id ${String(id)}.`)
+        return company
     }
 }
 
 export const deleteCompanyById = async (id: number) => {
-    try {
-        const deletedRowsCount = await Company.destroy({ where: { id: id } })
-        if (deletedRowsCount === 0) {
-            return createNewError(404)
-        } else {
-            return 
-        }
-    }
-    catch (error) {
-        return createNewError(500, error)
+    const logger = baseLogger.extend('deleteCompanyById')
+    const deletedRowsCount = await Company.destroy({ where: { id: id } })
+    if (deletedRowsCount === 0) {
+        throw new NotFoundError(`Not found: Company with id ${String(id)}.`)
+    } else {
+        logger(`Deleted company with id ${String(id)}.`)
+        return
     }
 }
 
-export const putCompanyById = async (id: number, company: CompanyNorm) => {
-    try {
-        if (company.name && company.companyType) {
-            const oldCompany = await Company.findByPk(id, { include: CompanyType })
-            if (oldCompany === null) {
-                return createNewError(404)
-            } else {
-                const companyType = await CompanyType.findOne({ where: { name: company.companyType } })            
-                if (companyType) {
-                    const data: CompanyFK = { name: company.name, companyTypeId: companyType.id }
-                    data.abbr = company.abbr ?? null
-                    data.www = company.www ?? null
-                    
-                    const updatedRow = await Company.update(data, { returning: true, where: { id: id } })            
-                    if (updatedRow[0] === 1) {
-                        const updatedCompany = updatedRow[1]
-                        const updatedCompanyInclude = await Company.findByPk(updatedCompany[0].id, {include: CompanyType})
-                        if (updatedCompanyInclude) {
-                            return updatedCompanyInclude
-                        } else {
-                            return createNewError(500, 'Error when updating company type')
-                        }
-                    } else {
-                        return createNewError(500, 'Error when updating company type')
-                    }
-            
-                } else {
-            
-                    return createNewError(404)
-            
-                }
-            }
-        } else {
-            return createNewError(400)
-        }
-    }
-    catch (error) {
-        return createNewError(500, error)
-    }
+export const putCompanyById = async (id: number, company: CompanyNorm): Promise<Company> => {
+    const logger = baseLogger.extend('putCompanyById')
+    if (company.name && company.companyType) {
+        const oldCompany = await Company.findByPk(id, { include: CompanyType })
+        if (oldCompany !== null) {
+            const companyType = await CompanyType.findOne({ where: { name: company.companyType } })
+            if (companyType) {
+                const data: CompanyFK = { name: company.name, companyTypeId: companyType.id }
+                data.abbr = company.abbr ?? null
+                data.www = company.www ?? null
+                const updatedCompany = await oldCompany.update(data)
+                const updatedCompanyInclude = await Company.findByPk(updatedCompany.id, { include: CompanyType })
+                if (updatedCompanyInclude) {
+                    logger(`Updated company with id ${String(id)}.`)
+                    return updatedCompanyInclude
+                } else throw new NotFoundError(`Not found: freshly updated company was not found.`)
+            } else throw new AssociationNotFoundError(`company type ${company.companyType}`)
+        } else throw new NotFoundError(`Not found: company ${String(id)}.`)
+    } else throw new ValidationError()
 }

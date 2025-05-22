@@ -21,7 +21,7 @@ export function changedCompanyReducer(changedCompany: DataWithMeta<Company>, act
             case 'abbrChange': {
                 return (
                     {
-                        meta: changedCompany.meta,
+                        ...changedCompany,
                         data: {
                             ...changedCompany.data,
                             'abbr': action.newValue,

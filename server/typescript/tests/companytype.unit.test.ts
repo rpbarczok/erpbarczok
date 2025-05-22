@@ -2,7 +2,6 @@ import { expect } from 'expect'
 import './utils/env.test.js'
 import { getAllCompanyTypes, getCompanyTypeById, deleteCompanyTypeById, putCompanyTypeById, addCompanyType, } from '../services/companyTypes.js'
 import { sequelize } from '../models/index.js'
-import { ErrorWithStatus } from '../services/error.js'
 
 
 describe('CompanyType Unit Tests', function () {
@@ -45,8 +44,8 @@ describe('CompanyType Unit Tests', function () {
         })
 
         it('getCompanyTypeById(17) returns error', async function () {
-            await expect(getCompanyTypeById(17)).resolves.toEqual(
-                expect.objectContaining({status: 404, message: 'not found'})
+            await expect(getCompanyTypeById(17)).rejects.toEqual(
+                expect.objectContaining({ message: 'Not found: Company type with id 17.'})
             )
         })
     })
@@ -66,8 +65,8 @@ describe('CompanyType Unit Tests', function () {
 
         it('putCompanyTypeId(1) remove name returns error', async function () {
             // @ts-expect-error Provoke error by giving object without props.
-            await expect(putCompanyTypeById(1, {})).resolves.toEqual(
-                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Spediteur', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+            await expect(putCompanyTypeById(1, {})).rejects.toEqual(
+                expect.objectContaining({ message: 'Bad request.' })
             )
         })
 
@@ -78,7 +77,9 @@ describe('CompanyType Unit Tests', function () {
         })
 
         it('putCompanyTypeById(17) returns error', async function () {
-            await expect(putCompanyTypeById(17, { 'name': 'Sonstiges' })).resolves.toBeInstanceOf(ErrorWithStatus)
+            await expect(putCompanyTypeById(17, { 'name': 'Sonstiges' })).rejects.toEqual(
+                expect.objectContaining({ message: 'Not found: Company type with id 17.' })
+            )
         })
     })
 
@@ -87,9 +88,9 @@ describe('CompanyType Unit Tests', function () {
             await expect(deleteCompanyTypeById(1)).resolves.toBeUndefined()
         })
 
-        it('subsequent deleteCompanyTypeById(1) throws NotFoundError', async function () {
-            await expect(deleteCompanyTypeById(1)).resolves.toEqual(
-                expect.objectContaining({status: 404, message: 'not found'})
+        it('subsequent deleteCompanyTypeById(1) throws 404 error', async function () {
+            await expect(deleteCompanyTypeById(1)).rejects.toEqual(
+                expect.objectContaining({ message: 'Not found: Company type with id 1.' })
             )
         })
 

@@ -43,8 +43,8 @@ describe('Field Unit Tests', function () {
         })
 
         it('getFieldById(17) returns error', async function () {
-            await expect(getFieldById(17)).resolves.toEqual(
-                expect.objectContaining({ status: 404, message: 'not found' })
+            await expect(getFieldById(17)).rejects.toEqual(
+                expect.objectContaining({ message: 'Not found: Field with id 17.' })
             )
         })
     })
@@ -62,10 +62,10 @@ describe('Field Unit Tests', function () {
             )
         })
 
-        it('putFieldId(1) remove name returns unchanged field', async function () {
+        it('putFieldId(1) remove name returns error', async function () {
             //@ts-expect-error -- provokes mistake to test reaction of db
-            await expect(putFieldById(1, {})).resolves.toEqual(
-                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Spediteur', updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+            await expect(putFieldById(1, {})).rejects.toEqual(
+                expect.objectContaining({ message: 'Bad request.' })
             )
         })
 
@@ -76,8 +76,8 @@ describe('Field Unit Tests', function () {
         })
 
         it('putFieldById(17) returns error', async function () {
-            await expect(putFieldById(17, { 'name': 'Sonstiges' })).resolves.toEqual(
-                expect.objectContaining({ status: 404, message: 'not found' }
+            await expect(putFieldById(17, { 'name': 'Sonstiges' })).rejects.toEqual(
+                expect.objectContaining({ message: 'Not found: Field with id 17.' }
                 ))
         })
     })
@@ -87,9 +87,9 @@ describe('Field Unit Tests', function () {
             await expect(deleteFieldById(1)).resolves.toBeUndefined()
         })
 
-        it('subsequent deleteFieldById(1) resolves to Error', async function () {
-            await expect(deleteFieldById(1)).resolves.toEqual(
-                expect.objectContaining({ status: 404, message: 'not found' })
+        it('subsequent deleteFieldById(1) rejects to Error', async function () {
+            await expect(deleteFieldById(1)).rejects.toEqual(
+                expect.objectContaining({ message: 'Not found: Field with id 1.' })
             )
         })
 

@@ -54,10 +54,54 @@ From a _developer perspective_, these choices have the following advantages:
 
 ## Getting Started
 
+### With Docker
+
+1. Prerequisites:
+   * Node.js (v20 or higher)
+   * Docker
+
+2. Clone the repository:
+
+   ```bash
+   git clone https://github.com/rpbarczok/erpbarczok.git
+   cd erpbarczok
+   ```
+
+3. Install dependencies
+
+   ```bash
+    npm install
+   ```
+
+4. run docker
+
+   ```bash
+   cd container
+   docker compose up
+   ```
+
+5. Access the application 
+
+   Open http://localhost:8080
+
+   Click login
+
+   Enter ``test_user`` pw: ``test`` or ``test_admin`` pw: ``admin``
+
+6. Manage Keycloak users and roles:
+
+   Open http://localhost:8081
+
+   Enter ``admin`` pw: ``admin``
+
+
+### With node.js
+
 1. Prerequisites
    * Node.js (v20 or higher)
    * PostgreSQL (v16 or higher)
    * Typescript (v5 or higher)
+   * EntraID or Auth0 Tenant (or any other OIDC IDP)
    * Docker (optional, for containerized deployment)
 
 2. Clone the repository:
@@ -176,6 +220,55 @@ The implementation of Auth works with Auth0 and EntraID. Depending on which serv
    | `JWKS_URI`          | _your-jwks_uri_                               | `JWKS_URI=https://login.microsoftonline.com/43aa1d23-d97f-4178-a9d8-917442f8d7af/discovery/v2.0/keys` | URI of the JWKS key if different from the standard - open the URI of the _OpenID Connect metadata document_ (found in the endpoints offcanvas) and look in the JSON for the value of `jwks-uri`. |
    | `CLIENT_ID_SWAGGER` | _your-client-id-for-swagger_                  | `CLIENT_ID_SWAGGER=c170d1cb-91af-446a-bdbd-ec24f3cc81cd`                                              | Only if you have registered the Swagger UI as its own application, otherwise it works with the client_id                                                                                         |
 
+</details>
+<details>
+   <summary>Keycloak Example</summary>
+   &nbsp;
+
+   For Keycloak, create a new realm (e.g., erpbarczok) and switch to it. Within this realm, register both the API and the application under the _Clients_ tab. 
+   
+   **Registering the API:**
+   
+   * _General settings_: Choose a name (e.g., erpbarczok_api). 
+   * _Capability config_: Uncheck it in the authentication flow. 
+   * _Login settings_: No entries required here.
+
+   After registering the API
+   
+   * Go to _Roles_ and create two roles: admin and user
+   * _Client scopes_ 
+      * Add `erpbarczok` as default
+      * Select *erpbarczok_api-dedicated*, open _Scope_ and disable _Full scope allowed_
+
+   **Registering the Application:**   
+   
+   * _General settings_: Choose a name (e.g., erpbarczok_app) and enable _Always display in UI_.
+   * _Capability config_: Ensure Standard flow is checked (default).
+   * _Login settings_: Enter the URLs of your application.
+   * _Web Origins_: Enter a _+_.
+
+   After registering the application, open the newly register entry
+
+   * _Client scopes_: 
+      * Add `erpbarczok` as default
+      * Select `erpbarczok_api-dedicated`, open _Scope_ and disable _Full scope allowed_
+   * _Clients_: select your app, open _Client scopes_, and add `erpbarczok` as default.
+
+   **User Management:**
+      
+   * Users can be added under the User tab.
+   * Assign the role `erpbarczok:admin` or `erpbarczok:user` to allow access.
+
+   Required Environment Variables for Keycloak
+
+   | Variable           | Value                                     | Example                                                                             | Where to find in Keycloak                                     |
+   | ------------------ | ----------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+   | `CLIENT_ID`        | _your-client-id_                          | `CLIENT_ID=erpbarczok_app`                                                          | in the tab _Clients_, Client ID of the app                    |
+   | `IDP_SERVER`       | _your-idp-server_                         | `IDP_SERVER=https://keycloak.barczok/realms/erpbarczok`                             | the URL of the keycloak server + /realms/ + name of the realm |
+   | `AUDIENCE`         | _your-audience_                           | `AUDIENCE=erpbarczok_api`                                                           | in the tab _Clients_, Client ID of the api                    |
+   | `SCOPE`            | `"openid email profile erpbarczok"`       | `SCOPE="openid email profile erpbarczok"`                                           |                                                               |
+   | `PERMISSION_CLAIM` | `resource_access.`_your-audience_`.roles` | `PERMISSION_CLAIM="resource_access.erpbarczok_api.roles"`                           |                                                               |
+   | `JWKS_URI`         | _your-jwks-uri_                           | `JWKS_URI=https://keycloak.barczok/realms/erpbarczok/protocol/openid-connect/certs` |                                                               |
 </details>
 &nbsp;
 

@@ -1,24 +1,29 @@
 import { getFieldById, deleteFieldById, putFieldById } from '../../services/fields.js'
-import { createNewError, ErrorWithStatus } from '../../services/error.js'
-import type { Request, Response } from 'express'
+import { ApiError } from '../controllersError.js'
+import type { NextFunction, Request, Response } from 'express'
 import { FieldNorm, normalizeField, createFieldMeta, isFieldNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { Meta } from '../../app.js'
+import { NotFoundError } from '../../services/servicesError.js'
 
-export const GET: Operation = async (req: Request, res: Response) => {
-    const fieldSearchResult = await getFieldById(Number(req.params.id))
-    if (fieldSearchResult instanceof ErrorWithStatus) {
-        res
-            .status(fieldSearchResult.status)
-            .json({ status: fieldSearchResult.status, message: fieldSearchResult.message })
-    } else {
+export const GET: Operation = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const fieldSearchResult = await getFieldById(Number(req.params.id))
         const fieldNorm: FieldNorm = normalizeField(fieldSearchResult)
         const fieldNormMeta: Meta = createFieldMeta(fieldSearchResult)
         res
             .status(200)
             .set(fieldNormMeta)
             .json(fieldNorm)
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            next(new ApiError(404, error.message))
+            return
+        } else {
+            throw error
+        }
     }
+
 
 }
 
@@ -74,23 +79,20 @@ GET.apiSpec = {
     }
 }
 
-export const DELETE: Operation = async (req: Request, res: Response) => {
-    const result = await deleteFieldById(Number(req.params.id))
-    if (result instanceof ErrorWithStatus) {
-        res
-            .status(result.status)
-            .json(
-                {
-                    status: result.status,
-                    message: result.message,
-                    'errors': []
-                })
-    } else {
+export const DELETE: Operation = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await deleteFieldById(Number(req.params.id))
         res
             .status(204)
             .end()
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            next(new ApiError(404, error.message))
+            return
+        } else {
+            throw error
+        }
     }
-
 }
 
 DELETE.apiSpec = {
@@ -131,42 +133,34 @@ DELETE.apiSpec = {
     }
 }
 
-export const PUT: Operation = async (req: Request, res: Response) => {
-    const dbFieldSearchResult = await getFieldById(Number(req.params.id))
-    if (dbFieldSearchResult instanceof ErrorWithStatus) {
-        res
-            .status(dbFieldSearchResult.status)
-            .json({ status: dbFieldSearchResult.status, message: dbFieldSearchResult.message, 'errors': [] })
-    } else {
-        
+export const PUT: Operation = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const dbFieldSearchResult = await getFieldById(Number(req.params.id))
         if (isFieldNorm(req.body)) {
             const dbFieldMeta = createFieldMeta(dbFieldSearchResult)
             if (dbFieldMeta.etag === req.headers['if-match']) {
-                    const updatedField = await putFieldById(Number(req.params.id), req.body)
-                    if (updatedField instanceof ErrorWithStatus) {
-                        res
-                            .status(updatedField.status)
-                            .json({ status: updatedField.status, message: updatedField.message, 'errors': [] })
-                    } else {
-                        const fieldHeader = createFieldMeta(updatedField)
-                        res
-                            .status(204)
-                            .set(fieldHeader)
-                            .end()
-                    }
-            } else {
-                const newError = createNewError(412)
+                const updatedField = await putFieldById(Number(req.params.id), req.body)
+                const fieldHeader = createFieldMeta(updatedField)
                 res
-                    .status(newError.status)
-                    .json({status: newError.status, message: newError.message})
+                    .status(204)
+                    .set(fieldHeader)
+                    .end()
+
+            } else {
+                next(new ApiError(412))
+                return
             }
         } else {
-            const newError = createNewError(400)
-            res
-                .status(newError.status)
-                .json({status: newError.status, message: newError.message})
+            next(new ApiError(400))
+            return
         }
-        
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            next(new ApiError(404, error.message))
+            return
+        } else {
+            throw error
+        }
     }
 }
 

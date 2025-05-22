@@ -21,8 +21,8 @@ import { sequelize } from './models/index.js'
 import { apiSpec } from './openapi.js'
 import { loadControllers, Operation } from './utils/apiSpecAssembler.js'
 import { jwtCheck } from './utils/auth.js'
-import { ErrorWithStatus } from './services/error.js'
 import { setDefaultValues } from './models/default-values.js'
+import { ApiErrorLike } from './controllers/controllersError.js'
 
 export interface Meta {
     location: string
@@ -144,8 +144,10 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             }
             return false
         }
-        const name = process.env.PERMISSION_CLAIM ?? 'roles'
-        const userPermissionsPrep: unknown = req.auth ? req.auth[name] : []
+        const name: string = process.env.PERMISSION_CLAIM ?? 'roles'
+        console.log("Permision Claim:", name)
+        const userPermissionsPrep: unknown = name.split('.').reduce((o, k) => o && o[k], req.auth)
+        console.log("Permision Claim Prep", userPermissionsPrep)
         const userPermissionsArray: string[] = []
         if (isArrayOfStrings(userPermissionsPrep)) {
             userPermissionsArray.push(...userPermissionsPrep)
@@ -157,7 +159,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
         if (userPermissionsArray.some(permission => permission === 'admin')) userPermissions.push('admin', 'user')
 
         req.userPermissions = userPermissions
-
+        console.log("req.userPermissions", req.userPermissions)
         res.set('permissions', req.userPermissions.join(' '))
 
         permissionLogger('Permissions: ', req.userPermissions.join(' '))
@@ -218,62 +220,33 @@ window.scope = '${jsesc(process.env.SCOPE)}';
         )
     )
 
+
     // add API error handler
     app.set('json spaces', 2)
     app.use(
-        (error: unknown, req: Request, res: Response, _next: NextFunction) => {
+        (error: Partial<ApiErrorLike>, req: Request, res: Response, _next: NextFunction) => {
             logger('Error %o.', error)
-            if (error instanceof ErrorWithStatus) {
-                res
-                    .status(error.status)
+            if (error.status) {
+                res.status(error.status)
                     .json({
                         status: error.status,
                         message: error.message,
-                        errors: []
+                        errors: error.errors
                     })
             } else {
-                if (typeof error === 'object' && error !== null) {
-                    if ('status' in error && (typeof error.status === 'number')) {
-                        if ('message' in error && typeof error.message === 'string') {
-                            res
-                                .status(error.status)
-                                .json({
-                                    status: error.status,
-                                    message: error.message,
-                                    errors: []
-                                })
-                        }
-                        else {
-                            res
-                                .status(error.status)
-                                .json({
-                                    status: error.status,
-                                    message: 'Unspecified ' + String(error.status) + " error.",
-                                    errors: []
-                                })
-                        }
-                    }
-                    else {
-                        res
-                            .status(500)
-                            .json({
-                                send: 500,
-                                message: 'Unspecified internal error.',
-                                errors: []
-                            })
-                    }
 
-                }
-                else {
-                    res
-                        .status(500)
-                        .json({
-                            status: 500,
-                            message: 'Unspecified internal error.',
-                            errors: []
-                        })
-                }
+                const message = process.env.NODE_ENV === "production"
+                    ? "internal error"
+                    : error instanceof Error ? error.message : JSON.stringify(error)
+
+                res.status(500)
+                    .json({
+                        status: 500,
+                        message,
+                        errors: []
+                    })
             }
+
         })
 
     return app

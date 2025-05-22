@@ -8,5 +8,5 @@ module.exports = {
     "spec": [
         "./tests/**/*.ts",
         "./tests/**/*.tsx"],
-    "ignore": ["./tests/utils/**/*"]
+    "ignore": ["./tests/utils/**/*", "./puppeteer/**/*"]
 }

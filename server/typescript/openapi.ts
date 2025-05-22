@@ -334,31 +334,37 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
             'error400': {
                 'value': {
                     'status': 400,
-                    'message': 'request/body must NOT have additional properties'
+                    'message': 'Bad request.'
                 }
             },
             'error401': {
                 'value': {
                     'status': 401,
-                    'message': 'Unauthorized'
+                    'message': 'Unauthorized.'
                 }
             },
             'error404': {
                 'value': {
                     'status': 404,
-                    'message': 'not found'
+                    'message': 'Not found.'
                 }
             },
             'error409': {
                 'value': {
                     'status': 409,
-                    'message': 'Entity can not be deleted since it is still referenced.'
+                    'message': 'Conflict.'
                 }
             },
             'error412': {
                 'value': {
                     'status': 412,
                     'message': 'Precondition failed.'
+                }
+            },
+            'error500': {
+                'value': {
+                    'status': 500,
+                    'message': 'Internal server error.'
                 }
             }
         }

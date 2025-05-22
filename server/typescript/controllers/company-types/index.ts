@@ -1,10 +1,11 @@
 import { DataWithMeta, Meta } from '../../app.js'
-import { sha256 } from '../../hasher.js'
+import { sha256 } from '../../tests/utils/hasher.js'
 import { CompanyType } from '../../models/companyTypes.js'
 import { getAllCompanyTypes, addCompanyType } from '../../services/companyTypes.js'
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
-import { createNewError, ErrorWithStatus } from '../../services/error.js'
+import { ApiError } from '../controllersError.js'
+import { ValidationError } from '../../services/servicesError.js'
 
 
 export interface CompanyTypeNorm {
@@ -12,11 +13,11 @@ export interface CompanyTypeNorm {
 }
 
 export const isCompanyTypeNorm = (value: unknown): value is CompanyTypeNorm => {
-    if (typeof value === 'object' && value !== null ) {
+    if (typeof value === 'object' && value !== null) {
         if (Object.keys(value).includes('name')) return true
     }
     return false
-} 
+}
 
 export function normalizeCompanyType(companyType: CompanyType): CompanyTypeNorm {
     const result: CompanyTypeNorm = { name: companyType.name }
@@ -36,17 +37,10 @@ export function combineCompanyTypeWithMeta(companyType: CompanyType): DataWithMe
 
 export const GET: Operation = async (req: Request, res: Response) => {
     const allCompanyTypesSearchResult = await getAllCompanyTypes()
-    if (allCompanyTypesSearchResult instanceof ErrorWithStatus) {
-        res
-            .status(allCompanyTypesSearchResult.status)
-            .json({ status: allCompanyTypesSearchResult.status, message: allCompanyTypesSearchResult.message })
-    } else {
-        const allCompanyTypesWithMeta: DataWithMeta<CompanyTypeNorm>[] = allCompanyTypesSearchResult.map(row => combineCompanyTypeWithMeta(row))
-        res
-            .status(200)
-            .json(allCompanyTypesWithMeta)
-    }
-
+    const allCompanyTypesWithMeta: DataWithMeta<CompanyTypeNorm>[] = allCompanyTypesSearchResult.map(row => combineCompanyTypeWithMeta(row))
+    res
+        .status(200)
+        .json(allCompanyTypesWithMeta)
 }
 
 GET.apiSpec = {
@@ -133,29 +127,30 @@ GET.apiSpec = {
         }
     }
 }
-export const POST: Operation = async (req: Request, res: Response) => {
+
+export const POST: Operation = async (req: Request, res: Response, next: NextFunction) => {
     if (isCompanyTypeNorm(req.body)) {
-        const newCompanyTypeSearchResult = await addCompanyType(req.body)
-        if (newCompanyTypeSearchResult instanceof ErrorWithStatus) {
-            res
-                .status(newCompanyTypeSearchResult.status)
-                .json({ status: newCompanyTypeSearchResult.status, message: newCompanyTypeSearchResult.message })
-        } else {
+        try {
+            const newCompanyTypeSearchResult = await addCompanyType(req.body)
             const newCompanyTypeMeta = createCompanyTypeMeta(newCompanyTypeSearchResult)
             res
                 .status(201)
                 .set(newCompanyTypeMeta)
                 .end()
+        } catch (error) {
+            if (error instanceof ValidationError) {
+                next(new ApiError(400, error.message))
+            } else {
+                throw error
+            }
         }
+
     } else {
-        const newError = createNewError(400)
-        res
-        .status(newError.status)
-        .json({status: newError.status, message: newError.message})
+        next(new ApiError(400))
+        return
     }
-
-
 }
+
 POST.apiSpec = {
     'summary': 'Add new company type',
     'description': 'POST request for a new company type',
@@ -186,7 +181,7 @@ POST.apiSpec = {
         },
         '400': {
             '$ref': '#/components/responses/400_validation_error'
-        },        '401': {
+        }, '401': {
             '$ref': '#/components/responses/401_authorization_error'
         }
     }

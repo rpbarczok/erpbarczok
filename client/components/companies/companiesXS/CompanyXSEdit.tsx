@@ -1,11 +1,8 @@
 import { FunctionComponent, useState } from 'react'
 import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
-import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../../utils/contextUndefined.js'
 import { hasPermission } from '../../../utils/hasPermission.js'
-import { LoadingContext } from '../../../utils/loadingContext.js'
-import { apiClient } from '../../../utils/openAPIClientAxios.js'
-import { PermissionContext, updateUserPermissions } from '../../../utils/permissionContext.js'
+import { PermissionContext } from '../../../utils/permissionContext.js'
 import { DataWithMeta } from '../../Pages.js'
 import { Note, Notes } from '../../notifiers/Notes.js'
 import { useNotifier } from '../../notifiers/useNotifier.js'
@@ -20,78 +17,46 @@ interface CompanyXSEditProps {
     setShow: React.Dispatch<React.SetStateAction<boolean>>
     companyTypesList: DataWithMeta<CompanyType>[]
     addEditNote: (note: Note) => void
-    setIsCompanyChanged: React.Dispatch<React.SetStateAction<boolean>>
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
     activeCompany: DataWithMeta<Company>
-    changeActive: (active: number) => Promise<void>
+    submitChangedCompany: () => Promise<Note>
+    deleteCompany: () => Promise<Note | undefined>
 }
 
 export const CompanyXSEdit: FunctionComponent<CompanyXSEditProps> = (
-    { show, 
-        setShow, 
-        companyTypesList, 
-        addEditNote, 
-        setIsCompanyChanged, 
-        changedCompany, 
-        changedCompanyDispatch, 
-        activeCompany, changeActive }) => {
+    { show,
+        setShow,
+        companyTypesList,
+        addEditNote,
+        changedCompany,
+        changedCompanyDispatch,
+        activeCompany,
+        submitChangedCompany,
+        deleteCompany }) => {
 
     const [validated, setValidated] = useState(false)
     const [errorNotes, addErrorNote, removeErrorNote] = useNotifier()
-    const auth = useAuth()
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { permissions } = useContextThrowUndefined(PermissionContext)
 
-    const token = auth.user?.access_token
     const isNotChanged: boolean = (activeCompany.data.name === changedCompany.data.name &&
         activeCompany.data.abbr === changedCompany.data.abbr &&
         activeCompany.data.www === changedCompany.data.www &&
         activeCompany.data.companyType === changedCompany.data.companyType)
 
-    const handleSubmitEdit: React.FormEventHandler<HTMLFormElement> = async (e: React.FormEvent<HTMLFormElement>) => {
-        const form = e.currentTarget
+    const handleSubmitEdit = async (e: React.FormEvent<HTMLFormElement>, form: HTMLFormElement) => {
         e.preventDefault()
-        if (token) {
-            if (!form.checkValidity()) {
-                setValidated(true)
-            } else {
-                setIsLoading(true)
-                try {
-                    const client = await apiClient
-                    const result = await client.putCompanyById({ id: changedCompany.meta.location, 'if-match': changedCompany.meta.etag },
-                        changedCompany.data,
-                        { headers: { Authorization: `Bearer ${token}` } })
-                    setIsLoading(false)
-                    const note: Note = {
-                        variant: 'success',
-                        message: `Unternehmen erfolgreich überarbeitet.`,
-                    }
-                    addEditNote(note)
-                    setIsCompanyChanged(true)
-                    await changeActive(changedCompany.meta.location)
-                    setShow(false)
-                    
-                    if (typeof result.headers.permissions === 'string') {
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                    } else {
-                        throw Error('Permissions header should be type string.')
-                    }
-                } catch (error) {
-                    setIsLoading(false)
-                    const note: Note = {
-                        variant: 'danger',
-                        message: `Fehler beim Speichern der Unternehmensdaten: ${error instanceof Error ? error.message : String(error)}`,
-                    }
-                    addErrorNote(note)
-                }
-            }
+        if (!form.checkValidity()) {
+            setValidated(true)
         } else {
-            const note: Note = {
-                variant: 'danger',
-                message: `Nicht angemeldet.`,
+            const newNote: Note = await submitChangedCompany()
+
+            if (newNote.variant === 'danger') {
+                addErrorNote(newNote)
+            } else {
+                setShow(false)
+                addEditNote(newNote)
             }
-            addErrorNote(note)
         }
     }
 
@@ -101,26 +66,6 @@ export const CompanyXSEdit: FunctionComponent<CompanyXSEditProps> = (
         changedCompanyDispatch({ type: 'companyChange', newValue: activeCompany })
     }
 
-    const UserButtons = () => {
-        if (hasPermission(['user'], permissions)) {
-            return (<ButtonGroup className='w-100'>
-                <Button size='sm' variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Rückgängig</Button>
-                <Button size='sm' type='submit' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
-                <CompanyDelete
-                    company={changedCompany}
-                    setIsCompanyChanged={setIsCompanyChanged}
-                    addNote={addEditNote}
-                    setShow={setShow}
-                    size='sm'
-                />
-                <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Abbrechen</Button>
-            </ButtonGroup>)
-        } else {
-            return <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Schließen</Button>
-        }
-
-    }
-
     return (
         <Modal
             key={changedCompany.meta.location}
@@ -128,7 +73,7 @@ export const CompanyXSEdit: FunctionComponent<CompanyXSEditProps> = (
             onHide={() => setShow(false)}
             backdrop='static'
             size='lg'>
-            <Form noValidate validated={validated} onSubmit={handleSubmitEdit}>
+            <Form noValidate validated={validated} onSubmit={(e) => handleSubmitEdit(e, e.currentTarget)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Unternehmen bearbeiten</Modal.Title>
                 </Modal.Header>
@@ -141,7 +86,19 @@ export const CompanyXSEdit: FunctionComponent<CompanyXSEditProps> = (
                     />
                 </Modal.Body>
                 <Modal.Footer>
-                    <UserButtons />
+                    {hasPermission(['user'], permissions)
+                        ? <ButtonGroup className='w-100'>
+                            <Button size='sm' variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Rückgängig</Button>
+                            <Button size='sm' type='submit' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
+                            <CompanyDelete
+                                addNote={addEditNote}
+                                setShow={setShow}
+                                size='sm'
+                                deleteCompany={deleteCompany}
+                            />
+                            <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Abbrechen</Button>
+                        </ButtonGroup>
+                        : <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Schließen</Button>}
                 </Modal.Footer>
             </Form>
         </Modal >

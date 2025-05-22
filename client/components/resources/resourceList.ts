@@ -2,13 +2,15 @@ import { CompanyType } from './companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../Pages.jsx'
 import { Field } from './fields/Fields.jsx'
 
+export type ResourceCollection = CompanyType | Field
+
 export interface Resource {
     name: string
     paths: {
         all: '/company-types/' | '/fields/',
         single: '/company-types/{id}' | '/fields/{id}'
     }
-    empty: DataWithMeta<Field | CompanyType>
+    empty: DataWithMeta<ResourceCollection>
 }
 
 export const resourceList: Resource[] = [{
