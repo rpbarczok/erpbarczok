@@ -50,9 +50,6 @@ services:
         source: ./keycloak/keycloak_realm
         target: /opt/keycloak/data/import
         read_only: true
-    environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: 'admin'
-      KC_BOOTSTRAP_ADMIN_PASSWORD: 'admin'
     networks:
       - erpbarczok_net
 
