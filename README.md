@@ -178,6 +178,54 @@ The implementation of Auth works with Auth0 and EntraID. Depending on which serv
    | `CLIENT_ID_SWAGGER` | _your-client-id-for-swagger_                  | `CLIENT_ID_SWAGGER=c170d1cb-91af-446a-bdbd-ec24f3cc81cd`                                              | Only if you have registered the Swagger UI as its own application, otherwise it works with the client_id                                                                                         |
 
 </details>
+<details>
+   <summary>Keycloak Example</summary>
+   &nbsp;
+
+   For Keycloak, you need to create a new realm (e.g. erpbarczok) and switch to it. Within this realm, register both the API and the application under the _Clients_ tab. 
+   
+   Registering the API:
+   
+     * _General settings_: Choose a name e.g. erpbarczok_api. 
+     * _Capability config_: Uncheck it in the authentication flow. 
+     * _Login settings_: No entries required here.
+
+   After registering the API open the the newly created register entry
+   
+     * Go to _Roles_ and create two roles: admin and user
+     * In _Client scopes_ 
+       * Add erpbarczok as default
+       * Select *erpbarczok_api-dedicated*, go to _Scope_ and disable _Full scope allowed_
+
+   Registering the Application
+   
+      * In General settings, enter a name (e.g., erpbarczok_app) and enable Always display in UI.
+      * In Capability config, ensure Standard flow is checked (default).
+      * In Login settings, enter the URLs of your application.
+      * In Web Origins, enter a + in the input field.
+
+   After registering the application, open the newly register entry
+   
+     * In _Client scopes_ 
+       * Add erpbarczok as default
+       * Select *erpbarczok_api-dedicated*, go to _Scope_ and disable _Full scope allowed_
+      * In the _Clients_ tab, select your app, go to Client scopes, and add erpbarczok as default.
+
+   User Management
+      * Users can be added under the User tab.
+      * To allow the app to accept a user, assign the role erpbarczok:admin or erpbarczok:user to the user.
+
+   Required Environment Variables for Keycloak
+
+   | Variable           | Value                                     | Example                                                                             | Where to find in Keycloak                                     |
+   | ------------------ | ----------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+   | `CLIENT_ID`        | _your-client-id_                          | `CLIENT_ID=erpbarczok_app`                                                          | in the tag _Clients_, Client ID of the app                    |
+   | `IDP_SERVER`       | _your-idp-server_                         | `IDP_SERVER=https://keycloak.barczok/realms/erpbarczok`                             | the URL of the keycloak server + /realms/ + name of the realm |
+   | `AUDIENCE`         | _your-audience_                           | `AUDIENCE=erpbarczok_api`                                                           | in the tag _Clients_, Client ID of the api                    |
+   | `SCOPE`            | `"openid email profile erpbarczok"`       | `SCOPE=""openid email profile erpbarczok""`                                         |                                                               |
+   | `PERMISSION_CLAIM` | `resource_access.`_your-audience_`.roles` | `PERMISSION_CLAIM="resource_access.erpbarczok_api.roles"`                           |                                                               |
+   | `JWKS_URI`         | _your-jwks-uri_                           | `JWKS_URI=https://keycloak.barczok/realms/erpbarczok/protocol/openid-connect/certs` |                                                               |
+</details>
 &nbsp;
 
 ## Releases

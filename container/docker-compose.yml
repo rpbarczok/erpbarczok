@@ -1,0 +1,65 @@
+services:
+  erpbarczok:
+    image: erpbarczok:latest
+    container_name: erpbarczok
+    ports: 
+      - 8080:8080
+    build:
+      context: ..
+      dockerfile: ./container/Dockerfile
+    environment:
+      NODE_ENV: 'development'
+      DEBUG: 'erpbarczok:*'
+      DB_NAME: 'erpbarczok_db'
+      DB_USER: 'erpbarczok_app'
+      DB_PASSWORD: 'blablubber'
+      DB_HOST: 'erpbarczok_db'
+      DB_PORT: 5432
+      CLIENT_ID: 'erpbarczok_app'
+      IDP_SERVER: 'http://localhost:8081/realms/erpbarczok'
+      AUDIENCE: 'erpbarczok_api'
+      SCOPE: 'openid email profile erpbarczok'
+      PERMISSION_CLAIM: 'resource_access.erpbarczok_api.roles'
+      JWKS_URI: 'http://erpbarczok_kc:8080/realms/erpbarczok/protocol/openid-connect/certs'
+    networks:
+      - erpbarczok_net
+    depends_on: 
+      erpbarczok_db:
+        condition: service_healthy
+
+  erpbarczok_db:
+    image: erpbarczok_db:latest
+    container_name: erpbarczok_db
+    build: ./postgres
+    environment:
+      POSTGRES_PASSWORD: 'blablubber'
+    healthcheck:
+      test: psql -lqt -U postgres | cut -d | -f 1 | grep erpbarczok_db | echo $?
+      start_period: 20s
+    networks:
+      - erpbarczok_net
+
+  erpbarczok_kc:
+    container_name: erpbarczok_kc
+    image: erpbarczok_kc:latest
+    build:  ./keycloak
+    ports: 
+      - 8081:8080
+    volumes:
+      - type: bind
+        source: ./keycloak/keycloak_realm
+        target: /opt/keycloak/data/import
+        read_only: true
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: 'admin'
+      KC_BOOTSTRAP_ADMIN_PASSWORD: 'admin'
+    networks:
+      - erpbarczok_net
+
+volumes:
+  keycloak:
+
+networks:
+  erpbarczok_net:
+    name: erpbarczok_net.internal
+    driver: bridge

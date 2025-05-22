@@ -5,49 +5,41 @@
   "private": "true",
   "type": "module",
   "scripts": {
-    "stop_dev_db": "docker kill devdb; sleep 2",
-    "start_dev_db": "npm run stop_dev_db ; docker run --name devdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm erpbarczok_db:latest",
-    "start_test_db": "docker run --name testdb -e POSTGRES_PASSWORD='blablubber' -p 8081:5432 -d --rm postgres:17.2-alpine3.20",
-
     "create_openapi_spec": "tsx create-openapi-spec.ts",
     "create_types": "npm run create_openapi_spec && mkdir -p client/types && npx openapicmd typegen client/utils/openapi.json > client/types/openapi.d.ts",
-
+    
+    "start_dev_db": "cd container/dev_db && docker compose up -d",
+    "start_dev_kc": "cd container/keycloak/keycloak_init && docker compose up -d",
+    
     "server": "tsx server/typescript/start.ts",
     "client": "webpack serve --config webpack.dev.js",
-
-    "prestart": "dotenvx run -f .env -- npm run create_types && npm run start_dev_db && sleep 2",
+    
+    "prestart": "dotenvx run -f .env -- npm run create_types && npm run start_dev_db && npm run start_dev_kc",
     "start": "concurrently --kill-others \"dotenvx run -f .env -- npm run server\" \"npm run client\" || true",
-    "poststart": "docker kill devdb",
+    
+    "start_test_db": "cd container/test_db && docker compose up -d",
+    
+    "test_be_ts": "cd server && npx mocha  --config mocha-typescript-rc.cjs --exit",
+    "test_be_es": "cd server && npx mocha --config mocha-ecmascript-rc.cjs --exit",
+    "test_fe": "cd client && npx mocha --config ./mocha-typescript-rc.cjs --exit",
+    "pretest_backend": "npm run start_test_db",
+    "test_backend": "npm run test_be_ts",
+    "pretest_frontend": "npm run start_test_db",
+    "test_frontend": "npm run test_fe_ts",
+    "pretest_all": "npm run start_test_db",
+    "test_all": "npm run start_test_db"
 
-    "start_test": "dotenvx run -f ./server/typescript/tests/utils/test.env -- npm run create_types && npm run start_test_db &&  concurrently \"dotenvx run -f ./server/typescript/tests/utils/test.env -- npm run server\" \"npm run client\" & sleep 20",
-    
-    "ecma_test": "cd server && npx mocha --config mocha-ecmascript-rc.cjs --exit",
-    "ts_test": "cd server && npx mocha  --config mocha-typescript-rc.cjs --exit",
-    
-    "pretest_e2e": "npm run start_test && sleep 2",
-    "test_e2e": "cd client/puppeteer && npx mocha -config ./mocha-typescript-rc.cjs --exit ; true",
-    "posttest_e2e": "docker kill testdb",
-    
-    "pretest_frontend": "npm run start_test_db && sleep 2",
-    "test_frontend": "cd client && npx mocha --config ./mocha-typescript-rc.cjs --exit ; true ",
-    "posttest_frontend": "docker kill testdb",
-    
-    "test_backend": "npm run ts_test --exit",
-
-    "pretest": "npm run start_test_db && sleep 2",
-    "test": "npm run ts_test --exit ; true",
-    "posttest": "docker kill testdb",
-
-    "lint": "eslint .",
-    
+    "docker_build_kc": "cd container/keycloak && docker buildx build --load -t erpbarczok_kc:latest --network host .",
+    "docker_build_db": "cd container/postgres && docker buildx build --load -t erpbarczok_db:latest --network host .",
+    "prebuild_client": "npm run start_test_db && npm run test_be_ts && npm run test_fe",
     "build_client": "npm run create_types && webpack --config webpack.prod.js",
     "build_server": "rm -fR server/ecmascript && npx tsc --project server/typescript",
+    "pure_build": "npm run build_client && npm run build_server",
+    "build": "npm run pure_build",  
 
-    "pure_build": "npm run build_client && npm run build_server && npm run ecma_test",
-    "build": "npm run start_test_db && npm run pure_build ; docker kill testdb",
-    
-    "docker_build": "npm run start_test_db && docker buildx build --load -t erpbarczok:latest --network host .",
-    "docker": "docker compose up"
+    "predocker_compose": "npm run build",
+    "docker_compose": "cd container && docker compose up",
+    "docker_compose_down": "cd container && docker compose down"
   },
   "author": "Ralph Barczok",
   "license": "MIT",

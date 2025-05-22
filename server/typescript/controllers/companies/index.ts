@@ -27,8 +27,6 @@ export const isCompanyNorm = (value: unknown): value is CompanyNorm => {
     return false
 }
 
-
-
 export interface CompanyFK {
     name: string
     abbr?: string | null
