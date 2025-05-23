@@ -17,14 +17,6 @@ services:
         source: ../keycloak_realm
         target: /opt/keycloak/export
         read_only: false
-    # command:
-    #   - "export"
-    #   - "--dir"
-    #   - "/opt/keycloak/export/"
-    #   - "--optimized"
-    #   - "--realm"
-    #   - "--users"
-    #   - "realm_file"
 
 volumes: 
   keycloak:

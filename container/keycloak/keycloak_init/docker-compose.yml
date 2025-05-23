@@ -15,7 +15,7 @@ services:
         read_only: false
       - type: bind
         source: ../keycloak_realm
-        target: /opt/keycloak/export
+        target: /opt/keycloak/data/import
         read_only: false
 
 volumes: 
