@@ -11,7 +11,7 @@
     "server": "tsx server/typescript/start.ts",
     "client": "webpack serve --config webpack.dev.js",
     
-    "prestart": "npm run create_types && cd container && docker compose up -d erpbarczok_db erpbarczok_kc",
+    "prestart": "npm run create_types && cd container && docker compose up -d --wait erpbarczok_db erpbarczok_kc",
     "start": "concurrently --kill-others \"dotenvx run -f container/dev.env -- npm run server\" \"npm run client\" || true",
     "poststart": "cd container && docker compose down",
     
