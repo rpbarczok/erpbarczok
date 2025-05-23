@@ -1,0 +1,56 @@
+services:
+  init:
+    container_name: erpbarczok_init_kc
+    image: erpbarczok_kc:latest
+    build: .
+    ports: 
+    - 8081:8080
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: "admin"
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "admin"
+    volumes:
+      - type: volume
+        source: keycloak
+        target: /opt/keycloak/data
+        read_only: false
+
+  export:
+    container_name: erpbarczok_export_kc
+    image: erpbarczok_kc:latest
+    build: .
+    ports: 
+    - 8081:8080
+    volumes:
+      - type: volume
+        source: keycloak
+        target: /opt/keycloak/data
+        read_only: false
+      - type: bind
+        source: ./keycloak_realm
+        target: /opt/keycloak/export
+        read_only: false
+    command:
+      - "export"
+      - "--dir"
+      - "/opt/keycloak/export/"
+      - "--optimized"
+      - "--users"
+      - "realm_file"
+
+  edit:
+    container_name: erpbarczok_edit_kc
+    image: erpbarczok_kc:latest
+    build: .
+    ports: 
+    - 8081:8080
+    volumes:
+      - type: volume
+        source: keycloak
+        target: /opt/keycloak/data
+        read_only: false
+      - type: bind 
+        source: keycloak_realm
+        target: /opt/keycloak/data/import
+        read_only: true
+volumes: 
+  keycloak:
