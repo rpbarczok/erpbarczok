@@ -1,6 +1,6 @@
 services:
   erpbarczok_db:
-    image: erpbarczok_db:latest
+    image: localhost/erpbarczok/erpbarczok_db:latest
     ports: 
       - 8083:5432
     container_name: test_db
