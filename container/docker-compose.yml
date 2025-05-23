@@ -31,10 +31,12 @@ services:
     image: localhost/erpbarczok/erpbarczok_db:latest
     container_name: erpbarczok_db
     build: postgres
+    ports:
+      - 8082:5432
     environment:
       POSTGRES_PASSWORD: 'blablubber'
     healthcheck:
-      test: psql -lqt -U postgres | cut -d | -f 1 | grep erpbarczok_db | echo $?
+      test: "psql -lqt -U postgres | cut -d '|' -f 1 | grep erpbarczok_db | echo $?"
       start_period: 20s
     networks:
       - erpbarczok_net
