@@ -1,6 +1,6 @@
 services:
   erpbarczok:
-    image: erpbarczok:latest
+    image: localhost/erpbarczok/erpbarczok:latest
     container_name: erpbarczok
     ports: 
       - 8080:8080
@@ -28,9 +28,9 @@ services:
         condition: service_healthy
 
   erpbarczok_db:
-    image: erpbarczok_db:latest
+    image: localhost/erpbarczok/erpbarczok_db:latest
     container_name: erpbarczok_db
-    build: ../postgres
+    build: postgres
     environment:
       POSTGRES_PASSWORD: 'blablubber'
     healthcheck:
@@ -41,7 +41,7 @@ services:
 
   erpbarczok_kc:
     container_name: erpbarczok_kc
-    image: erpbarczok_kc:latest
+    image: localhost/erpbarczok/erpbarczok_kc:latest
     build:  ./keycloak
     ports: 
       - 8081:8080

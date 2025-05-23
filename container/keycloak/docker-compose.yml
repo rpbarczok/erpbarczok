@@ -1,7 +1,7 @@
 services:
   init:
     container_name: erpbarczok_init_kc
-    image: erpbarczok_kc:latest
+    image: localhost/erpbarczok/erpbarczok_kc:latest
     build: .
     ports: 
     - 8081:8080
@@ -16,7 +16,7 @@ services:
 
   export:
     container_name: erpbarczok_export_kc
-    image: erpbarczok_kc:latest
+    image: localhost/erpbarczok/erpbarczok_kc:latest
     build: .
     ports: 
     - 8081:8080
@@ -39,7 +39,7 @@ services:
 
   edit:
     container_name: erpbarczok_edit_kc
-    image: erpbarczok_kc:latest
+    image: localhost/erpbarczok/erpbarczok_kc:latest
     build: .
     ports: 
     - 8081:8080
