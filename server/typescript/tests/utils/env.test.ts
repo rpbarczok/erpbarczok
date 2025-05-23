@@ -4,7 +4,7 @@ process.env.DB_NAME='postgres'
 process.env.DB_USER='postgres'
 process.env.DB_PASSWORD='blablubber'
 process.env.DB_HOST='localhost' 
-process.env.DB_PORT='8082'
+process.env.DB_PORT='8083'
 
 process.env.TEST_SECRET='secret'
 process.env.ALGORITHM='HS256'
