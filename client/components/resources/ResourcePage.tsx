@@ -5,7 +5,7 @@ import { ListGroup, Row } from 'react-bootstrap'
 import { LoadingContext } from '../../utils/loadingContext.js'
 import { Note, Notes } from '../notifiers/Notes.js'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
-import { Resource, ResourceCollection } from './resourceList.js'
+import { Resource, ResourceType } from './resourceList.js'
 import { ResourcesList } from './ResourcesList.js'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
@@ -13,7 +13,7 @@ import { useNotifier } from '../notifiers/useNotifier.js'
 
 interface ResourcePageComponent {
     resource: Resource
-    resourceList: DataWithMeta<ResourceCollection>[]
+    resourceList: DataWithMeta<ResourceType>[]
     setIsResourceChanged: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -24,8 +24,7 @@ export const ResourcePage = ({ resource, resourceList, setIsResourceChanged }: R
     const token = auth.user?.access_token
     const { setIsLoading } = useContextThrowUndefined(LoadingContext)
 
-    async function submitNewResource(newItem: DataWithMeta<ResourceCollection>): Promise<Note> {
-        const auth = useAuth()
+    async function submitNewResource(newItem: DataWithMeta<ResourceType>): Promise<Note> {
         const token = auth.user?.access_token
         if (token) {
             setIsLoading(true)
@@ -62,7 +61,7 @@ export const ResourcePage = ({ resource, resourceList, setIsResourceChanged }: R
 
     }
 
-    async function submitChangedResource(changedItem: DataWithMeta<ResourceCollection>): Promise<Note> {
+    async function submitChangedResource(changedItem: DataWithMeta<ResourceType>): Promise<Note> {
         if (token) {
             setIsLoading(true)
             try {
@@ -97,7 +96,7 @@ export const ResourcePage = ({ resource, resourceList, setIsResourceChanged }: R
         }
     }
 
-    async function deleteResource(item: DataWithMeta<ResourceCollection>): Promise<Note> {
+    async function deleteResource(item: DataWithMeta<ResourceType>): Promise<Note> {
         if (token) {
 
             setIsLoading(true)

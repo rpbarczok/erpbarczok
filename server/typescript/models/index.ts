@@ -3,6 +3,9 @@ import { initializeCompany, Company } from './companies.js'
 import { initializeCompanyType, CompanyType } from './companyTypes.js'
 import { baseLogger } from '../logger.js'
 import { Field, initializeField } from './fields.js'
+import { AddressType, initializeAddressType } from './addressTypes.js'
+import { Country, initializeCountry } from './countries.js'
+import { Address, initializeAddress } from './addresses.js'
 
 const logger = baseLogger.extend('models:index')
 const loggerSequelize = logger.extend('sequelize')
@@ -20,6 +23,20 @@ export const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER,
     port: Number(process.env.DB_PORT)
 })
 
+initializeAddressType(sequelize)
+initializeCountry(sequelize)
+initializeAddress(sequelize)
+
+Address.belongsTo(AddressType, {
+    onDelete: 'NO ACTION'
+})
+AddressType.hasMany(Address)
+
+Address.belongsTo(Country, {
+    onDelete: "NO ACTION"
+})
+Country.hasMany(Address)
+
 initializeCompanyType(sequelize)
 initializeField(sequelize)
 initializeCompany(sequelize)
@@ -32,3 +49,5 @@ CompanyType.hasMany(Company)
 Company.belongsToMany(Field, {through: 'company_fields', onDelete: 'NO ACTION'})
 Field.belongsToMany(Company, {through: 'company_fields', onDelete: 'CASCADE'})
 
+Company.belongsToMany(Address, {through: 'address_companies', onDelete: 'NO ACTION'})
+Address.belongsToMany(Company, {through: 'address_companies', onDelete: 'CASCADE'})

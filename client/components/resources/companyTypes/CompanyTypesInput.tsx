@@ -1,11 +1,14 @@
 import { ChangeEvent, FunctionComponent } from 'react'
 import { DataWithMeta } from '../../Pages.jsx'
 import { Form } from 'react-bootstrap'
+import { Resource } from '../resourceList.js'
 
 
 export interface CompanyType {
     'name': string
 }
+
+export const emptyCompanyTypeResource: Resource = { name: 'Beziehung', paths: { 'all': '/company-types/', 'single': '/company-types/{id}' }, empty: { meta: { location: 0, etag: '' }, data: { name: '' } } }
 
 interface CompanyTypesInputProps {
     companyType: DataWithMeta<CompanyType>

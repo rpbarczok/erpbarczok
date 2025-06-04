@@ -1,11 +1,8 @@
 import puppeteer from 'puppeteer'
-import { getDocument, queries, wait } from 'pptr-testing-library'
+import { getDocument, queries } from 'pptr-testing-library'
 import { expect } from 'expect'
 
-const { getByText } = queries
-
-const uri = window.location.href
-
+const uri = 'http://localhost:3000/'
 describe('config page', function () {
 
     it('displays config page', async function () {
@@ -17,7 +14,7 @@ describe('config page', function () {
         await page.goto(uri + 'config.js', { waitUntil: 'networkidle0' })
         console.log(page)
         const $document = await getDocument(page)
-        const $config = await queries.getByText($document, "window.client_id", { exact: false })
+        const $config = await queries.getByText($document, "window.client_id = 'erpbarczok_app';", { exact: false })
         expect($config).not.toBeNull()
         await browser.close()
     })

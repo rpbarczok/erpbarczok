@@ -5,16 +5,16 @@ import { useContextThrowUndefined } from "utils/contextUndefined.js"
 import { LoadingContext } from "utils/loadingContext.js"
 import { apiClient } from "utils/openAPIClientAxios.js"
 import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
-import { Resource, ResourceCollection, } from "./resourceList.js"
+import { Resource, ResourceType, } from "./resourceList.js"
 import { removeStringBeforeLastDigits } from "utils/removeStringBeforeLastDigits.js"
 
-export function useResources(resource: Resource): [DataWithMeta<ResourceCollection>[], React.Dispatch<React.SetStateAction<boolean>>, React.Dispatch<React.SetStateAction<boolean>>] {
+export function useResources(resource: Resource): [DataWithMeta<ResourceType>[], React.Dispatch<React.SetStateAction<boolean>>, React.Dispatch<React.SetStateAction<boolean>>] {
     const auth = useAuth()
     const token = auth.user?.access_token
     const { setIsLoading } = useContextThrowUndefined(LoadingContext)
     const [isResourceChanged, setIsResourceChanged] = useState(true)
     const [isActiveResourceChanged, setIsActiveResourceChanged] = useState(true)
-    const [resourceList, setResourceList] = useState<DataWithMeta<ResourceCollection>[]>([])
+    const [resourceList, setResourceList] = useState<DataWithMeta<ResourceType>[]>([])
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
 
 
@@ -29,7 +29,7 @@ export function useResources(resource: Resource): [DataWithMeta<ResourceCollecti
                         const result = await client.paths[resource.paths.all].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
                         setIsLoading(false)
                         const newList = result.data.map(row => {
-                            const newRow: DataWithMeta<ResourceCollection> = {
+                            const newRow: DataWithMeta<ResourceType> = {
                                 meta: {
                                     location: Number(removeStringBeforeLastDigits(row.meta.location)),
                                     etag: row.meta.etag
@@ -54,8 +54,12 @@ export function useResources(resource: Resource): [DataWithMeta<ResourceCollecti
             }
 
             void getResource()
-
-            setIsResourceChanged(false)
+            if (isResourceChanged) {
+                setIsResourceChanged(false)
+            }
+            if (isActiveResourceChanged) {
+                setIsActiveResourceChanged(false)
+            }
 
         }
     }, [isResourceChanged, isActiveResourceChanged])

@@ -20,6 +20,7 @@ const config = merge(common, {
             {
                 context: ['/companies',
                     '/company-types',
+                    '/address-types',
                     '/fields',
                     '/api-docs',
                     '/docs',

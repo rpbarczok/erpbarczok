@@ -42,7 +42,9 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
         '/company-types/': {},
         '/company-types/{id}': {},
         '/fields/': {},
-        '/fields/{id}': {}
+        '/fields/{id}': {},
+        '/address-types/': {},
+        '/address-types/{id}': {},
     },
     'components': {
         'parameters': {
@@ -245,6 +247,20 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                     }
                 }
             },
+            'addressType': {
+                'type': 'object',
+                'required': [
+                    'name'
+                ],
+                'additionalProperties': false,
+                'properties': {
+                    'name': {
+                        'type': 'string',
+                        'example': 'Unternehmensadresse',
+                        'maxLength': 32
+                    }
+                }
+            },
             'field': {
                 'type': 'object',
                 'required': [
@@ -324,6 +340,11 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
             'companyType': {
                 'value': {
                     'name': 'Kunde'
+                }
+            },
+            'addressType': {
+                'value': {
+                    'name': 'Unternehmensadresse'
                 }
             },
             'field': {

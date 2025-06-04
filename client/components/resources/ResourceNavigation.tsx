@@ -12,8 +12,8 @@ export const ResourceNavigation: FunctionComponent<LeftNavigationProps> = ({ set
 
     const resourceHandler = (e: React.MouseEvent, resource: Resource) => {
         e.preventDefault()
-        setActiveResource(resource)
         setIsActiveResourceChanged(true)
+        setActiveResource(resource)
     }
 
     const ButtonList = resourceList.map(resource => {

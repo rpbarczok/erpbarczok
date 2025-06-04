@@ -1,16 +1,17 @@
 import { CompanyType } from './companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../Pages.jsx'
 import { Field } from './fields/Fields.jsx'
+import { AddressType } from './addressTypes/AddressTypesInput.js'
 
-export type ResourceCollection = CompanyType | Field
+export type ResourceType= CompanyType | Field | AddressType
 
 export interface Resource {
     name: string
     paths: {
-        all: '/company-types/' | '/fields/',
-        single: '/company-types/{id}' | '/fields/{id}'
+        all: '/company-types/' | '/fields/' | '/address-types/',
+        single: '/company-types/{id}' | '/fields/{id}' | '/address-types/{id}'
     }
-    empty: DataWithMeta<ResourceCollection>
+    empty: DataWithMeta<ResourceType>
 }
 
 export const resourceList: Resource[] = [{
@@ -24,6 +25,14 @@ export const resourceList: Resource[] = [{
 {
     name: 'Branche',
     paths: { 'all': '/fields/', 'single': '/fields/{id}' },
+    empty: {
+        meta: { location: 0, etag: '' },
+        data: { name: '' }
+    }
+},
+{
+    name: 'Adresstyp',
+    paths: { 'all': '/address-types/', 'single': '/address-types/{id}' },
     empty: {
         meta: { location: 0, etag: '' },
         data: { name: '' }

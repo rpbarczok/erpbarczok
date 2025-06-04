@@ -3,15 +3,16 @@ import { DataWithMeta } from '../Pages.jsx'
 import { FieldsInput } from './fields/Fields.jsx'
 import { CompanyTypesInput } from './companyTypes/CompanyTypesInput.jsx'
 import { Note, Notes } from '../notifiers/Notes.jsx'
-import { Resource, ResourceCollection } from './resourceList.js'
+import { Resource, ResourceType } from './resourceList.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
 import { FunctionComponent, useState } from 'react'
+import { AddressTypesInput } from './addressTypes/AddressTypesInput.js'
 
 
 interface ResourceActiveProps {
     resource: Resource
-    changedItem: DataWithMeta<ResourceCollection>
-    setChangedItem: React.Dispatch<React.SetStateAction<DataWithMeta<ResourceCollection>>>
+    changedItem: DataWithMeta<ResourceType>
+    setChangedItem: React.Dispatch<React.SetStateAction<DataWithMeta<ResourceType>>>
 }
 
 const ResourceActive: FunctionComponent<ResourceActiveProps> = ({ resource, changedItem, setChangedItem }) => {
@@ -25,6 +26,10 @@ const ResourceActive: FunctionComponent<ResourceActiveProps> = ({ resource, chan
             return <FieldsInput
                 field={changedItem}
                 setField={setChangedItem} />
+        case 'Adresstyp':
+            return <AddressTypesInput
+                addressType={changedItem}
+                setAddressType={setChangedItem} />
         default:
             <p>No Content</p>
     }
@@ -32,17 +37,17 @@ const ResourceActive: FunctionComponent<ResourceActiveProps> = ({ resource, chan
 }
 
 interface ResourcesListProps {
-    item: DataWithMeta<ResourceCollection>
+    item: DataWithMeta<ResourceType>
     addMainNote: (note: Note) => void
     resource: Resource
-    submitChangedResource: (changedItem: DataWithMeta<ResourceCollection>) => Promise<Note>
-    deleteResource: (item: DataWithMeta<ResourceCollection>) => Promise<Note>
+    submitChangedResource: (changedItem: DataWithMeta<ResourceType>) => Promise<Note>
+    deleteResource: (item: DataWithMeta<ResourceType>) => Promise<Note>
 }
 
 export const ResourcesList = ({ resource, addMainNote, item, submitChangedResource, deleteResource }: ResourcesListProps) => {
     const [show, setShow] = useState(false)
     const [validated, setValidated] = useState<boolean>(false)
-    const [changedItem, setChangedItem] = useState<DataWithMeta<ResourceCollection>>(item)
+    const [changedItem, setChangedItem] = useState<DataWithMeta<ResourceType>>(item)
     const [notes, addNote, removeNote] = useNotifier()
     const isNotChanged = changedItem.data === item.data
     const handleModal = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -52,6 +57,7 @@ export const ResourcesList = ({ resource, addMainNote, item, submitChangedResour
 
     const handleClose = () => {
         setValidated(false)
+        setChangedItem(item)
         setShow(false)
     }
 
@@ -115,7 +121,7 @@ export const ResourcesList = ({ resource, addMainNote, item, submitChangedResour
                             <Button size='sm' variant='outline-primary' onClick={handleUndo} disabled={isNotChanged}>Undo</Button>
                             <Button type='submit' variant='outline-primary' disabled={isNotChanged}>Speichern</Button>
                             <Button size='sm' variant='outline-danger' onClick={handleDelete}>Löschen</Button>
-                            <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Abbrechen</Button>
+                            <Button size='sm' variant='outline-secondary' onClick={() => handleClose()}>Abbrechen</Button>
                         </ButtonGroup>
                     </Modal.Footer>
                 </Form>

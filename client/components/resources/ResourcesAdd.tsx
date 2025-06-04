@@ -1,7 +1,7 @@
 import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
 import { DataWithMeta } from '../Pages.js'
 import { Note, Notes } from '../notifiers/Notes.js'
-import { Resource, ResourceCollection } from './resourceList.js'
+import { Resource, ResourceType } from './resourceList.js'
 import { FunctionComponent, useState } from 'react'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
 import { ActiveResource } from './ActiveResource.js'
@@ -9,13 +9,13 @@ import { ActiveResource } from './ActiveResource.js'
 interface ResourcesAddProps {
     resource: Resource
     addMainNote: (note: Note) => void
-    submitNewResource: (newItem: DataWithMeta<ResourceCollection>) => Promise<Note>
+    submitNewResource: (newItem: DataWithMeta<ResourceType>) => Promise<Note>
 }
 
 export const ResourcesAdd: FunctionComponent<ResourcesAddProps> = ({ resource, addMainNote, submitNewResource }) => {
     const [show, setShow] = useState(false)
     const [validated, setValidated] = useState(false)
-    const [newItem, setNewItem] = useState<DataWithMeta<ResourceCollection>>(resource.empty)
+    const [newItem, setNewItem] = useState<DataWithMeta<ResourceType>>(resource.empty)
     const [notes, addNote, removeNote] = useNotifier()
     const [addItemCount, setAddItemCount] = useState(0)
 

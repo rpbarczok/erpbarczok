@@ -1,6 +1,7 @@
-import { DataTypes, Model, CreationOptional, InferAttributes, InferCreationAttributes, Sequelize, ForeignKey, NonAttribute } from 'sequelize'
+import { DataTypes, Model, CreationOptional, InferAttributes, InferCreationAttributes, Sequelize, ForeignKey, NonAttribute, BelongsToManyAddAssociationMixin } from 'sequelize'
 import { CompanyType } from './companyTypes.js'
 import { Field } from './fields.js'
+import { Address } from './addresses.js'
 
 
 export class Company extends Model<InferAttributes<Company>, InferCreationAttributes<Company>> {
@@ -13,6 +14,8 @@ export class Company extends Model<InferAttributes<Company>, InferCreationAttrib
     declare updatedAt: CreationOptional<Date>
     declare companyType?: NonAttribute<CompanyType>
     declare fields?: NonAttribute<Field[]>
+    declare addresses?: NonAttribute<Address[]>
+    declare addAddress: BelongsToManyAddAssociationMixin<Address, number>
 }
 
 export const initializeCompany = (sequelize: Sequelize) => {
@@ -33,7 +36,7 @@ export const initializeCompany = (sequelize: Sequelize) => {
         },
         www: {
             type: DataTypes.STRING,
-            comment: 'Internetadresse Unternehmens'
+            comment: 'Internetadresse Unternehmen'
         },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
