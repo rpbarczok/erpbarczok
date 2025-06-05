@@ -7,24 +7,33 @@
   "scripts": {
     "create_openapi_spec": "tsx create-openapi-spec.ts",
     "create_types": "npm run create_openapi_spec && mkdir -p client/types && npx openapicmd typegen client/utils/openapi.json > client/types/openapi.d.ts < /dev/null",
+    
     "server": "tsx server/typescript/start.ts",
     "client": "webpack serve --config webpack.dev.js",
+    
     "prestart": "npm run create_types && cd container && docker compose up -d --wait erpbarczok_db erpbarczok_kc",
     "start": "concurrently --kill-others \"dotenvx run -f container/dev.env -- npm run server\" \"npm run client\" || true",
     "poststart": "cd container && docker compose down",
-    "start_test_db": "cd container/test_db && docker compose up -d",
+  
+    "start_test_db": "cd container/test_db && docker compose up -d && sleep 20",
     "stop_test_db": "cd container/test_db && docker compose down",
+    
     "test_be_ts": "cd server && npx mocha  --config mocha-typescript-rc.cjs --exit",
     "test_be_es": "cd server && npx mocha --config mocha-ecmascript-rc.cjs --exit",
     "test_fe": "cd client && npx mocha --config ./mocha-typescript-rc.cjs --exit",
+    
     "pretest_backend": "npm run start_test_db",
     "test_backend": "npm run test_be_ts",
+    
     "posttest_backend": "npm run stop_test_db",
     "pretest_frontend": "npm run start_test_db",
+    
     "test_frontend": "npm run test_fe_ts",
     "posttest_frontend": "npm run stop_test_db",
+    
     "pretest_all": "npm run start_test_db",
     "test_all": "npm run test_be_ts && npm run test_fe",
+    
     "posttest_all": "npm run stop_test_db",
     "pretest_e2e": "npm run create_types && cd container && docker compose up -d --wait erpbarczok_db erpbarczok_kc",
     "test_e2e": "concurrently --kill-others \"dotenvx run -f container/dev.env -- npm run server\" \"npm run client\" \"sleep 30 && cd client && npx mocha ./puppeteer/**/*.e2e.test.ts --exit\"",
