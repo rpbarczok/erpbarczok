@@ -6,7 +6,6 @@ import { Button } from 'react-bootstrap'
 import { createRoot } from 'react-dom/client'
 import { serviceWorkerRegistry } from './utils/serviceworker.js'
 import { StrictMode } from 'react'
-import { WebStorageStateStore } from 'oidc-client-ts'
 
 export interface WindowAuth extends Window {
   idp_server?: string
@@ -54,7 +53,6 @@ if (rootElement) {
       authority: windowAuth.idp_server,
       client_id: windowAuth.client_id,
       redirect_uri: redirect_uri,
-      userStore: new WebStorageStateStore({ store: window.localStorage }),
       onSigninCallback: onSigninCallback,
       scope: windowAuth.scope,
       extraQueryParams: {
