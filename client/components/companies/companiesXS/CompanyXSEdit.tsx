@@ -9,7 +9,7 @@ import { useNotifier } from '../../notifiers/useNotifier.js'
 import { CompanyType } from '../../resources/companyTypes/CompanyTypesInput.js'
 import { ChangedCompanyAction } from '../utils/changedCompanyReducer.js'
 import { CompanyDelete } from '../CompanyDelete.js'
-import { Company } from '../CompanyPageBasis.js'
+import { Company } from '../CompanyPage.js'
 import { CompanyInput } from '../CompanyInput.js'
 
 interface CompanyXSEditProps {
@@ -20,7 +20,7 @@ interface CompanyXSEditProps {
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
     activeCompany: DataWithMeta<Company>
-    submitChangedCompany: () => Promise<Note>
+    submitChangedCompany: (changedCompany: DataWithMeta<Company>) => Promise<Note>,
     deleteCompany: () => Promise<Note | undefined>
 }
 
@@ -49,8 +49,8 @@ export const CompanyXSEdit: FunctionComponent<CompanyXSEditProps> = (
         if (!form.checkValidity()) {
             setValidated(true)
         } else {
-            const newNote: Note = await submitChangedCompany()
-
+            const newNote: Note = await submitChangedCompany(changedCompany)
+            changedCompanyDispatch({ type: 'companyChange', newValue: activeCompany })
             if (newNote.variant === 'danger') {
                 addErrorNote(newNote)
             } else {

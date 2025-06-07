@@ -46,8 +46,8 @@ Company.belongsTo(CompanyType, {
 })
 CompanyType.hasMany(Company)
 
-Company.belongsToMany(Field, {through: 'company_fields', onDelete: 'NO ACTION'})
-Field.belongsToMany(Company, {through: 'company_fields', onDelete: 'CASCADE'})
+Company.belongsToMany(Field, {through: 'company_fields', onDelete: 'CASCADE'})
+Field.belongsToMany(Company, {through: 'company_fields', onDelete: 'NO ACTION'})
 
-Company.belongsToMany(Address, {through: 'address_companies', onDelete: 'NO ACTION'})
-Address.belongsToMany(Company, {through: 'address_companies', onDelete: 'CASCADE'})
+Company.hasMany(Address, {onDelete: 'CASCADE'})
+Address.belongsTo(Company)

@@ -1,5 +1,5 @@
 import { CompanyType } from "components/resources/companyTypes/CompanyTypesInput.js"
-import { Company } from "../../components/companies/CompanyPageBasis.js"
+import { Company } from "../../components/companies/CompanyPage.js"
 import { DataWithMeta, Meta } from "../../components/Pages.js"
 import { Note } from "components/notifiers/Notes.js"
 

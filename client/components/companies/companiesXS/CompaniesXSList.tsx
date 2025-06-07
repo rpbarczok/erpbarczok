@@ -1,5 +1,5 @@
 import { ChangedCompanyAction } from '../utils/changedCompanyReducer.js'
-import { Company } from '../CompanyPageBasis.js'
+import { Company } from '../CompanyPage.js'
 import { CompanyType } from '../../resources/companyTypes/CompanyTypesInput.js'
 import { CompanyXSEdit } from './CompanyXSEdit.js'
 import { DataWithMeta } from '../../Pages.js'
@@ -15,7 +15,7 @@ interface CompanyXSListProps {
     changeActive: (active: number) => Promise<void>
     companyTypesList: DataWithMeta<CompanyType>[]
     addEditNote: (note: Note) => void
-    submitChangedCompany: () => Promise<Note>
+    submitChangedCompany: (changedCompany: DataWithMeta<Company>) => Promise<Note>,
     deleteCompany: () => Promise<Note | undefined>
 }
 

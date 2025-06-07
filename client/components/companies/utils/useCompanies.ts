@@ -1,7 +1,7 @@
 
 import { DataWithMeta } from "components/Pages.js";
-import { Company, emptyCompany } from "../CompanyPageBasis.js";
-import { useEffect, useReducer, useState } from "react";
+import { Company } from "../CompanyPage.js";
+import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { useContextThrowUndefined } from "utils/contextUndefined.js";
 import { LoadingContext } from "utils/loadingContext.js";
@@ -9,19 +9,14 @@ import { PermissionContext, updateUserPermissions } from "utils/permissionContex
 import { apiClient } from "utils/openAPIClientAxios.js";
 import { removeStringBeforeLastDigits } from "utils/removeStringBeforeLastDigits.js";
 import { Note } from "components/notifiers/Notes.js";
-import { ChangedCompanyAction, changedCompanyReducer } from "./changedCompanyReducer.js";
 import { useFilteredCompanyList } from "./useFilteredCompanies.js";
 
-export function useCompanies(search: string):
+export function useCompanies(search: string, activeCompany: DataWithMeta<Company>, changeActive: (active?: number) => Promise<void>):
     [
         DataWithMeta<Company>[],
-        DataWithMeta<Company>,
-        DataWithMeta<Company>,
-        () => Promise<Note>,
-        () => Promise<Note>,
+        (changedCompany: DataWithMeta<Company>) => Promise<Note>,
+        (newCompany: DataWithMeta<Company>) => Promise<Note>,
         () => Promise<Note | undefined>,
-        (active?: number) => Promise<void>,
-        React.ActionDispatch<[action: ChangedCompanyAction]>
     ] {
     const auth = useAuth()
     const token = auth.user?.access_token
@@ -29,10 +24,6 @@ export function useCompanies(search: string):
     const { setIsLoading } = useContextThrowUndefined(LoadingContext)
     const [companiesList, setCompaniesList] = useState<DataWithMeta<Company>[]>([])
     const [isCompanyChanged, setIsCompanyChanged] = useState<boolean>(true)
-    const [activeCompany, setActiveCompany] = useState(emptyCompany)
-    const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
-
-
     const [filteredCompaniesList, setIsNew] = useFilteredCompanyList(search, companiesList, activeCompany, changeActive)
 
     useEffect(() => {
@@ -75,43 +66,7 @@ export function useCompanies(search: string):
         }
     }, [isCompanyChanged])
 
-
-
-    async function changeActive(active?: number) {
-        if (token) {
-            if (!active) {
-                setActiveCompany(emptyCompany)
-            } else {
-                setIsLoading(true)
-                try {
-                    const client = await apiClient
-                    const result = await client.getCompanyById(active, null, { headers: { Authorization: `Bearer ${token}` } })
-                    setIsLoading(false)
-                    if (typeof result.headers.location !== 'string') {
-                        throw Error('Location header should be type string.')
-                    }
-                    if (typeof result.headers.etag !== 'string') {
-                        throw Error('Etag header should be type string.')
-                    }
-                    const company = { 'meta': { 'location': Number(removeStringBeforeLastDigits(result.headers.location)), 'etag': result.headers.etag }, 'data': result.data }
-                    setActiveCompany(company)
-                    changedCompanyDispatch({ type: 'companyChange', newValue: company })
-                    if (typeof result.headers.permissions === 'string') {
-                        updateUserPermissions(result.headers.permissions, permissions, setPermissions)
-                    } else {
-                        throw new Error("Permission header must be type 'string'")
-                    }
-                } catch (error) {
-                    setIsLoading(false)
-                    throw Error(`Error while loading company: ${error instanceof Error ? error.message : String(error)}`)
-                }
-            }
-        } else {
-            throw Error('Bitte authentifizieren.')
-        }
-    }
-
-    async function submitChangedCompany(): Promise<Note> {
+    async function submitChangedCompany(changedCompany: DataWithMeta<Company>): Promise<Note> {
         if (token) {
             setIsLoading(true)
             try {
@@ -151,12 +106,12 @@ export function useCompanies(search: string):
         }
     }
 
-    async function submitNewCompany(): Promise<Note> {
+    async function submitNewCompany(newCompany: DataWithMeta<Company>): Promise<Note> {
         if (token) {
             setIsLoading(true)
             try {
                 const client = await apiClient
-                const result = await client.postCompany(null, changedCompany.data, { headers: { Authorization: `Bearer ${token}` } })
+                const result = await client.postCompany(null, newCompany.data, { headers: { Authorization: `Bearer ${token}` } })
                 setIsLoading(false)
                 if (typeof result.headers.location === 'string') {
                     await changeActive(Number(removeStringBeforeLastDigits(result.headers.location)))
@@ -228,12 +183,8 @@ export function useCompanies(search: string):
 
     return [
         filteredCompaniesList,
-        activeCompany,
-        changedCompany,
         submitChangedCompany,
         submitNewCompany,
-        deleteCompany,
-        changeActive,
-        changedCompanyDispatch
+        deleteCompany
     ]
 }

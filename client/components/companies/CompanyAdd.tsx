@@ -7,23 +7,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 
-import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
-import { ChangedCompanyAction, changedCompanyReducer } from './utils/changedCompanyReducer.js'
-import { Company, emptyCompany } from './CompanyPageBasis.jsx'
+import { Button } from 'react-bootstrap'
+import { changedCompanyReducer } from './utils/changedCompanyReducer.js'
+import { Company, emptyCompany } from './CompanyPage.js'
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../Pages.jsx'
-import { CompanyInput } from './CompanyInput.jsx'
-import { Note, Notes } from '../notifiers/Notes.jsx'
-import { useNotifier } from '../notifiers/useNotifier.js'
+import { Note } from '../notifiers/Notes.jsx'
 import { FunctionComponent, useReducer, useState } from 'react'
+import { AddCompanyModal } from './companyAddModal.js'
 
 interface CompanyAddProps {
     addEditNote: (note: Note) => void
     companyTypesList: DataWithMeta<CompanyType>[]
-    submitNewCompany: () => Promise<Note>
+    submitNewCompany:(newCompany: DataWithMeta<Company>) => Promise<Note>
 }
 
-export const CompanyAdd: FunctionComponent<CompanyAddProps> = ({  addEditNote,companyTypesList, submitNewCompany }) => {
+export const CompanyAdd: FunctionComponent<CompanyAddProps> = ({ addEditNote, companyTypesList, submitNewCompany }) => {
 
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
     const [newCompanyClick, setNewCompanyClick] = useState(0)
@@ -32,7 +31,6 @@ export const CompanyAdd: FunctionComponent<CompanyAddProps> = ({  addEditNote,co
     const handleShow = (e: React.MouseEvent) => {
         e.preventDefault()
         setNewCompanyClick(newCompanyClick - 1)
-        changedCompanyDispatch({ type: 'companyChange', newValue: emptyCompany })
         setShow(true)
     }
 
@@ -51,82 +49,4 @@ export const CompanyAdd: FunctionComponent<CompanyAddProps> = ({  addEditNote,co
             />
         </>
     )
-}
-
-interface AddCompanyModalProps {
-    changedCompany: DataWithMeta<Company>
-    addEditNote: (note: Note) => void
-    show: boolean
-    setShow: React.Dispatch<React.SetStateAction<boolean>>
-    newCompanyClick: number
-    companyTypesList: DataWithMeta<CompanyType>[]
-    changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
-    submitNewCompany: () => Promise<Note>
-}
-
-export const AddCompanyModal: FunctionComponent<AddCompanyModalProps> = ({
-    changedCompany,
-    addEditNote,
-    show,
-    setShow,
-    newCompanyClick,
-    companyTypesList,
-    changedCompanyDispatch,
-    submitNewCompany }) => {
-    const [validated, setValidated] = useState<boolean>(false)
-    const [addNotes, addAddNote, removeAddNote] = useNotifier()
-
-
-    const handleClose: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-        e.preventDefault()
-        setValidated(false)
-        setShow(false)
-    }
-
-    const handleSubmitAdd = async (e: React.FormEvent<HTMLFormElement>, form: HTMLFormElement) => {
-        e.preventDefault()
-
-        if (!form.checkValidity()) {
-            setValidated(true)
-        } else {
-
-            const newNote = await submitNewCompany()
-
-            if (newNote.variant === 'success') {
-                setShow(false)
-                addEditNote(newNote)
-            } else {
-                addAddNote(newNote)
-            }
-
-        }
-    }
-
-    return <Modal
-        key={newCompanyClick}
-        show={show}
-        onHide={() => setShow(false)}
-        backdrop='static'
-        size='lg'>
-        <Form noValidate validated={validated} onSubmit={(e) => handleSubmitAdd(e, e.currentTarget)}>
-            <Modal.Header closeButton>
-                <Modal.Title>Neues Unternehmen hinzufügen</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Notes notes={addNotes} removeNote={removeAddNote} />
-                <Modal.Body>
-                    <CompanyInput
-                        companyTypesList={companyTypesList}
-                        changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}
-                    />
-                </Modal.Body>
-            </Modal.Body>
-            <Modal.Footer>
-                <ButtonGroup className='w-100'>
-                    <Button type='submit' variant='outline-primary'>Speichern</Button>
-                    <Button variant='outline-secondary' onClick={handleClose}>Abbrechen</Button>
-                </ButtonGroup>
-            </Modal.Footer>
-        </Form>
-    </Modal>
 }

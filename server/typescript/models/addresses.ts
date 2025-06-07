@@ -1,6 +1,7 @@
 import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize, NonAttribute, ForeignKey } from 'sequelize'
 import { AddressType } from './addressTypes.js'
 import { Country } from './countries.js'
+import { Company } from './companies.js'
 
 export class Address extends Model<InferAttributes<Address>, InferCreationAttributes<Address>> {
     declare id: CreationOptional<number>
@@ -9,10 +10,12 @@ export class Address extends Model<InferAttributes<Address>, InferCreationAttrib
     declare city: string
     declare po: string
     declare addressTypeId: ForeignKey<AddressType['id']>
+    declare companyId: ForeignKey<Company['id']>
     declare countryId: ForeignKey<Country['id']>
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
     declare country?: NonAttribute<Country>
+    declare company?: NonAttribute<Company>
     declare addressType?: NonAttribute<AddressType>
 }
 

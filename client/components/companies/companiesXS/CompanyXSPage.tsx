@@ -1,7 +1,7 @@
 import { ChangedCompanyAction } from '../utils/changedCompanyReducer.js'
 import { Col, Row } from 'react-bootstrap'
 import { CompaniesXSList } from './CompaniesXSList.js'
-import { Company } from '../CompanyPageBasis.js'
+import { Company } from '../CompanyPage.js'
 import { CompanyAdd } from '../CompanyAdd.js'
 import { CompanyType } from '../../resources/companyTypes/CompanyTypesInput.js'
 import { CompanyXSSearch } from './CompanyXSSearch.js'
@@ -23,8 +23,8 @@ interface CompanyXSPageProps {
     companyTypesList: DataWithMeta<CompanyType>[]
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
-    submitChangedCompany: () => Promise<Note>
-    submitNewCompany: () => Promise<Note>
+    submitChangedCompany: (changedCompany: DataWithMeta<Company>) => Promise<Note>,
+    submitNewCompany:(newCompany: DataWithMeta<Company>) => Promise<Note>
     deleteCompany: () => Promise<Note | undefined>
 }
 

@@ -1,6 +1,6 @@
 import { Button, ButtonGroup, Col, Form, Row } from 'react-bootstrap'
 import { ChangedCompanyAction } from '../utils/changedCompanyReducer.js'
-import { Company } from '../CompanyPageBasis.js'
+import { Company } from '../CompanyPage.js'
 import { CompanyInput } from '../CompanyInput.js'
 import { CompanyType } from '../../resources/companyTypes/CompanyTypesInput.js'
 import { DataWithMeta } from '../../Pages.js'
@@ -11,39 +11,40 @@ import { useContextThrowUndefined } from '../../../utils/contextUndefined.js'
 import { FunctionComponent, useState } from 'react'
 
 interface CompanySMEditProps {
-    company: DataWithMeta<Company>
+    activeCompany: DataWithMeta<Company>
     companyTypesList: DataWithMeta<CompanyType>[]
     addEditNote: (note: Note) => void
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
-    submitChangedCompany: () => Promise<Note>
+    submitChangedCompany: (changedCompany: DataWithMeta<Company>) => Promise<Note>,
 }
 
 export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({
-    company,
+    activeCompany,
     companyTypesList,
     addEditNote,
     changedCompany,
     changedCompanyDispatch,
-    submitChangedCompany 
+    submitChangedCompany,
 }) => {
 
     const [validated, setValidated] = useState<boolean>(false)
-    
+
     const { permissions } = useContextThrowUndefined(PermissionContext)
 
-    const isNotChanged: boolean = (company.data.name === changedCompany.data.name &&
-        company.data.abbr === changedCompany.data.abbr &&
-        company.data.www === changedCompany.data.www &&
-        company.data.companyType === changedCompany.data.companyType)
+    const isNotChanged: boolean = (activeCompany.data.name === changedCompany.data.name &&
+        activeCompany.data.abbr === changedCompany.data.abbr &&
+        activeCompany.data.www === changedCompany.data.www &&
+        activeCompany.data.companyType === changedCompany.data.companyType)
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, form: HTMLFormElement) => {
         e.preventDefault()
 
         if (!form.checkValidity()) {
             setValidated(true)
-        } else {            
-            const newNote = await submitChangedCompany()
+        } else {
+            const newNote = await submitChangedCompany(changedCompany)
+            changedCompanyDispatch({ type: 'companyChange', newValue: activeCompany })
             addEditNote(newNote)
         }
     }
@@ -51,7 +52,7 @@ export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({
     const handleUndo = (e: React.MouseEvent) => {
         e.preventDefault()
         setValidated(false)
-        changedCompanyDispatch({ type: 'companyChange', newValue: company })
+        changedCompanyDispatch({ type: 'companyChange', newValue: activeCompany })
     }
 
 

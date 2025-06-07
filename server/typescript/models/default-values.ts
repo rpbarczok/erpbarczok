@@ -72,53 +72,9 @@ export const setDefaultValues = async () => {
         ])
     }
     const companies = await Company.findAll()
-    if ( companies.length === 0 ) {
+    if (companies.length === 0) {
         if (process.env.NODE_ENV !== 'test') {
-            const addressesNew = [
-                {
-                    street: 'Im Schweinestall 1',
-                    city: 'Schweinfurt',
-                    po: '97421',
-                    countryId: 1,
-                    addressTypeId: 1
-                },
-                {
-                    street: 'Via Porcile 1',
-                    city: 'Vercelli',
-                    po: '13100',
-                    countryId: 2,
-                    addressTypeId: 1
-                },
-                {
-                    street: 'Im Schweinestall 2',
-                    city: 'Schweinfurt',
-                    po: '97421',
-                    countryId: 1,
-                    addressTypeId: 1
-                },
-                {
-                    street: 'Am Kontoreck 5',
-                    city: 'Hamburg',
-                    po: '20106',
-                    countryId: 1,
-                    addressTypeId: 1
-                },
-                {
-                    street: 'Sul Ghiacciaio',
-                    city: 'Bozen',
-                    po: '39100',
-                    countryId: 2,
-                    addressTypeId: 1
-                },
-                {
-                    street: 'La Manucuerna 78a',
-                    city: 'Cusco',
-                    po: '08211',
-                    countryId: 3,
-                    addressTypeId: 1
-                }
-            ]
-            const companiesNew = [
+            await Company.bulkCreate([
                 {
                     name: 'Hannes Frischling Haselnusspalast',
                     abbr: 'HFH',
@@ -155,12 +111,57 @@ export const setDefaultValues = async () => {
                     www: 'www.erdnussbaeume.org',
                     companyTypeId: 2
                 }
-            ]
-            for (let i = 0; i < 6; i++) {
-                const company = await Company.create(companiesNew[i])
-                const address = await Address.create(addressesNew[i])
-                await company.addAddress(address)
-            }
+            ])
+            await Address.bulkCreate([
+                {
+                    street: 'Im Schweinestall 1',
+                    city: 'Schweinfurt',
+                    po: '97421',
+                    countryId: 1,
+                    addressTypeId: 1,
+                    companyId: 1
+                },
+                {
+                    street: 'Via Porcile 1',
+                    city: 'Vercelli',
+                    po: '13100',
+                    countryId: 2,
+                    addressTypeId: 1,
+                    companyId: 2
+                },
+                {
+                    street: 'Im Schweinestall 2',
+                    city: 'Schweinfurt',
+                    po: '97421',
+                    countryId: 1,
+                    addressTypeId: 1,
+                    companyId: 3
+                },
+                {
+                    street: 'Am Kontoreck 5',
+                    city: 'Hamburg',
+                    po: '20106',
+                    countryId: 1,
+                    addressTypeId: 1,
+                    companyId: 4
+                },
+                {
+                    street: 'Sul Ghiacciaio',
+                    city: 'Bozen',
+                    po: '39100',
+                    countryId: 2,
+                    addressTypeId: 1,
+                    companyId: 5
+                },
+                {
+                    street: 'La Manucuerna 78a',
+                    city: 'Cusco',
+                    po: '08211',
+                    countryId: 3,
+                    addressTypeId: 1,
+                    companyId: 6
+                }
+            ])
         }
     }
 }

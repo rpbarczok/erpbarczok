@@ -8,7 +8,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 import { Col, Form, Row } from 'react-bootstrap'
 import { ChangedCompanyAction } from './utils/changedCompanyReducer.js'
-import { Company } from './CompanyPageBasis.jsx'
+import { Company } from './CompanyPage.js'
 import { DataWithMeta } from '../Pages.jsx'
 import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { CompanyTypesDropdown } from './CompanyTypesDropdown.jsx'

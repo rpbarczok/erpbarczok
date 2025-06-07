@@ -1,6 +1,6 @@
 import { AddCompanyModal } from "../../components/companies/CompanyAdd.js"
 import { screen } from '@testing-library/react';
-import { emptyCompany } from "components/companies/CompanyPageBasis.js";
+import { emptyCompany } from "components/companies/CompanyPage.js";
 import { expect } from "expect"
 import { noop, companyTypesTestList, axiosNoop, defaultCompanyWithMeta } from "../utils/testdata.js";
 import { PermissionContext } from "../../utils/permissionContext.js"

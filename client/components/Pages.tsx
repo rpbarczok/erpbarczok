@@ -1,5 +1,5 @@
 import { OpenPage } from './App.jsx'
-import { CompanyPageBasis } from './companies/CompanyPageBasis.jsx'
+import { CompanyPage } from './companies/CompanyPage.js'
 import { ResourcesPageBasis } from './resources/ResourcesPageBasis.jsx'
 
 export interface Meta {
@@ -16,7 +16,7 @@ export const Pages = ({ activePage }: { activePage: OpenPage }) => {
 
     switch (activePage.id) {
         case 'stamm':
-            return <CompanyPageBasis />
+            return <CompanyPage />
         case 'admin':
             return <ResourcesPageBasis />
         default:

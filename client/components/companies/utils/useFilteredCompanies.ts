@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Company } from "../CompanyPageBasis.js"
+import { Company } from "../CompanyPage.js"
 import { DataWithMeta } from "components/Pages.js"
 
 export function useFilteredCompanyList( 

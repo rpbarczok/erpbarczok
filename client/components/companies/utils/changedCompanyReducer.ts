@@ -1,5 +1,5 @@
 import { DataWithMeta } from 'components/Pages.js'
-import { Company } from '../CompanyPageBasis.js'
+import { Company } from '../CompanyPage.js'
 
 export interface ChangedCompanyAction {
     type: 'nameChange' | 'abbrChange' | 'wwwChange' | 'companyTypeChange' | 'companyChange'

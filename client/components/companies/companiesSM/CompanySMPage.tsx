@@ -1,7 +1,7 @@
 import { ButtonGroup, Col, Row } from 'react-bootstrap'
 import { ChangedCompanyAction } from '../utils/changedCompanyReducer.js'
 import { CompaniesSMList } from './CompaniesSMList.js'
-import { Company } from '../CompanyPageBasis.js'
+import { Company } from '../CompanyPage.js'
 import { CompanyAdd } from '../CompanyAdd.js'
 import { CompanyDelete } from '../CompanyDelete.js'
 import { CompanySMEdit } from './CompanySMEdit.js'
@@ -25,8 +25,8 @@ interface CompaniesSMPageProps {
     companyTypesList: DataWithMeta<CompanyType>[]
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
-    submitChangedCompany: () => Promise<Note>
-    submitNewCompany: () => Promise<Note>
+    submitChangedCompany: (changedCompany: DataWithMeta<Company>) => Promise<Note>,
+    submitNewCompany:(newCompany: DataWithMeta<Company>) => Promise<Note>
     deleteCompany: () => Promise<Note | undefined>
 }
 
@@ -104,7 +104,7 @@ export const CompanySMPage: FunctionComponent<CompaniesSMPageProps> = ({ search,
                     <Row>
                         <CompanySMEdit
                             key={activeCompany.meta.location}
-                            company={activeCompany}
+                            activeCompany={activeCompany}
                             companyTypesList={companyTypesList}
                             addEditNote={addEditNote}
                             changedCompany={changedCompany} changedCompanyDispatch={changedCompanyDispatch}

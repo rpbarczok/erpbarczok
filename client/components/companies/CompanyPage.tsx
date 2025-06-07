@@ -1,11 +1,13 @@
-import { DataWithMeta } from '../Pages.jsx'
+import { DataWithMeta } from '../Pages.js'
 import { useCompanies } from './utils/useCompanies.js'
 import { useResources } from 'components/resources/useResources.js'
 import { CompanySMPage } from './companiesSM/CompanySMPage.js'
 import { Row } from 'react-bootstrap'
 import { CompanyXSPage } from './companiesXS/CompanyXSPage.js'
 import { emptyCompanyTypeResource } from 'components/resources/companyTypes/CompanyTypesInput.js'
-import { useState } from 'react'
+import { useReducer, useState } from 'react'
+import { changedCompanyReducer } from './utils/changedCompanyReducer.js'
+import { useActiveCompany } from './utils/useActiveCompany.js'
 
 export interface Company {
     'name': string
@@ -16,20 +18,19 @@ export interface Company {
 
 export const emptyCompany: DataWithMeta<Company> = { 'meta': { 'location': 0, 'etag': '' }, 'data': { 'name': '', 'companyType': 'default', 'abbr': '', 'www': '' } }
 
-export const CompanyPageBasis = () => {
+export const CompanyPage = () => {
     const [companyTypesList] = useResources(emptyCompanyTypeResource)
     const [search, setSearch] = useState<string>('') // Content of the search input fiel
+    const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
+    const [activeCompany, changeActive] = useActiveCompany(changedCompanyDispatch)
     const [
         filteredCompaniesList,
-        activeCompany,
-        changedCompany, 
-        submitChangedCompany, 
-        submitNewCompany, 
-        deleteCompany,
-        changeActive,
-        changedCompanyDispatch
-    ] = useCompanies(search)
+        submitChangedCompany,
+        submitNewCompany,
+        deleteCompany
+    ] = useCompanies(search, activeCompany, changeActive)
 
+    
     return (
         <>
             <Row className='d-none d-sm-flex flex-grow-1 flex-column' style={{ overflowY: 'scroll' }}>
