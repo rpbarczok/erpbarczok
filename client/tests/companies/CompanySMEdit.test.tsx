@@ -19,7 +19,7 @@ describe('Company SM Edit', function () {
             <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                 <CompanySMEdit
                     key={companyTestList[0].meta.location}
-                    company={companyTestList[0]}
+                    activeCompany={companyTestList[0]}
                     companyTypesList={companyTypesTestList}
                     addEditNote={noop}
                     changedCompany={companyTestList[1]} changedCompanyDispatch={noop}
@@ -40,7 +40,7 @@ describe('Company SM Edit', function () {
             <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                 <CompanySMEdit
                     key={companyTestList[0].meta.location}
-                    company={companyTestList[0]}
+                    activeCompany={companyTestList[0]}
                     companyTypesList={companyTypesTestList}
                     addEditNote={noop}
                     changedCompany={companyTestList[0]} changedCompanyDispatch={noop}
@@ -62,7 +62,7 @@ describe('Company SM Edit', function () {
             <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                 <CompanySMEdit
                     key={companyTestList[0].meta.location}
-                    company={companyTestList[0]}
+                    activeCompany={companyTestList[0]}
                     companyTypesList={companyTypesTestList}
                     addEditNote={noop}
                     changedCompany={companyTestList[1]} changedCompanyDispatch={undoSpy}
@@ -85,7 +85,7 @@ describe('Company SM Edit', function () {
             <PermissionContext.Provider value={{ permissions: ['public', 'user'], setPermissions: noop }}>
                 <CompanySMEdit
                     key={companyTestList[0].meta.location}
-                    company={companyTestList[0]}
+                    activeCompany={companyTestList[0]}
                     companyTypesList={companyTypesTestList}
                     addEditNote={noop}
                     changedCompany={companyTestList[0]} changedCompanyDispatch={undoSpy}

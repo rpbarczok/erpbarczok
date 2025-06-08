@@ -14,7 +14,7 @@ import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../Pages.jsx'
 import { Note } from '../notifiers/Notes.jsx'
 import { FunctionComponent, useReducer, useState } from 'react'
-import { AddCompanyModal } from './companyAddModal.js'
+import { AddCompanyModal } from './CompanyAddModal.js'
 
 interface CompanyAddProps {
     addEditNote: (note: Note) => void

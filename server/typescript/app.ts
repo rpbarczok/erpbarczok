@@ -145,9 +145,7 @@ window.scope = '${jsesc(process.env.SCOPE)}';
             return false
         }
         const name: string = process.env.PERMISSION_CLAIM ?? 'roles'
-        console.log("Permision Claim:", name)
         const userPermissionsPrep: unknown = name.split('.').reduce((o, k) => o && o[k], req.auth)
-        console.log("Permision Claim Prep", userPermissionsPrep)
         const userPermissionsArray: string[] = []
         if (isArrayOfStrings(userPermissionsPrep)) {
             userPermissionsArray.push(...userPermissionsPrep)
@@ -159,7 +157,6 @@ window.scope = '${jsesc(process.env.SCOPE)}';
         if (userPermissionsArray.some(permission => permission === 'admin')) userPermissions.push('admin', 'user')
 
         req.userPermissions = userPermissions
-        console.log("req.userPermissions", req.userPermissions)
         res.set('permissions', req.userPermissions.join(' '))
 
         permissionLogger('Permissions: ', req.userPermissions.join(' '))

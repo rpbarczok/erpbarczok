@@ -1,4 +1,4 @@
-import { AddCompanyModal } from "../../components/companies/CompanyAdd.js"
+import { AddCompanyModal } from "../../components/companies/CompanyAddModal.js"
 import { screen } from '@testing-library/react';
 import { emptyCompany } from "components/companies/CompanyPage.js";
 import { expect } from "expect"
