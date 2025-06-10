@@ -1,22 +1,22 @@
 import { Button, ButtonGroup } from 'react-bootstrap'
-import { Resource, resourceList } from './resourceList.js'
+import { resourceDescriptionList, ResourceDescriptionType } from './resourceList.js'
 import { FunctionComponent } from 'react'
 
 interface LeftNavigationProps {
-    setActiveResource: React.Dispatch<React.SetStateAction<Resource>>
-    activeResource: Resource
+    setActiveResource: React.Dispatch<React.SetStateAction<ResourceDescriptionType>>
+    activeResource: ResourceDescriptionType
     setIsActiveResourceChanged: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const ResourceNavigation: FunctionComponent<LeftNavigationProps> = ({ setActiveResource, activeResource, setIsActiveResourceChanged }) => {
 
-    const resourceHandler = (e: React.MouseEvent, resource: Resource) => {
+    const resourceHandler = (e: React.MouseEvent, resource: ResourceDescriptionType) => {
         e.preventDefault()
         setIsActiveResourceChanged(true)
         setActiveResource(resource)
     }
 
-    const ButtonList = resourceList.map(resource => {
+    const ButtonList = resourceDescriptionList.map(resource => {
         return (
             <Button className='link' id={resource.name} variant='outline-secondary' key={resource.name} onClick={(e) => resourceHandler(e, resource)} active={resource.name === activeResource.name}>
                 {resource.name}

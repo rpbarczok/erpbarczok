@@ -22,6 +22,7 @@ const config = merge(common, {
                     '/company-types',
                     '/address-types',
                     '/fields',
+                    '/countries',
                     '/api-docs',
                     '/docs',
                     '/config.js'],

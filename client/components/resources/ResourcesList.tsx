@@ -1,45 +1,15 @@
 import { Button, ButtonGroup, Form, ListGroup, Modal } from 'react-bootstrap'
 import { DataWithMeta } from '../Pages.jsx'
-import { FieldsInput } from './fields/Fields.jsx'
-import { CompanyTypesInput } from './companyTypes/CompanyTypesInput.jsx'
 import { Note, Notes } from '../notifiers/Notes.jsx'
-import { Resource, ResourceType } from './resourceList.js'
+import { ResourceDescriptionType, ResourceType } from './resourceList.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
-import { FunctionComponent, useState } from 'react'
-import { AddressTypesInput } from './addressTypes/AddressTypesInput.js'
-
-
-interface ResourceActiveProps {
-    resource: Resource
-    changedItem: DataWithMeta<ResourceType>
-    setChangedItem: React.Dispatch<React.SetStateAction<DataWithMeta<ResourceType>>>
-}
-
-const ResourceActive: FunctionComponent<ResourceActiveProps> = ({ resource, changedItem, setChangedItem }) => {
-    switch (resource.name) {
-        case 'Beziehung':
-            return <CompanyTypesInput
-                companyType={changedItem}
-                setCompanyType={setChangedItem}
-            />
-        case 'Branche':
-            return <FieldsInput
-                field={changedItem}
-                setField={setChangedItem} />
-        case 'Adresstyp':
-            return <AddressTypesInput
-                addressType={changedItem}
-                setAddressType={setChangedItem} />
-        default:
-            <p>No Content</p>
-    }
-
-}
+import { useState } from 'react'
+import { ActiveResource } from './ActiveResource.js'
 
 interface ResourcesListProps {
     item: DataWithMeta<ResourceType>
     addMainNote: (note: Note) => void
-    resource: Resource
+    resource: ResourceDescriptionType
     submitChangedResource: (changedItem: DataWithMeta<ResourceType>) => Promise<Note>
     deleteResource: (item: DataWithMeta<ResourceType>) => Promise<Note>
 }
@@ -112,9 +82,9 @@ export const ResourcesList = ({ resource, addMainNote, item, submitChangedResour
                     </Modal.Header>
                     <Modal.Body>
                         <Notes notes={notes} removeNote={removeNote} />
-                        <ResourceActive
+                        <ActiveResource
                             resource={resource}
-                            changedItem={changedItem} setChangedItem={setChangedItem} />
+                            item={changedItem} setItem={setChangedItem} />
                     </Modal.Body>
                     <Modal.Footer>
                         <ButtonGroup className='w-100'>

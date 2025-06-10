@@ -1,7 +1,7 @@
-import { getAddressTypeById, deleteAddressTypeById, putAddressTypeById } from '../../services/addressTypes.js'
+import { getCountryById, deleteCountryById, putCountryById } from '../../services/countries.js'
 import { ApiError } from '../controllersError.js'
 import type { NextFunction, Request, Response } from 'express'
-import { AddressTypeNorm, normalizeAddressType, createAddressTypeMeta, isAddressTypeNorm } from './index.js'
+import { CountryNorm, normalizeCountry, createCountryMeta, isCountryNorm } from './index.js'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { Meta } from '../../app.js'
 import { Address } from '../../models/addresses.js'
@@ -10,13 +10,13 @@ import { ValidationError } from 'sequelize'
 
 export const GET: Operation = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const addressTypeSearchResult = await getAddressTypeById(Number(req.params.id))
-        const addressTypeNorm: AddressTypeNorm = normalizeAddressType(addressTypeSearchResult)
-        const addressTypeNormMeta: Meta = createAddressTypeMeta(addressTypeSearchResult)
+        const countrySearchResult = await getCountryById(Number(req.params.id))
+        const countryNorm: CountryNorm = normalizeCountry(countrySearchResult)
+        const countryNormMeta: Meta = createCountryMeta(countrySearchResult)
         res
             .status(200)
-            .set(addressTypeNormMeta)
-            .json(addressTypeNorm)
+            .set(countryNormMeta)
+            .json(countryNorm)
     } catch (error) {
         if (error instanceof NotFoundError) {
             next(new ApiError(404, error.message))
@@ -29,14 +29,14 @@ export const GET: Operation = async (req: Request, res: Response, next: NextFunc
 }
 
 GET.apiSpec = {
-    'summary': 'Get a certain address type',
-    'description': 'GET request on a certain address type by id {id}',
-    'operationId': 'getAddressTypeById',
+    'summary': 'Get a certain country',
+    'description': 'GET request on a certain country by id {id}',
+    'operationId': 'getCountryById',
     'security': [
         { 'openId': [] }
     ],
     'tags': [
-        'AddressType'
+        'Country'
     ],
     'parameters': [
         {
@@ -49,19 +49,19 @@ GET.apiSpec = {
             'content': {
                 'application/json': {
                     'schema': {
-                        '$ref': '#/components/schemas/addressType'
+                        '$ref': '#/components/schemas/country'
 
                     },
                     'examples': {
-                        'addressType': {
-                            '$ref': '#/components/examples/addressType'
+                        'country': {
+                            '$ref': '#/components/examples/country'
                         }
                     }
                 }
             },
             'headers': {
                 'etag': {
-                    'description': 'Etag of the requested addressType',
+                    'description': 'Etag of the requested country',
                     'schema': {
                         '$ref': '#/components/schemas/etag'
                     }
@@ -80,12 +80,12 @@ GET.apiSpec = {
 export const DELETE: Operation = async (req: Request, res: Response, next: NextFunction) => {
     const { count } = await Address.findAndCountAll({
         where: {
-            addressTypeId: Number(req.params.id)
+            countryId: Number(req.params.id)
         }
     })
     if (count === 0) {
         try {
-            await deleteAddressTypeById(Number(req.params.id))
+            await deleteCountryById(Number(req.params.id))
             res
                 .status(204)
                 .end()
@@ -104,9 +104,9 @@ export const DELETE: Operation = async (req: Request, res: Response, next: NextF
 }
 
 DELETE.apiSpec = {
-    'summary': 'Remove a certain address type',
-    'description': 'DELETE request on address type by id {id}',
-    'operationId': 'deleteAddressTypeById',
+    'summary': 'Remove a certain country',
+    'description': 'DELETE request on country by id {id}',
+    'operationId': 'deleteCountryById',
     'security': [
         {
             'openId': [
@@ -115,7 +115,7 @@ DELETE.apiSpec = {
         }
     ],
     'tags': [
-        'AddressType'
+        'Country'
     ],
     'parameters': [
         {
@@ -142,16 +142,16 @@ DELETE.apiSpec = {
 }
 
 export const PUT: Operation = async (req: Request, res: Response, next: NextFunction) => {
-    if (isAddressTypeNorm(req.body)) {
+    if (isCountryNorm(req.body)) {
         try {
-            const dbAddressTypeSearchResult = await getAddressTypeById(Number(req.params.id))
-            const dbAddressTypeMeta = createAddressTypeMeta(dbAddressTypeSearchResult)
-            if (dbAddressTypeMeta.etag === req.headers['if-match']) {
-                const updatedAddressType = await putAddressTypeById(Number(req.params.id), req.body)
-                const addressTypeHeader = createAddressTypeMeta(updatedAddressType)
+            const dbCountrySearchResult = await getCountryById(Number(req.params.id))
+            const dbCountryMeta = createCountryMeta(dbCountrySearchResult)
+            if (dbCountryMeta.etag === req.headers['if-match']) {
+                const updatedCountry = await putCountryById(Number(req.params.id), req.body)
+                const countryHeader = createCountryMeta(updatedCountry)
                 res
                     .status(204)
-                    .set(addressTypeHeader)
+                    .set(countryHeader)
                     .end()
             } else {
                 next(new ApiError(412))
@@ -176,9 +176,9 @@ export const PUT: Operation = async (req: Request, res: Response, next: NextFunc
 
 
 PUT.apiSpec = {
-    'summary': 'Updates address type with id {id}',
-    'description': 'Put request on address type by id {id}',
-    'operationId': 'putAddressTypeById',
+    'summary': 'Updates country with id {id}',
+    'description': 'Put request on country by id {id}',
+    'operationId': 'putCountryById',
     'security': [
         {
             'openId': [
@@ -187,14 +187,14 @@ PUT.apiSpec = {
         }
     ],
     'tags': [
-        'AddressType'
+        'Country'
     ],
     'requestBody': {
-        'description': 'Add address type',
+        'description': 'Add country',
         'content': {
             'application/json': {
                 'schema': {
-                    '$ref': '#/components/schemas/addressType'
+                    '$ref': '#/components/schemas/country'
                 }
             }
         }

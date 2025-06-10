@@ -5,15 +5,20 @@ import { ListGroup, Row } from 'react-bootstrap'
 import { LoadingContext } from '../../utils/loadingContext.js'
 import { Note, Notes } from '../notifiers/Notes.js'
 import { PermissionContext, updateUserPermissions } from '../../utils/permissionContext.js'
-import { Resource, ResourceType } from './resourceList.js'
+import { ResourceDescriptionType } from './resourceList.js'
 import { ResourcesList } from './ResourcesList.js'
 import { useAuth } from 'react-oidc-context'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { useNotifier } from '../notifiers/useNotifier.js'
+import { CompanyType } from './companyTypes/CompanyTypesInput.js'
+import { Field } from './fields/Fields.js'
+import { Country } from './countries/CountriesInput.js'
+import { AddressType } from './addressTypes/AddressTypesInput.js'
+
 
 interface ResourcePageComponent {
-    resource: Resource
-    resourceList: DataWithMeta<ResourceType>[]
+    resource: ResourceDescriptionType
+    resourceList: DataWithMeta<CompanyType>[] | DataWithMeta<Field>[] | DataWithMeta<Country>[]
     setIsResourceChanged: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -24,7 +29,7 @@ export const ResourcePage = ({ resource, resourceList, setIsResourceChanged }: R
     const token = auth.user?.access_token
     const { setIsLoading } = useContextThrowUndefined(LoadingContext)
 
-    async function submitNewResource(newItem: DataWithMeta<ResourceType>): Promise<Note> {
+    async function submitNewResource<T>(newItem: DataWithMeta<T>): Promise<Note> {
         const token = auth.user?.access_token
         if (token) {
             setIsLoading(true)
@@ -61,7 +66,7 @@ export const ResourcePage = ({ resource, resourceList, setIsResourceChanged }: R
 
     }
 
-    async function submitChangedResource(changedItem: DataWithMeta<ResourceType>): Promise<Note> {
+    async function submitChangedResource<T>(changedItem: DataWithMeta<T>): Promise<Note> {
         if (token) {
             setIsLoading(true)
             try {
@@ -96,7 +101,7 @@ export const ResourcePage = ({ resource, resourceList, setIsResourceChanged }: R
         }
     }
 
-    async function deleteResource(item: DataWithMeta<ResourceType>): Promise<Note> {
+    async function deleteResource<T>(item: DataWithMeta<T>): Promise<Note> {
         if (token) {
 
             setIsLoading(true)

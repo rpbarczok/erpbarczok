@@ -1,14 +1,15 @@
 import { Col, Row } from 'react-bootstrap'
 import { Heading } from '../headings/Heading.js'
 import { ResourcePage } from './ResourcePage.js'
-import { Resource } from './resourceList.js'
 import { ResourceNavigation } from './ResourceNavigation.js'
 import { useState } from 'react'
 import { useResources } from './useResources.js'
+import { companyTypeDescription } from './companyTypes/CompanyTypesInput.js'
+import { ResourceDescriptionType, ResourceType } from './resourceList.js'
 
 export function ResourcesPageBasis() {
-    const [activeResource, setActiveResource] = useState<Resource>({ name: 'Beziehung', paths: { all: '/company-types/', single: '/company-types/{id}' }, empty: { meta: { location: 0, etag: '' }, data: { name: '' } } })
-    const [resourceList, setIsResourceChanged, setIsActiveResourceChanged] = useResources(activeResource)
+    const [activeResource, setActiveResource] = useState<ResourceDescriptionType>(companyTypeDescription)
+    const [resourceList, setIsResourceChanged, setIsActiveResourceChanged] = useResources<ResourceType>(activeResource)
 
     return (
         <>

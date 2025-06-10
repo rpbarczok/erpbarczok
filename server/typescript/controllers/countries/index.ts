@@ -1,57 +1,58 @@
 import { DataWithMeta, Meta } from '../../app.js'
 import { sha256 } from '../../tests/utils/hasher.js'
-import { AddressType } from '../../models/addressTypes.js'
-import { getAllAddressTypes, addAddressType } from '../../services/addressTypes.js'
+import { Country } from '../../models/countries.js'
+import { getAllCountries, addCountry } from '../../services/countries.js'
 import { NextFunction, Request, Response } from 'express'
 import { Operation } from '../../utils/apiSpecAssembler.js'
 import { ApiError } from '../controllersError.js'
 import { ValidationError } from '../../services/servicesError.js'
 
-
-export interface AddressTypeNorm {
+export interface CountryNorm {
     name: string
+    abbr: string
+    isEU: boolean
 }
 
-export const isAddressTypeNorm = (value: unknown): value is AddressTypeNorm => {
+export const isCountryNorm = (value: unknown): value is CountryNorm => {
     if (typeof value === 'object' && value !== null) {
         if (Object.keys(value).includes('name')) return true
     }
     return false
 }
 
-export function normalizeAddressType(addressType: AddressType): AddressTypeNorm {
-    const result: AddressTypeNorm = { name: addressType.name }
+export function normalizeCountry(country: Country): CountryNorm {
+    const result: CountryNorm = { name: country.name, abbr: country.abbr, isEU: country.isEU }
     return result
 }
 
-export function createAddressTypeMeta(addressType: AddressType): Meta {
-    const addressTypeNorm: AddressTypeNorm = normalizeAddressType(addressType)
-    return { 'location': '/address-types/' + addressType.id, 'etag': sha256(JSON.stringify(addressTypeNorm)) }
+export function createCountryMeta(country: Country): Meta {
+    const countryNorm: CountryNorm = normalizeCountry(country)
+    return { 'location': '/countries/' + country.id, 'etag': sha256(JSON.stringify(countryNorm)) }
 }
 
-export function combineAddressTypeWithMeta(addressType: AddressType): DataWithMeta<AddressTypeNorm> {
-    const data: AddressTypeNorm = normalizeAddressType(addressType)
-    const meta = createAddressTypeMeta(addressType)
+export function combineCountryWithMeta(country: Country): DataWithMeta<CountryNorm> {
+    const data: CountryNorm = normalizeCountry(country)
+    const meta = createCountryMeta(country)
     return { meta: meta, data: data }
 }
 
 export const GET: Operation = async (req: Request, res: Response) => {
-    const allAddressTypesSearchResult = await getAllAddressTypes()
-    const allAddressTypesWithMeta: DataWithMeta<AddressTypeNorm>[] = allAddressTypesSearchResult.map(row => combineAddressTypeWithMeta(row))
+    const allCountriesSearchResult = await getAllCountries()
+    const allCountriesWithMeta: DataWithMeta<CountryNorm>[] = allCountriesSearchResult.map(row => combineCountryWithMeta(row))
     res
         .status(200)
-        .json(allAddressTypesWithMeta)
+        .json(allCountriesWithMeta)
 }
 
 GET.apiSpec = {
-    'summary': 'Get a list of all address types',
-    'description': 'GET request on all address types',
-    'operationId': 'getAddressTypes',
+    'summary': 'Get a list of all company types',
+    'description': 'GET request on all companies',
+    'operationId': 'getCountries',
     'security': [
         { 'openId': [] }
     ],
     'tags': [
-        'AddressType'
+        'Country'
     ],
     'responses': {
         '200': {
@@ -72,39 +73,45 @@ GET.apiSpec = {
                                     '$ref': '#/components/schemas/meta'
                                 },
                                 'data': {
-                                    '$ref': '#/components/schemas/addressType'
+                                    '$ref': '#/components/schemas/country'
                                 }
                             }
                         }
                     },
                     'examples': {
-                        'example-of-three-addressTypes': {
+                        'example-of-three-countries': {
                             'value': [
                                 {
                                     'meta': {
-                                        'location': '/address-types/1',
+                                        'location': '/countries/1',
                                         'etag': '656da9646b5a65673e4a1f504ac3d44232e2da0d939413619ef0fd33850f818a'
                                     },
                                     'data': {
-                                        'name': 'Unternehmensadresse'
+                                        'name': 'Germany',
+                                        'abbr': 'DEU',
+                                        isEU: true
                                     }
                                 },
                                 {
                                     'meta': {
-                                        'location': '/address-types/2',
+                                        'location': '/countries/2',
                                         'etag': '656da9646b5a65673e5a1f504ac3d44232e2da0d939413619ef0fd33850f818a'
                                     },
                                     'data': {
-                                        'name': 'Rechnungsadresse'
+                                        'name': 'Austria',
+                                        'abbr': 'AUT',
+                                        isEU: true
                                     }
                                 },
                                 {
                                     'meta': {
-                                        'location': '/address-types/3',
+                                        'location': '/countries/3',
                                         'etag': '656da9646b5a65673e4a1f504ac3d44262e2da0d939413619ef0fd33850f818a'
                                     },
                                     'data': {
-                                        'name': 'Lieferadresse'
+                                        'name': 'China',
+                                        'abbr': 'CHN',
+                                        isEU: false
                                     }
                                 }
                             ]
@@ -129,13 +136,13 @@ GET.apiSpec = {
 }
 
 export const POST: Operation = async (req: Request, res: Response, next: NextFunction) => {
-    if (isAddressTypeNorm(req.body)) {
+    if (isCountryNorm(req.body)) {
         try {
-            const newAddressTypeSearchResult = await addAddressType(req.body)
-            const newAddressTypeMeta = createAddressTypeMeta(newAddressTypeSearchResult)
+            const newCountrySearchResult = await addCountry(req.body)
+            const newCountryMeta = createCountryMeta(newCountrySearchResult)
             res
                 .status(201)
-                .set(newAddressTypeMeta)
+                .set(newCountryMeta)
                 .end()
         } catch (error) {
             if (error instanceof ValidationError) {
@@ -152,9 +159,9 @@ export const POST: Operation = async (req: Request, res: Response, next: NextFun
 }
 
 POST.apiSpec = {
-    'summary': 'Add new address type',
-    'description': 'POST request for a new address type',
-    'operationId': 'postAddressType',
+    'summary': 'Add new company type',
+    'description': 'POST request for a new company type',
+    'operationId': 'postCountry',
     'security': [
         {
             'openId': [
@@ -163,14 +170,14 @@ POST.apiSpec = {
         }
     ],
     'tags': [
-        'AddressType'
+        'Country'
     ],
     'requestBody': {
-        'description': 'Add address type',
+        'description': 'Add country',
         'content': {
             'application/json': {
                 'schema': {
-                    '$ref': '#/components/schemas/addressType'
+                    '$ref': '#/components/schemas/country'
                 }
             }
         }

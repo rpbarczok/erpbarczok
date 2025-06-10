@@ -34,6 +34,12 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
         },
         {
             'name': 'Field'
+        },
+        {
+            'name': 'Country'
+        },
+        {
+            'name': 'AddressType'
         }
     ],
     'paths': {
@@ -45,6 +51,8 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
         '/fields/{id}': {},
         '/address-types/': {},
         '/address-types/{id}': {},
+        '/countries/': {},
+        '/countries/{id}': {}
     },
     'components': {
         'parameters': {
@@ -302,6 +310,30 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                     }
                 }
             },
+            'country': {
+                'type': 'object',
+                'required': [
+                    'name',
+                    'abbr',
+                    'isEU'
+                ],
+                'additionalProperties': false,
+                'properties': {
+                    'name': {
+                        'type': 'string',
+                        'example': 'Germany'
+                    },
+                    'abbr': {
+                        'type': 'string',
+                        'example': 'DEU',
+                        'maxLength': 3
+                    },
+                    'isEU': {
+                        'type': 'boolean',
+                        'example': true
+                    }
+                }
+            },
             'error': {
                 'required': [
                     'message',
@@ -350,6 +382,13 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
             'field': {
                 'value': {
                     'name': 'Lebensmittel'
+                }
+            },
+            'country': {
+                'value': {
+                    'name': 'Germany',
+                    'abbr': 'DEU',
+                    'inEU': true
                 }
             },
             'error400': {

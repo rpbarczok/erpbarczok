@@ -1,13 +1,13 @@
 import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
 import { DataWithMeta } from '../Pages.js'
 import { Note, Notes } from '../notifiers/Notes.js'
-import { Resource, ResourceType } from './resourceList.js'
+import { ResourceDescriptionType, ResourceType } from './resourceList.js'
 import { FunctionComponent, useState } from 'react'
 import { useNotifier } from 'components/notifiers/useNotifier.js'
 import { ActiveResource } from './ActiveResource.js'
 
 interface ResourcesAddProps {
-    resource: Resource
+    resource: ResourceDescriptionType
     addMainNote: (note: Note) => void
     submitNewResource: (newItem: DataWithMeta<ResourceType>) => Promise<Note>
 }
@@ -59,7 +59,7 @@ export const ResourcesAdd: FunctionComponent<ResourcesAddProps> = ({ resource, a
                     <Notes notes={notes} removeNote={removeNote} />
                     <ActiveResource
                         resource={resource}
-                        newItem={newItem} setNewItem={setNewItem}
+                        item={newItem} setItem={setNewItem}
                     />
                 </Modal.Body>
                 <Modal.Footer>

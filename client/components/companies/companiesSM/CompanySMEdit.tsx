@@ -76,7 +76,12 @@ export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({
                     </Form>
                 </Col>
                 <Col sm={12} lg={6} xl={7}>
-                    CompanyAddition
+                    <Row>
+                            Addresses
+                    </Row>
+                    <Row>
+                        Employees
+                    </Row>
                 </Col>
             </Row>
         </Col>

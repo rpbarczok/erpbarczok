@@ -3,20 +3,19 @@ import { useEffect, useState } from "react"
 import { useAuth } from "react-oidc-context"
 import { useContextThrowUndefined } from "utils/contextUndefined.js"
 import { LoadingContext } from "utils/loadingContext.js"
-import { apiClient } from "utils/openAPIClientAxios.js"
 import { PermissionContext, updateUserPermissions } from "utils/permissionContext.js"
-import { Resource, ResourceType, } from "./resourceList.js"
 import { removeStringBeforeLastDigits } from "utils/removeStringBeforeLastDigits.js"
+import { ResourceDescription } from "./resourceList.js"
+import { apiClient } from "utils/openAPIClientAxios.js"
 
-export function useResources(resource: Resource): [DataWithMeta<ResourceType>[], React.Dispatch<React.SetStateAction<boolean>>, React.Dispatch<React.SetStateAction<boolean>>] {
+export function useResources<T>(resource: ResourceDescription<T>): [DataWithMeta<T>[], React.Dispatch<React.SetStateAction<boolean>>, React.Dispatch<React.SetStateAction<boolean>>] {
     const auth = useAuth()
     const token = auth.user?.access_token
     const { setIsLoading } = useContextThrowUndefined(LoadingContext)
     const [isResourceChanged, setIsResourceChanged] = useState(true)
     const [isActiveResourceChanged, setIsActiveResourceChanged] = useState(true)
-    const [resourceList, setResourceList] = useState<DataWithMeta<ResourceType>[]>([])
+    const [resourceList, setResourceList] = useState<DataWithMeta<T>[]>([])
     const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-
 
     useEffect(() => {
         if (isResourceChanged || isActiveResourceChanged) {
@@ -29,12 +28,12 @@ export function useResources(resource: Resource): [DataWithMeta<ResourceType>[],
                         const result = await client.paths[resource.paths.all].get(null, null, { headers: { Authorization: `Bearer ${token}` } })
                         setIsLoading(false)
                         const newList = result.data.map(row => {
-                            const newRow: DataWithMeta<ResourceType> = {
+                            const newRow: DataWithMeta<T> = {
                                 meta: {
                                     location: Number(removeStringBeforeLastDigits(row.meta.location)),
                                     etag: row.meta.etag
                                 },
-                                data: row.data
+                                data: row.data as T
                             }
                             return newRow
                         })

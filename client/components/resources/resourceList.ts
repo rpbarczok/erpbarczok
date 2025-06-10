@@ -1,41 +1,27 @@
-import { CompanyType } from './companyTypes/CompanyTypesInput.jsx'
+import { CompanyType, companyTypeDescription } from './companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../Pages.jsx'
-import { Field } from './fields/Fields.jsx'
-import { AddressType } from './addressTypes/AddressTypesInput.js'
+import { Field, fieldDescription} from './fields/Fields.jsx'
+import { AddressType, addressTypeDescription } from './addressTypes/AddressTypesInput.js'
+import { Country, countryDescription } from './countries/CountriesInput.js'
 
-export type ResourceType= CompanyType | Field | AddressType
+interface PathsResource {
+    'all': '/company-types/' | '/address-types/' | '/fields/' | '/countries/'
+    'single': '/company-types/{id}' | '/address-types/{id}' | '/fields/{id}' | '/countries/{id}'
+}
 
-export interface Resource {
+export type ResourceType = CompanyType | AddressType | Field | Country
+
+export interface ResourceDescription<T> {
     name: string
-    paths: {
-        all: '/company-types/' | '/fields/' | '/address-types/',
-        single: '/company-types/{id}' | '/fields/{id}' | '/address-types/{id}'
-    }
-    empty: DataWithMeta<ResourceType>
+    paths: PathsResource
+    empty: DataWithMeta<T>
 }
 
-export const resourceList: Resource[] = [{
-    name: 'Beziehung',
-    paths: { 'all': '/company-types/', 'single': '/company-types/{id}' },
-    empty: {
-        meta: { location: 0, etag: '' },
-        data: { name: '' }
-    }
-},
-{
-    name: 'Branche',
-    paths: { 'all': '/fields/', 'single': '/fields/{id}' },
-    empty: {
-        meta: { location: 0, etag: '' },
-        data: { name: '' }
-    }
-},
-{
-    name: 'Adresstyp',
-    paths: { 'all': '/address-types/', 'single': '/address-types/{id}' },
-    empty: {
-        meta: { location: 0, etag: '' },
-        data: { name: '' }
-    }
-}
+export type ResourceDescriptionType = ResourceDescription<CompanyType>  | ResourceDescription<AddressType> | ResourceDescription<Field> | ResourceDescription<Country>
+
+export const resourceDescriptionList: ResourceDescriptionType[] = [
+    companyTypeDescription,
+    fieldDescription,
+    addressTypeDescription,
+    countryDescription
 ]
