@@ -1,76 +1,95 @@
-import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap'
-import { DataWithMeta } from '../Pages.js'
-import { Note, Notes } from '../notifiers/Notes.js'
-import { ResourceDescriptionType, ResourceType } from './resourceList.js'
+import { Button } from 'react-bootstrap'
+import { Note } from '../notifiers/Notes.js'
+import { Resource, ResourceDescription, ResourcePayloadAndDescription } from './resourceList.js'
 import { FunctionComponent, useState } from 'react'
-import { useNotifier } from 'components/notifiers/useNotifier.js'
-import { ActiveResource } from './ActiveResource.js'
+import { apiClient } from 'utils/openAPIClientAxios.js'
+import { useAuth } from 'react-oidc-context'
+import { useContextThrowUndefined } from 'utils/contextUndefined.js'
+import { LoadingContext } from 'utils/loadingContext.js'
+import { PermissionContext, updateUserPermissions } from 'utils/permissionContext.js'
+import { Country, isCountryDescription } from './countries/CountriesInput.js'
+import { isAddressTypeDescription } from './addressTypes/AddressTypesInput.js'
+import { isCompanyTypeDescription } from './companyTypes/CompanyTypesInput.js'
+import { isFieldDescription } from './fields/Fields.js'
+import { ResourcesAddModal } from './ResourcesAddModal.js'
 
 interface ResourcesAddProps {
-    resource: ResourceDescriptionType
+    resource: ResourceDescription<Resource>
     addMainNote: (note: Note) => void
-    submitNewResource: (newItem: DataWithMeta<ResourceType>) => Promise<Note>
+    setIsResourceChanged: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const ResourcesAdd: FunctionComponent<ResourcesAddProps> = ({ resource, addMainNote, submitNewResource }) => {
+export const ResourcesAdd: FunctionComponent<ResourcesAddProps> = ({ resource, addMainNote, setIsResourceChanged }) => {
     const [show, setShow] = useState(false)
-    const [validated, setValidated] = useState(false)
-    const [newItem, setNewItem] = useState<DataWithMeta<ResourceType>>(resource.empty)
-    const [notes, addNote, removeNote] = useNotifier()
     const [addItemCount, setAddItemCount] = useState(0)
+    const auth = useAuth()
+    const token = auth.user?.access_token
+    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
 
     const handleModal = () => {
         setAddItemCount(addItemCount + 1)
         setShow(true)
     }
 
-    const handleClose = () => {
-        setValidated(false)
-        setShow(false)
-    }
+    async function submitNewResource({ description, item }: ResourcePayloadAndDescription<Resource>): Promise<Note> {
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, form: HTMLFormElement) => {
+        if (token) {
+            setIsLoading(true)
+            try {
+                const client = await apiClient
+                const result = isCountryDescription(description)
+                    ? await client.paths[description.paths.all].post(null, item.data as Country, { headers: { Authorization: `Bearer ${token}` } })
+                    : isAddressTypeDescription(description)
+                        ? await client.paths[description.paths.all].post(null, item.data, { headers: { Authorization: `Bearer ${token}` } })
+                        : isCompanyTypeDescription(description)
+                            ? await client.paths[description.paths.all].post(null, item.data, { headers: { Authorization: `Bearer ${token}` } })
+                            : isFieldDescription(description)
+                                ? await client.paths[description.paths.all].post(null, item.data, { headers: { Authorization: `Bearer ${token}` } })
+                                : undefined
+                if (result === undefined) {
+                    throw new Error('Entität nicht gefunden, bitte Entwickler kontaktieren.')
+                }
+                // const result = await client.paths[resource.paths.all].post(null, newItem.data, { headers: { Authorization: `Bearer ${token}` } })
+                setIsLoading(false)
 
-        e.preventDefault()
-        if (!form.checkValidity()) {
-            setValidated(true)
-        }
-        else {
-            const newNote: Note = await submitNewResource(newItem)
-            if (newNote.variant === 'success') {
-                addMainNote(newNote)
-                setShow(false)
-            } else {
-                addNote(newNote)
+                setIsResourceChanged(true)
+                if (typeof result.headers.permissions === 'string') {
+                    updateUserPermissions(result.headers.permissions, permissions, setPermissions)
+                } else {
+                    throw new Error("Permission header must be type 'string'")
+                }
+                return {
+                    message: `Eine neue Entität wurde erfolgreich abgespeichert.`,
+                    variant: 'success'
+                }
+
+            } catch (error) {
+                setIsLoading(false)
+                return {
+                    message: `Fehler beim Speichern der neuen Entität:  ${error instanceof Error ? error.message : String(error)}`,
+                    variant: 'danger',
+                }
+            }
+
+        } else {
+            return {
+                message: `Bitte anmelden`,
+                variant: 'danger',
             }
         }
 
     }
 
-
     return (<>
         <Button variant='outline-primary' onClick={handleModal}>{resource.name} hinzufügen</Button>
-        <Modal key={'newItem' + String(addItemCount)} show={show} onHide={() => handleClose()}>
-            <Form noValidate validated={validated} onSubmit={(e) => handleSubmit(e, e.currentTarget)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{resource.name} hinzufügen</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Notes notes={notes} removeNote={removeNote} />
-                    <ActiveResource
-                        resource={resource}
-                        item={newItem} setItem={setNewItem}
-                    />
-                </Modal.Body>
-                <Modal.Footer>
-                    <ButtonGroup className='w-100'>
-                        <Button type='submit' variant='outline-primary'>Speichern</Button>
-                        <Button size='sm' variant='outline-secondary' onClick={() => setShow(false)}>Abbrechen</Button>
-                    </ButtonGroup>
-                </Modal.Footer>
-            </Form>
-
-        </Modal>
+        <ResourcesAddModal
+            key={'newItem' + String(addItemCount)}
+            show={show} setShow={setShow}
+            resource={resource}
+            submitNewResource={submitNewResource}
+            addMainNote={addMainNote}
+        />
     </>
     )
 }

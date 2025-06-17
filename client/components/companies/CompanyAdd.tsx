@@ -10,15 +10,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import { Button } from 'react-bootstrap'
 import { changedCompanyReducer } from './utils/changedCompanyReducer.js'
 import { Company, emptyCompany } from './CompanyPage.js'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { DataWithMeta } from '../Pages.jsx'
 import { Note } from '../notifiers/Notes.jsx'
 import { FunctionComponent, useReducer, useState } from 'react'
 import { AddCompanyModal } from './CompanyAddModal.js'
+import { GenericResource } from 'components/resources/resourceList.js'
 
 interface CompanyAddProps {
     addEditNote: (note: Note) => void
-    companyTypesList: DataWithMeta<CompanyType>[]
+    companyTypesList: DataWithMeta<GenericResource>[]
     submitNewCompany:(newCompany: DataWithMeta<Company>) => Promise<Note>
 }
 

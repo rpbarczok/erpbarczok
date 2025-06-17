@@ -1,4 +1,5 @@
-import { CompanyType } from "components/resources/companyTypes/CompanyTypesInput.js"
+
+import { GenericResource } from "components/resources/resourceList.js"
 import { Company } from "../../components/companies/CompanyPage.js"
 import { DataWithMeta, Meta } from "../../components/Pages.js"
 import { Note } from "components/notifiers/Notes.js"
@@ -12,7 +13,7 @@ export const asyncNoop = async () => { }
 // eslint-disable-next-line
 export const axiosNoop = async (): Promise<Note> => { return {variant: 'info', message: 'test'} }
 
-const defaultCompanyType: CompanyType = {
+const defaultCompanyType: GenericResource = {
     name: "Kunde"
 }
 
@@ -29,7 +30,7 @@ export const createCompany = (overwrites: Partial<Company> = {}) => ({ ...defaul
 
 export const createMeta = (overwrites: Partial<Meta> = {}) => ({ ...defaultMeta, ...overwrites })
 
-export const createCompanyType = (overwrites: Partial<CompanyType> = {}) => ({ ...defaultCompanyType, ...overwrites })
+export const createCompanyType = (overwrites: Partial<GenericResource> = {}) => ({ ...defaultCompanyType, ...overwrites })
 
 export const metaFactory = (quantity: number): Meta[] => {
     const metaList: Meta[] = []
@@ -58,7 +59,7 @@ export const createCompanyList = (quantity: number): DataWithMeta<Company>[] => 
     return companyListWithMeta
 }
 
-export const companyTypesTestList: DataWithMeta<CompanyType>[] = [
+export const companyTypesTestList: DataWithMeta<GenericResource>[] = [
     { meta: createMeta(), data: createCompanyType() },
     { meta: createMeta({ location: 2 }), data: { name: 'Spediteur' } },
     { meta: createMeta({ location: 3 }), data: { name: 'Lieferant' } },

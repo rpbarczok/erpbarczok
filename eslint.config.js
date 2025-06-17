@@ -36,7 +36,8 @@ export default tseslint.config(
           checksVoidReturn: false,
         }
       ],
-      '@typescript-eslint/no-confusing-void-expression': ['error', {'ignoreArrowShorthand': true}]
+      '@typescript-eslint/no-confusing-void-expression': ['error', {'ignoreArrowShorthand': true}],
+      '@typescript-esling/dot-notation': 'off'
     },
     languageOptions: {
       parserOptions: {

@@ -10,15 +10,15 @@ import { Col, Form, Row } from 'react-bootstrap'
 import { ChangedCompanyAction } from './utils/changedCompanyReducer.js'
 import { Company } from './CompanyPage.js'
 import { DataWithMeta } from '../Pages.jsx'
-import { CompanyType } from '../resources/companyTypes/CompanyTypesInput.jsx'
 import { CompanyTypesDropdown } from './CompanyTypesDropdown.jsx'
 import { hasPermission } from '../../utils/hasPermission.js'
 import { PermissionContext } from '../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../utils/contextUndefined.js'
 import { FunctionComponent } from 'react'
+import { GenericResource } from 'components/resources/resourceList.js'
 
 interface CompanyInputProps {
-    companyTypesList: DataWithMeta<CompanyType>[]
+    companyTypesList: DataWithMeta<GenericResource>[]
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
 }

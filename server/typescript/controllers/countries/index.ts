@@ -21,7 +21,7 @@ export const isCountryNorm = (value: unknown): value is CountryNorm => {
 }
 
 export function normalizeCountry(country: Country): CountryNorm {
-    const result: CountryNorm = { name: country.name, abbr: country.abbr, isEU: country.isEU }
+    const result: CountryNorm = { name: country.name, abbr: country.abbr, isEU: Boolean(country.isEU) }
     return result
 }
 

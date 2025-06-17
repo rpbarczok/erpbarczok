@@ -9,12 +9,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import { DataWithMeta } from "components/Pages.js"
 import { Company, emptyCompany } from "./CompanyPage.js"
 import { Note, Notes } from "components/notifiers/Notes.js"
-import { CompanyType } from "components/resources/companyTypes/CompanyTypesInput.js"
 import { ChangedCompanyAction } from "./utils/changedCompanyReducer.js"
 import { FunctionComponent, useState } from "react"
 import { useNotifier } from "components/notifiers/useNotifier.js"
 import { Button, ButtonGroup, Form, Modal } from "react-bootstrap"
 import { CompanyInput } from "./CompanyInput.js"
+import { GenericResource } from "components/resources/resourceList.js"
 
 interface AddCompanyModalProps {
     changedCompany: DataWithMeta<Company>
@@ -22,7 +22,7 @@ interface AddCompanyModalProps {
     show: boolean
     setShow: React.Dispatch<React.SetStateAction<boolean>>
     newCompanyClick: number
-    companyTypesList: DataWithMeta<CompanyType>[]
+    companyTypesList: DataWithMeta<GenericResource>[]
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
     submitNewCompany:(newCompany: DataWithMeta<Company>) => Promise<Note>
 }

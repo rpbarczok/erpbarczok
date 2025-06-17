@@ -3,7 +3,6 @@ import { Col, Row } from 'react-bootstrap'
 import { CompaniesXSList } from './CompaniesXSList.js'
 import { Company } from '../CompanyPage.js'
 import { CompanyAdd } from '../CompanyAdd.js'
-import { CompanyType } from '../../resources/companyTypes/CompanyTypesInput.js'
 import { CompanyXSSearch } from './CompanyXSSearch.js'
 import { DataWithMeta } from '../../Pages.js'
 import { hasPermission } from '../../../utils/hasPermission.js'
@@ -13,6 +12,7 @@ import { PermissionContext } from '../../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../../utils/contextUndefined.js'
 import { useNotifier } from '../../notifiers/useNotifier.js'
 import { FunctionComponent } from 'react'
+import { GenericResource } from 'components/resources/resourceList.js'
 
 interface CompanyXSPageProps {
     search: string
@@ -20,7 +20,7 @@ interface CompanyXSPageProps {
     filteredCompaniesList: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>
     changeActive: (active: number) => Promise<void>
-    companyTypesList: DataWithMeta<CompanyType>[]
+    companyTypesList: DataWithMeta<GenericResource>[]
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
     submitChangedCompany: (changedCompany: DataWithMeta<Company>) => Promise<Note>,

@@ -6,7 +6,6 @@ import { CompanyAdd } from '../CompanyAdd.js'
 import { CompanyDelete } from '../CompanyDelete.js'
 import { CompanySMEdit } from './CompanySMEdit.js'
 import { CompanySMSearch } from './CompanySMSearch.js'
-import { CompanyType } from '../../resources/companyTypes/CompanyTypesInput.js'
 import { DataWithMeta } from '../../Pages.js'
 import { hasPermission } from '../../../utils/hasPermission.js'
 import { Heading } from '../../headings/Heading.js'
@@ -15,6 +14,7 @@ import { PermissionContext } from '../../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../../utils/contextUndefined.js'
 import { useNotifier } from '../../notifiers/useNotifier.js'
 import { FunctionComponent } from 'react'
+import { GenericResource } from 'components/resources/resourceList.js'
 
 interface CompaniesSMPageProps {
     search: string
@@ -22,7 +22,7 @@ interface CompaniesSMPageProps {
     filteredCompaniesList: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>
     changeActive: (active: number) => Promise<void>
-    companyTypesList: DataWithMeta<CompanyType>[]
+    companyTypesList: DataWithMeta<GenericResource>[]
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
     submitChangedCompany: (changedCompany: DataWithMeta<Company>) => Promise<Note>,

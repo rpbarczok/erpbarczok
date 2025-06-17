@@ -11,7 +11,6 @@ import { DataWithMeta } from '../../Pages.js'
 import { ListGroup } from 'react-bootstrap'
 import { FunctionComponent } from 'react'
 
-
 interface CompaniesSMListProps {
     filteredCompaniesList: DataWithMeta<Company>[]
     activeCompany: DataWithMeta<Company>

@@ -4,7 +4,7 @@ import { useResources } from 'components/resources/useResources.js'
 import { CompanySMPage } from './companiesSM/CompanySMPage.js'
 import { Row } from 'react-bootstrap'
 import { CompanyXSPage } from './companiesXS/CompanyXSPage.js'
-import { CompanyType, companyTypeDescription } from 'components/resources/companyTypes/CompanyTypesInput.js'
+import { companyTypeDescription } from 'components/resources/companyTypes/CompanyTypesInput.js'
 import { useReducer, useState } from 'react'
 import { changedCompanyReducer } from './utils/changedCompanyReducer.js'
 import { useActiveCompany } from './utils/useActiveCompany.js'
@@ -19,7 +19,8 @@ export interface Company {
 export const emptyCompany: DataWithMeta<Company> = { 'meta': { 'location': 0, 'etag': '' }, 'data': { 'name': '', 'companyType': 'default', 'abbr': '', 'www': '' } }
 
 export const CompanyPage = () => {
-    const [companyTypesList] = useResources<CompanyType>(companyTypeDescription)
+    const [rawCompanyTypesList] = useResources(companyTypeDescription)
+    const companyTypesList = rawCompanyTypesList.map(row => row.item )
     const [search, setSearch] = useState<string>('') // Content of the search input field
     const [changedCompany, changedCompanyDispatch] = useReducer(changedCompanyReducer, emptyCompany)
     const [activeCompany, changeActive] = useActiveCompany(changedCompanyDispatch)

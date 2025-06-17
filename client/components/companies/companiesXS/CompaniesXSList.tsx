@@ -1,11 +1,11 @@
 import { ChangedCompanyAction } from '../utils/changedCompanyReducer.js'
 import { Company } from '../CompanyPage.js'
-import { CompanyType } from '../../resources/companyTypes/CompanyTypesInput.js'
 import { CompanyXSEdit } from './CompanyXSEdit.js'
 import { DataWithMeta } from '../../Pages.js'
 import { ListGroup } from 'react-bootstrap'
 import { Note } from '../../notifiers/Notes.js'
 import { FunctionComponent, useState } from 'react'
+import { GenericResource } from 'components/resources/resourceList.js'
 
 interface CompanyXSListProps {
     filteredCompaniesList: DataWithMeta<Company>[]
@@ -13,7 +13,7 @@ interface CompanyXSListProps {
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
     activeCompany: DataWithMeta<Company>
     changeActive: (active: number) => Promise<void>
-    companyTypesList: DataWithMeta<CompanyType>[]
+    companyTypesList: DataWithMeta<GenericResource>[]
     addEditNote: (note: Note) => void
     submitChangedCompany: (changedCompany: DataWithMeta<Company>) => Promise<Note>,
     deleteCompany: () => Promise<Note | undefined>

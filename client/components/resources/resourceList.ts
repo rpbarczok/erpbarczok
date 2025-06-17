@@ -1,27 +1,48 @@
-import { CompanyType, companyTypeDescription } from './companyTypes/CompanyTypesInput.jsx'
+
 import { DataWithMeta } from '../Pages.jsx'
-import { Field, fieldDescription} from './fields/Fields.jsx'
-import { AddressType, addressTypeDescription } from './addressTypes/AddressTypesInput.js'
-import { Country, countryDescription } from './countries/CountriesInput.js'
+import { Country } from './countries/CountriesInput.js'
 
-interface PathsResource {
-    'all': '/company-types/' | '/address-types/' | '/fields/' | '/countries/'
-    'single': '/company-types/{id}' | '/address-types/{id}' | '/fields/{id}' | '/countries/{id}'
+
+export interface Paths {
+    all: string
+    single: string
 }
-
-export type ResourceType = CompanyType | AddressType | Field | Country
-
 export interface ResourceDescription<T> {
     name: string
-    paths: PathsResource
+    paths: Paths
     empty: DataWithMeta<T>
 }
 
-export type ResourceDescriptionType = ResourceDescription<CompanyType>  | ResourceDescription<AddressType> | ResourceDescription<Field> | ResourceDescription<Country>
+export interface ResourcePayloadAndDescription<T> {
+    description: ResourceDescription<T>
+    item: DataWithMeta<T>
+}
 
-export const resourceDescriptionList: ResourceDescriptionType[] = [
-    companyTypeDescription,
-    fieldDescription,
-    addressTypeDescription,
-    countryDescription
-]
+export interface GenericResource {
+    'name': string
+}
+
+export type Resource = GenericResource | Country
+
+export function isGenericResource(obj: unknown): obj is GenericResource {
+    if (typeof obj !== 'object' || obj === null) {
+        return false
+    }
+    if (Object.keys(obj).length === 1) {
+        if (Object.keys(obj).includes('name')) {
+            return true
+        }
+    }
+    return false
+}
+
+
+export function isResourceDescription(obj: unknown): obj is ResourceDescription<Resource> {
+    if (typeof obj !== 'object' || obj === null) {
+        return false
+    }
+    if (Object.keys(obj).length === 3) {
+        if (Object.keys(obj).includes('paths') && Object.keys(obj).includes('empty')) return true
+    }
+    return false
+}

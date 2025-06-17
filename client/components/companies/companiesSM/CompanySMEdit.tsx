@@ -2,17 +2,17 @@ import { Button, ButtonGroup, Col, Form, Row } from 'react-bootstrap'
 import { ChangedCompanyAction } from '../utils/changedCompanyReducer.js'
 import { Company } from '../CompanyPage.js'
 import { CompanyInput } from '../CompanyInput.js'
-import { CompanyType } from '../../resources/companyTypes/CompanyTypesInput.js'
 import { DataWithMeta } from '../../Pages.js'
 import { hasPermission } from '../../../utils/hasPermission.js'
 import { Note } from '../../notifiers/Notes.js'
 import { PermissionContext } from '../../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../../utils/contextUndefined.js'
 import { FunctionComponent, useState } from 'react'
+import { GenericResource } from 'components/resources/resourceList.js'
 
 interface CompanySMEditProps {
     activeCompany: DataWithMeta<Company>
-    companyTypesList: DataWithMeta<CompanyType>[]
+    companyTypesList: DataWithMeta<GenericResource>[]
     addEditNote: (note: Note) => void
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>

@@ -5,11 +5,11 @@ import { ResourceNavigation } from './ResourceNavigation.js'
 import { useState } from 'react'
 import { useResources } from './useResources.js'
 import { companyTypeDescription } from './companyTypes/CompanyTypesInput.js'
-import { ResourceDescriptionType, ResourceType } from './resourceList.js'
+import { Resource, ResourceDescription } from './resourceList.js'
 
 export function ResourcesPageBasis() {
-    const [activeResource, setActiveResource] = useState<ResourceDescriptionType>(companyTypeDescription)
-    const [resourceList, setIsResourceChanged, setIsActiveResourceChanged] = useResources<ResourceType>(activeResource)
+    const [activeResource, setActiveResource] = useState<ResourceDescription<Resource>>(companyTypeDescription)
+    const [resourceList, setIsResourceChanged, setIsActiveResourceChanged] = useResources(activeResource)
 
     return (
         <>

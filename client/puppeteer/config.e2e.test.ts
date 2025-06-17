@@ -12,7 +12,6 @@ describe('config page', function () {
         const page = await browser.newPage()
         await page.setViewport({ width: 1920, height: 1080 })
         await page.goto(uri + 'config.js', { waitUntil: 'networkidle0' })
-        console.log(page)
         const $document = await getDocument(page)
         const $config = await queries.getByText($document, "window.client_id = 'erpbarczok_app';", { exact: false })
         expect($config).not.toBeNull()

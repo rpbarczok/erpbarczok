@@ -6,16 +6,16 @@ import { PermissionContext } from '../../../utils/permissionContext.js'
 import { DataWithMeta } from '../../Pages.js'
 import { Note, Notes } from '../../notifiers/Notes.js'
 import { useNotifier } from '../../notifiers/useNotifier.js'
-import { CompanyType } from '../../resources/companyTypes/CompanyTypesInput.js'
 import { ChangedCompanyAction } from '../utils/changedCompanyReducer.js'
 import { CompanyDelete } from '../CompanyDelete.js'
 import { Company } from '../CompanyPage.js'
 import { CompanyInput } from '../CompanyInput.js'
+import { GenericResource } from 'components/resources/resourceList.js'
 
 interface CompanyXSEditProps {
     show: boolean
     setShow: React.Dispatch<React.SetStateAction<boolean>>
-    companyTypesList: DataWithMeta<CompanyType>[]
+    companyTypesList: DataWithMeta<GenericResource>[]
     addEditNote: (note: Note) => void
     changedCompany: DataWithMeta<Company>
     changedCompanyDispatch: React.ActionDispatch<[action: ChangedCompanyAction]>
