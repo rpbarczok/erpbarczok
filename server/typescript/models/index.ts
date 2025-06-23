@@ -26,6 +26,9 @@ export const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER,
 initializeAddressType(sequelize)
 initializeCountry(sequelize)
 initializeAddress(sequelize)
+initializeCompanyType(sequelize)
+initializeField(sequelize)
+initializeCompany(sequelize)
 
 Address.belongsTo(AddressType, {
     onDelete: 'NO ACTION'
@@ -36,10 +39,6 @@ Address.belongsTo(Country, {
     onDelete: "NO ACTION"
 })
 Country.hasMany(Address)
-
-initializeCompanyType(sequelize)
-initializeField(sequelize)
-initializeCompany(sequelize)
 
 Company.belongsTo(CompanyType, {
     onDelete: 'NO ACTION'

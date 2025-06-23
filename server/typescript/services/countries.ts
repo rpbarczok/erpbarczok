@@ -31,6 +31,17 @@ export const getCountryById = async (id: number) => {
     }
 }
 
+export const getCountryByName = async (name: string) => {
+    const logger = baseLogger.extend('getCountryByName')
+    const country = await Country.findOne({ where: { name: name } })
+    if (country === null) {
+        throw new NotFoundError(`Not found: Country with name ${name}.`)
+    } else {
+        logger(`Country with name ${name} found`)
+        return country
+    }
+}
+
 export const deleteCountryById = async (id: number) => {
     const logger = baseLogger.extend('deleteCountryById')
     const deletedRowsCount = await Country.destroy({ where: { id: id } })

@@ -1,4 +1,4 @@
-import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize} from 'sequelize'
+import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize } from 'sequelize'
 
 export class Country extends Model<InferAttributes<Country>, InferCreationAttributes<Country>> {
     declare id: CreationOptional<number>
@@ -7,6 +7,7 @@ export class Country extends Model<InferAttributes<Country>, InferCreationAttrib
     declare isEU: boolean
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
+
 }
 
 export const initializeCountry = (sequelize: Sequelize) => {
@@ -20,11 +21,14 @@ export const initializeCountry = (sequelize: Sequelize) => {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true,
             comment: 'Name of the country',
+
         },
         abbr: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true,
             comment: 'Abbreviation according to ISO 3166-1 A-3'
         },
         isEU: {

@@ -39,6 +39,17 @@ export const getCompanyTypeById = async (id: number) => {
     }
 }
 
+export const getCompanyTypeByName = async (name: string) => {
+    const logger = baseLogger.extend('getCompanyTypeByName')
+    const companyType = await CompanyType.findOne({where: {name: name}})
+    if (companyType === null) {
+        throw new NotFoundError(`Not found: Company type with name ${name}.`)
+    } else {
+        logger(`Company type with name ${name} found`)
+        return companyType
+    }
+}
+
 export const deleteCompanyTypeById = async (id: number) => {
     const logger = baseLogger.extend('deleteCompanyTypeById')
     const deletedRowsCount = await CompanyType.destroy({ where: { id: id } })

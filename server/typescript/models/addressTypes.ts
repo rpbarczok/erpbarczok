@@ -1,4 +1,4 @@
-import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize} from 'sequelize'
+import { CreationOptional, Model, DataTypes, InferAttributes, InferCreationAttributes, Sequelize } from 'sequelize'
 
 export class AddressType extends Model<InferAttributes<AddressType>, InferCreationAttributes<AddressType>> {
     declare id: CreationOptional<number>
@@ -18,6 +18,7 @@ export const initializeAddressType = (sequelize: Sequelize) => {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true,
             comment: 'Type of the Address',
         },
         createdAt: DataTypes.DATE,

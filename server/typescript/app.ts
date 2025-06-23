@@ -71,18 +71,21 @@ const startApp = async () => {
     // initialize Database
 
     try {
-        await database.sync({ alter: true })
+        await database.sync({ force: true })
         logger('Drop and re-sync db.')
     } catch (error: unknown) {
         logger('Failed to sync db: ', error)
         throw error
     }
 
-    try {
-        await setDefaultValues()
-    } catch (error: unknown) {
-        logger('Failed to set default values: ', error)
+    if (process.env.NODE_ENV !== 'test') {
+        try {
+            await setDefaultValues()
+        } catch (error: unknown) {
+            logger('Failed to set default values: ', error)
+        }
     }
+
 
     // mitteilen, wo das OAS-Document ist
 

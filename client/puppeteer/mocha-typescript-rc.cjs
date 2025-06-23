@@ -6,7 +6,7 @@ module.exports = {
         "ignore-styles"
     ],
     "spec": [
-        "./**/*.test.ts",
-        "./**/*.test.tsx"],
-    "ignore": ["./utils/**/*"]
+        "client/puppeteer/**/*.test.ts",
+        "client/puppeteer/**/*.test.tsx"],
+    "ignore": ["client/puppeteer/utils/**/*"]
 }

@@ -127,13 +127,11 @@ export const ResourcesList = ({ resource, addMainNote, setIsResourceChanged, res
         }
     }
 
-
-
     return (
         <>
             {resourceList.map(element => {
                 return (
-                    <ListGroup.Item onClick={(e) => handleModal(e, element)}>
+                    <ListGroup.Item key={element.item.data.name} onClick={(e) => handleModal(e, element)}>
                         {element.item.data.name}
                     </ListGroup.Item>
                 )

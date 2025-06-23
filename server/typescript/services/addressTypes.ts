@@ -31,6 +31,17 @@ export const getAddressTypeById = async (id: number) => {
     }
 }
 
+export const getAddressTypeByName = async (name: string) => {
+    const logger = baseLogger.extend('getAddressTypeByName')
+    const addressType = await AddressType.findOne({where: {name: name}})
+    if (addressType === null) {
+        throw new NotFoundError(`Not found: Address type with name ${name}.`)
+    } else {
+        logger(`Address type with name ${name} found`)
+        return addressType
+    }
+}
+
 export const deleteAddressTypeById = async (id: number) => {
     const logger = baseLogger.extend('deleteAddressTypeById')
     const deletedRowsCount = await AddressType.destroy({ where: { id: id } })

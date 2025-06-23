@@ -11,6 +11,7 @@ import { CompanyType } from '../models/companyTypes.js'
 import { CompanyNorm, CompanyFK } from '../controllers/companies/index.js'
 import { baseLogger } from '../logger.js'
 import { AssociationNotFoundError, NotFoundError, ValidationError } from './servicesError.js'
+import { getCompanyTypeByName } from './companyTypes.js'
 
 export const getAllCompanies = async () => {
     const logger = baseLogger.extend('getAllCompanies')
@@ -22,16 +23,14 @@ export const getAllCompanies = async () => {
 export const addCompany = async (company: CompanyNorm) => {
     const logger = baseLogger.extend('addCompanies')
     if (company.name && company.companyType) {
-        const companyType = await CompanyType.findOne({ where: { name: company.companyType } })
-        if (companyType) {
-            const newCompany = { name: company.name, companyTypeId: companyType.id, abbr: company.abbr, www: company.www }
-            const addedCompany = await Company.create(newCompany)
-            const addedCompanyInclude = await Company.findByPk(addedCompany.id, { include: CompanyType })
-            if (addedCompanyInclude) {
-                logger('Added company.')
-                return addedCompanyInclude
-            } else throw new Error('company.findByPK did not return freshly created company.')
-        } else throw new AssociationNotFoundError(`company type ${company.companyType}`)
+        const companyType = await getCompanyTypeByName(company.companyType)
+        const newCompany = { name: company.name, companyTypeId: companyType.id, abbr: company.abbr, www: company.www }
+        const addedCompany = await Company.create(newCompany)
+        const addedCompanyInclude = await Company.findByPk(addedCompany.id, { include: CompanyType })
+        if (addedCompanyInclude) {
+            logger('Added company.')
+            return addedCompanyInclude
+        } else throw new Error('company.findByPK did not return freshly created company.')
     } else throw new ValidationError()
 }
 

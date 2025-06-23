@@ -1,6 +1,6 @@
 import { expect } from 'expect'
 import './utils/env.test.js'
-import { getAllAddressTypes, getAddressTypeById, deleteAddressTypeById, putAddressTypeById, addAddressType, } from '../services/addressTypes.js'
+import { getAllAddressTypes, getAddressTypeById, deleteAddressTypeById, putAddressTypeById, addAddressType, getAddressTypeByName, } from '../services/addressTypes.js'
 import { sequelize } from '../models/index.js'
 
 
@@ -45,9 +45,24 @@ describe('AddressType Unit Tests', function () {
 
         it('getAddressTypeById(17) returns error', async function () {
             await expect(getAddressTypeById(17)).rejects.toEqual(
-                expect.objectContaining({ message: 'Not found: Address type with id 17.'})
+                expect.objectContaining({ message: 'Not found: Address type with id 17.' })
             )
         })
+    })
+
+    describe('Test getAddressTypeByName(name)', function () {
+
+        it("getAddressTypeByName('Unternehmensadresse') succeeds", async function () {
+            await expect(getAddressTypeByName('Unternehmensadresse')).resolves.toEqual(
+                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Unternehmensadresse', updatedAt: expect.any(Date), createdAt: expect.any(Date) } }))
+        })
+
+        it("getAddressTypeByName('Betrüger') fails", async function () {
+            await expect(getAddressTypeByName('Betrüger')).rejects.toEqual(
+                expect.objectContaining({ message: 'Not found: Address type with name Betrüger.' })
+            )
+        })
+
     })
 
     describe('Test putAddressTypeById(id)', function () {

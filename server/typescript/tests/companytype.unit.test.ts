@@ -1,6 +1,6 @@
 import { expect } from 'expect'
 import './utils/env.test.js'
-import { getAllCompanyTypes, getCompanyTypeById, deleteCompanyTypeById, putCompanyTypeById, addCompanyType, } from '../services/companyTypes.js'
+import { getAllCompanyTypes, getCompanyTypeById, deleteCompanyTypeById, putCompanyTypeById, addCompanyType, getCompanyTypeByName, } from '../services/companyTypes.js'
 import { sequelize } from '../models/index.js'
 
 
@@ -12,6 +12,7 @@ describe('CompanyType Unit Tests', function () {
     })
 
     describe('test getAllCompanyTypes / addCompanyType', function () {
+        
         it('should return [] for a fresh and empty DB', async function () {
             await expect(getAllCompanyTypes()).resolves.toHaveLength(0)
         })
@@ -45,9 +46,24 @@ describe('CompanyType Unit Tests', function () {
 
         it('getCompanyTypeById(17) returns error', async function () {
             await expect(getCompanyTypeById(17)).rejects.toEqual(
-                expect.objectContaining({ message: 'Not found: Company type with id 17.'})
+                expect.objectContaining({ message: 'Not found: Company type with id 17.' })
             )
         })
+    })
+
+    describe('Test getCompanyTypeByName(name)', function () {
+
+        it("getCompanyTypeByName('Kunde') succeeds", async function () {
+            await expect(getCompanyTypeByName('Kunde')).resolves.toEqual(
+                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Kunde', updatedAt: expect.any(Date), createdAt: expect.any(Date) } }))
+        })
+
+        it("getCompanyTypeByName('Betrüger') fails", async function () {
+            await expect(getCompanyTypeByName('Betrüger')).rejects.toEqual(
+                expect.objectContaining({ message: 'Not found: Company type with name Betrüger.' })
+            )
+        })
+
     })
 
     describe('Test putCompanyTypeById(id)', function () {

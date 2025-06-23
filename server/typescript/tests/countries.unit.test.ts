@@ -1,6 +1,6 @@
 import { expect } from 'expect'
 import './utils/env.test.js'
-import { getAllCountries, getCountryById, deleteCountryById, putCountryById, addCountry, } from '../services/countries.js'
+import { getAllCountries, getCountryById, deleteCountryById, putCountryById, addCountry, getCountryByName, } from '../services/countries.js'
 import { sequelize } from '../models/index.js'
 
 describe('Country Unit Tests', function () {
@@ -44,9 +44,25 @@ describe('Country Unit Tests', function () {
 
         it('getCountryById(17) returns error', async function () {
             await expect(getCountryById(17)).rejects.toEqual(
-                expect.objectContaining({ message: 'Not found: Country with id 17.'})
+                expect.objectContaining({ message: 'Not found: Country with id 17.' })
             )
         })
+    })
+
+    describe('Test getCountryByName(name)', function () {
+
+        it("getCountryByName('Germany') succeeds", async function () {
+            await expect(getCountryByName('Germany')).resolves.toEqual(
+                expect.objectContaining({ dataValues: { 'id': 1, 'name': 'Germany', abbr: 'DEU', isEU: true, updatedAt: expect.any(Date), createdAt: expect.any(Date) } })
+            )
+        })
+
+        it("getCountryByName('Hawaii') fails", async function () {
+            await expect(getCountryByName('Hawaii')).rejects.toEqual(
+                 expect.objectContaining({ message: 'Not found: Country with name Hawaii.' })
+            )
+        })
+
     })
 
     describe('Test putCountryById(id)', function () {
