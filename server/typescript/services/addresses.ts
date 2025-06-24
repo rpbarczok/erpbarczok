@@ -22,7 +22,7 @@ export interface AddressNorm {
 
 export const getAllAddressesByCompany = async (companyId: number) => {
     const logger = baseLogger.extend('getAllAddressesByCompany')
-    const addresses = await Address.findAll({where: {companyId: companyId}, include: ['Country', 'AddressType']})
+    const addresses = await Address.findAll({where: {companyId: companyId}})
     logger('Got all Addresses of Company')
     return addresses
 }
@@ -47,9 +47,6 @@ export const addAddressToCompany = async (companyId: number, address: AddressNor
         logger('Address added.')
         return addedAddressInclude
     } else throw new Error('address.findByPk did not return freshly created company.')
-
-
-
 
 }
 

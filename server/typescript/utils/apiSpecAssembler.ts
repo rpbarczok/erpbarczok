@@ -55,8 +55,8 @@ export const getControllerFiles = async () => {
         logger('Importing controller from path ', apiPath)
         controllerFiles[apiPath] = {}
         const controllerPath = apiPath.endsWith('/') ?
-            path.join(import.meta.dirname, '..', 'controllers', apiPath, 'index.js') :
-            path.join(import.meta.dirname, '..', 'controllers', apiPath) + '.js'
+            path.join(path.dirname(import.meta.filename), '..', 'controllers', apiPath, 'index.js') :
+            path.join(path.dirname(import.meta.filename), '..', 'controllers', apiPath) + '.js'
         const result: unknown = await import(controllerPath)
         // Use the type guard to check if the result is a VerbMap
         if (isVerbMap(result)) {

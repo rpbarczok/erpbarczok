@@ -64,9 +64,7 @@ const startApp = async () => {
     app.use(cors(corsOptions))
 
     // static content
-
     app.use(express.static(path.join(import.meta.dirname, '..', 'public')))
-
 
     // initialize Database
 
