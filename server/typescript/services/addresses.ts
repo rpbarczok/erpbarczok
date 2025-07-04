@@ -7,22 +7,45 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 import { baseLogger } from "../logger.js"
 import { Address } from "../models/addresses.js"
+import { AddressType } from "../models/addressTypes.js"
+import { Country } from "../models/countries.js"
 import { getAddressTypeByName } from "./addressTypes.js"
 import { getCompanyById } from "./companies.js"
 import { getCountryByName } from "./countries.js"
+import { AssociationNotFoundError, NotFoundError, ValidationError } from "./servicesError.js"
 
 export interface AddressNorm {
     street: string
-    addition?: string
+    addition?: string | null
     city: string
     po: string
     country: string
     addressType: string
 }
 
+export const isAddressNorm = (value: unknown): value is AddressNorm => {
+    if (typeof value === 'object' && value !== null) {
+        const keys = Object.keys(value)
+        if (keys.includes('street') && keys.includes('city') && keys.includes('po') && keys.includes('country') && keys.includes('addressType')) {
+            return (keys.every(key => ['street', 'addition', 'city', 'po', 'country', 'addressType'].includes(key)))
+        }
+    }
+    return false
+}
+
+
+export interface AddressFK {
+    street: string
+    addition?: string | null
+    city: string
+    po: string
+    countryId: number
+    addressTypeId: number
+}
+
 export const getAllAddressesByCompany = async (companyId: number) => {
     const logger = baseLogger.extend('getAllAddressesByCompany')
-    const addresses = await Address.findAll({where: {companyId: companyId}})
+    const addresses = await Address.findAll({ where: { companyId: companyId }, include: [Country, AddressType] })
     logger('Got all Addresses of Company')
     return addresses
 }
@@ -42,7 +65,8 @@ export const addAddressToCompany = async (companyId: number, address: AddressNor
         countryId: country.id
     }
     const addedAddress = await Address.create(newAddress)
-    const addedAddressInclude = await Address.findByPk(addedAddress.id, {include: ['Country', 'AddressType']})
+
+    const addedAddressInclude = await Address.findByPk(addedAddress.id, { include: [Country, AddressType] })
     if (addedAddressInclude) {
         logger('Address added.')
         return addedAddressInclude
@@ -50,8 +74,50 @@ export const addAddressToCompany = async (companyId: number, address: AddressNor
 
 }
 
-// export const getAddressById
+export const getAddressById = async (id: number) => {
+    const logger = baseLogger.extend('getAddressById')
+    const address = await Address.findByPk(id, { include: [Country, AddressType] })
+    if (address === null) {
+        throw new NotFoundError(`Not found: Address with id ${String(id)}.`)
+    } else {
+        logger(`Got address with id ${String(id)}.`)
+        return address
+    }
+}
 
-// export const deleteCompanyById
+export const deleteAddressById = async (id: number) => {
+    const logger = baseLogger.extend('deleteAddressById')
+    const deletedRowsCount = await Address.destroy({ where: { id: id } })
+    if (deletedRowsCount === 0) {
+        throw new NotFoundError(`Not found: Address with id ${String(id)}.`)
+    } else {
+        logger(`Deleted address with id ${String(id)}.`)
+        return
+    }
+}
 
-// export const putCompanyById
+export const putAddressById = async (id: number, address: AddressNorm) => {
+    const logger = baseLogger.extend('putAddressById')
+    if (address.street && address.addressType && address.city && address.country && address.po) {
+        const oldAddress = await Address.findByPk(id, { include: [AddressType, Country] })
+        if (oldAddress !== null) {
+            const addressType = await AddressType.findOne({ where: { name: address.addressType } })
+            if (addressType) {
+                const country = await Country.findOne({ where: { name: address.country } })
+                if (country) {
+                    const data: AddressFK = { street: address.street, city: address.city, po: address.po, countryId: country.id, addressTypeId: addressType.id }
+                    data.addition = address.addition ?? null
+                    const updatedAddress = await oldAddress.update(data)
+                    const updatedAddressInclude = await Address.findByPk(updatedAddress.id, { include: [AddressType, Country] })
+                    if (updatedAddressInclude) {
+                        logger(`Updated address with id ${String(id)}.`)
+                        return updatedAddressInclude
+                    } else throw new NotFoundError(`Not found: freshly updated address was not found.`)
+
+                } else throw new AssociationNotFoundError(`Association not found: Address type ${address.country}`)
+
+            } else throw new AssociationNotFoundError(`Association not found: Address type ${address.addressType}`)
+        } else throw new NotFoundError(`Not found: Address ${String(id)}.`)
+    } else throw new ValidationError()
+
+}

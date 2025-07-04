@@ -33,6 +33,7 @@ export interface CompanyFK {
     www?: string | null
     companyTypeId: number
 }
+
 export function normalizeCompany(company: Company) {
     if (company.companyType) {
         const result: CompanyNorm = { name: company.name, companyType: company.companyType.name }

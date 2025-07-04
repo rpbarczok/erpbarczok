@@ -16,7 +16,7 @@
     "poststart": "cd container && docker compose down",
   
     "start_test_db": "cd container/test_db && docker compose up -d --wait",
-    "stop_test_db": "cd container/test_db && docker compose down",
+    "stop_test_db": "cd container/test_db && docker compose down -v",
     
     "test_be_ts": "cd server && npx mocha  --config mocha-typescript-rc.cjs --exit",
     "test_be_es": "cd server && npx mocha --config mocha-ecmascript-rc.cjs --exit",

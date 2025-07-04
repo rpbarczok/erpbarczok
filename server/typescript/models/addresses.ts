@@ -6,7 +6,7 @@ import { Company } from './companies.js'
 export class Address extends Model<InferAttributes<Address>, InferCreationAttributes<Address>> {
     declare id: CreationOptional<number>
     declare street: string
-    declare addition?: string
+    declare addition?: string | null
     declare city: string
     declare po: string
     declare addressTypeId: ForeignKey<AddressType['id']>

@@ -40,11 +40,16 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
         },
         {
             'name': 'AddressType'
+        },
+        {
+            'name': 'Address'
         }
     ],
     'paths': {
         '/companies/': {},
         '/companies/{id}': {},
+        '/companies/{id}/addresses/': {},
+        '/companies/{id}/addresses/{second_id}': {},
         '/company-types/': {},
         '/company-types/{id}': {},
         '/fields/': {},
@@ -60,6 +65,17 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                 'name': 'id',
                 'in': 'path',
                 'description': 'Id of the entity',
+                'required': true,
+                'schema': {
+                    'type': 'integer',
+                    'minimum': 1,
+                    'example': 1
+                }
+            },
+            'second_id-in-path': {
+                'name': 'second_id',
+                'in': 'path',
+                'description': 'second id in entity if needed',
                 'required': true,
                 'schema': {
                     'type': 'integer',
@@ -331,6 +347,39 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                     'isEU': {
                         'type': 'boolean',
                         'example': true
+                    }
+                }
+            },
+            'address': {
+                'type': 'object',
+                'required': [
+                    'street',
+                    'po',
+                    'city',
+                    'addressType',
+                    'country'
+                ],
+                'additionalProperties': false,
+                'properties': {
+                    'street': {
+                        'type': 'string',
+                        'example': 'Poststraße 1'
+                    },
+                    'po': {
+                        'type': 'string',
+                        'example': '11111',
+                    },
+                    'city': {
+                        'type': 'string',
+                        'example': 'Berlin'
+                    },
+                    'country': {
+                        'type': 'string',
+                        'example': 'Deutschland'
+                    },
+                    'addressType': {
+                        'type': 'string',
+                        'example': 'Unternehmensadresse'
                     }
                 }
             },

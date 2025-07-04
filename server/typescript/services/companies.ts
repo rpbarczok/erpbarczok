@@ -70,9 +70,10 @@ export const putCompanyById = async (id: number, company: CompanyNorm): Promise<
                 const updatedCompanyInclude = await Company.findByPk(updatedCompany.id, { include: CompanyType })
                 if (updatedCompanyInclude) {
                     logger(`Updated company with id ${String(id)}.`)
+                    
                     return updatedCompanyInclude
                 } else throw new NotFoundError(`Not found: freshly updated company was not found.`)
-            } else throw new AssociationNotFoundError(`company type ${company.companyType}`)
+            } else throw new AssociationNotFoundError(`Association not found: Company type ${company.companyType}`)
         } else throw new NotFoundError(`Not found: company ${String(id)}.`)
     } else throw new ValidationError()
 }
