@@ -109,7 +109,7 @@ DELETE.apiSpec = {
         }
     ],
     'tags': [
-        'address'
+        'Address'
     ],
     'parameters': [
         {
