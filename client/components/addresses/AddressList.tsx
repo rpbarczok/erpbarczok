@@ -26,9 +26,9 @@ interface AddressListComponent {
 export const AddressList: FunctionComponent<AddressListComponent> = ({ activeCompany }) => {
     const auth = useAuth()
     const token = auth.user?.access_token
-    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
     const [addressList, setAddressList] = useState<DataWithMeta<Address>[]>([])
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+    const { setIsLoading } = useContextThrowUndefined<{ setIsLoading: (isLoading: boolean) => void }>(LoadingContext)
+    const { permissions, setPermissions } = useContextThrowUndefined<{ permissions: string[]; setPermissions: (permissions: string[]) => void }>(PermissionContext)
 
     useEffect(() => {
 
@@ -65,9 +65,7 @@ export const AddressList: FunctionComponent<AddressListComponent> = ({ activeCom
 
         void getAddressesByCompany()
 
-    }, []
-
-    )
+    }, [])
 
     const list = () => {
         if (addressList.length === 0) {
@@ -77,7 +75,7 @@ export const AddressList: FunctionComponent<AddressListComponent> = ({ activeCom
         } else {
             addressList.map((element) => {
                 return (
-                    <ListGroup.Item  key={element.meta.location} >
+                    <ListGroup.Item key={element.meta.location} >
                         {element.data.addressType}
                     </ListGroup.Item>
                 )

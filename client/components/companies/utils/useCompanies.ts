@@ -20,8 +20,8 @@ export function useCompanies(search: string, activeCompany: DataWithMeta<Company
     ] {
     const auth = useAuth()
     const token = auth.user?.access_token
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
-    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { permissions, setPermissions } = useContextThrowUndefined<{ permissions: string[]; setPermissions: (permissions: string[]) => void }>(PermissionContext)
+    const { setIsLoading } = useContextThrowUndefined<{ setIsLoading: (isLoading: boolean) => void }>(LoadingContext)
     const [companiesList, setCompaniesList] = useState<DataWithMeta<Company>[]>([])
     const [isCompanyChanged, setIsCompanyChanged] = useState<boolean>(true)
     const [filteredCompaniesList, setIsNew] = useFilteredCompanyList(search, companiesList, activeCompany, changeActive)

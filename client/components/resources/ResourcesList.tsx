@@ -23,10 +23,10 @@ interface ResourcesListProps {
 
 export const ResourcesList = ({ resource, addMainNote, setIsResourceChanged, resourceList }: ResourcesListProps) => {
     const [show, setShow] = useState(false)
-    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { setIsLoading } = useContextThrowUndefined<{ setIsLoading: (isLoading: boolean) => void }>(LoadingContext)
     const auth = useAuth()
     const token = auth.user?.access_token
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+    const { permissions, setPermissions } = useContextThrowUndefined<{ permissions: string[]; setPermissions: (permissions: string[]) => void }>(PermissionContext)
     const [item, setItem] = useState<ResourcePayloadAndDescription<Resource>>({description: resource, item: resource.empty})
 
 

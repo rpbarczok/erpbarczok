@@ -25,7 +25,7 @@ interface CompanyInputProps {
 
 export const CompanyInput: FunctionComponent<CompanyInputProps> = ({ companyTypesList, changedCompanyDispatch, changedCompany }) => {
 
-    const { permissions } = useContextThrowUndefined(PermissionContext)
+    const { permissions } = useContextThrowUndefined<{ permissions: string[] }>(PermissionContext)
     const handleChangeName = (e: React.ChangeEvent, change: string) => {
         e.preventDefault()
         changedCompanyDispatch({ type: 'nameChange', newValue: change })

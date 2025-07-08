@@ -31,7 +31,7 @@ export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({
 
     const [validated, setValidated] = useState<boolean>(false)
 
-    const { permissions } = useContextThrowUndefined(PermissionContext)
+    const { permissions } = useContextThrowUndefined<{ permissions: string[] }>(PermissionContext)
 
     const isNotChanged: boolean = (activeCompany.data.name === changedCompany.data.name &&
         activeCompany.data.abbr === changedCompany.data.abbr &&

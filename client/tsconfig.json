@@ -11,7 +11,16 @@
     "module": "NodeNext",
     "jsx": "react-jsxdev",
     "strictNullChecks": true,
-    "removeComments": true
+    "removeComments": true,
+    "types": []
   },
-  "strict": true
+  "strict": true,
+  "exclude": [
+    "node_modules/@types/bonjour",
+    "node_modules/@types/estree",
+    "node_modules/@types/istanbul-lib-coverage",
+    "node_modules/@types/istanbul-lib-report",
+    "node_modules/@types/istanbul-reports",
+    "node_modules/@types/trusted-types"
+  ]
 }

@@ -41,7 +41,7 @@ export const CompanyXSPage: FunctionComponent<CompanyXSPageProps> = ({
     deleteCompany }) => {
 
     const [editNotes, addEditNote, removeEditNote] = useNotifier()
-    const { permissions } = useContextThrowUndefined(PermissionContext)
+    const { permissions } = useContextThrowUndefined<{ permissions: string[] }>(PermissionContext)
 
     return (
 

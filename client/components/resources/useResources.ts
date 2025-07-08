@@ -15,11 +15,11 @@ import { isFieldDescription } from "./fields/Fields.js"
 export function useResources(description: ResourceDescription<Resource>): [ResourcePayloadAndDescription<Resource>[], React.Dispatch<React.SetStateAction<boolean>>, React.Dispatch<React.SetStateAction<boolean>>] {
     const auth = useAuth()
     const token = auth.user?.access_token
-    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
+    const { setIsLoading } = useContextThrowUndefined<{ setIsLoading: (isLoading: boolean) => void }>(LoadingContext)
     const [isResourceChanged, setIsResourceChanged] = useState(true)
     const [isActiveResourceChanged, setIsActiveResourceChanged] = useState(true)
     const [resourceList, setResourceList] = useState<ResourcePayloadAndDescription<Resource>[]>([])
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+    const { permissions, setPermissions } = useContextThrowUndefined<{ permissions: string[]; setPermissions: (permissions: string[]) => void }>(PermissionContext)
 
     useEffect(() => {
 

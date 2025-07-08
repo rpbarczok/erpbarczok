@@ -24,8 +24,8 @@ export const ResourcesAdd: FunctionComponent<ResourcesAddProps> = ({ resource, a
     const [addItemCount, setAddItemCount] = useState(0)
     const auth = useAuth()
     const token = auth.user?.access_token
-    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+    const { setIsLoading } = useContextThrowUndefined<{ setIsLoading: (isLoading: boolean) => void }>(LoadingContext)
+    const { permissions, setPermissions } = useContextThrowUndefined<{ permissions: string[]; setPermissions: (permissions: string[]) => void }>(PermissionContext)
 
     const handleModal = () => {
         setAddItemCount(addItemCount + 1)

@@ -17,8 +17,8 @@ export function useActiveCompany(changedCompanyDispatch: React.ActionDispatch<[a
     const [activeCompany, setActiveCompany] = useState(emptyCompany)
     const auth = useAuth()
     const token = auth.user?.access_token
-    const { setIsLoading } = useContextThrowUndefined(LoadingContext)
-    const { permissions, setPermissions } = useContextThrowUndefined(PermissionContext)
+    const { setIsLoading } = useContextThrowUndefined<{ setIsLoading: (isLoading: boolean) => void }>(LoadingContext)
+    const { permissions, setPermissions } = useContextThrowUndefined<{ permissions: string[]; setPermissions: (permissions: string[]) => void }>(PermissionContext)
 
     async function changeActive(active?: number) {
         if (token) {
