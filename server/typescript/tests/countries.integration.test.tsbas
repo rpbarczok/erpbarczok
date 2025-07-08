@@ -81,8 +81,8 @@ describe('/countries/ HTTP integration Tests', function () {
     let app: App
 
     before(async function () {
+        await sequelize.sync()
         app = await startingApp
-        await sequelize.sync({ force: true })
     });
 
     describe('GET /countries/ and POST /countries/', function () {

@@ -418,6 +418,15 @@ export const apiSpec: OpenAPIV3.DocumentV3 = {
                     'companyType': 'Kunde'
                 }
             },
+            'address': {
+                'value': {
+                    'street': 'Poststraße 1',
+                    'po': '1002',
+                    'city': 'Berlin',
+                    'addressType': 'Unternehmensadresse',
+                    'country': 'Deutschland'
+                }
+            },
             'companyType': {
                 'value': {
                     'name': 'Kunde'

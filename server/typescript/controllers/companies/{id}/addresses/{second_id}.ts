@@ -100,7 +100,7 @@ export const DELETE: Operation = async (req: Request, res: Response, next: NextF
 DELETE.apiSpec = {
     'summary': 'Remove a certain address',
     'description': 'DELETE request on address by id {second_id}',
-    'operationId': 'deleteCompanyById',
+    'operationId': 'deleteById',
     'security': [
         {
             'openId': [

@@ -69,7 +69,7 @@ const startApp = async () => {
     // initialize Database
 
     try {
-        await database.sync({ force: true })
+        await database.sync()
         logger('Drop and re-sync db.')
     } catch (error: unknown) {
         logger('Failed to sync db: ', error)

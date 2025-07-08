@@ -9,6 +9,7 @@ import { PermissionContext } from '../../../utils/permissionContext.js'
 import { useContextThrowUndefined } from '../../../utils/contextUndefined.js'
 import { FunctionComponent, useState } from 'react'
 import { GenericResource } from 'components/resources/resourceList.js'
+import { AddressList } from 'components/addresses/AddressList.js'
 
 interface CompanySMEditProps {
     activeCompany: DataWithMeta<Company>
@@ -77,7 +78,7 @@ export const CompanySMEdit: FunctionComponent<CompanySMEditProps> = ({
                 </Col>
                 <Col sm={12} lg={6} xl={7}>
                     <Row>
-                            Addresses
+                            <AddressList activeCompany={activeCompany} />
                     </Row>
                     <Row>
                         Employees
