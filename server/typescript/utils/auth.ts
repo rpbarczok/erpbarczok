@@ -11,7 +11,7 @@ const secret_prod = jwks.expressJwtSecret({
     rateLimit: true,
     jwksRequestsPerMinute: 5,
     jwksUri: process.env.JWKS_URI ?? `${String(process.env.IDP_SERVER)}.well-known/jwks.json`,
-    // requestAgent: Documentation hard to find: https://github.com/auth0/node-jwks-rsa/blob/master/EXAMPLES.md
+    // requestAgent: Documentation hard to find: https://github.com/auth0/node-jwks-rsa/blob/master/EXAMPLES.md --> Problems in ARM version thus removed
     // requestAgent: new ProxyAgent()
 }) as GetVerificationKey
 
