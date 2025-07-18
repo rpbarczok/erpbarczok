@@ -1,8 +1,7 @@
 import { expressjwt, GetVerificationKey } from 'express-jwt'
 import jwks from 'jwks-rsa'
-import { ProxyAgent } from 'proxy-agent'
+// import { ProxyAgent } from 'proxy-agent'
 import type { Algorithm } from 'jsonwebtoken'
-import { Agent } from 'node:http'
 
 
 const algorithms = process.env.ALGORITHM ? process.env.ALGORITHM.split(' ') : ['RS256']
@@ -13,7 +12,7 @@ const secret_prod = jwks.expressJwtSecret({
     jwksRequestsPerMinute: 5,
     jwksUri: process.env.JWKS_URI ?? `${String(process.env.IDP_SERVER)}.well-known/jwks.json`,
     // requestAgent: Documentation hard to find: https://github.com/auth0/node-jwks-rsa/blob/master/EXAMPLES.md
-    requestAgent: new ProxyAgent()as Agent
+    // requestAgent: new ProxyAgent()
 }) as GetVerificationKey
 
 const secret_test = process.env.TEST_SECRET ?? 'secret'
